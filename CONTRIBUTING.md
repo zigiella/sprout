@@ -20,7 +20,7 @@ Reglas blandas:
 | Rol | Zona principal | Zonas secundarias |
 |-----|---------------|-------------------|
 | **Cambium** (diseno + orden) | `docs/`, `bitacora/` | todas |
-| **Dev Rhizome** (Jetson) | `code/rhizome/`, `hardware/` | `docs/10_rhizome_spec.md` |
+| **Xilema** (Dev Rhizome, Jetson) | `code/rhizome/`, `hardware/` | `docs/10_rhizome_spec.md` |
 | **Dev Pollen** (Android) | `code/pollen/` | `docs/11_pollen_spec.md` |
 | **Dev Meristem + Fine-tune** | `code/meristem/`, `code/finetune/` | `docs/12_meristem_spec.md` |
 | **Redactoras** | `writeup/`, `video/` | `research/` |
