@@ -1,0 +1,93 @@
+# Claude Code agent config (local only)
+.claude/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+.python-version
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Model weights and large artifacts
+*.gguf
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.onnx
+checkpoints/
+wandb/
+
+# Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# IDE / Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Android
+code/pollen/build/
+code/pollen/.gradle/
+code/pollen/local.properties
+code/pollen/.idea/
+code/pollen/*.iml
+code/pollen/app/build/
+
+# Logs
+*.log
+logs/
+
+# Data (opt-in if we add real data)
+data/raw/
+data/processed/
+*.csv.bak
+
+# Secrets
+**/credentials.json
+**/*_key.json
+**/service-account.json
+
+# Video working files (too big for git)
+video/raw/
+video/cache/
+*.mp4
+*.mov
+# Keep final exports
+!video/final/*.mp4
