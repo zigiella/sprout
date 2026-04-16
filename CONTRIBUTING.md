@@ -144,7 +144,7 @@ El backlog vive en **GitHub Issues + Projects**.
 
 ### 10.1 Donde verlo
 - **Lista de issues:** https://github.com/zigiella/sprout/issues
-- **Tablero kanban (vista Board):** pestana *Projects* en el repo → "Sprout Backlog". Cuatro columnas: **Backlog / In Progress / Review / Done**. Arrastrar tarjeta cambia estado.
+- **Tablero kanban "Sprout Backlog":** https://github.com/users/zigiella/projects/2 — cuatro columnas: **Backlog / In Progress / Review / Done**. Arrastrar tarjeta cambia estado.
 - **Vista Table:** el mismo proyecto con vista de spreadsheet para priorizar en bloque.
 - **GitHub Mobile** (iOS/Android): misma vista Board, desde el sofa.
 
