@@ -173,4 +173,4 @@ Schemas completos en `code/shared/schemas/`. Resumen:
 - [Google AI Edge LiteRT docs](https://ai.google.dev/edge/litert)
 - [MediaPipe LLM Inference Android](https://ai.google.dev/edge/mediapipe/solutions/genai/llm_inference/android)
 - [GEMMA4-SKILL.md](../GEMMA4-SKILL.md) seccion 4.5 (MLX y moviles)
-- Hackathon Cactus track (routing entre modelos) y LiteRT track
+- Cactus (routing entre modelos en movil) como referencia ecosistema

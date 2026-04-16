@@ -558,7 +558,7 @@ No hace falta un producto nuevo. Basta una herramienta clara para ilustrar el co
 
 ## 16. Recomendación actual
 
-Si el objetivo inmediato es ganar el hackathon con un prototipo realista:
+Si el objetivo inmediato es cerrar el MVP con un prototipo realista:
 
 - Rhizome con Jetson Orin Nano Super
 - Gemma 4 E2B cuantizado en Rhizome

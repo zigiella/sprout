@@ -84,7 +84,7 @@ Si duda, NO entra.
 
 ## Como citar en el writeup
 
-Formato propuesto para las citas del writeup de Kaggle:
+Formato propuesto para las citas del writeup:
 
 ```markdown
 Segun el Banco de Espana, la sequia de 2022-2023 redujo hasta un 30% 

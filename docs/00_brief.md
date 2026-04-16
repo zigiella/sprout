@@ -24,15 +24,15 @@ Cada parcela debe poder seguir viva sola durante largos periodos. El sistema no 
 
 Una parcela con meteo no solo se protege a sí misma. Puede proteger a otras cuando **Pollen** transporta contexto fresco con caducidad.
 
-## Por qué esto encaja en el hackathon
-Sprout encaja sobre todo en **Global Resilience** por su foco en:
+## Por qué este diseño
+Sprout ataca un problema real con cinco propiedades a la vez:
 - escasez de agua
 - baja conectividad
 - autonomía operativa
 - despliegue local y replicable
 - infraestructura útil en entornos remotos
 
-También puede aspirar a la vía de **Ollama** si la demo muestra inferencia local visible, reproducible y no cosmética.
+Esto importa porque casi ninguna propuesta del mercado resuelve las cinco juntas sin asumir conectividad continua o infraestructura cloud.
 
 ## Qué NO es Sprout
 - no es un temporizador con marketing
@@ -69,7 +69,7 @@ No es un simple sincronizador. Es un **ferry de inteligencia contextual con cadu
 ### Meristem
 No teleopera. Distribuye criterio. Revisa patrones entre parcelas y emite políticas más duraderas.
 
-## Demostrador del hackathon
+## Demostrador del MVP
 El prototipo será deliberadamente pequeño, pero más rico de lo que parece.
 
 ### MVP físico
@@ -97,7 +97,7 @@ Solo cinco cosas:
 5. el sistema sabe cuándo una información ha **caducado** y deja de usarla
 
 ## Clímax narrativo del proyecto
-La idea que debe quedar en la cabeza del jurado es esta:
+La idea que debe quedar en la cabeza de quien vea el proyecto es esta:
 
 **cada parcela puede sobrevivir sola, pero el sistema mejora cuando la estrategia circula.**
 
@@ -118,7 +118,7 @@ Eso enseña tres cosas a la vez:
 - prudencia operacional
 - inteligencia local bajo incertidumbre
 
-## Límite de alcance para el hackathon
+## Límite de alcance del MVP
 No intentar demostrar todo el sistema futuro.
 
 ### Sí entra
@@ -169,7 +169,7 @@ No intentar demostrar todo el sistema futuro.
 - un simulador simple para visualizar escalado y caducidad
 
 ## Criterio para decidir cualquier cosa
-Si una pieza no mejora uno de estos cinco puntos, probablemente sobra para el hackathon:
+Si una pieza no mejora uno de estos cinco puntos, probablemente sobra para el MVP:
 - claridad visual
 - credibilidad técnica
 - encaje real con Gemma 4

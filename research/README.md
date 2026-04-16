@@ -6,7 +6,7 @@ Investigacion no-codigo: metricas de impacto, referencias tecnicas, analisis com
 
 - `metrics/` — estadisticas de impacto con fuente verificable
 - `references/` — papers, articulos, posts tecnicos relevantes
-- `competitive/` — analisis de submissions ganadoras de Gemma 3n Impact Challenge y otros hackathons similares
+- `competitive/` — analisis de proyectos similares y referencias competitivas
 
 ## Reglas
 

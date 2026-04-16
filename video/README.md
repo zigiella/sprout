@@ -1,13 +1,13 @@
 # video/
 
-Produccion del video de 3 minutos del hackathon. La pieza que vale 30 puntos del score.
+Produccion del video de 3 minutos de demostracion del proyecto.
 
 ## Archivos planificados
 
-- `storyboard.md` — guion visual plano por plano (Cambium + Bea)
-- `script.md` — voice-over completo en castellano con subs ingles (Bea)
-- `shot_list.md` — lista tecnica de planos a grabar (Bea)
-- `must_have_shots.md` — los 5 planos que no pueden faltar (Cambium)
+- `storyboard.md` — guion visual plano por plano
+- `script.md` — voice-over completo en castellano con subs ingles
+- `shot_list.md` — lista tecnica de planos a grabar
+- `must_have_shots.md` — los 5 planos que no pueden faltar
 - `location_notes.md` — Castellar de n'Hug: horarios de luz, permisos, logistica
 - `final/` — exports finales (esta carpeta SI se commitea)
 - `raw/` — material bruto (en `.gitignore` — demasiado pesado)
@@ -40,11 +40,7 @@ Todo lo demas es relleno.
 - Semana 2: primer corte con B-roll y placeholders del demo
 - Semana 3: grabacion del demo real en terraza
 - Semana 4: edicion final + subs + subida a YouTube
-- Semana 5 (parcial): revisiones de ultima hora
 
 ## Responsables
 
-- Grabacion: Bea + amigo
-- Edicion: Bea + amigo
-- Storyboard/shot list: Cambium (draft) + Bea (revision)
-- Script: Bea (draft) + Cambium (revision)
+Los detalles de grabacion, edicion y redaccion los coordina el core del equipo zigiella.

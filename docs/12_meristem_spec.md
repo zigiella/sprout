@@ -28,7 +28,7 @@ Esta es la decision estructural del MVP y del writeup.
 - **Modelo:** `gemma4:e4b` via Ollama (~8 GB Q4_K_M, deja 8 GB para OS + contexto + herramientas)
 - **Interfaz:** HTTP local en `http://localhost:11434/v1` (OpenAI-compatible)
 - **Estado:** **lo que corre en el demo grabado**
-- **Upgrade path:** si se adquiere Mac mini M4 24 GB antes del deadline, upgrade a `gemma-4-26b-a4b` via Ollama (~17 GB Q4_K_M, gana en razonamiento estrategico)
+- **Upgrade path:** si se adquiere Mac mini M4 24 GB antes de la entrega, upgrade a `gemma-4-26b-a4b` via Ollama (~17 GB Q4_K_M, gana en razonamiento estrategico)
 
 ### 2.2 Meristem Sombra (solo tiempo de test, desarrollo, validacion)
 - **Hardware:** cloud, Google AI Studio API
@@ -40,9 +40,9 @@ Esta es la decision estructural del MVP y del writeup.
 
 Tres razones:
 
-1. **Narrativa local-first intacta.** El demo grabado y el sistema desplegado son 100% local. El jurado no ve nube.
+1. **Narrativa local-first intacta.** El demo grabado y el sistema desplegado son 100% local. Quien mira no ve nube.
 2. **Datos de calidad para el writeup.** Podemos decir algo cuantitativo: *"Validamos 500 decisiones locales contra Gemma 4 31B como referencia cloud. El E4B local coincidio en X% de los casos y en los desacuerdos fue mas conservador en Y%."*
-3. **Material para tracks tecnologicos.** Este patron de "routing entre modelos segun contexto" abre la puerta al **Cactus Special Track** si lo enmarcamos en la arquitectura de Pollen tambien.
+3. **Material de analisis cualitativo.** Este patron de "routing entre modelos segun contexto" es tambien un aprendizaje arquitectonico reutilizable para la capa Pollen.
 
 ### 2.4 Reglas duras del sombra (no negociables)
 

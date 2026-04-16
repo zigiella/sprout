@@ -1,15 +1,15 @@
 # Como trabajamos en Sprout
 
-Guia para cualquier persona que entre al proyecto: desarrolladoras, redactoras, investigadoras, grabadoras.
+Guia interna del **equipo zigiella** para trabajar en Sprout.
 
 ---
 
 ## 1. Filosofia de colaboracion
 
-Sprout es un proyecto de hackathon con deadline corto (18 mayo 2026). Cada persona trabaja en su area pero todo converge en una unica entrega: **video de 3 min + writeup de 1500 palabras + repo publico + live demo**.
+Sprout es un proyecto del equipo zigiella. Durante el sprint MVP somos cuatro personas. Cada una trabaja en su area pero todo converge en una entrega coherente: **un sistema funcional + video de demostracion + documento de presentacion + repo publico**.
 
 Reglas blandas:
-- Si no aporta a los 5 puntos de "lo que debe demostrar el video", probablemente sobra
+- Si no aporta a los puntos de "lo que debe demostrar el video", probablemente sobra
 - Si no puedes explicar algo en una frase, probablemente esta mal formulado
 - Si algo es ambiguo en docs/, abre una entrada en bitacora/ y pregunta
 
@@ -19,13 +19,12 @@ Reglas blandas:
 
 | Rol | Zona principal | Zonas secundarias |
 |-----|---------------|-------------------|
-| **Cambium** (diseno + orden) | `docs/`, `bitacora/` | todas |
-| **Xilema** (Dev Rhizome, Jetson) | `code/rhizome/`, `hardware/` | `docs/10_rhizome_spec.md` |
-| **Dev Pollen** (Android) | `code/pollen/` | `docs/11_pollen_spec.md` |
-| **Dev Meristem + Fine-tune** | `code/meristem/`, `code/finetune/` | `docs/12_meristem_spec.md` |
-| **Redactoras** | `writeup/`, `video/` | `research/` |
-| **Investigadoras** | `research/` | `writeup/` |
-| **Grabacion / Edicion** | `video/` | `demo/` |
+| Coordinacion y diseno | `docs/`, `bitacora/` | todas |
+| Dev Rhizome (Jetson) | `code/rhizome/`, `hardware/` | `docs/10_rhizome_spec.md` |
+| Dev Pollen (Android) | `code/pollen/` | `docs/11_pollen_spec.md` |
+| Dev Meristem + Fine-tune | `code/meristem/`, `code/finetune/` | `docs/12_meristem_spec.md` |
+
+Writeup, video, research y demo los cubre el core del equipo (coordinacion + project lead).
 
 ---
 

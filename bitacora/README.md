@@ -6,7 +6,7 @@ Diario del proyecto. Todo el equipo escribe aqui.
 
 - Guardar decisiones y el **porque** detras de ellas
 - Dejar rastro de lo aprendido (para que otro miembro no repita tropiezos)
-- Servir de insumo al writeup del hackathon (memoria del proyecto)
+- Servir de insumo al writeup final (memoria del proyecto)
 - Actuar como "punto de entrada" cuando alguien se incorpora tarde al equipo
 
 ## Como se nombra una entrada

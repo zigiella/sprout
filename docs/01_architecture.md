@@ -2,7 +2,7 @@
 
 ## Arquitectura completa y alcance del MVP
 
-Documento maestro de arquitectura para el proyecto Sprout, actualizado para sustituir versiones anteriores y alineado con el alcance real del hackathon.
+Documento maestro de arquitectura para el proyecto Sprout, actualizado para sustituir versiones anteriores y alineado con el alcance real del MVP.
 
 ---
 
@@ -30,11 +30,6 @@ Sprout está diseñado para parcelas remotas con agua limitada, presencia humana
 Sprout no es “un riego inteligente”.
 
 Sprout es una red agrícola local-first para entornos remotos, donde cada parcela puede operar de forma autónoma durante largos periodos, pero la calidad de sus decisiones mejora cuando el conocimiento se mueve por la red.
-
-### Encaje principal con el hackathon
-
-- **Track principal recomendado:** Global Resilience
-- **Track tecnológico plausible:** Ollama, si la demo hace visible la inferencia local y reproducible en Rhizome
 
 ### Tesis resumida
 
@@ -211,7 +206,7 @@ Meristem es el nodo estratégico.
 
 La **arquitectura objetivo** de Sprout es local-first y contempla Meristem como nodo local en portátil o mini-PC.
 
-En el **MVP del hackathon**, Meristem podrá apoyarse en un atajo temporal de implementación para acelerar el sprint, pero esto debe presentarse como una decisión táctica de prototipado, no como dependencia del producto.
+En el **MVP**, Meristem podrá apoyarse en un atajo temporal de implementación para acelerar el sprint, pero esto debe presentarse como una decisión táctica de prototipado, no como dependencia del producto.
 
 La narrativa del proyecto debe seguir respirando ambición local:
 

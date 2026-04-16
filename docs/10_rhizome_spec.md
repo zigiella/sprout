@@ -1,6 +1,6 @@
 # Rhizome — Spec tecnica del MVP
 
-> Rhizome es el nodo edge en parcela. Ejecuta decisiones locales seguras con Gemma 4 E2B sobre Jetson Orin Nano Super. Es el nodo mas critico del MVP: es lo que el jurado ve "hacer cosas" en el video.
+> Rhizome es el nodo edge en parcela. Ejecuta decisiones locales seguras con Gemma 4 E2B sobre Jetson Orin Nano Super. Es el nodo mas critico del MVP: es lo que se ve "haciendo cosas" en el video.
 
 Este documento es el **briefing de onboarding** para **Xilema**, dev Rhizome. Esta disenado para que pueda empezar el dia 1 sin dependencias externas.
 
