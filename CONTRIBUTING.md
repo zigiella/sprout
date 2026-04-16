@@ -31,18 +31,22 @@ Writeup, video, research y demo los cubre el core del equipo (coordinacion + pro
 ## 3. Flujo de trabajo
 
 ### 3.1 Antes de empezar algo nuevo
-1. Leer la entrada mas reciente de `bitacora/`
-2. Revisar el doc relevante en `docs/`
-3. Si vas a cambiar algo que afecta a otros, dejar nota en `bitacora/` con fecha
+1. `git pull` en `main`
+2. Elegir un issue del [backlog](https://github.com/zigiella/sprout/issues) (ver §10) y asignartelo
+3. Leer la entrada mas reciente de `bitacora/`
+4. Revisar el doc relevante en `docs/`
+5. Crear rama `feat/<zona>-<tema>` o `fix/<zona>-<tema>` — **nunca** trabajar sobre `main`
 
 ### 3.2 Durante el trabajo
 - Commits pequenos y frecuentes
 - Mensaje de commit: `[zona] resumen corto` (ej: `[rhizome] humedad lectura via ADS1115`)
-- Rama `main` solo recibe codigo que ya ha sido probado
+- En el commit que cierra el issue, incluir `Closes #N` en el cuerpo para enlace automatico
 
 ### 3.3 Al terminar una pieza
-- Update en `bitacora/` con fecha, lo que se hizo, lo que queda, decisiones tomadas
+- Entrada en `bitacora/` con fecha, lo que se hizo, lo que queda, decisiones tomadas (**obligatorio antes de PR**)
 - Si hay cambio de arquitectura, actualizar el doc correspondiente en `docs/`
+- Abrir PR contra `main`. En la descripcion del PR: `Closes #N` + resumen + como probar
+- Review por Cambium antes de merge. Sin review, no hay merge
 
 ---
 
@@ -130,3 +134,65 @@ Abre una entrada en `bitacora/` con el tema `pregunta-<topic>` y etiqueta a Camb
 - [ ] Si cambie un contrato de datos, actualice `code/shared/schemas/`
 - [ ] Si cambie arquitectura, actualice `docs/`
 - [ ] Hice entrada en `bitacora/` con fecha
+- [ ] El PR referencia el issue con `Closes #N`
+
+---
+
+## 10. Backlog y tablero visual
+
+El backlog vive en **GitHub Issues + Projects**.
+
+### 10.1 Donde verlo
+- **Lista de issues:** https://github.com/zigiella/sprout/issues
+- **Tablero kanban (vista Board):** pestana *Projects* en el repo → "Sprout Backlog". Cuatro columnas: **Backlog / In Progress / Review / Done**. Arrastrar tarjeta cambia estado.
+- **Vista Table:** el mismo proyecto con vista de spreadsheet para priorizar en bloque.
+- **GitHub Mobile** (iOS/Android): misma vista Board, desde el sofa.
+
+### 10.2 Como usar el backlog
+
+**Abrir un issue nuevo:**
+- Titulo imperativo, corto, sin jerga interna. "Implementar schemas Pydantic" > "Schemas".
+- **Zero referencias externas** al hackathon, jurado, premios, deadline. El repo es publico.
+- Body con: contexto, criterios de aceptacion (checkboxes), dependencias, referencia a docs.
+- Labels obligatorios: **uno de `node:*`** y **uno de `priority:*`**. Opcionales: `area:*`, `status:blocked`.
+
+**Asignarse un issue:**
+- Solo asignarse lo que vas a empezar esa misma sesion. Si dudas, dejalo sin asignar.
+- Si lo abandonas, quitate de asignada y deja comentario con el por que.
+
+**Cerrar un issue:**
+- Solo se cierra por merge de PR que lo referencia con `Closes #N`.
+- No cerrar "a mano" salvo duplicados o invalidos (con comentario explicativo).
+
+### 10.3 Taxonomia de labels
+
+**Nodo (uno obligatorio):**
+- `node:rhizome` — Jetson, parcela
+- `node:pollen` — Android, itinerante
+- `node:meristem` — laptop, estrategico
+- `node:cambium` — coordinacion, diseno, supervision
+
+**Area (opcional, puede haber varias):**
+- `area:docs` — documentacion de arquitectura
+- `area:infra` — repo, CI, tooling
+- `area:research` — benchmarks, evaluacion
+- `area:firmware` — ESP32, capa fisica
+
+**Prioridad (una obligatoria):**
+- `priority:P0` — critico, bloquea a alguien
+- `priority:P1` — importante, no bloqueante
+- `priority:P2` — nice to have
+
+**Estado (opcional):**
+- `status:blocked` — esperando algo externo
+
+### 10.4 Relacion PR ↔ issue
+
+Cada PR deberia cerrar al menos un issue. En el cuerpo del PR:
+
+```
+Closes #12
+Closes #15
+```
+
+Al mergear, GitHub mueve esos issues a **Done** automaticamente.
