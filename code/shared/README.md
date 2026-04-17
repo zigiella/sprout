@@ -2,54 +2,56 @@
 
 Schemas JSON y protocolos compartidos entre Rhizome, Pollen y Meristem.
 
-Si un contrato de datos cruza de un nodo a otro, vive aqui. Unica fuente de verdad.
+Si un contrato de datos cruza de un nodo a otro, vive aqui. La **fuente de verdad** es la implementacion en Python con `pydantic` v2; Kotlin la replica para Pollen.
 
 ## Estructura
 
 ```
 shared/
 ├── README.md
+├── Makefile
 └── schemas/
-    ├── weather_packet.json
-    ├── policy_delta.json
-    ├── policy_packet.json
-    ├── contradiction_alert.json
-    ├── rhizome_snapshot.json
-    ├── decision_receipt.json
-    └── README.md
+    ├── __init__.py
+    ├── base.py
+    ├── enums.py
+    ├── rhizome_snapshot.py
+    ├── policy_packet.py
+    ├── policy_delta.py
+    ├── weather_packet.py
+    ├── contradiction_alert.py
+    ├── decision_receipt.py
+    └── tests/
 ```
 
 ## Convencion
 
-- Cada schema en JSON Schema Draft 2020-12
-- Cada schema tiene un `$id` estable: `https://sprout.network/schemas/v1/<nombre>.json`
-- Versiones via subcarpeta (`v1/`, `v2/`) cuando haya cambios breaking
-- Ejemplos minimos en `examples/` dentro de cada schema
+- Version actual del contrato: `docs/20_data_contracts.md` v1.0
+- `pydantic` es la implementacion canonica
+- Los parsers ignoran campos desconocidos para forward compatibility
+- Todos los timestamps viajan como ISO-8601 UTC con sufijo `Z`
+- Los ejemplos canonicos y round-trips viven en `schemas/tests/`
 
 ## Validacion
 
 ### Python (Rhizome, Meristem)
-```python
-from pydantic import BaseModel
-from pathlib import Path
-import json
-
-schema = json.loads(Path("shared/schemas/weather_packet.json").read_text())
-# generar modelo con datamodel-code-generator o escribir pydantic model a mano
+```bash
+cd code/shared
+make test-schemas
+# o, si no hay make disponible:
+python -m pytest schemas/tests
 ```
 
 ### Kotlin (Pollen)
 ```kotlin
 // usar kotlinx.serialization con data classes que mapean 1:1
-@Serializable data class WeatherPacket(
-    val type: String,
-    val id: String,
-    // ...
-)
+// respecto a los modelos Pydantic
 ```
 
 ## Cambios
 
-Si cambias un schema, actualizar **los tres nodos en el mismo commit**. Nunca commits que dejen los schemas inconsistentes.
+Si cambias un schema, sigue primero el proceso del contrato de datos:
 
-Si el cambio es breaking, bumpear version de carpeta y mantener la anterior para retrocompatibilidad temporal.
+1. entrada en `bitacora/`
+2. actualizacion de `docs/20_data_contracts.md`
+3. cambio en `code/shared/schemas/`
+4. sincronizacion posterior con Kotlin
