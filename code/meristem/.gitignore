@@ -1,0 +1,13 @@
+# SQLite local de Meristem y artefactos derivados.
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# pytest
+.pytest_cache/
+
+# Entorno local
+.env
