@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-04-16T08:30:15Z",
+  "origin_node_id": "meristem_01",
+  "signature": null,
+  "policy_id": "pkt_rhizome_01_20260416T083015_d5e7",
+  "target_node_id": "rhizome_01",
+  "valid_until": "2026-04-17T08:30:15Z",
+  "version_chain": [
+    "pkt_rhizome_01_20260415T083015_1234",
+    "pkt_rhizome_01_20260416T083015_d5e7"
+  ],
+  "mode_default": "normal",
+  "rules": {
+    "watering_window": {
+      "start_hour_local": 6,
+      "end_hour_local": 9
+    },
+    "soil_moisture_thresholds": {
+      "parcel_a": {
+        "min_pct": 35.0,
+        "target_pct": 55.0
+      },
+      "parcel_b": {
+        "min_pct": 30.0,
+        "target_pct": 50.0
+      }
+    },
+    "max_watering_duration_s": 45,
+    "daily_water_budget_liters": 8.0,
+    "tank_minimum_pct": 15.0,
+    "require_vision_confirmation": false,
+    "conservative_triggers": [
+      "tank_level_below_30",
+      "no_pollen_visit_48h",
+      "policy_expires_within_3h"
+    ]
+  },
+  "rationale": "Post-lluvia del 15 abril. Humedad general alta. Subir umbrales parcela B que suele retener mas.",
+  "notes": "Primera iteracion tras validacion semanal."
+}
