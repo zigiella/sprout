@@ -232,6 +232,20 @@ Co-Authored-By: Cambium <cambium@sprout.local>
 - **Nunca** usar `--global` al configurar estas identidades. Son locales al repo.
 - Al clonar el repo por primera vez, configurar identidad es **el primer paso**, antes del primer commit.
 
+### 11.1 Multi-agente sobre el mismo clone
+
+Si varias agentes (p.ej. Cambium y Meristem en conversaciones separadas) comparten el mismo clone del repo, **`git config user.email` persiste en `.git/config` y una agente puede pisar la identidad de otra.**
+
+Solucion: **no persistir la identidad**, pasarla inline en cada commit con `-c`:
+
+```bash
+git -c user.name="Meristem" -c user.email="meristem@sprout.local" commit -m "..."
+```
+
+Esto solo aplica a ese comando, no toca `.git/config`. Es el modo obligatorio cuando hay mas de una agente trabajando en el mismo clone.
+
+Si solo hay una persona/agente por clone (caso tipico de dev humana), el `git config` persistente esta bien.
+
 ---
 
 ## 12. Flujo de asignacion en el tablero
