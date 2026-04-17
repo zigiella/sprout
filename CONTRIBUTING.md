@@ -196,3 +196,75 @@ Closes #15
 ```
 
 Al mergear, GitHub mueve esos issues a **Done** automaticamente.
+
+---
+
+## 11. Convencion de autoria
+
+Todas las personas del equipo zigiella trabajamos bajo la **misma cuenta de GitHub** (`zigiella`). Para que en el historial del repo se pueda distinguir quien hizo que, cada dev configura **identidad local al repo** (no global, para no afectar otros proyectos tuyos):
+
+```bash
+cd <ruta-al-repo-sprout>
+git config user.name "<Nombre>"
+git config user.email "<nombre>@sprout.local"
+```
+
+**Identidades vigentes:**
+
+| Rol | `user.name` | `user.email` |
+|-----|-------------|--------------|
+| Coordinacion | `Cambium` | `cambium@sprout.local` |
+| Dev Rhizome | `Xilema` | `xilema@sprout.local` |
+| Dev Pollen | `Floema` | `floema@sprout.local` |
+| Dev Meristem | `Meristem` | `meristem@sprout.local` |
+| Project lead | `Bea` | `bea@sprout.local` |
+
+**Sobre la TLD `.local`:** es una TLD reservada por IANA (RFC 6762) para uso multicast DNS y redes internas. **No colisiona con ninguna direccion real de internet** y deja claro que son identidades ficticias del equipo.
+
+**Commits con coautoria (opcional pero recomendado para PR revisados):**
+
+```
+Co-Authored-By: Cambium <cambium@sprout.local>
+```
+
+**Reglas duras:**
+- **Nunca** reescribir historia para cambiar autoria en commits viejos. Si se subio algo con identidad equivocada, se corrige de aqui en adelante; el historial se respeta.
+- **Nunca** usar `--global` al configurar estas identidades. Son locales al repo.
+- Al clonar el repo por primera vez, configurar identidad es **el primer paso**, antes del primer commit.
+
+---
+
+## 12. Flujo de asignacion en el tablero
+
+**Principio:** auto-asignacion con protocolo corto, sin asignador central.
+
+### 12.1 Ciclo diario
+
+1. **Filtrar por tu nodo.** En [el tablero](https://github.com/users/zigiella/projects/2) aplicar filtro por label `node:<tuyo>`.
+2. **Elegir la de mayor prioridad** de la columna **Backlog**. Orden: `priority:P0` (rojas) → `priority:P1` (amarillas) → `priority:P2` (grises). Empate: menos dependencias abiertas.
+3. **Auto-asignarse el issue** (boton "assign yourself" en el issue) **y arrastrar la tarjeta** de Backlog a **In Progress**. Ese doble movimiento es la señal publica de "estoy con esto ahora".
+4. **Trabajar.** Commits pequenos y frecuentes, rama `feat/<zona>-<tema>` o `fix/<zona>-<tema>`.
+5. **Abrir PR** con `Closes #N` en el cuerpo. GitHub mueve automaticamente la tarjeta a **Review**.
+6. **Review por Cambium.** Si aprueba y mergea, la tarjeta va a **Done** automaticamente. Si pide cambios, la dev la arrastra de vuelta a **In Progress** y trabaja sobre los comentarios.
+
+### 12.2 Regla dura: una tarjeta por persona en In Progress
+
+**Solo una tarjeta** por persona puede estar en In Progress al mismo tiempo. Si necesitas bloquear algo para trabajar en otra cosa:
+- Añades label `status:blocked` al issue
+- Arrastras la tarjeta de vuelta a Backlog
+- Comentas en el issue explicando que esperas
+
+Evita que el tablero se llene de "en progreso" que nadie esta tocando.
+
+### 12.3 Casos especiales
+
+- **Tarjeta que nadie coge** (suele pasar con docs aburridos): Cambium prioriza en digest o la coge ella misma pasados 3 dias.
+- **Tarjeta urgente que debe cortar la cola:** Bea o Cambium añaden/suben a `priority:P0` y comentan en el issue el por que. La dev con hueco la coge antes que su backlog normal.
+- **Dependencias:** si #A bloquea #B, en #B se pone `Blocked by #A` en el cuerpo. Solo se puede auto-asignar #B cuando #A esta en Done.
+- **Abandono de tarea:** quitarse de asignada, dejar comentario en el issue con el por que, arrastrar tarjeta de vuelta a Backlog.
+
+### 12.4 El tablero es la verdad
+
+Si una conversacion privada (canal, DM, mail) decide algo sobre una tarea, esa decision se refleja en el issue (como comentario) o en bitacora. **No hay "yo pense que tu estabas haciendo eso".** La tarjeta dice quien, la columna dice en que fase, el PR dice el que.
+
+Si una tarjeta lleva >48h en In Progress sin commits ni comentarios, Cambium pregunta en el issue (pregunta publica, no DM).
