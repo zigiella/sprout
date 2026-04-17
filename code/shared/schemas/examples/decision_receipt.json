@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-04-16T14:30:10Z",
+  "origin_node_id": "rhizome_01",
+  "signature": null,
+  "decision_id": "rec_rhizome_01_20260416T143010_91ba",
+  "snapshot_id": "snap_rhizome_01_20260416T143005_a3f2",
+  "active_policy_id": "pkt_rhizome_01_20260416T083015_d5e7",
+  "action": "WATER_A",
+  "action_params": {
+    "duration_s": 30,
+    "expected_liters": 1.5
+  },
+  "rationale_short": "Humedad A en 38%, por debajo del umbral 45%. Dentro de ventana de riego. Deposito al 72%.",
+  "rationale_full": "El snapshot reciente muestra humedad parcela A al 38.2%, umbral minimo 45% segun politica vigente. Hora local dentro de ventana 06-09. Deposito al 72%. Vision confirma planta sana.",
+  "policy_refs": [
+    "rules.soil_moisture_thresholds.parcel_a.min_pct",
+    "rules.watering_window",
+    "rules.tank_minimum_pct"
+  ],
+  "contradictions": [],
+  "confidence": 0.87,
+  "executed": true,
+  "execution_details": {
+    "sent_to_esp32_at": "2026-04-16T14:30:10Z",
+    "esp32_ack_at": "2026-04-16T14:30:11Z",
+    "esp32_ack_status": "OK",
+    "actual_duration_s": 30.2,
+    "flow_observed_lpm": 3.1,
+    "estimated_liters_actual": 1.56
+  },
+  "blocked_reason": null
+}

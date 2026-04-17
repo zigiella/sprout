@@ -20,6 +20,10 @@ shared/
     ├── weather_packet.py
     ├── contradiction_alert.py
     ├── decision_receipt.py
+    ├── examples/
+    │   ├── builders.py
+    │   ├── generate_examples.py
+    │   └── *.json
     └── tests/
 ```
 
@@ -29,15 +33,19 @@ shared/
 - `pydantic` es la implementacion canonica
 - Los parsers ignoran campos desconocidos para forward compatibility
 - Todos los timestamps viajan como ISO-8601 UTC con sufijo `Z`
-- Los ejemplos canonicos y round-trips viven en `schemas/tests/`
+- Los payloads canonicos viven en `schemas/examples/`
+- Los JSON canonicos se generan con `python schemas/examples/generate_examples.py`
+- Los round-trips Python viven en `schemas/tests/`
 
 ## Validacion
 
 ### Python (Rhizome, Meristem)
 ```bash
 cd code/shared
+make generate-examples
 make test-schemas
 # o, si no hay make disponible:
+python -m schemas.examples.generate_examples
 python -m pytest schemas/tests
 ```
 
@@ -55,3 +63,5 @@ Si cambias un schema, sigue primero el proceso del contrato de datos:
 2. actualizacion de `docs/20_data_contracts.md`
 3. cambio en `code/shared/schemas/`
 4. sincronizacion posterior con Kotlin
+
+Si cambias un ejemplo canonico, no edites el JSON a mano: ajusta `schemas/examples/builders.py` y vuelve a generar los archivos.

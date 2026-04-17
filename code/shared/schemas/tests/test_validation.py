@@ -6,7 +6,7 @@ import pytest
 from pydantic import ValidationError
 
 from schemas import ContradictionAlert, DecisionReceipt, PolicyDelta, PolicyPacket, RhizomeSnapshot, WeatherPacket
-from schemas.tests.factories import (
+from schemas.examples.builders import (
     contradiction_alert_example,
     decision_receipt_example,
     policy_delta_example,

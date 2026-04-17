@@ -1,6 +1,6 @@
-"""Compatibility wrapper for canonical schema example builders."""
+"""Canonical schema examples for Sprout shared contracts."""
 
-from schemas.examples.builders import (
+from .builders import (
     canonical_examples,
     contradiction_alert_example,
     decision_receipt_blocked_example,

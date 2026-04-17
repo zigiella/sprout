@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-04-16T13:22:30Z",
+  "origin_node_id": "pollen_01",
+  "signature": null,
+  "alert_id": "alert_pollen_01_20260416T132230_f108",
+  "target_node_id": "rhizome_01",
+  "contradiction_type": "sensor_vs_vision",
+  "severity": "warning",
+  "observed_at": "2026-04-16T13:20:00Z",
+  "evidence": {
+    "sensor_reading": {
+      "source": "snap_rhizome_01_20260416T131800_4c5e",
+      "soil_moisture_a_pct": 42.0
+    },
+    "vision_reading": {
+      "source": "pollen_capture_20260416T132015",
+      "assessment": "severe_stress",
+      "notes": "Hojas claramente caidas en parcela A, decoloracion en los bordes."
+    }
+  },
+  "recommended_action": "defer_and_review",
+  "expires_at": "2026-04-16T19:22:30Z",
+  "rationale": "Humedad 42% es razonable en estacion seca, pero el estado visual indica estres claro. Puede haber sensor mal calibrado o problema de raiz."
+}

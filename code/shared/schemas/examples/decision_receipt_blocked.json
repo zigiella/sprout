@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-04-16T17:05:40Z",
+  "origin_node_id": "rhizome_01",
+  "signature": null,
+  "decision_id": "rec_rhizome_01_20260416T170540_6f4c",
+  "snapshot_id": "snap_rhizome_01_20260416T170500_77ae",
+  "active_policy_id": "pkt_rhizome_01_20260416T083015_d5e7",
+  "action": "BLOCK",
+  "action_params": {
+    "blocked_action": "WATER_A",
+    "reason": "tank_minimum_pct reached"
+  },
+  "rationale_short": "Riego bloqueado: deposito al 11%, por debajo del minimo de seguridad.",
+  "rationale_full": "El snapshot reporta deposito al 11%, por debajo del 15% exigido por la politica activa. Aunque la parcela A esta seca, Rhizome no envia comando al ESP32 y eleva bloqueo preventivo.",
+  "policy_refs": [
+    "rules.soil_moisture_thresholds.parcel_a.min_pct",
+    "rules.tank_minimum_pct"
+  ],
+  "contradictions": [
+    "alert_pollen_01_20260416T132230_f108"
+  ],
+  "confidence": 0.94,
+  "executed": false,
+  "execution_details": null,
+  "blocked_reason": "tank_below_minimum_pct"
+}
