@@ -16,12 +16,17 @@ import net.sprout.pollen.sync.RhizomeMockClient
 import java.time.Instant
 import java.time.Duration
 import kotlinx.coroutines.delay
+import net.sprout.pollen.inference.GemmaEngine
+// androidx.lifecycle.viewmodel.compose.viewModel / ViewModelProvider eran
+// imports sin uso y requerian dependencia no declarada. Removidos por Cambium.
 
 @Composable
-fun SplitscreenDash() {
+fun SplitscreenDash(viewModel: PollenViewModel) {
     val mockClient = remember { RhizomeMockClient() }
     val snapshot = remember { mockClient.getSnapshot() }
     val receipt = remember { mockClient.getDecisionReceipt() }
+    
+    val auditState by viewModel.uiState.collectAsState()
     
     // Simulate current time progression to illustrate TTL countdown
     var currentTime by remember { mutableStateOf(Instant.parse(snapshot.createdAt)) }
@@ -46,6 +51,20 @@ fun SplitscreenDash() {
 
         Divider(color = Color.DarkGray, thickness = 2.dp)
 
+        // Middle Half: Audit Streamer
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            AuditPanel(auditState) {
+                viewModel.runAudit(snapshot, receipt)
+            }
+        }
+
+        Divider(color = Color.DarkGray, thickness = 2.dp)
+
         // Lower Half: Active Policy & TTL
         Box(
             modifier = Modifier
@@ -54,6 +73,38 @@ fun SplitscreenDash() {
                 .padding(16.dp)
         ) {
             ActivePolicyPanel(snapshot, currentTime)
+        }
+    }
+}
+
+@Composable
+fun AuditPanel(state: AuditUiState, onRunAudit: () -> Unit) {
+    Column {
+        Text(text = "Gemma 4 Auditor", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(8.dp))
+        when (state) {
+            is AuditUiState.Idle -> {
+                androidx.compose.material3.Button(onClick = onRunAudit) {
+                    Text("Run Audit")
+                }
+            }
+            is AuditUiState.Loading -> {
+                Text("Loading model context...", color = Color.Gray)
+            }
+            is AuditUiState.Streaming -> {
+                Text(state.text, style = MaterialTheme.typography.bodyMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+                // Simulated generic loading indicator via text
+                Text("[Streaming...]", color = Color.Blue)
+            }
+            is AuditUiState.Done -> {
+                Text(state.text, style = MaterialTheme.typography.bodyMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Result: ${state.result}", color = Color.Green, fontWeight = FontWeight.Bold)
+            }
+            is AuditUiState.Error -> {
+                Text("Error: ${state.message}", color = Color.Red)
+            }
         }
     }
 }
