@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Theme.Pollen: Material3 base. La UI real se construye con Compose; este theme
+         existe solo para que AndroidManifest resuelva android:theme="@style/Theme.Pollen". -->
+    <style name="Theme.Pollen" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>
