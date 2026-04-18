@@ -1,0 +1,92 @@
+{
+  "captured_at": "2026-04-18T07:55:08Z",
+  "runtime": {
+    "name": "ollama",
+    "endpoint": "http://127.0.0.1:11434",
+    "version": "ollama version is 0.21.0"
+  },
+  "host": {
+    "hostname": "5CD533393M",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "system": "Windows",
+    "release": "11",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+    "python_version": "3.13.12",
+    "total_memory_bytes": 16605564928,
+    "manufacturer": "HP",
+    "model": "HP ProBook 460 16 inch G11 Notebook PC",
+    "label": "hp-probook-460-g11"
+  },
+  "model": {
+    "name": "gemma2:9b",
+    "details": {
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "gemma2",
+        "families": [
+          "gemma2"
+        ],
+        "parameter_size": "9.2B",
+        "quantization_level": "Q4_0"
+      },
+      "capabilities": [
+        "completion"
+      ],
+      "parameters": "stop                           \"<start_of_turn>\"\nstop                           \"<end_of_turn>\""
+    }
+  },
+  "benchmark_config": {
+    "prompt_set_path": "C:\\DATA\\PETS\\TEST\\T6A1-JETSON\\sprout\\code\\rhizome\\bench\\prompt_set.jsonl",
+    "repeat": 1,
+    "limit": 1,
+    "timeout_sec": 300,
+    "keep_alive": "0"
+  },
+  "summary": {
+    "requests_total": 1,
+    "requests_ok": 1,
+    "requests_failed": 0,
+    "wall_clock_ms_p50": 222169.97,
+    "wall_clock_ms_p95": 222169.97,
+    "first_token_latency_ms_p50": 198749.728,
+    "first_token_latency_ms_p95": 198749.728,
+    "tokens_per_second_avg": 2.325,
+    "tokens_per_second_p50": 2.325,
+    "tokens_per_second_p95": 2.325,
+    "memory_peak_used_bytes_max": 16603889664,
+    "memory_peak_used_gib_max": 15.464,
+    "power_watts_avg": null,
+    "result_class": "demo-pass"
+  },
+  "results": [
+    {
+      "id": "decision_water_a_from_snapshot",
+      "category": "decision_text",
+      "ok": true,
+      "max_tokens": 72,
+      "temperature": 0.0,
+      "source_examples": [
+        "rhizome_snapshot",
+        "policy_packet"
+      ],
+      "image_count": 0,
+      "wall_clock_ms": 222169.97,
+      "total_duration_ms": 222160.072,
+      "load_duration_ms": 9754.142,
+      "prompt_eval_duration_ms": 188995.587,
+      "first_token_latency_ms": 198749.728,
+      "prompt_eval_count": 1103,
+      "eval_count": 54,
+      "eval_duration_ms": 23227.22,
+      "tokens_per_second": 2.325,
+      "memory_peak_used_bytes": 16603889664,
+      "memory_peak_used_gib": 15.464,
+      "response_chars": 148,
+      "response_preview": "```json\n{\n \"action\": \"wait\",\n \"confidence\": 0.8,\n \"rationale_short\": \"Soil moisture in parcel A (29.5%) is above the minimum threshold (35%).\"\n}\n```",
+      "done_reason": "stop",
+      "iteration": 1
+    }
+  ]
+}

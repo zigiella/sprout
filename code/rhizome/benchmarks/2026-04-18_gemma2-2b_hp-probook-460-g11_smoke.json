@@ -1,0 +1,174 @@
+{
+  "captured_at": "2026-04-18T07:35:23Z",
+  "runtime": {
+    "name": "ollama",
+    "endpoint": "http://127.0.0.1:11434",
+    "version": "ollama version is 0.21.0"
+  },
+  "host": {
+    "hostname": "5CD533393M",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "system": "Windows",
+    "release": "11",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+    "python_version": "3.13.12",
+    "total_memory_bytes": 16605564928,
+    "manufacturer": "HP",
+    "model": "HP ProBook 460 16 inch G11 Notebook PC",
+    "label": "hp-probook-460-g11"
+  },
+  "model": {
+    "name": "gemma2:2b",
+    "details": {
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "gemma2",
+        "families": [
+          "gemma2"
+        ],
+        "parameter_size": "2.6B",
+        "quantization_level": "Q4_0"
+      },
+      "capabilities": [
+        "completion"
+      ],
+      "parameters": "stop                           \"<start_of_turn>\"\nstop                           \"<end_of_turn>\""
+    }
+  },
+  "benchmark_config": {
+    "prompt_set_path": "C:\\DATA\\PETS\\TEST\\T6A1-JETSON\\sprout\\code\\rhizome\\bench\\prompt_set.jsonl",
+    "repeat": 1,
+    "limit": 4,
+    "timeout_sec": 300,
+    "keep_alive": "30m"
+  },
+  "summary": {
+    "requests_total": 4,
+    "requests_ok": 4,
+    "requests_failed": 0,
+    "wall_clock_ms_p50": 54232.529,
+    "wall_clock_ms_p95": 67759.539,
+    "first_token_latency_ms_p50": 48281.716,
+    "first_token_latency_ms_p95": 60511.922,
+    "tokens_per_second_avg": 8.976,
+    "tokens_per_second_p50": 9.091,
+    "tokens_per_second_p95": 9.45,
+    "memory_peak_used_bytes_max": 15462367232,
+    "memory_peak_used_gib_max": 14.4,
+    "power_watts_avg": null,
+    "result_class": "demo-pass"
+  },
+  "results": [
+    {
+      "id": "decision_water_a_from_snapshot",
+      "category": "decision_text",
+      "ok": true,
+      "max_tokens": 72,
+      "temperature": 0.0,
+      "source_examples": [
+        "rhizome_snapshot",
+        "policy_packet"
+      ],
+      "image_count": 0,
+      "wall_clock_ms": 56304.965,
+      "total_duration_ms": 56298.885,
+      "load_duration_ms": 3582.951,
+      "prompt_eval_duration_ms": 47642.2,
+      "first_token_latency_ms": 51225.15,
+      "prompt_eval_count": 1103,
+      "eval_count": 47,
+      "eval_duration_ms": 4967.868,
+      "tokens_per_second": 9.461,
+      "memory_peak_used_bytes": 15462367232,
+      "memory_peak_used_gib": 14.4,
+      "response_chars": 138,
+      "response_preview": "```json\n{\n  \"action\": \"water\",\n  \"confidence\": 0.9,\n  \"rationale_short\": \"Parcel A has sufficient moisture but Parcel B needs more.\"\n}\n```",
+      "done_reason": "stop",
+      "iteration": 1
+    },
+    {
+      "id": "decision_water_b_from_snapshot",
+      "category": "decision_text",
+      "ok": true,
+      "max_tokens": 72,
+      "temperature": 0.0,
+      "source_examples": [
+        "rhizome_snapshot",
+        "policy_packet"
+      ],
+      "image_count": 0,
+      "wall_clock_ms": 49175.305,
+      "total_duration_ms": 49169.393,
+      "load_duration_ms": 195.796,
+      "prompt_eval_duration_ms": 41182.816,
+      "first_token_latency_ms": 41378.612,
+      "prompt_eval_count": 1109,
+      "eval_count": 72,
+      "eval_duration_ms": 7667.618,
+      "tokens_per_second": 9.39,
+      "memory_peak_used_bytes": 13996302336,
+      "memory_peak_used_gib": 13.035,
+      "response_chars": 244,
+      "response_preview": "```json\n{\n  \"action\": \"water\",\n  \"target_parcel\": \"parcel_b\",\n  \"rationale_short\": \"Parcel B necesita m\u00e1s agua, su humedad es menor que la de Parcel A.\" \n}\n``` \n\n**Rationale:**\n\n* **Snapshot Analysis:** The snapshot shows that the soil mois",
+      "done_reason": "length",
+      "iteration": 1
+    },
+    {
+      "id": "decision_block_if_tank_low",
+      "category": "decision_text",
+      "ok": true,
+      "max_tokens": 72,
+      "temperature": 0.0,
+      "source_examples": [
+        "rhizome_snapshot",
+        "policy_packet",
+        "decision_receipt_blocked"
+      ],
+      "image_count": 0,
+      "wall_clock_ms": 69780.934,
+      "total_duration_ms": 69759.933,
+      "load_duration_ms": 190.965,
+      "prompt_eval_duration_ms": 61959.799,
+      "first_token_latency_ms": 62150.764,
+      "prompt_eval_count": 1547,
+      "eval_count": 62,
+      "eval_duration_ms": 7505.717,
+      "tokens_per_second": 8.26,
+      "memory_peak_used_bytes": 14546259968,
+      "memory_peak_used_gib": 13.547,
+      "response_chars": 177,
+      "response_preview": "```json\n{\n  \"action\": \"BLOCK\",\n  \"blocked_reason\": \"tank_below_minimum_pct\",\n  \"rationale_short\": \"Riego bloqueado: deposito al 11%, por debajo del minimo de seguridad.\"\n}\n``` \n",
+      "done_reason": "stop",
+      "iteration": 1
+    },
+    {
+      "id": "decision_skip_if_healthy",
+      "category": "decision_text",
+      "ok": true,
+      "max_tokens": 64,
+      "temperature": 0.0,
+      "source_examples": [
+        "rhizome_snapshot",
+        "policy_packet"
+      ],
+      "image_count": 0,
+      "wall_clock_ms": 52160.093,
+      "total_duration_ms": 52154.251,
+      "load_duration_ms": 195.035,
+      "prompt_eval_duration_ms": 45143.247,
+      "first_token_latency_ms": 45338.281,
+      "prompt_eval_count": 1113,
+      "eval_count": 59,
+      "eval_duration_ms": 6711.423,
+      "tokens_per_second": 8.791,
+      "memory_peak_used_bytes": 14526611456,
+      "memory_peak_used_gib": 13.529,
+      "response_chars": 153,
+      "response_preview": "```json\n{\n  \"action\": null,\n  \"next_check_in_s\": \"0\",\n  \"rationale_short\": \"Humedad general alta. Subir umbrales parcela B que suele retener mas.\" \n}\n```",
+      "done_reason": "stop",
+      "iteration": 1
+    }
+  ]
+}
