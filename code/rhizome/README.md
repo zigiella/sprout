@@ -25,6 +25,9 @@ Nodo edge de parcela. Corre en Jetson Orin Nano Super con Gemma 4 E2B (fine-tune
 ```
 rhizome/
 ├── README.md
+├── Makefile
+├── bench/                  # harness benchmark reproducible
+├── benchmarks/             # resultados versionados del harness
 ├── requirements.txt
 ├── src/
 │   ├── main.py             # bucle principal
@@ -43,3 +46,16 @@ rhizome/
 ## Pendiente
 
 Briefing completo en `docs/10_rhizome_spec.md` (a redactar por Cambium + especialista Jetson).
+
+## Benchmark local
+
+Mientras llega el Jetson, el benchmark de `#5` se prepara y valida desde portatil:
+
+```bash
+cd code/rhizome
+make generate-prompts
+make test
+python -m bench.run_ollama_benchmark --model gemma4:e4b --hardware-label hp-probook-460-g11
+```
+
+El mismo harness se reutiliza luego en Jetson cambiando solo el target del modelo/runtime.

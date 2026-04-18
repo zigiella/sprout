@@ -1,0 +1,123 @@
+{
+  "captured_at": "2026-04-18T07:28:59Z",
+  "runtime": {
+    "name": "ollama",
+    "endpoint": "http://127.0.0.1:11434",
+    "version": "ollama version is 0.21.0"
+  },
+  "host": {
+    "hostname": "5CD533393M",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "system": "Windows",
+    "release": "11",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+    "python_version": "3.13.12",
+    "total_memory_bytes": 16605564928,
+    "manufacturer": "HP",
+    "model": "HP ProBook 460 16 inch G11 Notebook PC",
+    "label": "hp-probook-460-g11"
+  },
+  "model": {
+    "name": "gemma4:e4b",
+    "details": {
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "gemma4",
+        "families": [
+          "gemma4"
+        ],
+        "parameter_size": "8.0B",
+        "quantization_level": "Q4_K_M"
+      },
+      "capabilities": [
+        "completion",
+        "vision",
+        "audio",
+        "tools",
+        "thinking"
+      ],
+      "parameters": "temperature                    1\ntop_k                          64\ntop_p                          0.95"
+    }
+  },
+  "benchmark_config": {
+    "prompt_set_path": "C:\\DATA\\PETS\\TEST\\T6A1-JETSON\\sprout\\code\\rhizome\\bench\\prompt_set.jsonl",
+    "repeat": 1,
+    "limit": 2,
+    "timeout_sec": 300,
+    "keep_alive": "30m"
+  },
+  "summary": {
+    "requests_total": 2,
+    "requests_ok": 2,
+    "requests_failed": 0,
+    "wall_clock_ms_p50": 106211.69,
+    "wall_clock_ms_p95": 117911.55,
+    "first_token_latency_ms_p50": 94391.969,
+    "first_token_latency_ms_p95": 105741.437,
+    "tokens_per_second_avg": 6.274,
+    "tokens_per_second_p50": 6.274,
+    "tokens_per_second_p95": 6.339,
+    "memory_peak_used_bytes_max": 16603373568,
+    "memory_peak_used_gib_max": 15.463,
+    "power_watts_avg": null,
+    "result_class": "demo-pass"
+  },
+  "results": [
+    {
+      "id": "decision_water_a_from_snapshot",
+      "category": "decision_text",
+      "ok": true,
+      "max_tokens": 72,
+      "temperature": 0.0,
+      "source_examples": [
+        "rhizome_snapshot",
+        "policy_packet"
+      ],
+      "image_count": 0,
+      "wall_clock_ms": 119211.535,
+      "total_duration_ms": 119144.339,
+      "load_duration_ms": 16023.771,
+      "prompt_eval_duration_ms": 90978.718,
+      "first_token_latency_ms": 107002.489,
+      "prompt_eval_count": 1118,
+      "eval_count": 72,
+      "eval_duration_ms": 11610.432,
+      "tokens_per_second": 6.201,
+      "memory_peak_used_bytes": 16603373568,
+      "memory_peak_used_gib": 15.463,
+      "response_chars": 0,
+      "response_preview": "",
+      "done_reason": "length",
+      "iteration": 1
+    },
+    {
+      "id": "decision_water_b_from_snapshot",
+      "category": "decision_text",
+      "ok": true,
+      "max_tokens": 72,
+      "temperature": 0.0,
+      "source_examples": [
+        "rhizome_snapshot",
+        "policy_packet"
+      ],
+      "image_count": 0,
+      "wall_clock_ms": 93211.845,
+      "total_duration_ms": 93194.03,
+      "load_duration_ms": 473.446,
+      "prompt_eval_duration_ms": 81308.004,
+      "first_token_latency_ms": 81781.449,
+      "prompt_eval_count": 1124,
+      "eval_count": 72,
+      "eval_duration_ms": 11345.713,
+      "tokens_per_second": 6.346,
+      "memory_peak_used_bytes": 12165316608,
+      "memory_peak_used_gib": 11.33,
+      "response_chars": 0,
+      "response_preview": "",
+      "done_reason": "length",
+      "iteration": 1
+    }
+  ]
+}
