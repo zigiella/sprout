@@ -38,7 +38,9 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        // 1.5.13 es el Compose Compiler compatible con Kotlin 1.9.23.
+        // Matriz: https://developer.android.com/jetpack/androidx/releases/compose-kotlin
+        kotlinCompilerExtensionVersion = "1.5.13"
     }
     packaging {
         resources {

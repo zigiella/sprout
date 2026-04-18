@@ -41,10 +41,10 @@ jobs:
           gradle-version: '8.6'
 
       - name: Assemble debug
-        run: gradle assembleDebug
+        run: gradle assembleDebug --stacktrace
 
       - name: Unit tests
-        run: gradle testDebugUnitTest
+        run: gradle testDebugUnitTest --stacktrace
 
       - name: Publish test results
         if: always()
