@@ -106,6 +106,21 @@ Seguir [guia oficial de naming de Google](https://ai.google/documents/32/Externa
 - `fix/<zona>-<descripcion>` = bugfixes
 - Ejemplo: `feat/rhizome-audio-sensor`
 
+### Ejemplos canonicos (fixtures JSON)
+
+Viven en `code/shared/examples/`. Regla:
+
+- `<schema>.json` = fixture canonico unico por schema. Es el ejemplo de referencia,
+  el que se usa en tests y documentacion. Un solo archivo por schema.
+  Ejemplos: `rhizome_snapshot.json`, `weather_packet.json`, `policy_packet.json`.
+- `<schema>_<variante>.json` = variantes deliberadas que cubren un caso distinto
+  al canonico (estado de bloqueo, contradiccion, modo conservador, etc.).
+  Ejemplos: `decision_receipt_blocked.json`, `contradiction_alert_sensor_vs_vision.json`.
+
+**Regla dura:** si anades una variante, debe quedar claro en el nombre que varianta
+del canonico es. No metas campos nuevos al canonico solo para cubrir un caso;
+crea una variante.
+
 ---
 
 ## 7. Secretos y credenciales

@@ -37,6 +37,12 @@ shared/
 - Los JSON canonicos se generan con `python schemas/examples/generate_examples.py`
 - Los round-trips Python viven en `schemas/tests/`
 
+### Naming de ejemplos
+
+Convencion formalizada en [CONTRIBUTING §6](../../CONTRIBUTING.md#6-convenciones-de-naming):
+- `<schema>.json` = canonico unico por schema
+- `<schema>_<variante>.json` = variantes deliberadas (caso de bloqueo, contradiccion, etc.)
+
 ## Validacion
 
 ### Python (Rhizome, Meristem)
