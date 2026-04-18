@@ -135,6 +135,17 @@ Abre una entrada en `bitacora/` con el tema `pregunta-<topic>` y etiqueta a Camb
 - [ ] Si cambie arquitectura, actualice `docs/`
 - [ ] Hice entrada en `bitacora/` con fecha
 - [ ] El PR referencia el issue con `Closes #N`
+- [ ] Si toca una zona con CI (`code/pollen/**`, futuros Rhizome/Meristem), el CI esta **verde** antes de pedir review
+
+### 9.1 Regla dura sobre CI
+
+**Ningun PR se mergea con CI en rojo.** Sin excepciones. Si el CI falla:
+1. Lee los logs del workflow en GitHub Actions (pestaña "Checks" del PR)
+2. Reproduce localmente si tienes entorno, o itera con los logs si no
+3. Corrige, commitea, push. El CI se re-ejecuta automaticamente
+4. Solo cuando este verde, avisas para review
+
+Si el fallo del CI es del propio workflow (no del codigo), se abre issue aparte para arreglar el workflow. El PR afectado queda en hold.
 
 ---
 
