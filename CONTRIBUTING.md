@@ -1,3 +1,11 @@
+<!-- Bilingual document · Spanish first, English below · See §13 for language policy -->
+
+🇪🇸 **[Español](#contributing-es)** · 🇬🇧 **[English](#contributing-en)**
+
+---
+
+<a id="contributing-es"></a>
+
 # Como trabajamos en Sprout
 
 Guia interna del **equipo zigiella** para trabajar en Sprout.
@@ -308,3 +316,340 @@ Evita que el tablero se llene de "en progreso" que nadie esta tocando.
 Si una conversacion privada (canal, DM, mail) decide algo sobre una tarea, esa decision se refleja en el issue (como comentario) o en bitacora. **No hay "yo pense que tu estabas haciendo eso".** La tarjeta dice quien, la columna dice en que fase, el PR dice el que.
 
 Si una tarjeta lleva >48h en In Progress sin commits ni comentarios, Cambium pregunta en el issue (pregunta publica, no DM).
+
+---
+
+## 13. Idiomas del repo
+
+Para minimizar coste de mantenimiento sin cerrar la puerta a gente externa, tenemos dos capas de idiomas:
+
+| Zona | Idioma | Por que |
+|------|--------|---------|
+| `README.md` | **Bilingue** ES + EN | Puerta de entrada publica. Una persona externa debe poder entender el proyecto en minutos. |
+| `CONTRIBUTING.md` | **Bilingue** ES + EN | Una contribuidora externa debe poder abrir un PR sin hablar espanol. |
+| `docs/` | **Solo ES** | Specs de producto internos. Evolucionan rapido; traducirlos se desincroniza. |
+| `bitacora/` | **Solo ES** | Diario interno del equipo, en vivo. Mantener bilingue seria puro overhead. |
+| Commits, issues, PRs | Libre (ES o EN) | Claridad > consistencia. Cada persona escribe en el idioma en que piense mejor ese dia. |
+| Codigo (identifiers, comentarios) | Libre, pero consistente dentro de un modulo | Si un modulo empieza en ES, seguir en ES. No mezclar en el mismo archivo. |
+
+**Regla operacional:** al tocar `README.md` o `CONTRIBUTING.md`, actualizar **ambas** secciones de idioma en el mismo PR. Si solo se actualiza una, se abre issue para sincronizar la otra y se marca `priority:P1`.
+
+---
+---
+
+<a id="contributing-en"></a>
+
+# How we work on Sprout
+
+Internal guide of **equipo zigiella** for working on Sprout.
+
+---
+
+## 1. Collaboration philosophy
+
+Sprout is a project by equipo zigiella. During the MVP sprint we are four people. Each owns an area but everything converges on a coherent delivery: **a working system + demo video + writeup + public repo**.
+
+Soft rules:
+- If it doesn't feed into "what the video must show," it probably doesn't belong
+- If you can't explain something in one sentence, it's probably not well framed
+- If something is ambiguous in `docs/`, open a `bitacora/` entry and ask
+
+---
+
+## 2. Roles and repo zones
+
+| Role | Primary zone | Secondary |
+|------|-------------|-----------|
+| Coordination & design | `docs/`, `bitacora/` | any |
+| Dev Rhizome (Jetson) | `code/rhizome/`, `hardware/` | `docs/10_rhizome_spec.md` |
+| Dev Pollen (Android) | `code/pollen/` | `docs/11_pollen_spec.md` |
+| Dev Meristem + Fine-tune | `code/meristem/`, `code/finetune/` | `docs/12_meristem_spec.md` |
+
+Writeup, video, research, and demo are covered by the core team (coordination + project lead).
+
+---
+
+## 3. Workflow
+
+### 3.1 Before starting something new
+1. `git pull` on `main`
+2. Pick an issue from the [backlog](https://github.com/zigiella/sprout/issues) (see §10) and assign it to yourself
+3. Read the latest entry in `bitacora/`
+4. Review the relevant doc in `docs/` (Spanish)
+5. Create a branch `feat/<zone>-<topic>` or `fix/<zone>-<topic>` — **never** work directly on `main`
+
+### 3.2 While working
+- Small, frequent commits
+- Commit message: `[zone] short summary` (e.g. `[rhizome] moisture reading via ADS1115`)
+- On the commit that closes the issue, include `Closes #N` in the body for auto-link
+
+### 3.3 When a piece is done
+- Entry in `bitacora/` (in Spanish) with date, what was done, what's pending, decisions taken — **mandatory before PR**
+- If architecture changed, update the matching doc in `docs/`
+- Open a PR against `main`. PR body: `Closes #N` + summary + how to test
+- Review by Cambium before merge. No review, no merge.
+
+---
+
+## 4. Bitacora: how to write an entry
+
+Each entry is a file in `bitacora/` (Spanish-only) with the name:
+
+```
+YYYY-MM-DD_<short-topic>_<author>.md
+```
+
+Examples:
+- `2026-04-15_kickoff_cambium.md`
+- `2026-04-18_jetson-primer-arranque_ana.md`
+
+Template in [bitacora/README.md](bitacora/README.md).
+
+---
+
+## 5. Code conventions
+
+### Python (Rhizome, Meristem, Simulator)
+- Python 3.11+
+- `ruff` for lint, `black` for formatting
+- Type hints mandatory on public functions
+- Short docstrings; comments in the module's original language
+- Minimum tests in `tests/` per subproject
+
+### Android (Pollen)
+- Kotlin
+- Jetpack Compose
+- Gemma 4 via Google AI Edge / LiteRT (llama.cpp as fallback)
+
+### JSON schemas
+- All schemas live in `code/shared/schemas/`
+- Validation via `pydantic` (Python), `kotlinx.serialization` (Android)
+
+---
+
+## 6. Naming conventions
+
+### Doc filenames
+- Two-digit prefix (`00_`, `01_`, `10_`, ...)
+- Kebab-case for compound names
+- Example: `docs/20_data_contracts.md`
+
+### Gemma 4 model variants
+Follow [Google's naming guide](https://ai.google/documents/32/External_Gemma_Model_Variant_Guidelines.pdf):
+- Format: `sprout/sprout-<component>-<base_model>-v<N>`
+- Example: `sprout/sprout-rhizome-e2b-v1`
+- Never put "Gemma" in the derived model name (license requirement)
+
+### Git branches
+- `main` = production / last stable
+- `feat/<zone>-<desc>` = features
+- `fix/<zone>-<desc>` = bugfixes
+- Example: `feat/rhizome-audio-sensor`
+
+### Canonical examples (JSON fixtures)
+
+Live in `code/shared/examples/`. Rule:
+
+- `<schema>.json` = single canonical fixture per schema. The reference example used in tests and docs. Exactly one per schema. Examples: `rhizome_snapshot.json`, `weather_packet.json`.
+- `<schema>_<variant>.json` = deliberate variants covering a non-canonical case (blocked state, contradiction, conservative mode, etc.). Examples: `decision_receipt_blocked.json`.
+
+**Hard rule:** if you add a variant, its name must make the variation clear. Don't add new fields to the canonical example just to cover a case — create a variant.
+
+---
+
+## 7. Secrets and credentials
+
+**Never** commit:
+- API keys (Google AI Studio, HuggingFace, etc.)
+- Certificates or tokens
+- `.env` files
+
+Use environment variables. Template in `.env.example` when applicable.
+
+`.gitignore` already covers the basics. When in doubt, ask before pushing.
+
+---
+
+## 8. Questions
+
+Open a `bitacora/` entry with the topic `pregunta-<topic>` and tag Cambium. Or use the team's active channel.
+
+---
+
+## 9. Pre-push checklist
+
+- [ ] Code runs without errors
+- [ ] No exposed credentials
+- [ ] If a data contract changed, updated `code/shared/schemas/`
+- [ ] If architecture changed, updated `docs/`
+- [ ] Bitacora entry written (with date)
+- [ ] PR references the issue with `Closes #N`
+- [ ] If touching a zone with CI (`code/pollen/**`, future Rhizome/Meristem), CI is **green** before requesting review
+
+### 9.1 Hard rule on CI
+
+**No PR merges on red CI. No exceptions.** If CI fails:
+1. Read the workflow logs (PR's "Checks" tab in GitHub Actions)
+2. Reproduce locally if you can, or iterate from the logs if you can't
+3. Fix, commit, push. CI re-runs automatically
+4. Only when green, request review
+
+If the failure is in the workflow itself (not the code), open a separate issue for the workflow. The affected PR stays on hold.
+
+---
+
+## 10. Backlog and visual board
+
+The backlog lives in **GitHub Issues + Projects**.
+
+### 10.1 Where to see it
+- **Issues list:** https://github.com/zigiella/sprout/issues
+- **Kanban "Sprout Backlog":** https://github.com/users/zigiella/projects/2 — four columns: **Backlog / In Progress / Review / Done**. Dragging a card changes state.
+- **Table view:** same project, spreadsheet-like, for bulk prioritization.
+- **GitHub Mobile** (iOS/Android): same Board view, from the couch.
+
+### 10.2 How to use the backlog
+
+**Open a new issue:**
+- Imperative title, short, no internal jargon. "Implement Pydantic schemas" > "Schemas".
+- **Zero external references** to hackathons, juries, prizes, deadlines. The repo is public.
+- Body with: context, acceptance criteria (checkboxes), dependencies, reference to docs.
+- Required labels: **one `node:*`** and **one `priority:*`**. Optional: `area:*`, `status:blocked`.
+
+**Assign yourself an issue:**
+- Only self-assign what you'll start in the same session. When in doubt, leave it unassigned.
+- If you drop it, un-assign and leave a comment with the reason.
+
+**Close an issue:**
+- Only by PR merge referencing it with `Closes #N`.
+- No manual closes except for duplicates or invalids (with explanatory comment).
+
+### 10.3 Label taxonomy
+
+**Node (one required):**
+- `node:rhizome`, `node:pollen`, `node:meristem`, `node:cambium`
+
+**Area (optional, multiple allowed):**
+- `area:docs`, `area:infra`, `area:research`, `area:firmware`
+
+**Priority (one required):**
+- `priority:P0` — critical, blocks someone
+- `priority:P1` — important, non-blocking
+- `priority:P2` — nice to have
+
+**State (optional):**
+- `status:blocked` — waiting on something external
+
+### 10.4 PR ↔ issue relationship
+
+Every PR should close at least one issue. In the PR body:
+
+```
+Closes #12
+Closes #15
+```
+
+On merge, GitHub auto-moves those issues to **Done**.
+
+---
+
+## 11. Authorship convention
+
+All people in equipo zigiella push under the **same GitHub account** (`zigiella`). To tell who did what in the repo history, each dev sets a **repo-local identity** (not global, so it doesn't leak into your other projects):
+
+```bash
+cd <path-to-sprout-repo>
+git config user.name "<Name>"
+git config user.email "<name>@sprout.local"
+```
+
+**Current identities:**
+
+| Role | `user.name` | `user.email` |
+|------|-------------|--------------|
+| Coordination | `Cambium` | `cambium@sprout.local` |
+| Dev Rhizome | `Xilema` | `xilema@sprout.local` |
+| Dev Pollen | `Floema` | `floema@sprout.local` |
+| Dev Meristem | `Meristem` | `meristem@sprout.local` |
+| Project lead | `Bea` | `bea@sprout.local` |
+
+**On the `.local` TLD:** reserved by IANA (RFC 6762) for multicast DNS and internal networks. **Does not collide with any real internet address** and makes it clear these are team-internal fictional identities.
+
+**Co-authorship on reviewed PRs (optional but recommended):**
+
+```
+Co-Authored-By: Cambium <cambium@sprout.local>
+```
+
+**Hard rules:**
+- **Never** rewrite history to change authorship on old commits. If something was pushed with the wrong identity, fix going forward; history is preserved.
+- **Never** use `--global` when setting these identities. Always repo-local.
+- When cloning the repo for the first time, setting identity is **the first step**, before the first commit.
+
+### 11.1 Multiple agents on the same clone
+
+If multiple agents (e.g., Cambium and Meristem in separate conversations) share the same clone, **`git config user.email` persists in `.git/config` and one agent may overwrite another's identity.**
+
+Solution: **don't persist identity** — pass it inline per commit with `-c`:
+
+```bash
+git -c user.name="Meristem" -c user.email="meristem@sprout.local" commit -m "..."
+```
+
+This applies only to that one command; `.git/config` stays untouched. Mandatory mode when more than one agent works on the same clone.
+
+If only one person/agent per clone (typical human-dev case), persistent `git config` is fine.
+
+---
+
+## 12. Board assignment flow
+
+**Principle:** self-assignment with a short protocol, no central assigner.
+
+### 12.1 Daily loop
+
+1. **Filter by your node.** On [the board](https://github.com/users/zigiella/projects/2) filter by label `node:<yours>`.
+2. **Pick the highest-priority** card from **Backlog**. Order: `priority:P0` → `P1` → `P2`. Tiebreaker: fewer open dependencies.
+3. **Self-assign the issue** and **drag the card** Backlog → In Progress. This double move is the public "I'm on this now" signal.
+4. **Work.** Small frequent commits, branch `feat/<zone>-<topic>` or `fix/<zone>-<topic>`.
+5. **Open PR** with `Closes #N` in the body. GitHub auto-moves the card to **Review**.
+6. **Review by Cambium.** Approve + merge → **Done** automatically. Requested changes → dev drags the card back to **In Progress** and works on the comments.
+
+### 12.2 Hard rule: one card per person in In Progress
+
+**Only one card** per person in In Progress at a time. If you need to block something to switch:
+- Add label `status:blocked`
+- Drag the card back to Backlog
+- Comment on the issue explaining what you're waiting on
+
+Prevents a board full of "in-progress" items nobody is touching.
+
+### 12.3 Special cases
+
+- **Nobody picks a card** (common with boring doc tasks): Cambium prioritizes it in a digest or takes it herself after 3 days.
+- **Urgent card that cuts the line:** Bea or Cambium bumps it to `priority:P0` and comments why. The next dev with capacity takes it before their normal backlog.
+- **Dependencies:** if #A blocks #B, write `Blocked by #A` in #B's body. Self-assign #B only when #A is Done.
+- **Dropping a task:** un-assign, leave a comment with the reason, drag card back to Backlog.
+
+### 12.4 The board is the truth
+
+If a private conversation (channel, DM, email) decides something about a task, that decision gets reflected in the issue (as a comment) or in `bitacora/`. **No "I thought you were doing that."** The card says who, the column says what phase, the PR says what.
+
+If a card sits >48h in In Progress with no commits or comments, Cambium asks on the issue (public question, not DM).
+
+---
+
+## 13. Repo language policy
+
+To minimize maintenance cost without closing the door to external contributors, we have two language layers:
+
+| Zone | Language | Why |
+|------|----------|-----|
+| `README.md` | **Bilingual** ES + EN | Public entry point. An outsider must understand the project in minutes. |
+| `CONTRIBUTING.md` | **Bilingual** ES + EN | An external contributor must be able to open a PR without speaking Spanish. |
+| `docs/` | **Spanish only** | Internal product specs. They move fast; translating them would go stale. |
+| `bitacora/` | **Spanish only** | Live internal journal. Bilingual would be pure overhead. |
+| Commits, issues, PRs | Free (ES or EN) | Clarity > consistency. Write in the language you think best in that day. |
+| Code (identifiers, comments) | Free, but consistent within a module | If a module starts in ES, stay in ES. Don't mix inside a file. |
+
+**Operational rule:** when editing `README.md` or `CONTRIBUTING.md`, update **both** language sections in the same PR. If only one is updated, open an issue to sync the other with `priority:P1`.
