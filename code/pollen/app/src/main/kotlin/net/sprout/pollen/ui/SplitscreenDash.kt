@@ -17,8 +17,8 @@ import java.time.Instant
 import java.time.Duration
 import kotlinx.coroutines.delay
 import net.sprout.pollen.inference.GemmaEngine
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.ViewModelProvider
+// androidx.lifecycle.viewmodel.compose.viewModel / ViewModelProvider eran
+// imports sin uso y requerian dependencia no declarada. Removidos por Cambium.
 
 @Composable
 fun SplitscreenDash(viewModel: PollenViewModel) {

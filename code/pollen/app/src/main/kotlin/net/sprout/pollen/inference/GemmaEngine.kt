@@ -4,10 +4,10 @@ import android.content.Context
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import net.sprout.pollen.schemas.AuditEvent
-import net.sprout.pollen.schemas.AuditResult
 import net.sprout.pollen.schemas.DecisionReceipt
 import net.sprout.pollen.schemas.RhizomeSnapshot
+// AuditEvent / AuditResult viven en el mismo paquete (GemmaContracts.kt),
+// no hace falta import. Fix de compilacion por Cambium (Floema OOO 19-20 abril).
 // import com.google.mediapipe.tasks.genai.llminference.LlmInference
 
 class GemmaEngine(private val context: Context, private val modelPath: String = "/data/local/tmp/gemma-4-e2b.bin") {
