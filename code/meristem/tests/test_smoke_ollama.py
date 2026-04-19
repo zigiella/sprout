@@ -26,7 +26,12 @@ from src.settings import load_settings
 @pytest.mark.ollama
 def test_consolidate_against_local_ollama(tmp_path: Path) -> None:
     settings = load_settings()
-    client = OllamaClient(settings)
+    # Budget holgado para el smoke manual: el prompt real del engine
+    # (system_v1 + active_policy + evidence) + structured output contra el
+    # schema completo de PolicyPacket excede el default de 120s en CPU. El
+    # test todavia asserta elapsed < 90.0 mas abajo para dar senal clara de
+    # si cumplimos el objetivo del spec.
+    client = OllamaClient(settings, timeout_s=300.0)
     if not client.ping():
         client.close()
         pytest.skip(
