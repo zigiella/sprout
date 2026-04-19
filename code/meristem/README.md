@@ -20,7 +20,7 @@ Detalle completo en [`docs/12_meristem_spec.md`](../../docs/12_meristem_spec.md)
 - `sqlite3` para persistencia
 - `google-genai` **solo si** `SHADOW_ENABLED=true` (Meristem sombra para validacion en dev)
 
-## Estructura actual (bootstrap)
+## Estructura actual
 
 ```
 meristem/
@@ -30,26 +30,32 @@ meristem/
 ├── .env.example
 ├── src/
 │   ├── __init__.py
-│   ├── main.py             # FastAPI app, /health
+│   ├── main.py             # FastAPI app, /health + router /ingest, /policies, /deltas
+│   ├── routes.py           # endpoints HTTP
 │   ├── settings.py         # env vars -> Settings
-│   ├── llm_client.py       # Ollama client (stub)
-│   ├── persistence.py      # SQLite schema init
+│   ├── llm_client.py       # Ollama client (ping + generate_json)
+│   ├── persistence.py      # SQLite schema + helpers CRUD
+│   ├── safety_rules.py     # validador pre-emit §30 (max_duration, tank_min)
+│   ├── policy_engine.py    # consolidacion: evidence + policy -> LLM -> validate -> persist
 │   ├── prompts/
-│   │   └── system_v1.txt   # draft del system prompt de Meristem
+│   │   └── system_v1.txt   # system prompt de Meristem
 │   └── shadow/             # Meristem sombra (solo dev, flag-gated)
 │       ├── __init__.py
-│       ├── shadow_client.py
-│       └── compare.py
+│       └── shadow_client.py
 └── tests/
     ├── conftest.py
     ├── test_settings.py
     ├── test_health.py
-    ├── test_shadow_off.py      # negativo: shadow no carga con flag off
+    ├── test_shadow_off.py         # negativo: shadow no carga con flag off
     ├── test_schemas_importable.py
-    └── test_llm_client.py
+    ├── test_llm_client.py
+    ├── test_safety_rules.py       # validador §30 (unit)
+    ├── test_ingest.py             # /ingest con fixtures canonicos + 422
+    ├── test_policies.py           # GET /policies/{rhizome_id}
+    ├── test_deltas.py             # /deltas/pending + /deltas/propose (§30)
+    ├── test_policy_engine.py      # engine con LLM mock (happy + §30)
+    └── test_smoke_ollama.py       # marcado @pytest.mark.ollama (skip sin daemon)
 ```
-
-El policy_engine real (consolidacion + llamada a E4B) entra en PR siguiente, con su propia bitacora.
 
 ## Variables de entorno
 
@@ -85,18 +91,42 @@ El `conftest.py` de los tests ya anade `code/shared` al path, asi que `python -m
 
 ## Endpoints
 
-- `GET /health` — liveness
+| Metodo | Path | Descripcion |
+|---|---|---|
+| `GET` | `/health` | Liveness + metadata (version, modelo, shadow_enabled). |
+| `POST` | `/ingest` | Pollen empuja evidencia. Envelope `{"kind": "...", "payload": {...}}`. Kinds validos: `rhizome_snapshot`, `decision_receipt`, `weather_packet`, `contradiction_alert`. Responde 202 con `{stored_id, kind}`. 422 si el payload no valida el schema del kind. |
+| `GET` | `/policies/{rhizome_id}` | Policy activa (no expirada) mas reciente para ese nodo. 404 si no hay. |
+| `GET` | `/deltas/pending/{rhizome_id}` | Lista los `PolicyDelta` con status `pending` para ese nodo. |
+| `POST` | `/deltas/propose` | Pollen propone un `PolicyDelta`. Meristem valida el schema, comprueba que la `base_policy_id` sea la policy activa del nodo (409 si no), proyecta el delta y valida la proyeccion contra §30. Responde 201 si validated, 422 con `reason=violates_safety_rule` y lista de violaciones si no. **Idempotente por `delta_id`: reenviar el mismo delta sobrescribe la fila existente.** |
 
-Endpoints de ingest/emision (`/ingest`, `/policies/*`, `/deltas/*`) se anaden en PR siguiente.
+### Limites duros del firmware (docs/30 §3) aplicados pre-emit
+
+`safety_rules.py` bloquea la emision/aceptacion si un PolicyPacket o la proyeccion de un PolicyDelta infringe:
+
+- `rules.max_watering_duration_s > 60` → bloquea (§30.1).
+- `rules.tank_minimum_pct < 20` → bloquea (§30.2).
+
+Rate limits 8/h y 48/dia y concurrencia de zonas NO son pre-checkables desde PolicyPacket v1.0 (no hay campos de scheduling ni caudal). Se consolidaran post-hoc via `REJECTED RATE_LIMIT_*` observados en DecisionReceipts en un PR futuro. Ver bitacora `2026-04-18_drafts-subissue-30-gaps_meristem.md` y aclaracion de Cambium (2026-04-19).
+
+## Policy engine
+
+`policy_engine.consolidate(db_path, target_node_id, evidence, llm)` es la API interna (no expuesta HTTP en este PR):
+
+1. Lee la policy activa y la pasa al user prompt como contexto.
+2. Llama a Ollama con `system_v1.txt` + schema de `PolicyPacket` como structured output.
+3. Valida la salida contra `PolicyPacket` (pydantic).
+4. Si es valida, aplica `safety_rules.check_policy_packet`.
+5. Si pasa, persiste como policy activa. Si no, loguea el intento en `decisions_log` con action `blocked_by_safety` o `blocked_invalid_schema` y retorna `EngineResult(packet=None, reason=...)`.
 
 ## Tests
 
 ```bash
 cd code/meristem
-python -m pytest tests -v
+python -m pytest tests -v               # suite completa (skippea Ollama smoke)
+python -m pytest -m ollama tests -v     # solo smoke, requiere daemon + gemma4:e4b
 ```
 
-Cobertura del bootstrap: settings, /health + init SQLite, cliente Ollama, shadow off por construccion, importacion de los 6 schemas canonicos.
+Cobertura: settings, /health + init SQLite, cliente Ollama, shadow off por construccion, importacion de los 6 schemas canonicos, validador §30 (unit + integrado), los 4 endpoints, policy_engine con LLM mock.
 
 ## Regla dura del sombra
 

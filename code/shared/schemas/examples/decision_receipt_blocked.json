@@ -11,8 +11,8 @@
     "blocked_action": "WATER_A",
     "reason": "tank_minimum_pct reached"
   },
-  "rationale_short": "Riego bloqueado: deposito al 11%, por debajo del minimo de seguridad.",
-  "rationale_full": "El snapshot reporta deposito al 11%, por debajo del 15% exigido por la politica activa. Aunque la parcela A esta seca, Rhizome no envia comando al ESP32 y eleva bloqueo preventivo.",
+  "rationale_short": "Riego bloqueado: deposito al 18%, por debajo del minimo de seguridad.",
+  "rationale_full": "El snapshot reporta deposito al 18%, por debajo del 20% exigido por la politica activa. Aunque la parcela A esta seca, Rhizome no envia comando al ESP32 y eleva bloqueo preventivo.",
   "policy_refs": [
     "rules.soil_moisture_thresholds.parcel_a.min_pct",
     "rules.tank_minimum_pct"
