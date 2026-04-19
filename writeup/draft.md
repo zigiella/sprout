@@ -25,21 +25,27 @@ Decision: dia 20 (tras video rodado, sabremos mejor cual pega).
 
 ## 1. Problema — ~200 palabras
 
-<!--
-Argumento: decision tardia = agua perdida. No es problema de falta de agua;
-es problema de falta de presencia.
+Una parcela de almendros a cuarenta kilometros del pueblo mas cercano. El
+agricultor la visita una vez por semana, a veces menos. Entre visita y
+visita, el suelo decide solo: o recibe agua a tiempo, o no la recibe.
+Cuando el agricultor vuelve, el problema ya ha pasado — solo queda medir
+cuanto se perdio.
 
-Datos a citar (investigar antes):
-- [ ] Metrica opener: cuanta agua se pierde en parcelas remotas por decisiones tardias (FAO si tiene dato)
-- [ ] FAO/ITU: cobertura movil rural en Europa rural (% parcelas con <3G)
-- [ ] IRRIFRAME (o similar): cuanto error en una politica de riego cuesta en kg/ha
-- [ ] Banco de España: tamaño del sector agricola en zonas de baja poblacion
+La escena no es anecdota. La ITU mide en 2025 una brecha de 27 puntos
+entre cobertura movil urbana (85%) y rural (58%) en paises desarrollados;
+en Australia, el 90% del territorio vive sin conectividad fiable. El
+Banco de España atribuye entre un 20% y un 30% de las perdidas de trigo
+de la campaña 2022-23 al retraso en decisiones agronomicas, no a escasez
+absoluta de recurso. IRRIFRAME sirve a 40.000 explotaciones en
+Emilia-Romaña desde un servidor central — un modelo que funciona donde
+hay red y se degrada donde no la hay.
 
-Estructura:
-1. Escena corta: "una parcela de almendros a 40 km del pueblo..."
-2. Datos objetivos.
-3. El problema no es falta de agua, es el lag de decision.
--->
+El denominador comun no es la falta de agua. Es el **lag** entre lo que
+pasa en la parcela y la decision que deberia corregirlo. Cuando la red
+falla o el agricultor no esta, ese lag se mide en dias. Cerrar el lag
+exige llevar la decision donde hay agua — no al reves.
+
+<!-- Fuentes: research/narrative_sources.md (ITU 2025, BdE 2025, IRRIFRAME, Australia Regional Tech Hub). -->
 
 ## 2. Solucion — ~300 palabras
 
