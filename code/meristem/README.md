@@ -97,7 +97,7 @@ El `conftest.py` de los tests ya anade `code/shared` al path, asi que `python -m
 | `POST` | `/ingest` | Pollen empuja evidencia. Envelope `{"kind": "...", "payload": {...}}`. Kinds validos: `rhizome_snapshot`, `decision_receipt`, `weather_packet`, `contradiction_alert`. Responde 202 con `{stored_id, kind}`. 422 si el payload no valida el schema del kind. |
 | `GET` | `/policies/{rhizome_id}` | Policy activa (no expirada) mas reciente para ese nodo. 404 si no hay. |
 | `GET` | `/deltas/pending/{rhizome_id}` | Lista los `PolicyDelta` con status `pending` para ese nodo. |
-| `POST` | `/deltas/propose` | Pollen propone un `PolicyDelta`. Meristem valida el schema, comprueba que la `base_policy_id` sea la policy activa del nodo (409 si no), proyecta el delta y valida la proyeccion contra §30. Responde 201 si validated, 422 con `reason=violates_safety_rule` y lista de violaciones si no. |
+| `POST` | `/deltas/propose` | Pollen propone un `PolicyDelta`. Meristem valida el schema, comprueba que la `base_policy_id` sea la policy activa del nodo (409 si no), proyecta el delta y valida la proyeccion contra §30. Responde 201 si validated, 422 con `reason=violates_safety_rule` y lista de violaciones si no. **Idempotente por `delta_id`: reenviar el mismo delta sobrescribe la fila existente.** |
 
 ### Limites duros del firmware (docs/30 §3) aplicados pre-emit
 
