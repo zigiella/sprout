@@ -59,3 +59,15 @@ python -m bench.run_ollama_benchmark --model gemma4:e4b --hardware-label hp-prob
 ```
 
 El mismo harness se reutiliza luego en Jetson cambiando solo el target del modelo/runtime.
+
+## Safety firmware mock
+
+Mientras llega el bench fisico del ESP32, `#4` arranca con un simulador fiel en `tests/firmware/`:
+
+```bash
+cd code/rhizome
+make test-firmware
+make demo-firmware
+```
+
+La demo actual enseña el camino `Rhizome CMD -> ESP32 REJECTED -> DecisionReceipt bloqueado`, que es justo la prueba que queremos filmar antes de tener bomba y valvulas reales en mesa.
