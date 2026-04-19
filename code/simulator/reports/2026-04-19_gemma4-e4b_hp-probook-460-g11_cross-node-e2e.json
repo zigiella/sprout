@@ -1,0 +1,280 @@
+{
+  "captured_at": "2026-04-19T07:12:17Z",
+  "host": {
+    "hostname": "5CD533393M",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python_version": "3.13.12",
+    "label": "hp-probook-460-g11"
+  },
+  "model": {
+    "name": "gemma4:e4b",
+    "runtime": "ollama",
+    "endpoint": "http://127.0.0.1:11434"
+  },
+  "benchmark_config": {
+    "timeout_sec": 240,
+    "keep_alive": "15m",
+    "num_predict": 256,
+    "scenario_ids": [
+      "pollen_fresh_weather_review"
+    ]
+  },
+  "summary": {
+    "scenarios_total": 1,
+    "scenarios_ok": 1,
+    "scenarios_failed": 0,
+    "end_to_end_ms_p50": 123663.258,
+    "end_to_end_ms_p95": 123663.258,
+    "meristem_generate_ms_p50": 123658.642,
+    "meristem_generate_ms_p95": 123658.642,
+    "tokens_per_second_avg": 6.168,
+    "result_class": "engineering-pass"
+  },
+  "results": [
+    {
+      "scenario_id": "pollen_fresh_weather_review",
+      "description": "Pollen llega con weather fresco y contradiccion visual leve sobre parcela B.",
+      "ok": true,
+      "rhizome_export": {
+        "snapshot": {
+          "schema_version": "1.0",
+          "created_at": "2026-04-19T10:10:00Z",
+          "origin_node_id": "rhizome_01",
+          "signature": null,
+          "snapshot_id": "snap_rhizome_01_20260419T101000_fresh",
+          "mode": "normal",
+          "active_policy_id": "pkt_rhizome_01_20260416T083015_d5e7",
+          "active_policy_expires_at": "2026-04-20T06:30:15Z",
+          "sensors": {
+            "soil_moisture_a_pct": 44.0,
+            "soil_moisture_b_pct": 31.2,
+            "tank_level_pct": 72.0,
+            "flow_rate_lpm": 0.0,
+            "last_reading_at": "2026-04-16T14:31:58Z"
+          },
+          "vision": {
+            "last_capture_at": "2026-04-16T14:25:00Z",
+            "parcel_a_status": "healthy",
+            "parcel_b_status": "healthy",
+            "visual_notes": "foto de Rhizome de hace 2h: color uniforme, sin curling visible"
+          },
+          "health": {
+            "cpu_temp_c": 58.4,
+            "cpu_load_pct": 41.0,
+            "ram_used_gb": 4.8,
+            "ram_total_gb": 7.4,
+            "esp32_heartbeat_ok": true,
+            "last_esp32_ack_at": "2026-04-16T14:32:00Z"
+          },
+          "last_decision_id": "rec_rhizome_01_20260416T143000_91ba",
+          "pending_contradictions": []
+        },
+        "receipt": {
+          "schema_version": "1.0",
+          "created_at": "2026-04-19T10:11:00Z",
+          "origin_node_id": "rhizome_01",
+          "signature": null,
+          "decision_id": "rec_rhizome_01_20260419T101100_e2e",
+          "snapshot_id": "snap_rhizome_01_20260419T101000_fresh",
+          "active_policy_id": "pkt_rhizome_01_20260416T083015_d5e7",
+          "action": "WATER_A",
+          "action_params": {
+            "duration_s": 30,
+            "expected_liters": 1.5
+          },
+          "rationale_short": "Humedad A en 38%, por debajo del umbral 45%. Dentro de ventana de riego. Deposito al 72%.",
+          "rationale_full": "El snapshot reciente muestra humedad parcela A al 38.2%, umbral minimo 45% segun politica vigente. Hora local dentro de ventana 06-09. Deposito al 72%. Vision confirma planta sana.",
+          "policy_refs": [
+            "rules.soil_moisture_thresholds.parcel_a.min_pct",
+            "rules.watering_window",
+            "rules.tank_minimum_pct"
+          ],
+          "contradictions": [],
+          "confidence": 0.87,
+          "executed": true,
+          "execution_details": {
+            "sent_to_esp32_at": "2026-04-16T14:30:10Z",
+            "esp32_ack_at": "2026-04-16T14:30:11Z",
+            "esp32_ack_status": "OK",
+            "actual_duration_s": 30.2,
+            "flow_observed_lpm": 3.1,
+            "estimated_liters_actual": 1.56
+          },
+          "blocked_reason": null
+        },
+        "active_policy": {
+          "schema_version": "1.0",
+          "created_at": "2026-04-19T06:30:15Z",
+          "origin_node_id": "meristem_01",
+          "signature": null,
+          "policy_id": "pkt_rhizome_01_20260416T083015_d5e7",
+          "target_node_id": "rhizome_01",
+          "valid_until": "2026-04-20T06:30:15Z",
+          "version_chain": [
+            "pkt_rhizome_01_20260415T083015_1234",
+            "pkt_rhizome_01_20260416T083015_d5e7"
+          ],
+          "mode_default": "normal",
+          "rules": {
+            "watering_window": {
+              "start_hour_local": 6,
+              "end_hour_local": 9
+            },
+            "soil_moisture_thresholds": {
+              "parcel_a": {
+                "min_pct": 35.0,
+                "target_pct": 55.0
+              },
+              "parcel_b": {
+                "min_pct": 30.0,
+                "target_pct": 50.0
+              }
+            },
+            "max_watering_duration_s": 45,
+            "daily_water_budget_liters": 8.0,
+            "tank_minimum_pct": 20.0,
+            "require_vision_confirmation": false,
+            "conservative_triggers": [
+              "tank_level_below_30",
+              "no_pollen_visit_48h",
+              "policy_expires_within_3h"
+            ]
+          },
+          "rationale": "Post-lluvia del 15 abril. Humedad general alta. Subir umbrales parcela B que suele retener mas.",
+          "notes": "Fixture rehecho para rehearsal local con hard-limit fisico de 20%."
+        }
+      },
+      "pollen_relay": {
+        "summary": "Pollen confirma deposito suficiente, detecta estres visual emergente en parcela B y transporta meteo fresca con viento seco. Pide ajuste prudente de corto TTL.",
+        "transported_items": [
+          "weather_packet",
+          "contradiction_alert"
+        ],
+        "weather_packet": {
+          "schema_version": "1.0",
+          "created_at": "2026-04-19T10:12:00Z",
+          "origin_node_id": "pollen_01",
+          "signature": null,
+          "packet_id": "pkt_weather_pollen_01_20260419T101200_fresh",
+          "observed_at": "2026-04-19T09:50:00Z",
+          "observed_by_node_id": "rhizome_02",
+          "provenance": "ferried",
+          "valid_until": "2026-04-19T20:00:00Z",
+          "location": {
+            "lat": 42.1828,
+            "lon": 1.9931,
+            "altitude_m": 1100.0,
+            "label": "Castellar de n'Hug, parcela A"
+          },
+          "measurements": {
+            "temperature_c": 18.4,
+            "humidity_rel_pct": 36.0,
+            "pressure_hpa": 1013.5,
+            "rain_last_1h_mm": 0.0,
+            "rain_last_24h_mm": 0.0,
+            "wind_speed_kmh": 24.0,
+            "wind_direction_deg": 220.0,
+            "solar_radiation_wm2": 485.0,
+            "uv_index": 4.8
+          },
+          "confidence": 0.85,
+          "notes": "Pollen trae aviso de viento seco y humedad baja desde parcela con estacion."
+        },
+        "contradiction_alert": {
+          "schema_version": "1.0",
+          "created_at": "2026-04-19T10:12:50Z",
+          "origin_node_id": "pollen_01",
+          "signature": null,
+          "alert_id": "alert_pollen_01_20260419T101250_visual",
+          "target_node_id": "rhizome_01",
+          "contradiction_type": "sensor_vs_vision",
+          "severity": "warning",
+          "observed_at": "2026-04-19T10:12:20Z",
+          "evidence": {
+            "sensor_reading": {
+              "source": "snap_rhizome_01_20260416T131800_4c5e",
+              "soil_moisture_a_pct": 44.0
+            },
+            "vision_reading": {
+              "source": "pollen_capture_20260416T132015",
+              "assessment": "severe_stress",
+              "notes": "Pollen detecta curling leve y tono amarillento en parcela B que Rhizome no vio."
+            }
+          },
+          "recommended_action": "defer_and_review",
+          "expires_at": "2026-04-19T16:12:50Z",
+          "rationale": "La vision itinerante ve estres emergente en parcela B y meteo mas dura de la que conoce Rhizome."
+        }
+      },
+      "timings_ms": {
+        "rhizome_export_ms": 0.081,
+        "pollen_relay_ms": 0.024,
+        "meristem_generate_ms": 123658.642,
+        "validation_ms": 3.965,
+        "end_to_end_ms": 123663.258
+      },
+      "meristem": {
+        "advice": {
+          "patches": [
+            {
+              "op": "replace",
+              "path": "rules.soil_moisture_thresholds.parcel_b.min_pct",
+              "value": 32.0
+            },
+            {
+              "op": "replace",
+              "path": "rules.conservative_triggers",
+              "value": [
+                "tank_level_below_30",
+                "no_pollen_visit_48h",
+                "policy_expires_within_3h",
+                "low_humidity_alert"
+              ]
+            }
+          ],
+          "rationale": "Ajuste prudente para B por estres visual y viento seco. Se eleva el umbral m\u00ednimo de humedad de B y se a\u00f1ade alerta de baja humedad. TTL corto por incertidumbre.",
+          "ttl_seconds": 21600,
+          "priority": "high"
+        },
+        "policy_delta": {
+          "schema_version": "1.0",
+          "created_at": "2026-04-19T07:12:17Z",
+          "origin_node_id": "meristem_01",
+          "signature": null,
+          "delta_id": "delta_rhizome_01_pollen_fresh_weather_review_071217",
+          "target_node_id": "rhizome_01",
+          "base_policy_id": "pkt_rhizome_01_20260416T083015_d5e7",
+          "patches": [
+            {
+              "op": "replace",
+              "path": "rules.soil_moisture_thresholds.parcel_b.min_pct",
+              "value": 32.0
+            },
+            {
+              "op": "replace",
+              "path": "rules.conservative_triggers",
+              "value": [
+                "tank_level_below_30",
+                "no_pollen_visit_48h",
+                "policy_expires_within_3h",
+                "low_humidity_alert"
+              ]
+            }
+          ],
+          "rationale": "Ajuste prudente para B por estres visual y viento seco. Se eleva el umbral m\u00ednimo de humedad de B y se a\u00f1ade alerta de baja humedad. TTL corto por incertidumbre.",
+          "ttl_seconds": 21600,
+          "priority": "high"
+        },
+        "response_preview": "{\"patches\":[{\"op\":\"replace\",\"path\":\"rules.soil_moisture_thresholds.parcel_b.min_pct\",\"value\":32.0},{\"op\":\"replace\",\"path\":\"rules.conservative_triggers\",\"value\":[\"tank_level_below_30\",\"no_pollen_visit_48h\",\"policy_expires_within_3h\",\"low_hum",
+        "total_duration_ms": 123606.47,
+        "load_duration_ms": 433.53,
+        "prompt_eval_duration_ms": 99633.236,
+        "first_token_latency_ms": 100066.766,
+        "eval_duration_ms": 23182.35,
+        "eval_count": 143,
+        "tokens_per_second": 6.168,
+        "done_reason": "stop"
+      }
+    }
+  ]
+}

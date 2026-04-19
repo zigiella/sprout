@@ -1,38 +1,53 @@
 # simulator/
 
-Simulador del sistema Sprout para ilustrar el escalado en el video y probar comportamiento con 2/4/5/8 nodos Rhizome.
+Capa de rehearsal e integracion de Sprout. Aqui viven los harnesses que no son
+codigo productivo de un nodo, pero que nos dejan ensayar rutas, latencias y
+flujo E2E antes de tener todo el hardware real montado.
 
-## Proposito
+## Hoy
 
-- **Apoyo al video:** zoom-out final del demo de "una terraza" a "una red". 10-15 segundos de animacion.
-- **Prueba de rutas Pollen:** visualizar que parcelas visita, en que orden, que contexto transporta.
-- **Ensayo de caducidad:** mostrar weather_packets caducando en el camino, policy_deltas rechazados.
-- **Prueba de simulacion multi-parcela** sin tener que fabricar 8 Rhizome fisicos.
+### 1. Harness E2E cross-node
 
-## Alcance
+`src/cross_node_e2e.py` encadena:
 
-Minimo viable: script Python que genera una animacion o grafo estatico con matplotlib/graphviz.
+- `Rhizome` mock
+- `Pollen` mock
+- `Meristem` real contra Ollama local
 
-Optimo: mini web-app con `vis.js` o `cytoscape.js` que permite:
-- Ver parcelas en un mapa (coordenadas ficticias)
-- Ver al Pollen moverse entre ellas
-- Ver el estado de cada parcela cambiar
-- Ver un weather_packet viajando con su TTL restante
+y mide:
 
-Decision concreta en semana 2 segun ancho de banda del equipo.
+- latencia de export desde Rhizome
+- latencia de relay por Pollen
+- latencia de generacion en Meristem
+- latencia total E2E
 
-## Dependencias candidatas
+La salida se versiona en `reports/` como JSON + Markdown.
 
-Para version minima:
-- `networkx` + `matplotlib`
-- `imageio` para generar GIFs
+### 2. Futuro simulador visual
 
-Para version web:
-- Vanilla HTML + `vis.js` o `cytoscape.js`
-- Python genera escenarios JSON, el front los anima
+Sigue siendo la carpeta candidata para la animacion/zoom-out del video final:
+
+- grafo multi-parcela
+- rutas de Pollen
+- weather_packets viajando con TTL
+- rechazo de policy_deltas o contexto caducado
+
+## Comandos
+
+Desde `code/simulator/`:
+
+```bash
+make test
+make e2e
+make e2e-smoke
+python -m src.cross_node_e2e --model gemma4:e4b --scenario pollen_fresh_weather_review
+```
 
 ## Que NO es
 
-- No es un producto nuevo
-- No necesita UI compleja
-- No sustituye el demo real — lo complementa para el zoom-out
+- No sustituye el demo real
+- No decide sobre actuadores
+- No debe duplicar logica productiva de Rhizome, Pollen o Meristem
+
+Su trabajo es otro: darnos una capa de ensayo reproducible para detectar roturas
+de integracion antes del rehearsal.
