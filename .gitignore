@@ -91,3 +91,8 @@ video/cache/
 *.mov
 # Keep final exports
 !video/final/*.mp4
+
+# Simulator rehearsal artifacts (generated locally, not versioned)
+code/simulator/reports/*.json
+code/simulator/reports/*.md
+!code/simulator/reports/README.md

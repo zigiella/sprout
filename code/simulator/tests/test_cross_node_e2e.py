@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from src.cross_node_e2e import (
+    _read_meristem_system_prompt,
     build_scenarios,
     extract_json_candidate,
     render_markdown_report,
@@ -37,6 +38,15 @@ def test_extract_json_candidate_handles_fenced_noise() -> None:
 def test_extract_json_candidate_unwraps_policy_delta_wrapper() -> None:
     candidate = extract_json_candidate('{"policy_delta":{"patches":[],"rationale":"ok","ttl_seconds":21600,"priority":"normal"}}')
     assert candidate == '{"patches": [], "rationale": "ok", "ttl_seconds": 21600, "priority": "normal"}'
+
+
+def test_prompt_contract_holds() -> None:
+    prompt = _read_meristem_system_prompt()
+    prompt_lower = prompt.lower()
+    assert "meristem" in prompt_lower
+    assert "json" in prompt_lower
+    assert "policydelta" in prompt_lower or "policydelta" in prompt
+    assert "tank_minimum_pct" in prompt
 
 
 def test_summarize_run_and_markdown() -> None:

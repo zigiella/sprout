@@ -22,6 +22,8 @@ y mide:
 - latencia total E2E
 
 La salida se versiona en `reports/` como JSON + Markdown.
+Los artefactos generados por corridas locales viven en `reports/`, pero **no se versionan**:
+se ignoran via `.gitignore` y solo se conserva en git la evidencia historica que movamos a `docs/benchmarks/`.
 
 ### 2. Futuro simulador visual
 
@@ -42,6 +44,9 @@ make e2e
 make e2e-smoke
 python -m src.cross_node_e2e --model gemma4:e4b --scenario pollen_fresh_weather_review
 ```
+
+Si quieres conservar una corrida como evidencia narrativa o tecnica, resume el hallazgo en `docs/benchmarks/`
+en vez de commitear el JSON/Markdown bruto del directorio `reports/`.
 
 ## Que NO es
 

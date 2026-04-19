@@ -1,8 +1,8 @@
 # reports/
 
-Artefactos versionados del harness E2E cross-node.
+Artefactos **generados localmente** por el harness E2E cross-node.
 
-Formato:
+Formato esperado:
 
 - `YYYY-MM-DD_<modelo>_<host>_cross-node-e2e.json`
 - `YYYY-MM-DD_<modelo>_<host>_cross-node-e2e.md`
@@ -15,5 +15,9 @@ Cada corrida deja:
 - latencia total
 - delta emitido por Meristem o error de validacion
 
-La idea es poder comparar rehearsal local, portatil de Bea y, mas adelante, los
-ensayos que se hagan ya con el resto del stack maduro.
+## Importante
+
+- Los `*.json` y `*.md` de este directorio **no se versionan**.
+- `.gitignore` conserva solo este `README.md`.
+- Si una corrida produce un hallazgo que debe quedar en el repo, se resume en
+  `docs/benchmarks/` como evidencia historica, separada de la herramienta.
