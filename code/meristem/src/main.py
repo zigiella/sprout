@@ -1,7 +1,12 @@
 """Entrypoint HTTP de Meristem (FastAPI).
 
-Bootstrap: solo expone `/health`. Los endpoints de ingest y emision de
-policies se montan en PRs posteriores junto con el policy_engine.
+Expone:
+- `/health`               → liveness + metadata.
+- `/ingest`               → Pollen empuja evidencia.
+- `/policies/{rhizome_id}`→ policy activa.
+- `/deltas/pending/{rhizome_id}` + `/deltas/propose`.
+
+Ver `src/routes.py`.
 
 Shadow (Meristem sombra contra Gemma 4 31B cloud) solo se importa si el
 flag `SHADOW_ENABLED` esta activo. Con flag apagado, `google.genai` no debe
@@ -14,6 +19,7 @@ from fastapi import FastAPI
 
 from . import __version__
 from .persistence import init_db
+from .routes import router as api_router
 from .settings import Settings, load_settings
 
 
@@ -37,6 +43,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "shadow_enabled": settings.shadow_enabled,
         }
 
+    app.include_router(api_router)
     return app
 
 

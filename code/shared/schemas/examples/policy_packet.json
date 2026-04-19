@@ -28,7 +28,7 @@
     },
     "max_watering_duration_s": 45,
     "daily_water_budget_liters": 8.0,
-    "tank_minimum_pct": 15.0,
+    "tank_minimum_pct": 20.0,
     "require_vision_confirmation": false,
     "conservative_triggers": [
       "tank_level_below_30",

@@ -23,3 +23,6 @@ shadow = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = [
+    "ollama: test que requiere un daemon Ollama activo (skip automatico si no responde).",
+]

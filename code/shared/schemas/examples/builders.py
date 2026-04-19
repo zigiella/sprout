@@ -63,7 +63,7 @@ def policy_packet_example() -> dict:
             },
             "max_watering_duration_s": 45,
             "daily_water_budget_liters": 8.0,
-            "tank_minimum_pct": 15.0,
+            "tank_minimum_pct": 20.0,
             "require_vision_confirmation": False,
             "conservative_triggers": [
                 "tank_level_below_30",
@@ -216,8 +216,8 @@ def decision_receipt_blocked_example() -> dict:
             "blocked_action": "WATER_A",
             "reason": "tank_minimum_pct reached",
         },
-        "rationale_short": "Riego bloqueado: deposito al 11%, por debajo del minimo de seguridad.",
-        "rationale_full": "El snapshot reporta deposito al 11%, por debajo del 15% exigido por la politica activa. Aunque la parcela A esta seca, Rhizome no envia comando al ESP32 y eleva bloqueo preventivo.",
+        "rationale_short": "Riego bloqueado: deposito al 18%, por debajo del minimo de seguridad.",
+        "rationale_full": "El snapshot reporta deposito al 18%, por debajo del 20% exigido por la politica activa. Aunque la parcela A esta seca, Rhizome no envia comando al ESP32 y eleva bloqueo preventivo.",
         "policy_refs": [
             "rules.soil_moisture_thresholds.parcel_a.min_pct",
             "rules.tank_minimum_pct",
