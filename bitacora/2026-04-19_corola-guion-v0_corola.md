@@ -23,7 +23,7 @@ VO (bajo el objetivo ~180 de Cambium — margen holgado para doblaje EN).
 6. **Datos duros en cartelas silenciosas:**
    - BdE 20-30% trigo (plano 11): impacto economico agricola español.
    - FAO 84%/36% (cierre): escala del problema — pequeñas explotaciones son la mayoria del alimento mundial.
-   - IRRIFRAME 40k central (cierre): contraste con Sprout-a-pie.
+   - IRRIFRAME 40k central (cierre): contraste con Sprout — "criterio que viaja con quien se mueve" (cartela ajustada en v0.2, ver `bitacora/2026-04-20_corola-guion-v02_corola.md`).
    - ITU 85/58 (tarjeta final): contexto universal de conectividad rural.
 7. **Australia 90% fuera.** Por priorizacion (geografia lejana para jurado global), no por calidad.
 8. **Caducidad conservada como bloque complementario** (1:50-2:10). Mantiene el clavo narrativo que estaba en v0.1, pero subordinado a la tesis de circulacion.
