@@ -43,7 +43,7 @@ Tabla alineada con `shot_list.md` v0. `VO` es texto hablado (castellano).
 |---|--------|----|---------|
 | 1:00-1:15 | Timelapse | — | "... pasa el dia ..." |
 | 1:15-1:30 | Meristem | "Al final del dia, otro modelo consolida lo aprendido." | Meristem · Gemma 4 E4B · Ollama / MVP local 16 GB / arquitectura objetivo: 26B |
-| 1:30-1:50 | Capa fisica | "El hardware bloquea lo que el modelo no deberia permitir." | BdE 2024: 20-30% trigo España perdido por decisiones tardias |
+| 1:30-1:50 | Capa fisica | "El firmware rechaza lo que el modelo aun no sabe frenar." | BdE 2024: 20-30% trigo España perdido por decisiones tardias |
 | 1:50-2:10 | Caducidad | "Si llega tarde, no se usa." | REJECTED · policy_expired |
 | 2:10-2:30 | Amanecer siguiente | "A la mañana siguiente, la parcela despierta con el criterio del dia anterior." | — |
 | 2:30-2:50 | **CIERRE (e)** | — | FAO: 84% explotaciones <2 ha. Producen 36% del alimento. / IRRIFRAME: 40k explotaciones · servidor central. / Sprout: criterio que viaja a pie. |
@@ -60,10 +60,10 @@ Tabla alineada con `shot_list.md` v0. `VO` es texto hablado (castellano).
 - 0:35-0:50: 22
 - 0:50-1:00: 8
 - 1:15-1:30: 11
-- 1:30-1:50: 12
+- 1:30-1:50: 11
 - 1:50-2:10: 6
 - 2:10-2:30: 15
-- **Total: ~106 palabras VO.** Margen holgado bajo el objetivo ~180. Permite doblaje EN sin apretar.
+- **Total: ~105 palabras VO.** Margen holgado bajo el objetivo ~180. Permite doblaje EN sin apretar.
 
 ---
 
@@ -91,5 +91,6 @@ Tabla alineada con `shot_list.md` v0. `VO` es texto hablado (castellano).
 
 ## Historial de versiones
 
+- **v0-post-review** (2026-04-20, Corola) — ajuste tras review Cambium en PR #41: linea 1:30-1:50 pasa de "El hardware bloquea lo que el modelo no deberia permitir." a **"El firmware rechaza lo que el modelo aun no sabe frenar."** (de pasivo+adversarial a activo+narrativa de capas, -1 palabra). Climax (0:35-0:50) mantenido tal cual por recomendacion explicita de Cambium. Linea 2:10-2:30 ("despierta con el criterio") mantenida por voto estilistico — busco resonancia con el amanecer en pantalla. Total VO: 105 palabras.
 - **v0** (2026-04-19, Corola) — reset tras reframe (`2026-04-18_reframe-narrativo-pollen_cambium.md`) y Meristem diferido (`2026-04-19_meristem-como-revision-diferida_cambium.md`). 3 min con min 1 autosuficiente, climax (b) transferencia cruzada, cierre (e) Meristem diferido, cartela 26B objetivo, VO ~106 palabras. Acepta criterios #12.
 - **v0.1** (2026-04-18, Corola) — draft descartado. Construido sobre climax caducidad y Pollen como mula.
