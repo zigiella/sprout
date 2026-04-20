@@ -46,7 +46,7 @@ Tabla alineada con `shot_list.md` v0. `VO` es texto hablado (castellano).
 | 1:30-1:50 | Capa fisica | "El firmware rechaza lo que el modelo aun no sabe frenar." | BdE 2024: 20-30% trigo España perdido por decisiones tardias |
 | 1:50-2:10 | Caducidad | "Si llega tarde, no se usa." | REJECTED · policy_expired |
 | 2:10-2:30 | Amanecer siguiente | "A la mañana siguiente, la parcela despierta con el criterio del dia anterior." | — |
-| 2:30-2:50 | **CIERRE (e)** | — | FAO: 84% explotaciones <2 ha. Producen 36% del alimento. / IRRIFRAME: 40k explotaciones · servidor central. / Sprout: criterio que viaja con quien se mueve. |
+| 2:30-2:50 | **CIERRE (e)** | — | FAO: 84% explotaciones <2 ha. Producen 36% del alimento. / IRRIFRAME: 40k explotaciones · servidor central. / Sprout: criterio que se mueve, se suma y se ajusta. |
 | 2:50-3:00 | Tarjeta final | — | zigiella · Apache 2.0 · github.com/zigiella/sprout / ITU 2024: 85% conectividad rural global · 58% zonas remotas |
 
 ---
@@ -70,12 +70,12 @@ Tabla alineada con `shot_list.md` v0. `VO` es texto hablado (castellano).
 ## Principios aplicados
 
 1. **Apertura silenciosa.** Una cartela, cero VO, cero idioma. Funciona para jurado anglo sin friccion.
-2. **Triptico narrativo:** "Un modelo. Tres profundidades. Tres tiempos." — frase espinal que aparece en pull-back (fin min 1) y se reconoce implicita en el cierre (Sprout: criterio que viaja con quien se mueve).
+2. **Triptico narrativo:** "Un modelo. Tres profundidades. Tres tiempos." — frase espinal que aparece en pull-back (fin min 1). Rima con la cartela de cierre, tambien triptica ("Sprout: criterio que se mueve, se suma y se ajusta"): dos tripletas que abren y cierran el video con la misma cadencia estructural.
 3. **Stack cartelas Gemma** en cada nodo — Gusthema (Gemma DevRel) ve la familia explicita, no inferida.
 4. **Climax 15 s** con VO denso en 0:35-0:50 (20 palabras) — es el bloque que el espectador necesita entender mejor, y donde el video se juega la tesis.
 5. **Meristem honesto:** cartela "E4B MVP / 26B objetivo". No se esconde el trade-off; se nombra.
 6. **Cartelas como motor de densidad.** Datos fuertes (BdE, FAO, IRRIFRAME, ITU) **nunca en VO**. Siempre en cartela. El dato impacta visualmente; el VO hace la historia.
-7. **Cierre sin VO.** Tripleta silenciosa de cartelas. La ultima —"Sprout: criterio que viaja con quien se mueve"— cierra la tesis que abrio la apertura silenciosa. **Verbo neutro deliberado:** no "a pie", no "caminar" — el diseño de Pollen es agnostico al portador (persona/bici/camioneta/tractor/dron), y la cartela no lo encadena a un solo modo aunque la imagen en pantalla sea humana. Ver bitacora v0.2 para racional.
+7. **Cierre sin VO.** Tripleta silenciosa de cartelas. La ultima —"Sprout: criterio que se mueve, se suma y se ajusta"— cierra la tesis que abrio la apertura silenciosa. **Tres verbos reflexivos que mapean el sistema:** se mueve (Pollen, itinerante), se suma (Meristem, consolida al cierre del dia), se ajusta (climax A→B + Rhizome, la regla viva). **Sujeto unico: el criterio.** Sin portador en la sintaxis — aplicacion maxima del principio agnostico al portador (el diseño de Pollen admite persona/bici/camioneta/tractor/dron sin refactor). Ver bitacoras v0.2 y v0.4 para racional completo.
 
 ---
 
@@ -91,6 +91,7 @@ Tabla alineada con `shot_list.md` v0. `VO` es texto hablado (castellano).
 
 ## Historial de versiones
 
+- **v0.4** (2026-04-20, Corola) — ajuste cartela cierre pedido por Bea tras releer el mail al padre: **"Sprout: criterio que viaja con quien se mueve."** → **"Sprout: criterio que se mueve, se suma y se ajusta."** Tres verbos reflexivos mapean las tres capas del sistema (Pollen se mueve / Meristem se suma / Rhizome y climax se ajustan), reforzando la tripleta de la frase espinal ("Un modelo. Tres profundidades. Tres tiempos."). Sujeto unico: el criterio. Sin portador en la sintaxis — aplicacion maxima del principio agnostico al portador. Actualizados principio #2 (triptico) y principio #7 (cierre sin VO). Total VO sin cambios (101 palabras — cartela es silenciosa). Cambio paralelo en shot list v0.3 (PR #40). Racional: `bitacora/2026-04-20_corola-guion-v04_corola.md`.
 - **v0.3** (2026-04-20, Corola) — ajuste VO pedido por Bea: linea 1:15-1:30 pasa de "Al final del dia, otro modelo consolida lo aprendido." a **"Al final del dia, Meristem consolida lo aprendido."** (9 palabras, -2). Nombrar Meristem en VO le da peso — es la unica aparicion del nombre en audio, la cartela ya lo nombra en pantalla pero la combinacion doble refuerza. Total VO: 101 palabras. **Nota:** la cartela stack del plano 10 ("E4B MVP / 26B objetivo") se mantiene en esta version; se reformula en shot list v1 tras el reframe de Meristem (`bitacora/2026-04-20_meristem-reframe-modelo-objetivo_cambium.md`, en main commit 0a6376d).
 - **v0.2** (2026-04-20, Corola) — ajuste narrativo pedido por Bea: los verbos "caminar" y "a pie" empequeñecen la tesis de Pollen. Sustituidos por neutros. VO 0:18-0:25: "Alguien ya camina esta ruta." → **"Alguien ya recorre esta ruta."** (5 palabras, igual). VO climax 0:35-0:50: "En el camino de A a B..." → **"En ruta de A a B..."** (20 palabras, -2). Cartela cierre 2:30-2:50: "Sprout: criterio que viaja a pie." → **"Sprout: criterio que viaja con quien se mueve."** Principio #7 anotado explicitamente: verbo neutro protege diseño agnostico al portador de Pollen. Total VO: 103 palabras. Racional completo en `bitacora/2026-04-20_corola-guion-v02_corola.md`.
 - **v0-post-review** (2026-04-20, Corola) — ajuste tras review Cambium en PR #41: linea 1:30-1:50 pasa de "El hardware bloquea lo que el modelo no deberia permitir." a **"El firmware rechaza lo que el modelo aun no sabe frenar."** (de pasivo+adversarial a activo+narrativa de capas, -1 palabra). Climax (0:35-0:50) mantenido tal cual por recomendacion explicita de Cambium. Linea 2:10-2:30 ("despierta con el criterio") mantenida por voto estilistico — busco resonancia con el amanecer en pantalla. Total VO: 105 palabras.
