@@ -223,4 +223,26 @@ Sin impacto directo. Vuelve dia 21 con su rebase de `feat/pollen-fake-voice`. El
 - `bitacora/2026-04-19_meristem-como-revision-diferida_cambium.md` — marco temporal: Meristem es asincrono, lo que permite aceptar latencia extra de thinking mode o de proxy cloud.
 - `bitacora/2026-04-19_thinking-mode-e4b-latencia_meristem.md` — hallazgo `/api/chat` vs `/api/generate`, vigente y ganando peso con este reframe.
 - PR #37 (mergeado dia 5) — `policy_engine` model-agnostic que habilita el pivote.
-- Issues pendientes: #42, #43, #44, #45 + dos nuevos que se abren hoy.
+- Issues: #42, #43, #44, #45 (preexistentes tras reframe) + **#46 adapter Ollama-Gemini** y **#47 context window sweep** abiertos en el dia 6.
+
+---
+
+## Adenda (dia 6, tarde): eje de ventana de contexto como estructural
+
+Tras la ronda Q1-Q4 sobre el diseno del adapter #46, Meristem (persona) identifico que la ventana de contexto efectiva es un eje **estructural independiente** del thinking budget, no parametro de tuning. Razones:
+
+1. Thinking budget y contexto consumen el mismo pool de tokens — medirlos juntos emborrona senal.
+2. Afecta operaciones asimetricamente: las context-heavy (D patrones inter-parcela, E meteo local vs general, F bucle hipotesis→aprendizaje, I contradicciones temporales) se limitan por ventana util, no solo se ralentizan.
+3. Informa D6 (decision hardware dia 18-20): si 32k basta → RTX 3090 24GB viable con ahorro ~€700 vs MBP M1 Max. Medir con dato, no con spec de catalogo. Ademas hay riesgo `lost-in-the-middle`: aceptar 128k no implica usarlos bien.
+
+**Decision:** issue gemelo dedicado — **#47 `meristem_context_window_sweep`** — priorizado para correr **despues** de #44 (thinking A/B) y **antes** del dia 18. Cadena de dependencias:
+
+```
+adapter #46 → #42 → #44 → #47 sweep → #45 harness completo → decision hardware D6
+                                   ↓
+                                  #43 consolidator consume ventana util del knee
+```
+
+Presupuesto €15-25 dentro del techo €150.
+
+**Procedencia explicita:** este eje nace del callout de Meristem al procesar las respuestas Q1-Q5 del reframe. No estaba en el cuerpo original de esta bitacora. La trazabilidad queda registrada para que el proximo lector del repo entienda de donde sale la pieza.
