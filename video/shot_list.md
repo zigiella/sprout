@@ -28,10 +28,10 @@ superior exacta). Columna **tipo** distingue `real` (MVP funcional),
 | 01 | 0:00-0:07 | B-roll | Parcela B sola al amanecer. Plano general estatico. Cartela silenciosa: **"Decide sola hoy."** | 7 s | Exterior (terraza con encuadre "parcela") | Telefono, tripode, luz natural amanecer. |
 | 02 | 0:07-0:13 | real | Rhizome sobre mesa: Jetson + sensor humedad + camara. LED verde. Stack cartela: **"Rhizome · Gemma 4 E2B · edge"**. | 6 s | Terraza (MVP) | Telefono, luz controlada. |
 | 03 | 0:13-0:18 | screen | Terminal mostrando `decision_receipt` JSON firmado localmente. Overlay: "<1 s, sin red". | 5 s | — | OBS captura 1080p. |
-| 04 | 0:18-0:25 | real | Humano caminando con Pixel 10 Pro. Plano medio. Stack cartela: **"Pollen · Gemma 4 E2B · movil, LiteRT"**. | 7 s | Exterior | Telefono + gimbal. |
+| 04 | 0:18-0:25 | real | Humano en ruta con Pixel 10 Pro. Plano medio. Stack cartela: **"Pollen · Gemma 4 E2B · movil, LiteRT"**. | 7 s | Exterior | Telefono + gimbal. |
 | 05 | 0:25-0:30 | real | Pollen llega a parcela A. Handshake BLE. Pantalla Pixel: auditoria en curso. | 5 s | Terraza | Telefono + captura sincronizada. |
 | 06 | 0:30-0:35 | screen | **Flash A (auditoria gemela).** Split screen: "Rhizome decidio" vs "Pollen auditoria". Acuerdo verde. Cartela apoyo: **"Segunda opinion en el movil."** | 5 s | — | Captura app Pollen. |
-| 07 | 0:35-0:50 | real+screen | **CLIMAX (b) — transferencia cruzada A→B.** Humano camina A→B. En el camino, Pixel genera `policy_delta` con rationale visible. Al llegar a B, delta aplicado. | 15 s | Exterior + terraza | Telefono + captura pantalla rationale. |
+| 07 | 0:35-0:50 | real+screen | **CLIMAX (b) — transferencia cruzada A→B.** Humano se desplaza A→B. En ruta, Pixel genera `policy_delta` con rationale visible. Al llegar a B, delta aplicado. | 15 s | Exterior + terraza | Telefono + captura pantalla rationale. |
 | 08 | 0:50-1:00 | veo3 | **Pull-back cenital.** De parcela B a 8 parcelas distribuidas. Rutas humanas conectando. Cartela final: **"Criterio que circula en el bolsillo."** | 10 s | — | Veo3 (imposible filmar sin mentir sobre escala MVP). |
 
 ---
@@ -45,7 +45,7 @@ superior exacta). Columna **tipo** distingue `real` (MVP funcional),
 | 11 | 1:30-1:50 | real | Detalle ESP32 + caudalimetro + valvula. Primeros **10 s** solo hardware + pantalla Rhizome `REJECTED: RATE_LIMIT`. Ultimos **10 s** entra cartela inserto silencioso: **"BdE: 20-30% trigo España perdido por decisiones tardias, 2024."** | 20 s | Terraza | Telefono macro + captura. |
 | 12 | 1:50-2:10 | real+screen | **Caducidad.** Pixel entrega paquete fuera de ventana. Pantalla Rhizome: `REJECTED: policy_expired`. Cartela: **"Si llega tarde, no se usa."** | 20 s | Terraza | Telefono + captura. |
 | 13 | 2:10-2:30 | B-roll+real | **Amanecer siguiente.** Parcela B al alba. Rhizome arranca. Politica consolidada por Meristem aterriza: nueva regla visible en pantalla. Planta de B sana. | 20 s | Exterior + terraza | Telefono, luz amanecer, captura. |
-| 14 | 2:30-2:50 | veo3+screen | **CIERRE (e) — Meristem diferido como tesis.** Zoom-out desde parcela B a red de 8. Cartelas secuenciales silenciosas: **"FAO: 84% explotaciones <2 ha. Producen 36% del alimento."** → **"IRRIFRAME: 40k explotaciones. Servidor central."** → **"Sprout: criterio que viaja a pie."** | 20 s | — | Veo3 + diseno cartelas. |
+| 14 | 2:30-2:50 | veo3+screen | **CIERRE (e) — Meristem diferido como tesis.** Zoom-out desde parcela B a red de 8. Cartelas secuenciales silenciosas: **"FAO: 84% explotaciones <2 ha. Producen 36% del alimento."** → **"IRRIFRAME: 40k explotaciones. Servidor central."** → **"Sprout: criterio que viaja con quien se mueve."** | 20 s | — | Veo3 + diseno cartelas. |
 | 15 | 2:50-3:00 | screen | Tarjeta cierre dividida en **dos cartelas internas de 5 s**: (a) 2:50-2:55 logo zigiella + Apache 2.0 + URL repo; (b) 2:55-3:00 cartela micro: **"ITU 2024: 85% conectividad rural global / 58% en zonas remotas."** | 10 s (5+5) | — | Diseno estatico. |
 
 ---
@@ -71,6 +71,7 @@ Si fallan, no hay video:
 - **Audio:** VO castellano separado, microfono de mano en ambiente silencioso. Bea dobla a EN para release. Sincronizar en edicion.
 - **Veo3:** solo en planos 08 y 14. En ningun otro plano. Si se puede filmar real, se filma real.
 - **Cartelas:** motor de densidad informativa. VO poca palabra, cartelas compactas. Tipografia monospace para coherencia con terminales.
+- **Portador de Pollen:** el diseño es **agnostico al portador**. Lo que viaja es un movil con Gemma; quien lo lleve (persona a pie, en bici, en camioneta, en tractor, o incluso un dron agricola) es incidental a la arquitectura. En el MVP rodado se muestra humano andando porque es filmable y coherente con el caso de uso social. Narrativa y cartelas usan verbos neutros ("se mueve", "en ruta", "recorre") para no encadenar la tesis a un solo modo. Caso de uso dron va a backlog de futuros; no se cuenta en el video pero si se puede mencionar en writeup / Q&A.
 
 ---
 
@@ -87,6 +88,7 @@ Si fallan, no hay video:
 
 ## Historial de versiones
 
+- **v0.2** (2026-04-20, Corola) — ajuste narrativo pedido por Bea: los verbos "caminar" y "a pie" empequeñecen la tesis de Pollen (la encadenan a una sola forma de moverse). Sustituidos por verbos neutros ("en ruta", "se desplaza", "recorre"). Cartela cierre plano 14: **"Sprout: criterio que viaja a pie"** → **"Sprout: criterio que viaja con quien se mueve"**. Plano 04 descripcion: "caminando" → "en ruta". Plano 07 descripcion: "camina A→B / en el camino" → "se desplaza A→B / en ruta". Añadida nota en Notas de grabacion sobre portador agnostico del diseño de Pollen.
 - **v0.1-post-review** (2026-04-20, Corola) — ajustes menores tras review Cambium en PR #40: (1) plano 06 gana cartela apoyo "Segunda opinion en el movil" para compensar 5s cortos; (2) plano 11 reparte 10s hardware + 10s cartela BdE (antes cartela ocupaba los 20s); (3) plano 15 dividido en dos cartelas internas de 5s (logo+repo / ITU). Plano 13 ya estaba en must-have desde v0. No cambia estructura ni duracion total.
 - **v0** (2026-04-19, Corola) — reset tras reframe narrativo (`2026-04-18_reframe-narrativo-pollen_cambium.md`) y clarificacion Meristem diferido (`2026-04-19_meristem-como-revision-diferida_cambium.md`). Climax pasa de caducidad a transferencia cruzada A→B; Meristem se reubica en min 2; se añade cartela 26B objetivo; stack Gemma en cada nodo; Veo3 solo planos 08 y 14. Acepta criterios #12.
 - **v0.1** (2026-04-18, Corola) — draft inicial descartado. Construido sobre climax caducidad y arquitectura 3 min sin autosuficiencia min 1.

@@ -31,7 +31,7 @@ v0.1 queda **invalido** tras:
 6. **Stack cartelas Gemma** en planos 02, 04, 10: modelo + variante + rol. Visibilidad DevRel (Gusthema es Gemma DevRel — le importa ver Gemma 4 explicitada, no asumida).
 7. **Caducidad (12) conservada** como bloque complementario, no climax. Sigue siendo clavo narrativo, pero subordinado a la tesis de circulacion.
 8. **Amanecer siguiente (13)** cierra el arco temporal: el criterio del dia anterior aterriza. Prueba visual de que Meristem-diferido funciona.
-9. **Cierre (e) con tripleta de cartelas:** FAO 84%/36% → IRRIFRAME 40k central → Sprout a pie. Contraste explicito, silencioso. La cartela final del minuto 3 remata la tesis que el minuto 1 sembro.
+9. **Cierre (e) con tripleta de cartelas:** FAO 84%/36% → IRRIFRAME 40k central → Sprout "criterio que viaja con quien se mueve" (cartela ajustada en v0.2 tras feedback Bea; ver `2026-04-20_corola-shot-list-v02_corola.md` para racional completo). Contraste explicito, silencioso. La cartela final del minuto 3 remata la tesis que el minuto 1 sembro.
 10. **BdE 20-30%** (inserto plano 11): dato duro de perdida economica agricola española, reforzando capa fisica.
 11. **ITU 85/58** (tarjeta final, plano 15): dato universal que contextualiza el "por que offline importa" sin abrir el video con pesimismo.
 12. **Australia 90%** (research punto 4): **no entra en v0**. Geograficamente lejano para un jurado que tambien incluye el contexto global — se descarto por priorizacion, no por calidad del dato.
@@ -45,7 +45,7 @@ v0.1 queda **invalido** tras:
 
 ## Riesgos conocidos
 
-- **Plano 07 (climax) es el mas caro de coordinar.** Requiere Xilema + Floema + Meristem sincronizados y rationale visible en pantalla mientras el humano camina. Si el MVP no llega a tiempo, el climax degrada a captura estatica — y el video pierde su tesis. Marca como bloqueante principal.
+- **Plano 07 (climax) es el mas caro de coordinar.** Requiere Xilema + Floema + Meristem sincronizados y rationale visible en pantalla mientras el humano se desplaza A→B. Si el MVP no llega a tiempo, el climax degrada a captura estatica — y el video pierde su tesis. Marca como bloqueante principal.
 - **Veo3 planos 08, 14.** Requiere prompt y tiempo de generacion. No bloquea rodaje real pero si postproduccion.
 - **Datos sombra (E4B vs 26B).** No hay medicion aun. Cartela del plano 10 promete "26B objetivo" — si no llegamos a demostrar 26B en ningun side-channel, la cartela queda como intencion, no hallazgo. Aceptable para MVP hackathon; anotado para equipo Meristem.
 
