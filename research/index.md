@@ -33,4 +33,4 @@ _(pendiente)_
 
 ## Trucos y problemas conocidos (Ollama, structured output, caching)
 
-_(pendiente — en curso)_
+- 🔴 [2026-04-21 · Trucos y problemas conocidos: Ollama + Gemma 4](experiments/2026-04-21_trucos-problemas-ollama-gemma4_estoma.md) — `format` con JSON schema funciona pero con minas: `think=false`+`format` ignora schema (#15260), fences markdown en E4B/31B (#15595), FA en 31B denso cuelga (#15350), GPU→CPU silencioso (#15237). `/api/chat` > `/api/generate` (templating, tool-calling). `keep_alive=-1` + prompt byte-estable = reuso de KV. Tags: @xilema, @cambium, @meristem, @floema, @corola.
