@@ -49,26 +49,49 @@ exige llevar la decision donde hay agua — no al reves.
 
 ## 2. Solucion — ~300 palabras
 
-<!--
-Los tres nodos + frase clave + por que funciona SIN depender de internet
-continuo (pero tampoco ASUMIR offline total — *usar framing del espectro
-de conectividad, ver bitacora 2026-04-18_reframe-narrativo-pollen*).
+Sprout reparte la decision en un sistema de parcelas de cultivos que
+funciona en **todo el espectro de conectividad** — WiFi, 4G
+intermitente, o nada — sin que las personas agricultoras tengan que
+saber en que tramo esta cada dia. El trabajo se distribuye entre tres
+nodos cooperantes, cada uno con un modelo de la familia Gemma 4
+ajustado a su funcion y a su hardware.
 
-Puntos a cubrir:
-- Rhizome: nodo edge, decisiones locales seguras, Gemma 4 E2B
-- Pollen: NO "mula de datos". Transferencia cruzada entre parcelas via
-  presencia humana. Auditor con modelo gemelo. Autoridad fisica.
-  (tres angulos, elegir el/los que encajen con el video)
-- Meristem: consolidacion estrategica, Gemma 4 E4B local
+**Rhizome** es el nodo en el territorio. Vive en la parcela, lee
+sensores y actua sobre el riego bajo reglas fisicas no negociables.
+Usa **Gemma 4 E2B** corriendo sobre un Jetson Orin Nano Super, con un
+microcontrolador ESP32 acoplado que ejecuta el firmware de seguridad.
+Las decisiones son locales, rapidas y auditables: cada regla recibida
+se valida contra los limites duros del firmware antes de ejecutarse.
+Si la red cae, Rhizome sigue decidiendo sola.
 
-Frase clave candidata:
-"Rhizome ejecuta, Pollen transporta inteligencia cruzada, Meristem aprende."
+**Meristem** es el nodo estrategico basado en **Gemma 4 26B MoE** — el
+cerebro mas potente del sistema. Consolida evidencia de multiples
+parcelas, detecta contradicciones y emite propuestas de politica con
+rationale. Habla con Rhizomes y Pollens. Aunque el objetivo es correr
+el modelo en hardware local, en el MVP la demo usa un proxy
+Ollama-compatible hacia la nube, declarado al jurado y con el mismo
+codepath que el modo local.
 
-Matiz del nuevo framing (obligatorio):
-"Sprout no es un sistema para parcelas sin internet. Es un sistema que
-funciona en todo el espectro de conectividad — WiFi, 4G intermitente,
-o nada — sin que el agricultor tenga que saber de redes."
--->
+**Pollen** es el nodo movil. No todos los Rhizomes tendran buena
+conectividad; Pollen transporta inteligencia cruzada entre parcelas y
+audita las decisiones de Rhizome sobre el terreno. Esta disenado como
+**agnostico al portador**: lo que viaja es un movil con **Gemma 4 E4B**
+corriendo en LiteRT; quien lo lleva — persona a pie, en bici, en
+tractor, o un dron agricola autonomo — es decision de despliegue, no
+de arquitectura.
+
+<!-- Pendiente seccion 3: contratos de datos v1.0, reglas §30 firmware,
+     ciclo de vida de PolicyDelta, handshake Pollen↔Meristem. -->
+
+**Rhizome ejecuta, Meristem aprende y reparte, Pollen transporta
+inteligencia cruzada.** Una arquitectura distribuida que resuelve el
+lag donde se produce.
+
+<!-- Fuentes: bitacora/2026-04-20_meristem-reframe-modelo-objetivo_cambium.md
+     (Meristem 26B objetivo),
+     bitacora/2026-04-20_mensaje-cambium-pollen-agnostico-portador_corola.md
+     (Pollen agnostico al portador),
+     bitacora/2026-04-21_pollen-upgrade-e4b_cambium.md (Pollen E4B). -->
 
 ## 3. Arquitectura — ~350 palabras
 
@@ -178,7 +201,7 @@ Decision: dia 25, tras video y demos.
 - [ ] Conseguir cifra opener del problema (dia 6-8)
 - [ ] Generar diagrama arquitectura exportable a PNG (dia 10)
 - [ ] Cerrar titulo + subtitulo con Bea (dia 20)
-- [ ] Sesion escritura conjunta seccion 1-2 (dia 6 o 7)
+- [x] Sesion escritura conjunta seccion 1-2 (dia 6 o 7)
 - [ ] Sesion escritura conjunta seccion 3-4 (dia 12-13)
 - [ ] Sesion escritura conjunta seccion 5-7 (dia 18-20)
 - [ ] Review final conjunto (dia 27-28)
