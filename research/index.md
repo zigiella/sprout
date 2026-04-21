@@ -27,9 +27,13 @@ Indice de bitacoras de la celula de investigacion (Estoma + Peri). Agrupadas por
 
 _(pendiente)_
 
+---
+
 ## LiteRT en movil (Pollen, Pixel 10 Pro)
 
-_(pendiente)_
+- 🔴 [2026-04-21 · LiteRT-LM reemplaza a MediaPipe Tasks GenAI para Gemma 4](experiments/2026-04-21_litertlm-deprecated-mediapipe_peri.md) — Google depreca MediaPipe (`.bin`) en favor de la dependencia `litertlm-android` (`.litertlm`). Pollen debe migrar la orquestación a la nueva clase `Engine`. Tags: @floema, @xilema, @meristem.
+
+---
 
 ## Trucos y problemas conocidos (Ollama, structured output, caching)
 
