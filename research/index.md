@@ -17,6 +17,12 @@ Indice de bitacoras de la celula de investigacion (Estoma + Peri). Agrupadas por
 
 ---
 
+## Cuantizacion y hardware edge (Jetson, Raspberry Pi)
+
+- 🔴 [2026-04-21 · Gemma 4 en Jetson Orin Nano Super](experiments/2026-04-21_gemma4-jetson-orin-nano-super_estoma.md) — E2B Q4_K_M es el fit natural (~1.5 GB); Ollama **nativo** (no Docker), JetPack ≥6.2; proxy Gemma 3n e2b ~16.55 tok/s gen. Tags: @xilema, @cambium, @meristem, @floema, @corola.
+
+---
+
 ## Thinking mode
 
 _(pendiente)_
@@ -25,10 +31,6 @@ _(pendiente)_
 
 _(pendiente)_
 
-## Cuantizacion y hardware edge (Jetson, Raspberry Pi)
+## Trucos y problemas conocidos (Ollama, structured output, caching)
 
-_(pendiente)_
-
-## Trucos y problemas conocidos
-
-_(pendiente)_
+_(pendiente — en curso)_
