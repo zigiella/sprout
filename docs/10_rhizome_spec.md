@@ -10,13 +10,16 @@ Su trabajo es responder esta pregunta:
 
 ## 2. Hardware y software
 
-- Jetson Orin Nano Super
-- Gemma 4 E2B
+- Jetson Orin Nano Super 8 GB
+- JetPack 6.x + MAXN SUPER + NVMe SSD + swap
+- Gemma 4 E2B via **llama.cpp** (no Ollama; Ollama en Jetson no tiene mmap loading y E2B queda al limite de memoria)
 - servicio local del agente Rhizome
 - SQLite
 - enlace serie con ESP32
 - acceso a meteo local si existe
 - API local para Pollen
+
+Detalle operativo de la ruta llama.cpp en `docs/51_rhizome_gemma4_e2b_jetson_guide.md`.
 
 ## 3. Qué hace
 
