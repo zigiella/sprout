@@ -31,3 +31,14 @@ Ejemplo:
 ## Alcance actual
 
 Las corridas versionadas aqui son una validacion local del harness y de los prompts. No sustituyen el benchmark objetivo de `#5`, que sigue pendiente de repetirse en Jetson Orin Nano Super y de compararse contra `llama.cpp`.
+
+## Analisis derivado
+
+Para sintetizar ratios y una hipotesis provisional de arquitectura:
+
+```bash
+cd code/rhizome
+make analyze-benchmarks
+```
+
+Salida actual: `2026-04-18_local-proxy-analysis.md`

@@ -22,6 +22,7 @@ Desde `code/rhizome/`:
 ```bash
 make generate-prompts
 make check-prompts
+make analyze-benchmarks
 python -m bench.run_ollama_benchmark --model gemma4:e4b --hardware-label hp-probook-460-g11
 ```
 
@@ -30,3 +31,4 @@ python -m bench.run_ollama_benchmark --model gemma4:e4b --hardware-label hp-prob
 - El harness soporta `image_paths`, aunque la primera version del prompt set es texto puro.
 - `power_watts_avg` queda en `null` cuando el host no expone una lectura portable.
 - En Jetson el runner se reutiliza sin cambiar el formato de salida; solo cambia el modelo y, si hace falta, el endpoint.
+- `analyze_reports.py` convierte los JSON comprometidos en una hipotesis provisional de arquitectura para `#5`.
