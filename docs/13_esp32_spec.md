@@ -1,0 +1,177 @@
+# ESP32 — función, conexión y especificación v2
+
+## 1. Rol
+
+El ESP32 no es “la placa de relés”.
+
+Es el **coprocesador de seguridad e I/O en tiempo real** de Rhizome.
+
+Su misión es esta:
+
+> **leer el mundo físico, ejecutar actuadores bajo límites duros y sobrevivir de forma segura a fallos del Jetson.**
+
+## 2. Por qué existe
+
+Jetson es muy bueno para inferencia, contexto y lógica de alto nivel.  
+No es un sistema en tiempo real duro.
+
+El ESP32 aporta lo que Jetson no debe prometer:
+
+- control determinista de actuadores,
+- conteo fiable de pulsos del caudalímetro,
+- watchdog,
+- fail-safe al perder enlace,
+- arranque seguro,
+- protección frente a órdenes fuera de rango.
+
+## 3. Qué hace
+
+### 3.1 Entradas físicas
+- humedad suelo A
+- humedad suelo B
+- nivel de depósito
+- caudalímetro
+- opcional: interruptor manual / E-stop / sensor de puerta de caja
+
+### 3.2 Salidas físicas
+- relé o driver bomba 12V
+- relé o driver válvula A
+- relé o driver válvula B
+- LED de estado
+- buzzer opcional de alerta
+
+### 3.3 Supervisión
+- heartbeat con Jetson
+- temporizador máximo de riego
+- verificación de caudal
+- rechazo por depósito bajo
+- latch de alertas hasta reset controlado
+
+## 4. Qué no hace
+
+- no interpreta lenguaje natural,
+- no decide estrategia agrícola,
+- no habla con meteo internet,
+- no reemplaza a Rhizome.
+
+## 5. Conexión recomendada
+
+## 5.1 Jetson ↔ ESP32
+Recomendación MVP:
+- **USB serial CDC** entre Jetson y ESP32
+
+Ventajas:
+- evita problemas de nivel lógico,
+- simplifica alimentación y debug,
+- da un dispositivo claro en Linux (`/dev/ttyACM0` o similar).
+
+Alternativa:
+- UART TTL 3V3 con GND común.
+
+## 5.2 Sensores ↔ ESP32
+### Analógicos
+- sensores de humedad
+- sensor de nivel
+
+Recomendación:
+- ADS1115 por I2C al ESP32 si necesitas mejor estabilidad que el ADC interno.
+
+### Pulsos
+- caudalímetro a GPIO con interrupción.
+
+## 5.3 Actuadores ↔ ESP32
+- GPIO del ESP32 a módulo de relés o drivers MOSFET
+- relé/driver 1: bomba
+- relé/driver 2: válvula A
+- relé/driver 3: válvula B
+
+### Alimentación
+- Jetson con su fuente dedicada
+- actuadores con fuente 12V dedicada
+- ESP32 desde buck 5V estable
+- **masa común entre control y actuadores**
+- flyback y/o módulos adecuados para cargas inductivas
+
+## 6. Topología recomendada
+
+```text
+[Jetson]
+   |
+   | USB serial / UART
+   v
+[ESP32]
+  |-- I2C --> ADS1115 --> humedad A, humedad B, nivel depósito
+  |-- GPIO interrupt --> caudalímetro
+  |-- GPIO out --> relé bomba
+  |-- GPIO out --> relé válvula A
+  |-- GPIO out --> relé válvula B
+  |-- GPIO out --> LED / buzzer
+```
+
+## 7. Protocolo lógico
+
+### Comandos Jetson → ESP32
+- `STATUS`
+- `WATER A <seconds>`
+- `WATER B <seconds>`
+- `WATER BOTH <seconds>`
+- `STOP`
+- `RESET_ALERT`
+- `SET_LIMITS` opcional
+
+### Respuestas ESP32 → Jetson
+- `ACK`
+- `REJECT reason`
+- `ALERT code`
+- `HEARTBEAT`
+- `STATUS_REPORT`
+
+## 8. Reglas duras mínimas
+
+- si depósito < umbral: no riega
+- si no hay heartbeat reciente del Jetson: no inicia riego
+- si caudal no aparece tras abrir agua: corta y alerta
+- si se supera tiempo máximo: corta y alerta
+- si hay orden malformada o fuera de rango: rechaza
+- al arrancar tras reboot: estado seguro, todo cerrado
+
+## 9. Estados de firmware
+
+- `SAFE_IDLE`
+- `READY`
+- `EXECUTING`
+- `DEGRADED`
+- `ALERT_LATCHED`
+
+## 10. Persistencia mínima en ESP32
+
+En NVS / flash:
+- calibración de sensores
+- umbrales críticos
+- último `alert_code`
+- versión de firmware
+- último `command_seq` aceptado
+
+En RAM:
+- últimas lecturas
+- contador de pulsos
+- temporizador de sesión
+- heartbeat freshness
+
+## 11. Aportación al wow del proyecto
+
+El ESP32 hace visible una idea importante para el jurado:
+
+> **la IA puede ser ambiciosa, pero el agua la gobierna una capa física prudente.**
+
+Eso da confianza y diferencia el proyecto de un simple “LLM que enciende un relé”.
+
+## 12. Definición de hecho
+
+El ESP32 está listo cuando:
+
+1. lee sensores y reporta estado al Jetson,
+2. ejecuta una orden válida,
+3. rechaza una orden insegura,
+4. corta riego si falta caudal o heartbeat,
+5. deja evidencia suficiente para que Rhizome emita un `DecisionReceipt`.

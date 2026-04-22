@@ -49,49 +49,58 @@ exige llevar la decision donde hay agua — no al reves.
 
 ## 2. Solucion — ~300 palabras
 
-Sprout reparte la decision en un sistema de parcelas de cultivos que
-funciona en **todo el espectro de conectividad** — WiFi, 4G
-intermitente, o nada — sin que las personas agricultoras tengan que
-saber en que tramo esta cada dia. El trabajo se distribuye entre tres
-nodos cooperantes, cada uno con un modelo de la familia Gemma 4
-ajustado a su funcion y a su hardware.
+Sprout resuelve el lag distribuyendo la decision entre nodos con
+**jurisdicciones distintas**. No es una red cooperativa generica; es
+un sistema donde cada nodo responde a una pregunta concreta, en una
+escala de tiempo concreta, y con autoridad acotada.
 
-**Rhizome** es el nodo en el territorio. Vive en la parcela, lee
-sensores y actua sobre el riego bajo reglas fisicas no negociables.
-Usa **Gemma 4 E2B** corriendo sobre un Jetson Orin Nano Super, con un
-microcontrolador ESP32 acoplado que ejecuta el firmware de seguridad.
-Las decisiones son locales, rapidas y auditables: cada regla recibida
-se valida contra los limites duros del firmware antes de ejecutarse.
-Si la red cae, Rhizome sigue decidiendo sola.
+**Rhizome** es el nodo autonomo de parcela. Vive junto a los sensores,
+lee el estado local y decide si riega, difiere, salta o bloquea —
+dentro de un sobre seguro impuesto por un **ESP32 acoplado que ejecuta
+firmware propio**. Usa **Gemma 4 E2B** sobre Jetson Orin Nano Super
+solo para arbitraje y explicacion, no para toda decision. La mayoria
+de pasos son deterministas; Gemma entra cuando hay senales
+contradictorias o mision humana nueva. Si la red cae, Rhizome sigue
+decidiendo sola. Su jurisdiccion son los minutos.
 
-**Meristem** es el nodo estrategico basado en **Gemma 4 26B MoE** — el
-cerebro mas potente del sistema. Consolida evidencia de multiples
-parcelas, detecta contradicciones y emite propuestas de politica con
-rationale. Habla con Rhizomes y Pollens. Aunque el objetivo es correr
-el modelo en hardware local, en el MVP la demo usa un proxy
-Ollama-compatible hacia la nube, declarado al jurado y con el mismo
-codepath que el modo local.
+**El ESP32 es coprocesador de seguridad**, no una placa de reles. Es
+dueno de los sensores criticos (humedad, nivel de deposito,
+caudalimetro) y de los actuadores (bomba, valvulas), y el unico que
+puede autorizar ejecucion fisica. Ninguna orden de riego pasa sin su
+visto bueno: tiempo maximo por evento, deposito minimo, verificacion
+de caudal, heartbeat con Jetson. **Si Jetson se cae, el sistema no se
+vuelve peligroso.** La IA propone; el agua la gobierna una capa fisica
+prudente.
 
-**Pollen** es el nodo movil. No todos los Rhizomes tendran buena
-conectividad; Pollen transporta inteligencia cruzada entre parcelas y
-audita las decisiones de Rhizome sobre el terreno. Esta disenado como
-**agnostico al portador**: lo que viaja es un movil con **Gemma 4 E4B**
-corriendo en LiteRT; quien lo lleva — persona a pie, en bici, en
-tractor, o un dron agricola autonomo — es decision de despliegue, no
-de arquitectura.
+**Pollen** es el nodo itinerante. No es un sincronizador de datos: es
+el pedazo del sistema que convierte cada visita humana en tres cosas
+distintas. Compila intencion humana ("vuelvo en 72 horas, prioriza
+parcela A, maximo 900 ml") a `MissionPatch` estructurado con
+caducidad; audita decisiones pasadas de Rhizome traduciendo `receipts`
+a lenguaje natural; y federa parcelas transportando `WeatherDigest` o
+contexto util entre nodos sin red directa. Gemma 4 E4B en Pixel 10 Pro
+via LiteRT-LM. Su jurisdiccion es la visita, con TTL corto.
 
-<!-- Pendiente seccion 3: contratos de datos v1.0, reglas §30 firmware,
-     ciclo de vida de PolicyDelta, handshake Pollen↔Meristem. -->
+**Meristem** queda especificado como cerebro lento del sistema —
+consolida bundles de visitas, evalua desempeno de politicas, emite
+politicas mas duraderas. **No esta en la demo del hackathon**; el
+sistema se defiende con Rhizome + Pollen + ESP32. Meristem es trabajo
+en curso con adapter Ollama-compatible ya construido (disponible como
+infraestructura de la version 2 del proyecto), explicitado como tal
+ante el jurado.
 
-**Rhizome ejecuta, Meristem aprende y reparte, Pollen transporta
-inteligencia cruzada.** Una arquitectura distribuida que resuelve el
-lag donde se produce.
+**Rhizome mantiene viva la parcela cuando nadie esta. Pollen convierte
+la visita en inteligencia util.** Esa es la tesis del sistema: cuando
+el campo, la persona y la red no coinciden en el tiempo, la decision
+correcta la toma el nodo que si esta ahi — y la visita humana, en vez
+de ser interrupcion, entra al sistema como evento de primera clase con
+criterio, caducidad y trazabilidad.
 
-<!-- Fuentes: bitacora/2026-04-20_meristem-reframe-modelo-objetivo_cambium.md
-     (Meristem 26B objetivo),
-     bitacora/2026-04-20_mensaje-cambium-pollen-agnostico-portador_corola.md
-     (Pollen agnostico al portador),
-     bitacora/2026-04-21_pollen-upgrade-e4b_cambium.md (Pollen E4B). -->
+<!-- Fuentes: bitacora/2026-04-22_pivote-v2-constitucion-sprout_bea.md
+     (constitucion v2 de Sprout),
+     docs/01_architecture.md, docs/10_rhizome_spec.md,
+     docs/11_pollen_spec.md, docs/12_meristem_spec.md,
+     docs/13_esp32_spec.md. -->
 
 ## 3. Arquitectura — ~350 palabras
 
