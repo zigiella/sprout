@@ -32,6 +32,7 @@ _(pendiente)_
 ## LiteRT en movil (Pollen, Pixel 10 Pro)
 
 - 🔴 [2026-04-21 · LiteRT-LM reemplaza a MediaPipe Tasks GenAI para Gemma 4](experiments/2026-04-21_litertlm-deprecated-mediapipe_peri.md) — Google depreca MediaPipe (`.bin`) en favor de la dependencia `litertlm-android` (`.litertlm`). Pollen debe migrar la orquestación a la nueva clase `Engine`. Tags: @floema, @xilema, @meristem.
+- 🔴 [2026-04-22 · Validación operativa: Gemma 4 E4B + LiteRT-LM en Android 16 (Pixel 10 Pro)](experiments/2026-04-22_litertlm-e4b-android16-pixel10pro_peri.md) — Verificación de docs oficiales y bugs abiertos. La Guía 50 es sólida; el bug de GPU #1681 justifica usar CPU como baseline obligatoria en Pollen. Tags: @floema, @bea, @estoma.
 
 ---
 
