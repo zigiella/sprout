@@ -1,155 +1,156 @@
 # Guía técnica de desarrollo
 
-## Gemma 4 E2B en Jetson Orin Nano Super (8 GB)
+## Gemma 4 E2B + llama.cpp en Jetson Orin Nano Super
 
-Versión: 2026-04-22
+Versión orientada a desarrollo e integración.
 
-## Objetivo
+---
 
-Esta guía está pensada para una programadora que quiera desarrollar sobre **Gemma 4 E2B** en un **Jetson Orin Nano Super de 8 GB** con una ruta realista, reproducible y relativamente estable.
+## 1. Objetivo
 
-La conclusión práctica es simple:
+Esta guía define una base técnica para ejecutar **Gemma 4 E2B** en un **Jetson Orin Nano Super** usando **llama.cpp** como runtime principal.
 
-- **Ruta recomendada**: `llama.cpp` usando el contenedor de NVIDIA para Jetson y el checkpoint GGUF recomendado para Orin Nano.
-- **Ruta avanzada**: `vLLM` si necesitas especialmente la parte de audio o un servidor más cercano a despliegue tipo API.
-- **Ruta experimental**: `Ollama`. Se puede instalar en Jetson, pero **hoy no es la opción que yo recomendaría para Gemma 4 E2B en Orin Nano Super 8 GB**.
+La decisión de arquitectura aquí es deliberada:
 
-## Resumen ejecutivo
+- **Modelo**: Gemma 4 E2B
+- **Hardware**: Jetson Orin Nano Super, normalmente con **8 GB de RAM**
+- **Runtime recomendado**: **llama.cpp**
+- **Serving**: `llama-server`
+- **Ruta no recomendada como baseline en este hardware**: Ollama
 
-### Qué sí encaja bien
+Jetson AI Lab indica que en **Orin Nano** el modelo que mejor encaja de la familia Gemma 4 es **E2B**, y que para ese caso **llama.cpp** es la ruta más directa. La misma guía señala que, en **Orin Nano**, **Gemma 4 no funciona con Ollama ahora mismo**. [Fuente: Jetson AI Lab, “Gemma 4 on Jetson”]
 
-**Gemma 4 E2B** es, dentro de la familia Gemma 4, el modelo que mejor encaja en **Jetson Orin Nano**. NVIDIA y Jetson AI Lab lo colocan como la opción natural para esta máquina. La familia Gemma 4 está soportada en Jetson mediante **vLLM** y **llama.cpp**, pero la propia guía oficial dice que en **Orin Nano** la ruta sencilla y directa es **llama.cpp** con el checkpoint GGUF adecuado.
+---
 
-### Qué no compraría como promesa fácil
+## 2. Qué es Gemma 4 E2B y por qué tiene sentido aquí
 
-**Ollama** en Jetson funciona como plataforma general y se instala sin drama, pero para **Gemma 4 E2B en Orin Nano 8 GB** hay señales públicas de que **no está fino todavía**: la propia guía de Jetson AI Lab indica que **Gemma 4 no funciona en Orin Nano con Ollama ahora mismo**, y en Ollama hay un issue abierto donde el runner falla en Orin Nano y un colaborador apunta a que el modelo va al límite de memoria y que el runner **no tiene mmap loading**, mientras que con `llama.cpp` sí se puede cargar justo al límite.
+Según la tarjeta oficial de modelo de Google, Gemma 4 es una familia abierta multimodal con cuatro tamaños: **E2B, E4B, 26B A4B y 31B**. Los modelos pequeños son los que añaden soporte de audio, mientras que la familia completa admite texto e imagen y genera texto como salida. [Fuente: Google AI, “Gemma 4 model card”]
 
-## Arquitectura recomendada
+Jetson AI Lab describe **Gemma 4 E2B** como la variante más pequeña de la familia y la posiciona para:
 
-### Opción A. Recomendada
+- asistentes offline
+- copilotos de robótica
+- OCR ligero y document QA
+- pipelines agentic locales con tool calling y huella reducida
 
-**Jetson Orin Nano Super 8 GB + JetPack 6.x + NVMe SSD + swap + MAXN SUPER + llama.cpp container + GGUF Q4_K_S**
+Además, Jetson AI Lab resume E2B como un modelo configurado para ejecutarse en Jetson con **vLLM** y **llama.cpp**, y remite a la tarjeta oficial de Google para sus capacidades base: contexto largo, multimodalidad y function calling. [Fuente: Jetson AI Lab, “Gemma 4 E2B”]
 
-Esto es lo más razonable si quieres:
+### Lectura práctica
 
-- arrancar rápido
-- no pelearte con RAM de más
-- tener un endpoint local y una UI mínima en `localhost:8080`
-- desarrollar encima con el menor número posible de variables rotas
+En un **Jetson Orin Nano Super**, la elección buena no es la más glamourosa, sino la que permite:
 
-### Opción B. Avanzada
+- arrancar siempre
+- no vivir al borde del OOM
+- servir localmente con una latencia razonable
+- conservar espacio para integración con cámara, sensores, ASR, TTS u otra lógica de aplicación
 
-**Jetson Orin Nano Super 8 GB + vLLM container + modelo Hugging Face E2B**
+Por eso **E2B** es el punto de partida correcto.
 
-Úsala si necesitas:
+---
 
-- aproximarte más a un servicio tipo API
-- reasoning y tool calling desde el arranque
-- la parte de **audio**, porque la guía oficial indica un **problema actual de audio con E2B bajo llama.cpp en Orin**
+## 3. Arquitectura recomendada
 
-### Opción C. Experimental
+### Baseline de referencia
 
-**Jetson Orin Nano Super 8 GB + Ollama**
+- **JetPack**: JP 6.x sobre L4T r36.x
+- **Almacenamiento**: NVMe SSD recomendado para modelos y cachés
+- **Contenedor**: `ghcr.io/nvidia-ai-iot/llama_cpp:latest-jetson-orin`
+- **Modelo GGUF**: `unsloth/gemma-4-E2B-it-GGUF:Q4_K_S`
+- **Servidor**: `llama-server`
+- **UI local**: `http://localhost:8080`
 
-Úsala solo si quieres probar, documentar o comparar. Hoy no la tomaría como baseline de desarrollo para Gemma 4 E2B en esta placa.
+Jetson AI Lab deja este flujo expresamente documentado para **Orin Nano**. [Fuente: Jetson AI Lab, “Gemma 4 on Jetson”]
 
-## Lo que se sabe del modelo
+### Por qué `llama.cpp`
 
-Gemma 4 E2B es el modelo pequeño de Gemma 4 orientado a edge. Jetson AI Lab resume sus características principales así:
+Jetson AI Lab dice que, en términos generales, **vLLM** suele rendir mejor como motor de serving, mientras que **llama.cpp** sigue siendo una buena opción si quieres la ruta **GGUF**. En **Orin Nano**, sin embargo, el tutorial baja a tierra y recomienda directamente **E2B + llama.cpp** como camino más sencillo. [Fuente: Jetson AI Lab, “Gemma 4 on Jetson”]
 
-- **2.3B parámetros efectivos**
-- **5.1B contando embeddings**
-- **128K de contexto**
-- entrada **texto, imagen y audio**
-- **function calling** nativo
-- soporte de **ASR** y traducción hablada en clips de hasta **30 segundos**
+### Por qué no tomar Ollama como baseline aquí
 
-En Jetson, esto abre casos de uso interesantes para:
+La misma guía oficial de Jetson AI Lab dice literalmente que **Gemma 4 no funciona en Orin Nano con Ollama ahora mismo**. Eso no significa que Ollama sea inútil en Jetson. Significa que, para **este modelo y este hardware concretos**, no deberías planificar el proyecto alrededor de esa ruta. [Fuente: Jetson AI Lab, “Gemma 4 on Jetson”]
 
-- asistentes locales
-- inspección visual
-- agentes ligeros con herramientas
-- robots y smart machines
-- OCR y razonamiento multimodal
+---
 
-## Requisitos recomendados
+## 4. Casos de uso razonables en este hardware
+
+Con **Gemma 4 E2B + llama.cpp** en Orin Nano Super, los casos más sensatos son:
+
+### Asistentes locales y edge copilots
+
+- chat local
+- consulta técnica embebida
+- asistentes de campo
+- controladores de dispositivos con lenguaje natural
+
+### Visión ligera y multimodalidad pragmática
+
+- OCR ligero
+- document QA simple
+- comprensión básica de imágenes
+- copilotos de cámara para inspección guiada
+
+### Robótica y sistemas físicos
+
+- agente local que combine texto, imagen y reglas
+- decisiones asistidas en robots pequeños
+- interfaces por voz si la arquitectura externa resuelve STT/TTS
+
+### Tool calling local
+
+Gemma 4 soporta function calling y razonamiento configurable a nivel de familia. En Jetson AI Lab también se destaca el uso de reasoning y tool calling con Gemma 4, sobre todo bajo vLLM. [Fuente: Google AI, “Gemma 4 model card”; Jetson AI Lab, “Gemma 4 on Jetson”]
+
+---
+
+## 5. Requisitos previos
 
 ### Hardware
 
-- Jetson Orin Nano Super Developer Kit, **8 GB RAM**
-- microSD de **64 GB o más** para el arranque inicial
-- **NVMe SSD** muy recomendable para modelos, caches y swap
-- refrigeración y alimentación correctas
+- Jetson Orin Nano Super
+- fuente oficial o equivalente adecuada
+- microSD si el sistema está sobre SD
+- **NVMe SSD muy recomendable**
+- conectividad de red
+- espacio suficiente para contenedores y modelos
+
+Jetson AI Lab recomienda de forma explícita **NVMe SSD** tanto en la guía inicial como en la guía de SSD + Docker, porque los contenedores y modelos ocupan bastante y el flujo GenAI se vuelve torpe si todo vive en almacenamiento limitado. [Fuente: Jetson AI Lab, “Initial Setup Guide for Jetson Orin Nano Developer Kit”; “SSD + Docker Setup”]
 
 ### Software base
 
-- **JetPack 6.x / L4T r36.x**
-- Docker funcional
-- red operativa para descargar contenedores y pesos
-- acceso SSH si vas en modo headless
+- JetPack 6.x
+- Docker operativo
+- runtime NVIDIA disponible para contenedores
+- acceso al terminal por monitor o SSH
 
-## Preparación del sistema
+Jetson AI Lab documenta JetPack 6.2 como base de preparación y coloca JP 6 / L4T r36.x como requisito para Orin en la guía de Gemma 4 on Jetson. [Fuente: Jetson AI Lab, “Initial Setup Guide for Jetson Orin Nano Developer Kit”; “Gemma 4 on Jetson”]
 
-### 1. Deja la placa en un estado sano
+---
 
-La guía oficial de Jetson AI Lab para Orin Nano pasa por:
+## 6. Preparación de la placa
 
-- firmware actualizado
-- JetPack 6.2.x
-- modo de potencia **MAXN SUPER**
+### 6.1. Instalar o actualizar JetPack
 
-En JetPack 6.2 el modo por defecto es **25 W**, y la guía recomienda pasar a **MAXN SUPER** para desbloquear el máximo rendimiento.
+Jetson AI Lab describe el flujo completo para dejar un Orin Nano listo para JP 6.2, incluyendo comprobación de firmware UEFI, actualización de QSPI si hace falta y arranque posterior con JetPack 6.x. [Fuente: Jetson AI Lab, “Initial Setup Guide for Jetson Orin Nano Developer Kit”]
 
-### 2. Usa NVMe SSD
+### 6.2. Habilitar modo de máximo rendimiento
 
-Jetson AI Lab recomienda SSD NVMe tanto para el sistema de contenedores como para los pesos y caches. En esta clase de flujos no es un capricho. Es la diferencia entre una máquina soportable y una máquina torpe.
+La guía inicial de Jetson AI Lab incluye el paso de desbloquear el modo **Super performance**, y señala que las actualizaciones recientes de software mejoran notablemente el rendimiento del Orin Nano. [Fuente: Jetson AI Lab, “Initial Setup Guide for Jetson Orin Nano Developer Kit”]
 
-### 3. Optimiza RAM
+### 6.3. Montar SSD NVMe y mover Docker
 
-En un Orin Nano de 8 GB la memoria es el cuello de botella más vulgar y más decisivo. Jetson AI Lab recomienda varias medidas.
+La guía **SSD + Docker Setup** explica cómo:
 
-#### Desactivar el escritorio temporalmente
+- instalar físicamente el NVMe
+- verificarlo
+- formatearlo y montarlo
+- reubicar el almacenamiento de Docker
 
-```bash
-sudo init 3
-# volver al escritorio cuando lo necesites
-sudo init 5
-```
+Esto no es adorno. En GenAI local, si el modelo, las capas del contenedor y la caché viven en almacenamiento estrecho, el sistema se degrada enseguida. [Fuente: Jetson AI Lab, “SSD + Docker Setup”]
 
-#### Desactivar el escritorio al arranque si vas por SSH
+---
 
-```bash
-sudo systemctl set-default multi-user.target
-# para reactivar el entorno gráfico al arranque
-sudo systemctl set-default graphical.target
-```
+## 7. Comando de arranque recomendado
 
-#### Desactivar servicios no necesarios
-
-```bash
-sudo systemctl disable nvargus-daemon.service
-```
-
-#### Crear swap en SSD
-
-```bash
-sudo systemctl disable nvzramconfig
-sudo fallocate -l 16G /ssd/16GB.swap
-sudo mkswap /ssd/16GB.swap
-sudo swapon /ssd/16GB.swap
-```
-
-Añade esto al final de `/etc/fstab`:
-
-```fstab
-/ssd/16GB.swap  none  swap  sw 0 0
-```
-
-## Ruta recomendada: Gemma 4 E2B con llama.cpp
-
-La guía oficial de Gemma 4 on Jetson es muy clara para **Orin Nano**: **E2B es una gran opción** y **llama.cpp es la ruta directa**.
-
-### Comando recomendado
+Este es el comando oficial que Jetson AI Lab publica para **Orin Nano + Gemma 4 E2B + llama.cpp**:
 
 ```bash
 sudo docker run -it --rm --pull always --runtime=nvidia --network host \
@@ -158,277 +159,211 @@ sudo docker run -it --rm --pull always --runtime=nvidia --network host \
   llama-server -hf unsloth/gemma-4-E2B-it-GGUF:Q4_K_S
 ```
 
-### Qué hace este comando
-
-- usa el contenedor oficial de `llama.cpp` para Jetson Orin
-- descarga el checkpoint **GGUF** recomendado para E2B en Orin Nano
-- levanta `llama-server`
-- expone una UI básica en:
+Después, la interfaz queda disponible en:
 
 ```text
 http://localhost:8080
 ```
 
-### Cuándo usar esta ruta
+[Fuente: Jetson AI Lab, “Gemma 4 on Jetson”]
 
-Úsala como **baseline de desarrollo** si tu prioridad es:
+---
 
-- texto
-- pruebas rápidas
-- consumo de memoria razonable
-- mínima complejidad operativa
+## 8. Qué está haciendo realmente este comando
 
-### Cosas que debes saber
+### Contenedor
 
-- E2B y E4B soportan audio a nivel de familia, pero la guía de Jetson AI Lab marca un **problema actual de audio con E2B en llama.cpp sobre Orin**.
-- Si el audio es parte central de tu producto, mira la ruta vLLM.
+Usa el contenedor oficial de NVIDIA AI IoT para **llama.cpp sobre Jetson Orin**.
 
-## Ruta avanzada: Gemma 4 E2B con vLLM
+### Caché de Hugging Face
 
-La misma guía oficial indica que **vLLM** suele ofrecer **mejor rendimiento de serving** que `llama.cpp`, y es la opción que Jetson AI Lab recomienda cuando quieres algo más parecido a despliegue serio.
+Monta `~/.cache/huggingface` del host para evitar descargas redundantes y facilitar reinicios.
 
-### Cuándo compensa
+### Modelo
 
-- si vas a construir un servicio local más estable para tu aplicación
-- si quieres **reasoning** y **tool calling** desde el arranque
-- si quieres mantener abierta la posibilidad de usar la parte de audio de E2B
+Descarga y sirve una versión **GGUF cuantizada** del modelo instruction-tuned de Gemma 4 E2B.
 
-### Comando base
+### Cuantización
 
-```bash
-sudo docker run -it --rm --pull always --runtime=nvidia --network host \
-  -v $HOME/.cache/huggingface:/root/.cache/huggingface \
-  ghcr.io/nvidia-ai-iot/vllm:gemma4-jetson-orin \
-  vllm serve google/gemma-4-E2B-it \
-    --enable-auto-tool-choice \
-    --reasoning-parser gemma4 \
-    --tool-call-parser gemma4
-```
+La guía oficial para Orin Nano usa **`Q4_K_S`**. En este tipo de dispositivo, la cuantización no es una opción cosmética. Es la diferencia entre algo desplegable y algo ornamental.
 
-### Activar thinking en la petición
+---
 
-Aunque arranques el servidor con los flags de Gemma 4, la guía oficial aclara que el reasoning **no se activa por defecto** en cada request. Debes pasar `enable_thinking=true` dentro de `chat_template_kwargs`.
+## 9. Flujo de verificación
 
-Ejemplo mínimo:
+### 9.1. Verificar Docker
 
 ```bash
-curl -sN http://127.0.0.1:8000/v1/chat/completions \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "model": "google/gemma-4-E2B-it",
-    "messages": [{"role": "user", "content": "hi"}],
-    "chat_template_kwargs": {"enable_thinking": true},
-    "stream": true
-  }'
+docker --version
 ```
 
-### Advertencias
-
-- Si no haces streaming, la propia guía advierte que puede haber casos donde el texto de pensamiento se mezcle con la respuesta final.
-- No mezcles formatos a lo loco: checkpoints de Hugging Face para `vLLM`, checkpoints **GGUF** para `llama.cpp`.
-
-## Ollama: estado real y recomendación
-
-## ¿Se puede instalar Ollama en Jetson?
-
-Sí.
-
-Jetson AI Lab dice que el instalador oficial soporta Jetson:
+### 9.2. Verificar que NVIDIA runtime está activo
 
 ```bash
-curl -fsSL https://ollama.com/install.sh | sh
+docker info | grep -i runtime
 ```
 
-También hay ruta Docker en Jetson, y la documentación oficial de Ollama avisa que en sistemas JetPack debes pasar `JETSON_JETPACK=5` o `JETSON_JETPACK=6` al contenedor oficial porque Ollama no puede detectar automáticamente la versión de JetPack.
+### 9.3. Lanzar el servidor
 
-## ¿Lo recomiendo para Gemma 4 E2B en Orin Nano Super?
+Usar el comando anterior.
 
-**No como camino principal.**
+### 9.4. Abrir la UI local
 
-### Por qué no
+Desde el navegador del propio Jetson o desde otro equipo en la red:
 
-Hay tres señales demasiado claras:
-
-1. **Jetson AI Lab** afirma directamente que **Gemma 4 no funciona en Orin Nano con Ollama ahora mismo**.
-2. En **Ollama issue #15398**, un usuario reporta que `gemma4:e2b` falla en Jetson Orin Nano y un colaborador de Ollama dice que el runner va al límite de memoria y que **no tiene mmap loading**, mientras que con `llama.cpp` sí se puede cargar justo al borde.
-3. En el foro de NVIDIA aparece gente intentando usar `gemma4:e2b` con Ollama nativo en Orin Nano y topándose con errores o caídas.
-
-### Qué haría yo con Ollama
-
-- lo dejaría como **anexo experimental**
-- lo usaría para comparar experiencia o para otros modelos menos al límite
-- no lo pondría en el camino crítico de un proyecto que tenga fechas
-
-### Si aun así quieres probarlo
-
-#### Instalación nativa
-
-```bash
-curl -fsSL https://ollama.com/install.sh | sh
+```text
+http://IP_DEL_JETSON:8080
 ```
 
-#### Prueba tentativa
+### 9.5. Probar prompts básicos
 
-```bash
-OLLAMA_DEBUG=1 ollama run gemma4:e2b
-```
+Ejemplos:
 
-#### Expectativa honesta
+- “Resume este texto en 5 líneas.”
+- “Extrae tareas y riesgos de esta nota.”
+- “Explícame este error de sistema.”
 
-- puede fallar con `EOF` o `500 Internal Server Error`
-- puede cargar más memoria de la esperada
-- puede terminar moviendo más trabajo a CPU del deseable
+---
 
-## Flujo de desarrollo recomendado
+## 10. Diseño de integración recomendado
 
-## Fase 1. Baseline estable
+### Opción 1. Integración mínima
 
-Objetivo: verificar que la máquina queda lista y el modelo responde.
+Usar `llama-server` como servicio local y consumirlo desde otra aplicación mediante HTTP.
 
-1. JetPack 6.x en orden
-2. MAXN SUPER activado
-3. SSD montado
-4. swap activa
-5. escritorio desactivado si vas por SSH
-6. arranque con `llama.cpp`
-7. prueba manual desde `http://localhost:8080`
+Adecuado para:
 
-Entregable: una sesión reproducible donde E2B arranca siempre.
+- apps Python externas
+- Node.js
+- dashboards locales
+- pruebas rápidas de copilotos
 
-## Fase 2. Integración de aplicación
+### Opción 2. Servicio embebido en sistema edge
 
-Una vez `llama.cpp` responda de forma consistente, construye tu aplicación cliente encima. En esta fase yo mantendría el foco en:
+Mantener `llama-server` como proceso local persistente y envolverlo con una capa de negocio que:
 
-- prompts
-- plantillas de sistema
-- validación de latencia
-- límites de contexto útiles
-- consumo térmico y estabilidad a sesiones largas
+- reciba datos de sensores
+- prepare prompts
+- ejecute funciones locales
+- gestione contexto y memoria de sesión
 
-## Fase 3. Solo si hace falta, pasar a vLLM
+### Opción 3. Multimodalidad acotada
 
-Migra a `vLLM` si necesitas una de estas cosas:
+Aunque la familia E2B admite audio e imagen, la propia guía de Jetson AI Lab avisa de que **hay un problema actual con el audio de E2B bajo llama.cpp en Orin**. Si el audio es importante, recomiendan usar los modelos pequeños de Gemma 4 a través de **vLLM**. [Fuente: Jetson AI Lab, “Gemma 4 on Jetson”]
 
-- razonamiento controlado con `enable_thinking`
-- tool calling desde el servidor
-- mejor ruta para audio
-- serving más serio
+Eso deja una decisión nítida:
 
-Haz este cambio **después** de tener un baseline estable, no antes. El error habitual es abrir demasiados frentes a la vez y terminar culpando al modelo de un problema de infraestructura.
+- si tu primera meta es **texto y serving local estable**, usa `llama.cpp`
+- si tu primera meta es **audio serio**, no diseñes sobre `llama.cpp` sin validar antes esa parte
 
-## Trucos prácticos
+---
 
-### Limpia caché de página si vienes de un arranque fallido
+## 11. Riesgos y límites reales
 
-```bash
-sudo sysctl -w vm.drop_caches=3
-```
+### 11.1. Audio en llama.cpp
 
-La guía de Jetson AI Lab lo recomienda al reintentar modelos grandes o cuando una carga anterior ha dejado memoria retenida.
+Jetson AI Lab documenta explícitamente una incidencia actual con **audio en E2B bajo llama.cpp para Orin**. Eso invalida cualquier guía que te prometiera audio plug-and-play como baseline de proyecto en esta combinación. [Fuente: Jetson AI Lab, “Gemma 4 on Jetson”]
 
-### Mata procesos previos antes de volver a lanzar
+### 11.2. Ollama
 
-Asegúrate de que no quede un contenedor o servidor anterior ocupando memoria. En un Orin Nano, la memoria “fantasma” te puede arruinar una prueba y hacerte creer que el comando correcto está mal.
+No lo tomes como ruta de referencia para Gemma 4 E2B en Orin Nano. La propia guía oficial lo desaconseja de facto al decir que **no funciona ahora mismo**. [Fuente: Jetson AI Lab, “Gemma 4 on Jetson”]
 
-### No mezcles checkpoints
+### 11.3. Contexto y expectativas
 
-- `vLLM` → modelos Hugging Face listados por Jetson AI Lab
-- `llama.cpp` → checkpoints **GGUF**
+Google documenta hasta **128K de contexto** para E2B. Eso no significa que debas comportarte como si cada caso de uso fuese a tolerar prompts gigantes sin coste. En Jetson pequeño, el presupuesto térmico, la memoria y la latencia siguen mandando. [Fuente: Google AI, “Gemma 4 model card”; Jetson AI Lab, “Gemma 4 E2B”]
 
-### No conviertas Ollama en religión
+### 11.4. No confundir servir con medir
 
-Ollama es cómodo. Eso no lo vuelve adecuado para cualquier combinación de placa, memoria y modelo. En esta máquina y con este modelo, hoy parece ser más una fuente de ruido que una ventaja.
+Jetson AI Lab tiene una guía específica de benchmarking donde deja claro que medir rendimiento implica fijarse en:
 
-## Casos de uso razonables en esta placa
+- **TTFT**
+- throughput
+- latencia
 
-Con Gemma 4 E2B en Orin Nano Super yo apuntaría a:
+Servir el modelo no equivale a conocer su comportamiento real bajo carga. [Fuente: Jetson AI Lab, “GenAI Benchmarking: LLMs and VLMs on Jetson”]
 
-- asistentes locales de texto
-- inspección visual ligera
-- OCR o análisis de imágenes con prompts cortos
-- agentes simples con herramientas
-- prototipos de robótica con inferencia local
+---
 
-No lo trataría como un servidor universal para cargas pesadas o sesiones enormes. La placa es muy capaz para su tamaño, pero sigue siendo una placa de 8 GB, no un juguete mágico que obedece al marketing.
+## 12. Checklist técnica para una programadora
 
-## Matriz de decisión
-
-| Escenario | Ruta recomendada |
-|---|---|
-| Quiero que funcione hoy y con el menor dolor posible | `llama.cpp` |
-| Quiero texto + audio + tool calling y estoy dispuesto a afinar más | `vLLM` |
-| Quiero la experiencia más simple tipo Ollama y me da igual probar algo verde | `Ollama` |
-| Quiero producción ligera y repetible en Orin Nano Super 8 GB | `llama.cpp`, y luego evaluar `vLLM` |
-
-## Checklist de validación
-
-### Validación de plataforma
+### Infraestructura
 
 - [ ] JetPack 6.x instalado
-- [ ] Modo MAXN SUPER activado
-- [ ] SSD NVMe montado
-- [ ] Docker operativo
-- [ ] swap activa
-- [ ] GUI desactivada si aplica
+- [ ] firmware/UEFI y QSPI actualizados si hacía falta
+- [ ] modo Super performance habilitado
+- [ ] SSD NVMe instalado y montado
+- [ ] Docker usando almacenamiento en SSD
+- [ ] acceso por SSH confirmado
 
-### Validación de modelo
+### Runtime
 
-- [ ] El contenedor descarga el modelo sin errores
-- [ ] `llama-server` arranca
-- [ ] `localhost:8080` responde
-- [ ] Se puede completar al menos una conversación corta
-- [ ] No aparecen OOM ni bloqueos repetidos
+- [ ] contenedor `llama_cpp:latest-jetson-orin` descargado
+- [ ] caché de Hugging Face persistida
+- [ ] comando de `llama-server` probado
+- [ ] UI local accesible en el puerto 8080
 
-### Validación de integración
+### Aplicación
 
-- [ ] Tu cliente puede enviar prompts repetidamente
-- [ ] La latencia es aceptable para el caso de uso
-- [ ] La placa no entra en inestabilidad térmica
-- [ ] El sistema se recupera bien tras reinicios y relanzamientos
+- [ ] prompts base de prueba definidos
+- [ ] límite de contexto operativo fijado por caso de uso
+- [ ] timeout y reintentos definidos
+- [ ] logging de inferencia activado
+- [ ] estrategia de fallback definida si el servidor no responde
 
-## Conclusión
+### Producto
 
-Para **Gemma 4 E2B en Jetson Orin Nano Super**, mi recomendación es clara:
+- [ ] caso de uso principal acotado
+- [ ] texto como baseline
+- [ ] audio tratado como experimental salvo validación propia
+- [ ] Ollama descartado como baseline en esta placa
 
-1. **Empieza por `llama.cpp`** con el comando oficial de Jetson AI Lab.
-2. **Prepara bien la máquina**: JetPack 6.x, MAXN SUPER, SSD, swap y RAM optimizada.
-3. **Usa `vLLM`** si de verdad necesitas audio o una capa de serving más formal.
-4. **No tomes Ollama como base del proyecto** mientras siga el estado actual de memoria y compatibilidad en Orin Nano para `gemma4:e2b`.
+---
 
-## Fuentes
+## 13. Sugerencia de roadmap
 
-- Jetson AI Lab, *Gemma 4 on Jetson*  
-  https://www.jetson-ai-lab.com/tutorials/gemma4-on-jetson/
+### Fase 1. Bring-up
 
-- Jetson AI Lab, *Gemma 4 E2B model page*  
-  https://www.jetson-ai-lab.com/models/gemma4-e2b/
+Objetivo: arrancar modelo, responder prompts y estabilizar servicio.
 
-- Jetson AI Lab, *Introduction to GenAI on Jetson: How to Run LLMs and VLMs*  
-  https://www.jetson-ai-lab.com/tutorials/genai-on-jetson-llms-vlms/
+### Fase 2. Integración
 
-- Jetson AI Lab, *Ollama on Jetson*  
-  https://www.jetson-ai-lab.com/tutorials/ollama/
+Objetivo: conectar `llama-server` con la aplicación, herramientas y fuentes de datos.
 
-- Jetson AI Lab, *Initial Setup Guide for Jetson Orin Nano Developer Kit*  
-  https://www.jetson-ai-lab.com/tutorials/initial-setup-jetson-orin-nano/
+### Fase 3. Medición
 
-- Jetson AI Lab, *RAM Optimization*  
-  https://www.jetson-ai-lab.com/tutorials/ram-optimization/
+Objetivo: benchmark básico con prompts representativos y sesiones sostenidas.
 
-- Jetson AI Lab, *SSD + Docker Setup*  
-  https://www.jetson-ai-lab.com/tutorials/ssd-docker-setup/
+### Fase 4. Endurecimiento
 
-- NVIDIA Developer Blog, *Bringing AI Closer to the Edge and On-Device with Gemma 4*  
-  https://developer.nvidia.com/blog/bringing-ai-closer-to-the-edge-and-on-device-with-gemma-4/
+Objetivo: gestión de errores, watchdog, reinicios, control térmico, logging y límites de contexto.
 
-- NVIDIA Developer Forums, *No luck with Gemma 4 on Jetson Nano Super*  
-  https://forums.developer.nvidia.com/t/no-luck-with-gemma-4-on-jetson-nano-super/365620
+### Fase 5. Extensión
 
-- Ollama issue #15398, *gemma4 e2B does not work on Jetson Orin Nano*  
-  https://github.com/ollama/ollama/issues/15398
+Objetivo: decidir si merece añadir visión, audio, tool calling o migrar parte del stack a `vLLM`.
 
-- Ollama docs, *Docker*  
-  https://docs.ollama.com/docker
+---
 
-- Ollama docs, *Linux install*  
-  https://docs.ollama.com/linux
+## 14. Recomendación final
+
+Si lo que quieres es una base **que funcione** en **Jetson Orin Nano Super**, la combinación correcta hoy es:
+
+- **Gemma 4 E2B**
+- **llama.cpp**
+- **GGUF cuantizado**
+- **NVMe SSD**
+- **JetPack 6.x**
+
+Eso es coherente con la guía oficial de Jetson AI Lab y con la posición de Google sobre la familia Gemma 4 como modelos multimodales abiertos desplegables desde edge hasta sistemas mayores. [Fuente: Jetson AI Lab, “Gemma 4 on Jetson”; Google AI, “Gemma 4 model card”]
+
+La versión honesta de la historia es esta: en este hardware, **la elegancia no está en perseguir la variante más grande ni el runtime más cómodo, sino en elegir el camino que no te rompa la placa ni la paciencia**.
+
+---
+
+## 15. Fuentes
+
+1. Jetson AI Lab. **Gemma 4 on Jetson**. https://www.jetson-ai-lab.com/tutorials/gemma4-on-jetson/
+2. Jetson AI Lab. **Gemma 4 E2B**. https://www.jetson-ai-lab.com/models/gemma4-e2b/
+3. Jetson AI Lab. **Initial Setup Guide for Jetson Orin Nano Developer Kit**. https://www.jetson-ai-lab.com/tutorials/initial-setup-jetson-orin-nano/
+4. Jetson AI Lab. **SSD + Docker Setup**. https://www.jetson-ai-lab.com/tutorials/ssd-docker-setup/
+5. Jetson AI Lab. **GenAI Benchmarking: LLMs and VLMs on Jetson**. https://www.jetson-ai-lab.com/tutorials/genai-benchmarking/
+6. Google AI for Developers. **Gemma 4 model card**. https://ai.google.dev/gemma/docs/core/model_card_4

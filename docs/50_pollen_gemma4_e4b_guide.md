@@ -1,24 +1,25 @@
 # Guía técnica de desarrollo v2
 
-## Gemma 4 A4B + LiteRT-LM en Pixel 10 Pro
+## Gemma 4 E4B + LiteRT-LM en Pixel 10 Pro
 
 Versión: 2026-04-22  
 Audiencia: programadora Android que va a desarrollar conmigo  
 Formato: Kotlin + Android + LiteRT-LM  
 Estado: documento operativo para arrancar implementación  
+Nota: esta versión corrige un error de nomenclatura de una versión anterior. El modelo objetivo es **Gemma 4 E4B**, no A4B.
 
 ---
 
 ## 1. Objetivo del documento
 
-Este documento convierte la investigación previa en una guía de ejecución. No busca vender una demo, sino reducir ambigüedad técnica para una implementación real de una app Android que ejecute **Gemma 4 A4B** mediante **LiteRT-LM** en un **Pixel 10 Pro**.
+Este documento convierte la investigación previa en una guía de ejecución. No busca vender una demo, sino reducir ambigüedad técnica para una implementación real de una app Android que ejecute **Gemma 4 E4B** mediante **LiteRT-LM** en un **Pixel 10 Pro**.
 
 La base del proyecto se apoya en cuatro hechos:
 
-1. **Gemma 4 26B A4B existe oficialmente** como variante MoE con **25.2B parámetros totales**, **3.8B activos**, soporte **texto + imagen** y **contexto de hasta 256K tokens**.
+1. **Gemma 4 E4B existe oficialmente** como variante edge de la familia Gemma 4, con **4.5B parámetros efectivos**, alrededor de **8B contando embeddings**, soporte multimodal y **contexto de hasta 128K tokens**.
 2. **LiteRT-LM** es el runtime oficial abierto de Google AI Edge para LLMs on-device con **CPU, GPU, NPU, multimodalidad y tool use**.
 3. **Pixel 10 Pro** sale con **Tensor G5**, **16 GB de RAM** y **Android 16**.
-4. **A4B ya funciona en tu Pixel 10 Pro dentro de AI Edge Gallery**, que según la documentación oficial corre enteramente sobre **LiteRT-LM**.
+4. **E4B ya funciona en tu Pixel 10 Pro dentro de AI Edge Gallery**, que según la documentación oficial corre enteramente sobre **LiteRT-LM**.
 
 Eso permite una conclusión muy importante:
 
@@ -33,14 +34,14 @@ Eso permite una conclusión muy importante:
 - El dispositivo objetivo primario es **Pixel 10 Pro**.
 - El sistema operativo objetivo es **Android 16**.
 - El runtime obligatorio es **LiteRT-LM**.
-- El modelo objetivo funcional es **Gemma 4 A4B**.
+- El modelo objetivo funcional es **Gemma 4 E4B**.
 - Existe una validación práctica positiva en **AI Edge Gallery** con tu propio teléfono.
 
 ### Lo que no asumimos
 
 - No asumimos que el backend **GPU** sea estable en Pixel 10 Pro.
-- No asumimos que el artefacto **A4B** que usa Gallery esté publicado de forma transparente como paquete descargable estándar en LiteRT Community.
-- No asumimos que 256K tokens sean utilizables en móvil como presupuesto de contexto realista.
+- No asumimos que el artefacto **E4B** que ves en Gallery coincida byte a byte con el paquete público de LiteRT Community, aunque sí existe una ruta pública clara para E4B en formato `.litertlm`.
+- No asumimos que 128K tokens sean utilizables en móvil como presupuesto de contexto realista.
 - No asumimos que la **NPU** de Pixel esté lista para nuestro caso con LiteRT-LM.
 
 ### Decisiones de producto para el MVP
@@ -56,19 +57,18 @@ Eso permite una conclusión muy importante:
 
 ## 3. Estado técnico relevante
 
-### 3.1 Modelo: Gemma 4 26B A4B
+### 3.1 Modelo: Gemma 4 E4B
 
-Según el model card oficial:
+Según la ficha técnica oficial:
 
-- variante: **Mixture-of-Experts**
-- parámetros totales: **25.2B**
-- parámetros activos: **3.8B**
-- capas: **30**
-- contexto máximo teórico: **256K**
-- modalidades: **texto, imagen**
-- el nombre **A4B** alude a parámetros activos, no al tamaño total del grafo
+- variante: **edge**
+- parámetros efectivos: **4.5B**
+- tamaño aproximado total: **8B contando embeddings**
+- contexto máximo teórico: **128K**
+- modalidades: **texto, imagen y audio**
+- orientado a ejecución on-device y edge
 
-La implicación práctica es clara: el modelo no se comporta como un 26B denso, pero tampoco debe tratarse como un 4B trivial de bolsillo. Hay que planificar con cuidado **latencia, inicialización, temperatura, memoria y degradación**.
+La implicación práctica es clara: no es un modelo “pequeño” en sentido trivial, pero sí está diseñado para caber en hardware móvil moderno. Aun así, hay que planificar con cuidado **latencia, inicialización, temperatura, memoria y degradación**.
 
 ### 3.2 Runtime: LiteRT-LM
 
@@ -87,7 +87,7 @@ Google documenta que `engine.initialize()` puede tardar varios segundos y recomi
 
 La documentación oficial de LiteRT-LM afirma que **AI Edge Gallery** es una app experimental que muestra capacidades GenAI on-device ejecutadas enteramente offline con LiteRT-LM.
 
-Esto importa mucho, porque tu evidencia local no es anecdótica: si A4B funciona allí en tu Pixel 10 Pro, entonces la combinación **Pixel 10 Pro + LiteRT-LM** ya está probada en el mundo real al menos para una ruta concreta.
+Esto importa mucho, porque tu evidencia local no es anecdótica: si E4B funciona allí en tu Pixel 10 Pro, entonces la combinación **Pixel 10 Pro + LiteRT-LM** ya está probada en el mundo real al menos para una ruta concreta.
 
 ### 3.4 Pixel 10 Pro como plataforma
 
@@ -117,17 +117,17 @@ Traducción operativa:
 
 No la tomamos como pilar del MVP. La documentación general de LiteRT-LM contempla NPU, pero para Pixel el estado público sigue sin ser lo bastante sólido como para diseñar sobre ello.
 
-### 3.7 Disponibilidad pública del artefacto A4B
+### 3.7 Disponibilidad pública del artefacto E4B
 
 A fecha de este documento:
 
 - sí existe una ruta pública clara para **E4B** en formato `.litertlm`
-- no he verificado con la misma claridad una publicación pública y estable equivalente para **A4B**
-- tú ya tienes una validación práctica local dentro de Gallery
+- tu validación en Gallery demuestra que **E4B** ya corre en tu Pixel 10 Pro
+- aun así, conviene tratar el artefacto exacto que ya funciona en tu teléfono como referencia de proyecto, porque no sabemos si Gallery usa exactamente el mismo empaquetado, backend o configuración que tu futura app
 
 Conclusión técnica:
 
-> El artefacto A4B que ya funciona en tu Pixel debe tratarse como activo de proyecto. Hay que inventariarlo, conservarlo y documentarlo antes de intentar cualquier refactor heroico.
+> E4B sí es reproducible públicamente en LiteRT-LM, pero el artefacto exacto que ya funciona en tu Pixel debe inventariarse y preservarse como referencia de proyecto.
 
 ---
 
@@ -135,7 +135,7 @@ Conclusión técnica:
 
 Construir una app Android nativa que:
 
-- cargue Gemma 4 A4B con LiteRT-LM
+- cargue Gemma 4 E4B con LiteRT-LM
 - funcione de forma estable en Pixel 10 Pro
 - soporte chat de texto
 - permita streaming de salida
@@ -161,7 +161,7 @@ Construir una app Android nativa que:
 
 ### Fase 0. Captura de la realidad que ya funciona
 
-Antes de programar nada serio, hay que documentar exactamente el A4B que ya corre en Edge Gallery.
+Antes de programar nada serio, hay que documentar exactamente el E4B que ya corre en Edge Gallery.
 
 Checklist obligatorio:
 
@@ -186,7 +186,7 @@ Objetivo: TTFT, duración de inicialización, tokens por segundo aproximados, er
 
 ### Fase 3. Imagen
 
-Objetivo: habilitar inputs de imagen solo si el artefacto A4B y la integración Kotlin/Android demuestran estabilidad suficiente.
+Objetivo: habilitar inputs de imagen solo si el artefacto E4B y la integración Kotlin/Android demuestran estabilidad suficiente.
 
 ### Fase 4. GPU experimental
 
@@ -443,7 +443,7 @@ data class ModelDescriptor(
 object ModelRegistry {
     fun activeModel(): ModelDescriptor = ModelDescriptor(
         id = "gemma4_a4b_pixel10",
-        displayName = "Gemma 4 A4B",
+        displayName = "Gemma 4 E4B",
         localPath = "/data/user/0/com.tuempresa.gemma/files/models/gemma4-a4b/model.litertlm",
         sha256 = null,
         supportsVision = true,
@@ -553,7 +553,7 @@ class LiteRtEngineFactory(
 Notas:
 
 - si se activa visión, revisar si la API o el artefacto requieren `visionBackend`
-- la configuración exacta dependerá del formato del modelo A4B que ya estás usando
+- la configuración exacta dependerá del formato del modelo E4B que ya estás usando
 
 ### 12.2 Session manager
 
@@ -820,7 +820,7 @@ fun ChatScreen(
 
 ## 18. Estrategia de conversación y contexto
 
-No hay que caer en la fantasía de “el modelo soporta 256K, así que se lo damos todo”.
+No hay que caer en la fantasía de “el modelo soporta 128K, así que se lo damos todo”.
 
 ### Política recomendada
 
@@ -839,11 +839,11 @@ No hay que caer en la fantasía de “el modelo soporta 256K, así que se lo dam
 
 ## 19. Visión e imagen
 
-Gemma 4 A4B soporta texto + imagen según el model card oficial. Eso lo vuelve muy interesante para una segunda fase.
+Gemma 4 E4B soporta texto + imagen según el model card oficial. Eso lo vuelve muy interesante para una segunda fase.
 
 ### Requisitos antes de activarlo
 
-- confirmar que el artefacto A4B concreto que tienes soporta visión bajo LiteRT-LM en Android
+- confirmar que el artefacto E4B concreto que tienes soporta visión bajo LiteRT-LM en Android
 - confirmar firma de API concreta para enviar imagen en Kotlin
 - validar memoria y temperatura con inputs visuales
 
@@ -934,7 +934,7 @@ No hace falta una telemetría paranoica desde el día uno, pero sí conviene reg
 
 ## 22. Riesgos del proyecto
 
-### Riesgo 1. El artefacto A4B no es trivialmente exportable o reproducible
+### Riesgo 1. El artefacto E4B que ya funciona en Gallery no coincide exactamente con el de la app propia
 
 Mitigación:
 
@@ -979,7 +979,7 @@ Mitigación:
 
 ### Sprint 0
 
-- inventario del modelo A4B validado en Edge Gallery
+- inventario del modelo E4B validado en Edge Gallery
 - captura de hashes y metadatos
 - decisión de ruta de almacenamiento
 
@@ -1005,7 +1005,7 @@ Mitigación:
 
 ### Sprint 4
 
-- imagen si la ruta A4B real la soporta de forma estable en Kotlin
+- imagen si la ruta E4B real la soporta de forma estable en Kotlin
 - redimensionado y límites
 - pruebas térmicas y de memoria
 
@@ -1013,7 +1013,7 @@ Mitigación:
 
 ## 24. Preguntas técnicas que la programadora debe resolver al inicio
 
-1. ¿Cuál es exactamente el archivo A4B que ya funciona en tu Edge Gallery?
+1. ¿Cuál es exactamente el archivo E4B que ya funciona en tu Edge Gallery?
 2. ¿Está disponible fuera de la app o solo queda encapsulado dentro de su flujo?
 3. ¿La ruta actual funcional usa CPU o GPU?
 4. ¿Qué firma exacta de API requiere visión para ese artefacto con LiteRT-LM Kotlin?
@@ -1056,7 +1056,7 @@ La arquitectura correcta no es la más aparatosa. Es la que acepta el estado rea
 
 - app Android nativa
 - LiteRT-LM encapsulado en una capa interna
-- Gemma 4 A4B como artefacto controlado y versionado por metadatos
+- Gemma 4 E4B como artefacto controlado y versionado por metadatos
 - CPU como contrato estable
 - GPU como experimento reversible
 - visión como segunda iteración
@@ -1092,7 +1092,7 @@ En otras palabras:
 
 ### Fuentes internas de proyecto a crear
 
-- ficha del artefacto A4B validado localmente
+- ficha del artefacto E4B validado localmente
 - hash SHA-256 del modelo
 - tabla de benchmarks internos CPU/GPU
 - registro de fallos por backend

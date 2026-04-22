@@ -84,15 +84,11 @@ Pollen debe funcionar en tres modos:
 - `FieldVisit`
 - `SyncBundle` hacia Meristem
 
-## 8. Gemma 4 en Android
+## 8. Gemma 4 E4B en Android
 
-**Decision pendiente (dia 10): E4B vs A4B como modelo objetivo de Pollen.**
+Modelo objetivo de Pollen: **Gemma 4 E4B** (4.5B efectivos, ~8B con embeddings, 128K contexto, texto + imagen + audio). E4B esta validado empiricamente en el Pixel 10 Pro via AI Edge Gallery (que corre enteramente sobre LiteRT-LM offline segun documentacion oficial).
 
-- **E4B** era la eleccion inicial del pivote v2 por coherencia edge-mobile.
-- **A4B** (26B MoE, 3.8B activos, 256K contexto) esta validado empiricamente en Pixel 10 Pro via AI Edge Gallery (corre enteramente sobre LiteRT-LM offline). Mas capacidad de razonamiento, mas memoria de contexto.
-- Guia tecnica comparativa y plan de implementacion en `docs/50_pollen_gemma4_a4b_guide.md`.
-
-La spec del resto de este documento se mantiene agnostica al modelo concreto hasta que se cierre la decision.
+Detalle operativo completo — runtime, capas, build Gradle, manifest, politica de backend, plan de implementacion por fases — en `docs/50_pollen_gemma4_e4b_guide.md`.
 
 Gemma se usa para cuatro tareas esenciales:
 
