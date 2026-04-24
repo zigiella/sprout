@@ -134,6 +134,7 @@ class LiteRtChatService(
             activeConversation = engine.createConversation(config)
         }
         val conversation = activeConversation!!
+        val start = metricsCollector.now()
         
         try {
             val prompt = Message.user(userText)
@@ -160,7 +161,7 @@ class LiteRtChatService(
             val finalMetrics = metricsCollector.build(
                 backendMode = initialMetrics?.backendMode ?: BackendMode.CPU,
                 initializeStart = 0, // already measured in init
-                initializeEnd = metricsCollector.now(), 
+                initializeEnd = start, 
                 firstTokenAt = firstTokenAt ?: completedAt,
                 completedAt = completedAt,
                 output = output
