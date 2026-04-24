@@ -1,6 +1,8 @@
 package net.sprout.pollen.ui.chat
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -127,8 +129,10 @@ fun ChatScreen(
             Text(text = "Error: ${uiState.error}", color = MaterialTheme.colorScheme.error)
         }
 
-        SelectionContainer {
-            Text(text = uiState.output, style = MaterialTheme.typography.bodyLarge)
+        Box(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+            SelectionContainer {
+                Text(text = uiState.output, style = MaterialTheme.typography.bodyLarge)
+            }
         }
     }
 }
