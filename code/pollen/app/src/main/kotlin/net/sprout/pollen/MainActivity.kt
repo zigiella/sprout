@@ -1,12 +1,16 @@
 package net.sprout.pollen
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
 import net.sprout.pollen.ui.chat.ChatScreen
 import net.sprout.pollen.ui.chat.ChatViewModel
 import net.sprout.pollen.llm.LiteRtEngineFactory
@@ -14,19 +18,32 @@ import net.sprout.pollen.llm.LiteRtBackendPolicy
 import net.sprout.pollen.llm.LiteRtMetricsCollector
 import net.sprout.pollen.llm.LiteRtSessionManager
 import net.sprout.pollen.llm.LiteRtChatService
+import net.sprout.pollen.voice.PollenVoiceInfra
 import androidx.compose.runtime.collectAsState
 
 class MainActivity : ComponentActivity() {
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        // Si no lo concede, el log de VoiceInfra avisará
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+
         val engineFactory = LiteRtEngineFactory(this)
         val backendPolicy = LiteRtBackendPolicy()
         val metricsCollector = LiteRtMetricsCollector()
         val sessionManager = LiteRtSessionManager(engineFactory, backendPolicy, metricsCollector)
         val chatService = LiteRtChatService(sessionManager, metricsCollector)
+        val voiceInfra = PollenVoiceInfra(this)
         
-        val viewModel = ChatViewModel(chatService, sessionManager, "/data/local/tmp/gemma-4-E4B-it.litertlm")
+        val viewModel = ChatViewModel(chatService, sessionManager, voiceInfra, "/data/local/tmp/gemma-4-E4B-it.litertlm")
 
         setContent {
             MaterialTheme {
@@ -39,7 +56,8 @@ class MainActivity : ComponentActivity() {
                         uiState = uiState,
                         onPromptChanged = { viewModel.onPromptChanged(it) },
                         onThinkingToggled = { viewModel.onThinkingToggled(it) },
-                        onSend = { viewModel.send() }
+                        onSend = { viewModel.send() },
+                        onStartVoice = { viewModel.startListening() }
                     )
                 }
             }

@@ -1,5 +1,6 @@
 package net.sprout.pollen.ui.chat
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,6 +15,7 @@ import net.sprout.pollen.domain.model.GenerationMetrics
 import net.sprout.pollen.llm.LiteRtChatService
 import net.sprout.pollen.llm.LiteRtSessionManager
 import net.sprout.pollen.domain.model.BackendMode
+import net.sprout.pollen.voice.PollenVoiceInfra
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,23 +26,32 @@ import kotlinx.coroutines.withContext
 data class ChatUiState(
     val prompt: String = "",
     val isLoading: Boolean = false,
+    val isListening: Boolean = false,
     val output: String = "",
     val error: String? = null,
     val metrics: GenerationMetrics? = null,
-    val isThinkingEnabled: Boolean = false
+    val isThinkingEnabled: Boolean = false,
+    val voiceLogs: List<String> = emptyList()
 )
 
 class ChatViewModel(
     private val chatService: LiteRtChatService,
     private val sessionManager: LiteRtSessionManager,
+    private val voiceInfra: PollenVoiceInfra,
     private val modelPath: String
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ChatUiState())
     val uiState: StateFlow<ChatUiState> = _uiState
 
     init {
-        // Initialize engine strictly on background IO thread
         viewModelScope.launch {
+            // Recoger logs de VoiceInfra
+            launch {
+                voiceInfra.logs.collect { logs ->
+                    _uiState.update { it.copy(voiceLogs = logs) }
+                }
+            }
+
             _uiState.update { it.copy(isLoading = true, output = "Iniciando motor LiteRT-LM en CPU...") }
             try {
                 withContext(Dispatchers.IO) {
@@ -63,26 +74,66 @@ class ChatViewModel(
 
     fun onThinkingToggled(enabled: Boolean) {
         _uiState.update { it.copy(isThinkingEnabled = enabled) }
-        chatService.resetConversation() // Resetea contexto al cambiar el modo
+        chatService.resetConversation()
+    }
+
+    fun startListening() {
+        _uiState.update { it.copy(isListening = true) }
+        voiceInfra.startListening(
+            onResult = { text ->
+                _uiState.update { it.copy(prompt = text, isListening = false) }
+                send() // Autodisparar
+            },
+            onError = { err ->
+                _uiState.update { it.copy(isListening = false, error = err) }
+            },
+            onPartial = { partial ->
+                _uiState.update { it.copy(prompt = partial) }
+            }
+        )
     }
 
     fun send() {
         val prompt = _uiState.value.prompt.trim()
         if (prompt.isEmpty()) return
 
+        voiceInfra.stopSpeaking() // Cortar si estaba hablando
+
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, output = "", error = null, metrics = null) }
             
+            var sentenceBuffer = ""
+
             withContext(Dispatchers.IO) {
                 runCatching {
                     chatService.sendPrompt(prompt, _uiState.value.isThinkingEnabled).collect { (chunk, metricsUpdate) ->
+                        // Acumular chunk visualmente
                         _uiState.update { state ->
                             state.copy(
                                 output = state.output + chunk,
                                 metrics = metricsUpdate ?: state.metrics
                             )
                         }
+
+                        // Acumular para TTS (reproducir frases completas)
+                        sentenceBuffer += chunk
+                        if (sentenceBuffer.contains(Regex("[.?!\\n]"))) {
+                            val parts = sentenceBuffer.split(Regex("(?<=[.?!\\n])"))
+                            for (i in 0 until parts.size - 1) {
+                                val sentence = parts[i].trim()
+                                if (sentence.isNotEmpty()) {
+                                    voiceInfra.speak(sentence)
+                                }
+                            }
+                            sentenceBuffer = parts.last() // lo que sobra
+                        }
                     }
+                    
+                    // Al finalizar, hablar lo que quede
+                    if (sentenceBuffer.trim().isNotEmpty()) {
+                        voiceInfra.speak(sentenceBuffer.trim())
+                    }
+
                 }.onFailure { t ->
                     _uiState.update { it.copy(error = t.message) }
                 }
@@ -97,6 +148,7 @@ fun ChatScreen(
     uiState: ChatUiState,
     onPromptChanged: (String) -> Unit,
     onThinkingToggled: (Boolean) -> Unit,
+    onStartVoice: () -> Unit,
     onSend: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -104,7 +156,7 @@ fun ChatScreen(
             value = uiState.prompt,
             onValueChange = onPromptChanged,
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Mensaje para Gemma 4 E4B") }
+            label = { Text("Mensaje para Pollen") }
         )
 
         Spacer(Modifier.height(12.dp))
@@ -114,10 +166,18 @@ fun ChatScreen(
                 onClick = onSend,
                 enabled = !uiState.isLoading,
             ) {
-                Text(if (uiState.isLoading) "Pensando / Generando..." else "Enviar")
+                Text(if (uiState.isLoading) "Generando..." else "Enviar")
+            }
+            Spacer(Modifier.width(8.dp))
+            Button(
+                onClick = onStartVoice,
+                enabled = !uiState.isLoading && !uiState.isListening,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+            ) {
+                Text(if (uiState.isListening) "Escuchando..." else "🎤 Hablar")
             }
             Spacer(Modifier.width(16.dp))
-            Text("Thinking Mode")
+            Text("Thinking")
             Switch(
                 checked = uiState.isThinkingEnabled,
                 onCheckedChange = onThinkingToggled
@@ -133,7 +193,6 @@ fun ChatScreen(
                     Text("Init Time: ${m.initializeMillis} ms", style = MaterialTheme.typography.labelSmall)
                     Text("TTFT (1er token): ${m.ttftMillis} ms", style = MaterialTheme.typography.labelSmall)
                     Text("Generación total: ${m.totalMillis} ms", style = MaterialTheme.typography.labelSmall)
-                    Text("Tokens(chars): ${m.outputChars}", style = MaterialTheme.typography.labelSmall)
                 }
             }
         }
@@ -142,6 +201,24 @@ fun ChatScreen(
 
         if (uiState.error != null) {
             Text(text = "Error: ${uiState.error}", color = MaterialTheme.colorScheme.error)
+        }
+
+        // Voice logs console
+        if (uiState.voiceLogs.isNotEmpty()) {
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .padding(4.dp)
+                .verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = uiState.voiceLogs.joinToString("\n"),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Spacer(Modifier.height(8.dp))
         }
 
         Box(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
