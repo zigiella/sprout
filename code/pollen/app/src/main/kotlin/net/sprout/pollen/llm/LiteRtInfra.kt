@@ -9,6 +9,7 @@ import com.google.ai.edge.litertlm.Message
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.collect
+import com.google.ai.edge.litertlm.Content
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import net.sprout.pollen.domain.model.BackendMode
@@ -129,12 +130,14 @@ class LiteRtChatService(
             // We use standard Kotlin Flow collect here (this may need adjustments based on exact API)
             try {
                 // Since this is standard Kotlin, LiteRT's Flow returns strings chunks
+                // NOTE: the API returns Message, we must extract Content.Text from it.
                 conversation.sendMessageAsync(prompt).collect { chunk ->
                     if (firstTokenAt == null) {
                         firstTokenAt = metricsCollector.now()
                     }
-                    output += chunk
-                    emit(chunk to null)
+                    val textChunk = chunk.contents.contents.filterIsInstance<Content.Text>().joinToString("") { it.text }
+                    output += textChunk
+                    emit(textChunk to null)
                 }
             } catch(e: Exception) {
                 // If API is slightly different (e.g. sendMessage vs sendMessageAsync) we catch it.
