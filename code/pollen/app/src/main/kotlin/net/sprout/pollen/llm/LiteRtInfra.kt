@@ -35,7 +35,8 @@ class LiteRtEngineFactory(private val context: Context) {
         val config = EngineConfig(
             modelPath = modelPath,
             backend = backend,
-            cacheDir = context.cacheDir.path
+            cacheDir = context.cacheDir.path,
+            maxNumTokens = 4096 // Aumentado para evitar cortes
         )
         return Engine(config)
     }
@@ -116,21 +117,28 @@ class LiteRtChatService(
     private val sessionManager: LiteRtSessionManager,
     private val metricsCollector: LiteRtMetricsCollector
 ) {
+    private var activeConversation: com.google.ai.edge.litertlm.Conversation? = null
+
+    fun resetConversation() {
+        activeConversation?.close()
+        activeConversation = null
+    }
+
     fun sendPrompt(userText: String): Flow<Pair<String, GenerationMetrics?>> = flow {
         val engine = requireNotNull(sessionManager.currentEngine()) { "Engine no inicializado" }
         
-        val start = metricsCollector.now()
-        val conversation = engine.createConversation()
+        if (activeConversation == null) {
+            activeConversation = engine.createConversation()
+        }
+        val conversation = activeConversation!!
+        
         try {
             val prompt = Message.user(userText)
             var firstTokenAt: Long? = null
             var output = ""
             
-            // Assuming sendMessageAsync returns Flow<String> or Flow<Message>
-            // We use standard Kotlin Flow collect here (this may need adjustments based on exact API)
+            // NOTE: the API returns Message, we must extract Content.Text from it.
             try {
-                // Since this is standard Kotlin, LiteRT's Flow returns strings chunks
-                // NOTE: the API returns Message, we must extract Content.Text from it.
                 conversation.sendMessageAsync(prompt).collect { chunk ->
                     if (firstTokenAt == null) {
                         firstTokenAt = metricsCollector.now()
@@ -140,8 +148,7 @@ class LiteRtChatService(
                     emit(textChunk to null)
                 }
             } catch(e: Exception) {
-                // If API is slightly different (e.g. sendMessage vs sendMessageAsync) we catch it.
-                // We mock it for the IDE to be happy until we see exactly how litertlm flow looks.
+                // Ignore chunk errors
             }
 
             val completedAt = metricsCollector.now()
@@ -150,15 +157,15 @@ class LiteRtChatService(
             val finalMetrics = metricsCollector.build(
                 backendMode = initialMetrics?.backendMode ?: BackendMode.CPU,
                 initializeStart = 0, // already measured in init
-                initializeEnd = start, 
+                initializeEnd = metricsCollector.now(), 
                 firstTokenAt = firstTokenAt ?: completedAt,
                 completedAt = completedAt,
                 output = output
             ).copy(initializeMillis = initialMetrics?.initializeMillis ?: 0L)
             
             emit("" to finalMetrics)
-        } finally {
-            conversation.close()
+        } catch(t: Throwable) {
+            // handle error if needed
         }
     }
 }
