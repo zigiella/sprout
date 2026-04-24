@@ -64,8 +64,8 @@ dependencies {
     // Kotlinx Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
-    // MediaPipe GenAI (Gemma)
-    implementation("com.google.mediapipe:tasks-genai:0.10.14")
+    // LiteRT-LM (Gemma 4)
+    implementation("com.google.ai.edge.litertlm:litertlm-android:+")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
