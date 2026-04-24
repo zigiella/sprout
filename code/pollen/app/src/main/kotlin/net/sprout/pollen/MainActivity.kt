@@ -15,6 +15,7 @@ import net.sprout.pollen.llm.LiteRtMetricsCollector
 import net.sprout.pollen.llm.LiteRtSessionManager
 import net.sprout.pollen.llm.LiteRtChatService
 import androidx.compose.runtime.collectAsState
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,8 +26,6 @@ class MainActivity : ComponentActivity() {
         val sessionManager = LiteRtSessionManager(engineFactory, backendPolicy, metricsCollector)
         val chatService = LiteRtChatService(sessionManager, metricsCollector)
         
-        // As per F0, model is located at C:\DATA\PETS\TEST\T6A2-POLLEN\models\gemma-4-E4B-it.litertlm
-        // But on Android device it will be pushed to /data/local/tmp/gemma-4-E4B-it.litertlm
         val viewModel = ChatViewModel(chatService, sessionManager, "/data/local/tmp/gemma-4-E4B-it.litertlm")
 
         setContent {
@@ -39,6 +38,7 @@ class MainActivity : ComponentActivity() {
                     ChatScreen(
                         uiState = uiState,
                         onPromptChanged = { viewModel.onPromptChanged(it) },
+                        onThinkingToggled = { viewModel.onThinkingToggled(it) },
                         onSend = { viewModel.send() }
                     )
                 }

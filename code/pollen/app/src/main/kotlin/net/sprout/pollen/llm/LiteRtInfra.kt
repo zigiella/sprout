@@ -124,11 +124,14 @@ class LiteRtChatService(
         activeConversation = null
     }
 
-    fun sendPrompt(userText: String): Flow<Pair<String, GenerationMetrics?>> = flow {
+    fun sendPrompt(userText: String, isThinkingEnabled: Boolean = false): Flow<Pair<String, GenerationMetrics?>> = flow {
         val engine = requireNotNull(sessionManager.currentEngine()) { "Engine no inicializado" }
         
         if (activeConversation == null) {
-            activeConversation = engine.createConversation()
+            val config = com.google.ai.edge.litertlm.ConversationConfig(
+                extraContext = if (isThinkingEnabled) mapOf("enable_thinking" to true) else emptyMap()
+            )
+            activeConversation = engine.createConversation(config)
         }
         val conversation = activeConversation!!
         

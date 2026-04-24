@@ -26,7 +26,8 @@ data class ChatUiState(
     val isLoading: Boolean = false,
     val output: String = "",
     val error: String? = null,
-    val metrics: GenerationMetrics? = null
+    val metrics: GenerationMetrics? = null,
+    val isThinkingEnabled: Boolean = false
 )
 
 class ChatViewModel(
@@ -60,6 +61,11 @@ class ChatViewModel(
         _uiState.update { it.copy(prompt = value) }
     }
 
+    fun onThinkingToggled(enabled: Boolean) {
+        _uiState.update { it.copy(isThinkingEnabled = enabled) }
+        chatService.resetConversation() // Resetea contexto al cambiar el modo
+    }
+
     fun send() {
         val prompt = _uiState.value.prompt.trim()
         if (prompt.isEmpty()) return
@@ -69,7 +75,7 @@ class ChatViewModel(
             
             withContext(Dispatchers.IO) {
                 runCatching {
-                    chatService.sendPrompt(prompt).collect { (chunk, metricsUpdate) ->
+                    chatService.sendPrompt(prompt, _uiState.value.isThinkingEnabled).collect { (chunk, metricsUpdate) ->
                         _uiState.update { state ->
                             state.copy(
                                 output = state.output + chunk,
@@ -90,6 +96,7 @@ class ChatViewModel(
 fun ChatScreen(
     uiState: ChatUiState,
     onPromptChanged: (String) -> Unit,
+    onThinkingToggled: (Boolean) -> Unit,
     onSend: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -102,11 +109,19 @@ fun ChatScreen(
 
         Spacer(Modifier.height(12.dp))
 
-        Button(
-            onClick = onSend,
-            enabled = !uiState.isLoading,
-        ) {
-            Text(if (uiState.isLoading) "Pensando / Generando..." else "Enviar")
+        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            Button(
+                onClick = onSend,
+                enabled = !uiState.isLoading,
+            ) {
+                Text(if (uiState.isLoading) "Pensando / Generando..." else "Enviar")
+            }
+            Spacer(Modifier.width(16.dp))
+            Text("Thinking Mode")
+            Switch(
+                checked = uiState.isThinkingEnabled,
+                onCheckedChange = onThinkingToggled
+            )
         }
 
         Spacer(Modifier.height(8.dp))
