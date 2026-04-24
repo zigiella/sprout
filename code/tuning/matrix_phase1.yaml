@@ -1,0 +1,70 @@
+# Fase 1 — exploración de dials en turno único.
+#
+# 3 configs (perfiles que cruzan varias palancas a la vez)
+# x 8 prompts (prompt_pack_en.yaml completo)
+# = 24 runs.
+#
+# Todas respetan num_ctx + num_predict <= 4096 (techo LiteRT-LM real).
+# Todas temperature = 0.3 (decisión fija en v0, se barre en fase 2 si importa).
+# Todas en EN (hipótesis: inglés mejor para lógica interna, se valida en 1.5).
+
+phase: 1
+purpose: |
+  Explorar qué perfil de configuración produce respuestas utilizables por
+  arquetipo. Tres perfiles que cruzan varias palancas para no barrer a ciegas.
+
+invariants:
+  model: "gemma4:e4b"
+  backend: local-ollama
+  adapter_url: "http://localhost:11434"
+  temperature: 0.3
+  max_ventana_tokens: 4096    # num_ctx + num_predict <= 4096
+  language: en
+
+configs:
+  - id: C1_austero
+    system_prompt_id: brief_direct_en
+    think: false
+    num_ctx: 2048
+    num_predict: 512
+    rationale: |
+      Perfil minimalista. Sin razonamiento extendido, system prompt directo,
+      respuesta corta. Hipótesis: suficiente para compile_mission si el
+      modelo es capaz de parsear la intención sin pensar en voz alta.
+
+  - id: C2_balanced
+    system_prompt_id: auditor_standard_en
+    think: true
+    num_ctx: 2048
+    num_predict: 2048
+    rationale: |
+      Perfil de compromiso. Thinking activo, system prompt con cobertura de
+      los 4 arquetipos, reparto equilibrado de ventana. Hipótesis: baseline
+      razonable para los 4 arquetipos.
+
+  - id: C3_expansive
+    system_prompt_id: reason_exhaustive_en
+    think: true
+    num_ctx: 512
+    num_predict: 3584
+    rationale: |
+      Perfil de respuesta generosa. Poco contexto, mucho margen de output.
+      Hipótesis: útil para explain_decision y federate_context si el modelo
+      tiende a producir respuestas largas cuando se le da espacio. Riesgo:
+      se queda corto de contexto en audit_visit (receipts ocupan).
+
+prompts:
+  - compile_mission_CM1
+  - compile_mission_CM2
+  - audit_visit_AV1
+  - audit_visit_AV2
+  - federate_context_FC1
+  - federate_context_FC2
+  - explain_decision_ED1
+  - explain_decision_ED2
+
+total_runs: 24
+
+output:
+  path: "results/phase1.jsonl"
+  one_record_per_run: true

@@ -1,0 +1,12 @@
+# Resultados de runs — datos grandes y regenerables
+results/
+*.jsonl
+
+# Entornos locales
+.venv/
+__pycache__/
+*.pyc
+
+# Archivos temporales
+*.tmp
+*.log

@@ -1,0 +1,82 @@
+# Fase 1.5 — validación empírica de idioma de system prompt.
+#
+# 4 configs (2 estilos × 2 idiomas)
+# x 2 prompts pivot (uno de compile, uno de explain)
+# = 8 runs.
+#
+# Objetivo: resolver si la hipótesis "inglés mejor para lógica interna"
+# se sostiene con datos en Gemma 4 E4B. Elegimos dos prompts pivot porque
+# cubren los dos extremos de output (JSON estructurado vs prosa natural).
+
+phase: 1.5
+purpose: |
+  Validar empíricamente si usar system prompts en inglés produce mejor
+  calidad que usarlos en español, para dos arquetipos representativos.
+  Resultado determina si toda la batería siguiente corre en EN o si hay
+  que revisar la hipótesis.
+
+invariants:
+  model: "gemma4:e4b"
+  backend: local-ollama
+  adapter_url: "http://localhost:11434"
+  temperature: 0.3
+  max_ventana_tokens: 4096
+  think: true
+
+configs:
+  - id: EN_balanced
+    system_prompt_id: auditor_standard_en
+    language: en
+    num_ctx: 2048
+    num_predict: 2048
+    notes: "Usa el user_message en EN del prompt_pack_en.yaml."
+
+  - id: EN_expansive
+    system_prompt_id: reason_exhaustive_en
+    language: en
+    num_ctx: 512
+    num_predict: 3584
+    notes: "Usa el user_message en EN."
+
+  - id: ES_balanced
+    system_prompt_id: auditor_standard_es
+    language: es
+    num_ctx: 2048
+    num_predict: 2048
+    notes: "Usa el user_message en ES del prompt_pack_es.yaml (mismo prompt traducido)."
+
+  - id: ES_expansive
+    system_prompt_id: reason_exhaustive_es
+    language: es
+    num_ctx: 512
+    num_predict: 3584
+    notes: "Usa el user_message en ES."
+
+pivot_prompts:
+  - en_id: compile_mission_CM2    # el más rico en restricciones
+    es_id: compile_mission_CM2_es
+  - en_id: explain_decision_ED1   # prosa natural, farmer-facing
+    es_id: explain_decision_ED1_es
+
+total_runs: 8
+
+decision_rule: |
+  Tras leer las 8 runs aplicando judge_rubric.md:
+
+  - Si EN_balanced y EN_expansive ganan en ambos pivots en >=4 de 6 criterios
+    respectivamente, se fija EN para toda la batería. Recomendación firme
+    a Floema: migrar SystemPrompts.kt a inglés.
+
+  - Si no hay diferencia apreciable (EN gana en unos, ES en otros, sin patrón
+    claro), se recomienda EN igualmente por alineación con training data,
+    pero sin evidencia de coste. Se documenta como "decisión de ingeniería
+    por precaución, no por medida".
+
+  - Si ES gana claramente en ambos pivots, hallazgo importante. Se documenta
+    con rigor, se hipotetiza por qué (Gemma 4 puede tener más exposición a
+    español de la esperada, o el fine-tuning IT lo equilibró), y se revisa
+    la hipótesis de Bea con ella antes de concluir.
+
+output:
+  path: "results/phase1_5.jsonl"
+  one_record_per_run: true

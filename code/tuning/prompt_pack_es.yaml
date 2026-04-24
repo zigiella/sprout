@@ -1,0 +1,182 @@
+# 8 user prompts en ES — traducciones semánticas de prompt_pack_en.yaml.
+#
+# Usados en fase 1.5 para validar empíricamente si la lógica interna de
+# prompts debe estar en EN o ES. Los IDs tienen sufijo _es para distinguir.
+#
+# IMPORTANTE: el context de cada prompt está traducido también. Si solo
+# tradujéramos el user_message y dejáramos el context en inglés, estaríamos
+# midiendo otra cosa (code-switching), no idioma.
+
+- id: compile_mission_CM1_es
+  archetype: compile_mission
+  language: es
+  user_message: |
+    "Vuelvo el viernes. Prioriza la albahaca."
+  context: |
+    Fecha actual: 2026-04-24 (viernes es 2026-04-25, dentro de 24 horas).
+    Parcelas conocidas: A (albahaca), B (tomate).
+  expected_output_shape: json_missionpatch_v2
+  judgment_focus:
+    - JSON sintácticamente válido y parseable
+    - schema_version == "2.0"
+    - horizon_h aproximadamente 24
+    - priority_plot == "A" (albahaca está en A)
+    - operator_note preserva la instrucción original
+    - sin campos alucinados
+
+- id: compile_mission_CM2_es
+  archetype: compile_mission
+  language: es
+  user_message: |
+    "Estaré fuera 72 horas. Parcela A prioritaria. Máximo 1 litro de agua.
+    No riegues entre mediodía y las 3 de la tarde si hace calor. Objetivo:
+    modo supervivencia."
+  context: |
+    Fecha actual: 2026-04-24.
+    Parcelas conocidas: A (albahaca), B (tomate).
+  expected_output_shape: json_missionpatch_v2
+  judgment_focus:
+    - horizon_h == 72
+    - priority_plot == "A"
+    - budget_cap_ml == 1000
+    - avoid_hours cubre 12, 13, 14
+    - goal_mode == "survival"
+    - operator_note resume o preserva la instrucción
+
+- id: audit_visit_AV1_es
+  archetype: audit_visit
+  language: es
+  user_message: |
+    "Estoy en la parcela A. La tierra está seca. La albahaca tiene las hojas
+    un poco marchitas. ¿Qué dices tú?"
+  context: |
+    Snapshot Rhizome (parcela A, hace 5 minutos):
+      - soil_now_pct: 18
+      - last_watered_at: hace 22 horas
+      - tank_now_pct: 65
+      - flow_ok: true
+      - current_mode: normal
+    Última decisión (hace 14 horas):
+      - DEFER(240min), reason_code: "weather_digest_predicts_rain"
+    Tiempo desde entonces: no llovió (fuente: Pollen cached forecast, el fallo
+      confirmado por lecturas recientes del sensor).
+  expected_output_shape: json_validationstamp
+  judgment_focus:
+    - Confirma la observación humana (la tierra está seca según sensor)
+    - Referencia soil_now_pct=18 como evidencia
+    - Nota el defer-sin-lluvia como factor contribuyente
+    - NO inventa lecturas ni toma decisiones de regar (eso es de Rhizome)
+
+- id: audit_visit_AV2_es
+  archetype: audit_visit
+  language: es
+  user_message: |
+    "La parcela A está sequísima al tacto. De verdad. ¿Pero tú dices que está bien?"
+  context: |
+    Snapshot Rhizome (parcela A, hace 3 minutos):
+      - soil_now_pct: 55
+      - last_watered_at: hace 4 horas
+      - tank_now_pct: 70
+      - flow_ok: true
+      - current_mode: normal
+    Última decisión (hace 4 horas):
+      - WATER(A, 180s), completada, receipt id dr_881
+  expected_output_shape: json_visitamendment
+  judgment_focus:
+    - Identifica el conflicto entre observación humana y lectura del sensor
+    - NO se pone automáticamente del lado de ninguno — pide prudencia o verificación
+    - Propone acción concreta (revisar sensor, segunda lectura manual, mirar deriva del sensor)
+    - JSON VisitAmendment válido
+
+- id: federate_context_FC1_es
+  archetype: federate_context
+  language: es
+  user_message: |
+    "Resúmeme lo que pasó en la parcela A en las últimas 24h para llevármelo a la parcela B."
+  context: |
+    Eventos parcela A, últimas 24h (15 eventos):
+      - 00:12  soil A: 38 pct
+      - 02:30  heartbeat ok
+      - 04:45  soil A: 35 pct
+      - 06:00  ALERTA tank_low (depósito bajó a 22 pct)
+      - 06:15  decisión SKIP (razón: tank_low)
+      - 08:30  soil A: 32 pct
+      - 09:00  depósito rellenado manualmente a 90 pct (inferido por salto)
+      - 10:00  soil A: 30 pct
+      - 11:00  decisión WATER(A, 120s)
+      - 11:02  flow confirmado, suelo subiendo
+      - 13:00  soil A: 55 pct
+      - 14:30  soil A: 52 pct
+      - 16:00  weather_cache actualizado: sin lluvia 24h vista
+      - 20:00  soil A: 48 pct
+      - 23:30  heartbeat ok
+  expected_output_shape: json_weatherdigest
+  judgment_focus:
+    - Comprimido a 3-5 líneas factuales
+    - Preserva señales críticas (alerta tank_low, relleno manual inferido, evento de riego)
+    - Descarta ruido (heartbeats rutinarios, fluctuaciones menores)
+    - Útil para que Pollen lo lleve a la parcela B
+
+- id: federate_context_FC2_es
+  archetype: federate_context
+  language: es
+  user_message: |
+    "Dame el resumen semanal de la parcela B para la reunión de arbitraje."
+  context: |
+    Eventos parcela B, últimos 7 días (resumen):
+      - 3 ALERTAS: heartbeat_lost (2 minutos cada una), todas por la tarde con calor
+      - Suelo estable en rango 40-50 pct excepto caída a 28 pct el día 4
+      - 5 decisiones WATER, todas completadas con flow_ok
+      - Política sin cambios hace 14 días (policy_age_h = 336)
+      - Tiempo: semana seca, temperaturas altas (media 34°C), sin lluvia
+      - Depósito rellenado manualmente dos veces
+  expected_output_shape: json_weatherdigest
+  judgment_focus:
+    - Identifica el patrón de heartbeats como posiblemente relacionado con calor
+    - Nota la edad de la política como preocupación a elevar en arbitraje
+    - Prioriza qué debería mirar la próxima visita
+    - No especula en exceso (no inventa causas raíz)
+
+- id: explain_decision_ED1_es
+  archetype: explain_decision
+  language: es
+  user_message: |
+    "¿Por qué no regaste ayer a las 11 de la mañana?"
+  context: |
+    Decision receipt dr_742 (ayer, 11:03):
+      - action: DEFER
+      - duration: 240 min
+      - reason_code: weather_digest_predicts_rain_in_6h
+      - soil_at_decision: 34 pct
+      - soil_threshold_for_action: 30 pct (margen sobre umbral)
+      - weather_source: digest de Pollen recibido 08:15, indicó probabilidad de lluvia 0.72 a las 17:00
+    Continuación: no llovió. Suelo llegó a 28 pct a las 16:30. Decisión posterior
+    a las 17:00 fue WATER(A, 180s), completada.
+  expected_output_shape: freeform_natural
+  judgment_focus:
+    - Explica que el defer fue por predicción de lluvia
+    - Cita valores concretos (suelo 34, umbral 30, margen de 4 puntos)
+    - Menciona que la lluvia no ocurrió y que se regó más tarde
+    - Lenguaje accesible al agricultor (sin jerga "reason_code")
+    - Breve (bajo 60 palabras idealmente)
+    - Sin excusas ni disculpas
+
+- id: explain_decision_ED2_es
+  archetype: explain_decision
+  language: es
+  user_message: |
+    "¿Qué ha cambiado desde mi última visita hace 72 horas?"
+  context: |
+    Delta de snapshot (hace 72h → ahora):
+      - Parcela A: 3 eventos WATER (total 540s), 1 SKIP (tank_low, resuelto por relleno manual), trayectoria suelo 45 -> 42 -> 58 -> 52 pct
+      - Parcela B: 1 evento WATER (120s), suelo estable 40-48 pct
+      - Alertas: 1 tank_low en A (día 1), 1 heartbeat_lost en B (día 2, 90s)
+      - Política: sin cambios
+      - Digest meteo: recibido una vez (día 2), predijo semana seca correctamente
+  expected_output_shape: freeform_natural
+  judgment_focus:
+    - Resume los deltas más importantes primero (alertas, relleno de depósito)
+    - Menciona estabilidad donde importa (política sin cambios, parcela B tranquila)
+    - Orden cronológico o por prioridad — cualquiera vale si es consistente
+    - Bajo 100 palabras
+    - Sin eventos alucinados

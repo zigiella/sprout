@@ -1,0 +1,93 @@
+# Fase 3 — muro maxNumTokens con acumulación de KV cache.
+#
+# 2 arquetipos stateful × 3 profundidades × 2 configs = 12 runs.
+#
+# Replica el escenario del feature request abierto en LiteRT-LM sobre
+# gestión de contexto en conversaciones largas. Responde a la pregunta:
+# "¿dónde se rompe Pollen por acumulación, y qué estrategia de poda
+# recomendamos a Floema?"
+
+phase: 3
+purpose: |
+  Medir empíricamente cómo degrada la calidad (o se produce corte) cuando
+  la conversación acumula turnos y se acerca al techo de 4096 tokens
+  (num_ctx + num_predict invariante). Comparar thinking on vs off en
+  acumulación para ver si el razonamiento persiste en el KV cache.
+
+invariants:
+  model: "gemma4:e4b"
+  backend: local-ollama
+  adapter_url: "http://localhost:11434"
+  temperature: 0.3
+  max_ventana_tokens: 4096
+  language: en   # fijado tras fase 1.5, sujeto a revisión si 1.5 pivota
+  system_prompt_id: auditor_standard_en
+
+archetypes_tested:
+  - explain_decision   # naturalmente conversacional
+  - audit_visit        # receipts cargados, KV se llena rápido
+
+depths:
+  - id: D1
+    warmup_turns: 1
+    description: "Un solo turno previo de calentamiento. Baseline de medida."
+  - id: D3
+    warmup_turns: 3
+    description: "Tres turnos previos. Acumulación media."
+  - id: D5
+    warmup_turns: 5
+    description: "Cinco turnos previos. Ya debería acercarse al muro."
+
+configs:
+  - id: T_OFF_HIGH_CTX
+    think: false
+    num_ctx: 3500
+    num_predict: 596       # 3500 + 596 = 4096 exacto
+    rationale: |
+      Sin thinking, maximizando contexto disponible. Mide cómo degrada el
+      modelo puramente por acumulación de turnos previos.
+
+  - id: T_ON_HIGH_CTX
+    think: true
+    num_ctx: 3500
+    num_predict: 596
+    rationale: |
+      Con thinking, misma ventana. Si el razonamiento se acumula en KV
+      cache (filter_channel_content_from_kv_cache no seteado a true),
+      deberíamos ver degradación antes que T_OFF_HIGH_CTX.
+
+prompts_per_archetype:
+  explain_decision:
+    warmup: explain_decision_ED2     # el contexto largo (delta de 72h)
+    measured: explain_decision_ED1   # pregunta más directa, medimos calidad de respuesta
+  audit_visit:
+    warmup: audit_visit_AV1
+    measured: audit_visit_AV2
+
+total_runs: 12
+
+measurements_per_run:
+  - tokens_in (header Sprout-Inference-Tokens-In, incluye KV previo)
+  - tokens_out (header Sprout-Inference-Tokens-Out)
+  - thinking_tokens (header, relevante solo cuando think=true en runtime con cloud — en local es 0, limitación conocida)
+  - duration_ms (header)
+  - was_truncated (bool — detectar si el output se corta por límite)
+  - hallucination_count (juicio manual — cuántos datos inventados)
+  - subjective_quality (juicio manual 1-5 vs baseline D1)
+
+output:
+  path: "results/phase3.jsonl"
+  one_record_per_run: true
+  additional_fields:
+    - warmup_messages_count
+    - accumulated_tokens_before_measured_turn
+
+expected_findings:
+  - "A profundidad D5, T_ON probablemente degrada antes que T_OFF si el thinking no se filtra del KV."
+  - "Si T_ON y T_OFF degradan similar, el thinking se está filtrando ok y el muro es solo el input."
+  - "audit_visit probablemente toca el muro antes que explain_decision por carga de receipts."
+
+decision_outputs:
+  - "Recomendación concreta a Floema sobre si llamar a resetConversation() entre arquetipos."
+  - "Recomendación sobre si verificar filter_channel_content_from_kv_cache explícitamente."
+  - "Recomendación sobre si maxNumTokens=4096 es suficiente o hay que elevarlo por arquetipo."

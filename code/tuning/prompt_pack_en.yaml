@@ -1,0 +1,201 @@
+# 8 user prompts en EN, 2 por arquetipo.
+#
+# Cada prompt incluye:
+# - id: identificador estable
+# - archetype: uno de los 4 arquetipos de Pollen
+# - user_message: el texto que llega al modelo
+# - context: bloques de datos que el sistema le pasa (snapshot, receipts,
+#   eventos) — concatenado al user_message en el formato que el harness decida
+# - expected_output_shape: json_missionpatch_v2 | json_validationstamp |
+#   json_visitamendment | json_weatherdigest | freeform_natural
+# - judgment_focus: qué mirar al juzgar
+
+# -----------------------------------------------------------------------------
+# Arquetipo 1: compile_mission  (natural language → MissionPatch v2)
+# Schema de referencia: docs/20_data_contracts.md → MissionPatch
+# -----------------------------------------------------------------------------
+
+- id: compile_mission_CM1
+  archetype: compile_mission
+  language: en
+  user_message: |
+    "I'm back on Friday. Prioritize the basil."
+  context: |
+    Current date: 2026-04-24 (Friday is 2026-04-25, 24 hours away).
+    Known plots: A (basil), B (tomato).
+  expected_output_shape: json_missionpatch_v2
+  judgment_focus:
+    - JSON is syntactically valid and parseable
+    - schema_version == "2.0"
+    - horizon_h approximately 24 (the user said Friday)
+    - priority_plot == "A" (because basil is on A)
+    - operator_note preserved verbatim
+    - no hallucinated fields (no invented budget_cap_ml, no invented avoid_hours)
+
+- id: compile_mission_CM2
+  archetype: compile_mission
+  language: en
+  user_message: |
+    "I'll be away for 72 hours. Plot A has priority. Max 1 litre of water.
+    Don't irrigate between noon and 3pm if it's hot. Goal: survival mode."
+  context: |
+    Current date: 2026-04-24.
+    Known plots: A (basil), B (tomato).
+  expected_output_shape: json_missionpatch_v2
+  judgment_focus:
+    - horizon_h == 72
+    - priority_plot == "A"
+    - budget_cap_ml == 1000 (1 litre)
+    - avoid_hours covers 12, 13, 14 (noon to 3pm)
+    - goal_mode == "survival"
+    - operator_note summarizes or preserves original instruction
+
+# -----------------------------------------------------------------------------
+# Arquetipo 2: audit_visit  (Rhizome signals + human observation → stamp)
+# -----------------------------------------------------------------------------
+
+- id: audit_visit_AV1
+  archetype: audit_visit
+  language: en
+  user_message: |
+    "I'm standing at plot A. The soil feels dry. Basil leaves are slightly
+    wilted. What do you say?"
+  context: |
+    Rhizome snapshot (plot A, 5 minutes ago):
+      - soil_now_pct: 18
+      - last_watered_at: 22 hours ago
+      - tank_now_pct: 65
+      - flow_ok: true
+      - current_mode: normal
+    Last decision (14 hours ago):
+      - DEFER(240min), reason_code: "weather_digest_predicts_rain"
+    Weather since then: no rain occurred (source: Pollen cached forecast,
+      miss confirmed by recent sensor readings).
+  expected_output_shape: json_validationstamp
+  judgment_focus:
+    - Confirms the human observation (soil is indeed dry per sensor)
+    - References soil_now_pct=18 as evidence
+    - Notes the defer-without-rain miss as contributing factor
+    - Does NOT invent readings or make decisions about watering (that's Rhizome's job)
+
+- id: audit_visit_AV2
+  archetype: audit_visit
+  language: en
+  user_message: |
+    "Plot A feels bone dry to me. Really dry. But you say it's fine?"
+  context: |
+    Rhizome snapshot (plot A, 3 minutes ago):
+      - soil_now_pct: 55
+      - last_watered_at: 4 hours ago
+      - tank_now_pct: 70
+      - flow_ok: true
+      - current_mode: normal
+    Last decision (4 hours ago):
+      - WATER(A, 180s), completed, receipt id dr_881
+  expected_output_shape: json_visitamendment
+  judgment_focus:
+    - Identifies the conflict between human observation and sensor reading
+    - Does NOT automatically side with either — asks for caution or verification
+    - Proposes concrete action (check sensor, manual second reading, inspect for sensor drift)
+    - Valid JSON VisitAmendment shape
+
+# -----------------------------------------------------------------------------
+# Arquetipo 3: federate_context  (many events → WeatherDigest)
+# -----------------------------------------------------------------------------
+
+- id: federate_context_FC1
+  archetype: federate_context
+  language: en
+  user_message: |
+    "Summarize what happened at plot A in the last 24h for me to carry to plot B."
+  context: |
+    Events from plot A, last 24h (15 events):
+      - 00:12  soil A: 38 pct
+      - 02:30  heartbeat ok
+      - 04:45  soil A: 35 pct
+      - 06:00  ALERT tank_low (tank fell to 22 pct)
+      - 06:15  decision SKIP (reason: tank_low)
+      - 08:30  soil A: 32 pct
+      - 09:00  tank refilled manually to 90 pct (inferred from jump)
+      - 10:00  soil A: 30 pct
+      - 11:00  decision WATER(A, 120s)
+      - 11:02  flow confirmed, soil rising
+      - 13:00  soil A: 55 pct
+      - 14:30  soil A: 52 pct
+      - 16:00  weather_cache updated: no rain 24h out
+      - 20:00  soil A: 48 pct
+      - 23:30  heartbeat ok
+  expected_output_shape: json_weatherdigest
+  judgment_focus:
+    - Compressed to 3-5 factual lines
+    - Preserves critical signals (tank_low alert, manual refill inference, watering event)
+    - Drops noise (routine heartbeats, minor soil fluctuations)
+    - Useful for Pollen to carry to plot B (contextual, not just a log dump)
+
+- id: federate_context_FC2
+  archetype: federate_context
+  language: en
+  user_message: |
+    "Give me the weekly rollup of plot B for the arbitration meeting."
+  context: |
+    Events from plot B, last 7 days (summarized input):
+      - 3 ALERTs: heartbeat_lost (2 minutes each), all during afternoon heat
+      - Soil stable in 40-50 pct range except one dip to 28 pct on day 4
+      - 5 WATER decisions, all completed with flow_ok
+      - Policy unchanged for 14 days (policy_age_h = 336)
+      - Weather: dry week, high temps (avg 34°C), no rain
+      - Tank refilled twice manually
+  expected_output_shape: json_weatherdigest
+  judgment_focus:
+    - Identifies the heartbeat pattern as potentially heat-related (thermal throttling)
+    - Notes policy aging as a concern worth flagging for arbitration
+    - Prioritizes what the next visit should look at
+    - Does not over-speculate (no invented root causes)
+
+# -----------------------------------------------------------------------------
+# Arquetipo 4: explain_decision  (past decision → natural explanation)
+# -----------------------------------------------------------------------------
+
+- id: explain_decision_ED1
+  archetype: explain_decision
+  language: en
+  user_message: |
+    "Why didn't you water yesterday at 11am?"
+  context: |
+    Decision receipt dr_742 (yesterday, 11:03):
+      - action: DEFER
+      - duration: 240 min
+      - reason_code: weather_digest_predicts_rain_in_6h
+      - soil_at_decision: 34 pct
+      - soil_threshold_for_action: 30 pct (margin above threshold)
+      - weather_source: Pollen digest received 08:15, indicated rain probability 0.72 at 17:00
+    Follow-up: no rain occurred. Soil reached 28 pct at 16:30. Subsequent
+    decision at 17:00 was WATER(A, 180s), completed.
+  expected_output_shape: freeform_natural
+  judgment_focus:
+    - Explains the defer was based on weather prediction (rain expected)
+    - Cites concrete values (soil was 34, threshold 30, margin of 4 pts)
+    - Mentions the rain did not occur and watering happened later
+    - Farmer-accessible language (no "reason_code" jargon)
+    - Brief (under 60 words ideally)
+    - Does not make excuses or apologize
+
+- id: explain_decision_ED2
+  archetype: explain_decision
+  language: en
+  user_message: |
+    "What changed since my last visit 72 hours ago?"
+  context: |
+    Snapshot delta (from 72h ago to now):
+      - Plot A: 3 WATER events (total 540s), 1 SKIP (tank_low, resolved by manual refill), soil trajectory 45 -> 42 -> 58 -> 52 pct
+      - Plot B: 1 WATER event (120s), soil stable 40-48 pct
+      - Alerts: 1 tank_low on plot A (day 1), 1 heartbeat_lost on plot B (day 2, 90s)
+      - Policy: unchanged
+      - Weather digest: received once (day 2), predicted dry week correctly
+  expected_output_shape: freeform_natural
+  judgment_focus:
+    - Summarizes the most important deltas first (the alerts, the tank refill)
+    - Mentions stability where it matters (policy unchanged, plot B calm)
+    - Chronological or priority order — either is fine if consistent
+    - Under 100 words
+    - No hallucinated events
