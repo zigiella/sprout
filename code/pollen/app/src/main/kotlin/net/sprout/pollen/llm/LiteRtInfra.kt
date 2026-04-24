@@ -8,6 +8,7 @@ import com.google.ai.edge.litertlm.EngineConfig
 import com.google.ai.edge.litertlm.Message
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import net.sprout.pollen.domain.model.BackendMode
@@ -118,7 +119,8 @@ class LiteRtChatService(
         val engine = requireNotNull(sessionManager.currentEngine()) { "Engine no inicializado" }
         
         val start = metricsCollector.now()
-        engine.createConversation().use { conversation ->
+        val conversation = engine.createConversation()
+        try {
             val prompt = Message.user(userText)
             var firstTokenAt: Long? = null
             var output = ""
@@ -127,7 +129,7 @@ class LiteRtChatService(
             // We use standard Kotlin Flow collect here (this may need adjustments based on exact API)
             try {
                 // Since this is standard Kotlin, LiteRT's Flow returns strings chunks
-                conversation.sendMessage(prompt).collect { chunk ->
+                conversation.sendMessageAsync(prompt).collect { chunk ->
                     if (firstTokenAt == null) {
                         firstTokenAt = metricsCollector.now()
                     }
@@ -152,6 +154,8 @@ class LiteRtChatService(
             ).copy(initializeMillis = initialMetrics?.initializeMillis ?: 0L)
             
             emit("" to finalMetrics)
+        } finally {
+            conversation.close()
         }
     }
 }

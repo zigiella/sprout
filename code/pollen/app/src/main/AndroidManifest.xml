@@ -6,7 +6,7 @@
         android:label="Pollen"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SproutPollen">
+        android:theme="@style/Theme.Pollen">
 
         <uses-native-library
             android:name="libvndksupport.so"
