@@ -151,6 +151,7 @@ Siguiente paso inmediato:
 - comando `TELEMETRY`
 - `STATUS_REPORT` y `HEARTBEAT` con `host_link` y `host_age_ms`
 - `SET_SENSOR_STUB ...` y `RESET_SENSOR_STUBS` para pruebas sin cableado
+- `WATER A|B|BOTH <seconds>` en `DRY_RUN` con rechazo por safety rules
 
 Antes de sensores y actuadores, el firmware debe ser un periférico serie estable y predecible.
 
@@ -163,6 +164,7 @@ Antes de sensores y actuadores, el firmware debe ser un periférico serie establ
 - `SET_SENSOR_STUB SOIL_A <int>`
 - `SET_SENSOR_STUB SOIL_B <int>`
 - `SET_SENSOR_STUB TANK_LEVEL <int>`
+- `SET_SENSOR_STUB TANK_LEVEL_PCT <int>`
 - `SET_SENSOR_STUB FLOW_PULSES <int>`
 - `SET_SENSOR_STUB BME280 CONNECTED|DISCONNECTED`
 - `RESET_SENSOR_STUBS`

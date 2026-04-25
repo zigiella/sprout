@@ -23,6 +23,7 @@ El siguiente hito inmediato añade:
 - `TELEMETRY` para devolver un snapshot stub de sensores mientras no haya cableado
 - `host_link` y `host_age_ms` en `STATUS_REPORT` y `HEARTBEAT`
 - `SET_SENSOR_STUB ...` y `RESET_SENSOR_STUBS` para simular entradas antes del cableado real
+- `WATER A|B|BOTH <seconds>` en modo `DRY_RUN`, con rechazo por safety aunque todavia no se activen relés
 
 ## Stack
 
@@ -50,9 +51,14 @@ Entrada por línea ASCII terminada en `\n`:
 - `SET_SENSOR_STUB SOIL_A <int>`
 - `SET_SENSOR_STUB SOIL_B <int>`
 - `SET_SENSOR_STUB TANK_LEVEL <int>`
+- `SET_SENSOR_STUB TANK_LEVEL_PCT <int>`
 - `SET_SENSOR_STUB FLOW_PULSES <int>`
 - `SET_SENSOR_STUB BME280 CONNECTED|DISCONNECTED`
 - `RESET_SENSOR_STUBS`
+- `WATER A <seconds>`
+- `WATER B <seconds>`
+- `WATER BOTH <seconds>`
+- `STOP`
 
 Salida:
 
@@ -62,6 +68,7 @@ Salida:
 - `ACK command=HOST_HEARTBEAT state=... host_link=... host_age_ms=...`
 - `TELEMETRY_REPORT soil_a_raw=... soil_b_raw=... tank_level_raw=... flow_pulses=... bme280=...`
 - `ACK command=SET_SENSOR_STUB field=... soil_a_raw=... soil_b_raw=... tank_level_raw=... flow_pulses=... bme280=...`
+- `ACK command=WATER plot=... seconds=... execution=DRY_RUN ...`
 - `REJECT reason=UNKNOWN_COMMAND cmd=...`
 
 ## Build y flash
@@ -135,9 +142,27 @@ Ejemplo de simulacion de sensores:
 SET_SENSOR_STUB SOIL_A 1234
 SET_SENSOR_STUB SOIL_B 1450
 SET_SENSOR_STUB TANK_LEVEL 820
+SET_SENSOR_STUB TANK_LEVEL_PCT 65
 SET_SENSOR_STUB FLOW_PULSES 17
 SET_SENSOR_STUB BME280 CONNECTED
 TELEMETRY
+```
+
+Ejemplos de seguridad para `WATER`:
+
+```text
+WATER A 12
+REJECT reason=HEARTBEAT_PERDIDO cmd=WATER A 12
+
+HOST_HEARTBEAT
+SET_SENSOR_STUB TANK_LEVEL_PCT 15
+WATER A 12
+REJECT reason=DEPOSITO_BAJO cmd=WATER A 12
+
+SET_SENSOR_STUB TANK_LEVEL_PCT 65
+HOST_HEARTBEAT
+WATER A 12
+ACK command=WATER plot=A seconds=12 execution=DRY_RUN state=SAFE_IDLE host_link=FRESH tank_level_pct=65
 ```
 
 Si el puerto USB no enumera a la primera en un S3 nuevo:

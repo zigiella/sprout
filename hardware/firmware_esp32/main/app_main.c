@@ -38,6 +38,7 @@ typedef struct {
     int soil_a_raw;
     int soil_b_raw;
     int tank_level_raw;
+    int tank_level_pct;
     uint32_t flow_pulses;
     bool bme280_connected;
 } sprout_telemetry_snapshot_t;
@@ -49,6 +50,7 @@ static sprout_telemetry_snapshot_t s_telemetry = {
     .soil_a_raw = -1,
     .soil_b_raw = -1,
     .tank_level_raw = -1,
+    .tank_level_pct = -1,
     .flow_pulses = 0,
     .bme280_connected = false,
 };
@@ -158,7 +160,7 @@ static void sprout_emit_status_report(const char *source)
     printf(
         "STATUS_REPORT state=%s fw=%s board=%s uptime_ms=%" PRIi64 " flash_bytes=%" PRIu32
         " psram_bytes=%u telemetry_mode=STUB host_link=%s host_age_ms=%" PRIi64
-        " hb_timeout_ms=%d source=%s\n",
+        " hb_timeout_ms=%d tank_min_pct=%d max_water_s=%d source=%s\n",
         sprout_state_name(s_state),
         fw_version,
         profile->id,
@@ -168,6 +170,8 @@ static void sprout_emit_status_report(const char *source)
         sprout_host_link_name(sprout_host_link_state()),
         host_age_ms,
         CONFIG_SPROUT_HOST_HEARTBEAT_TIMEOUT_MS,
+        CONFIG_SPROUT_TANK_MINIMUM_PCT,
+        CONFIG_SPROUT_MAX_WATER_SECONDS,
         source);
     fflush(stdout);
 }
@@ -186,12 +190,13 @@ static void sprout_emit_ack(const char *command)
 static void sprout_emit_ack_sensor_stub(const char *field)
 {
     printf(
-        "ACK command=SET_SENSOR_STUB field=%s soil_a_raw=%d soil_b_raw=%d tank_level_raw=%d "
+        "ACK command=SET_SENSOR_STUB field=%s soil_a_raw=%d soil_b_raw=%d tank_level_raw=%d tank_level_pct=%d "
         "flow_pulses=%" PRIu32 " bme280=%s\n",
         field,
         s_telemetry.soil_a_raw,
         s_telemetry.soil_b_raw,
         s_telemetry.tank_level_raw,
+        s_telemetry.tank_level_pct,
         s_telemetry.flow_pulses,
         s_telemetry.bme280_connected ? "CONNECTED" : "DISCONNECTED");
     fflush(stdout);
@@ -203,14 +208,27 @@ static void sprout_emit_reject(const char *reason, const char *command)
     fflush(stdout);
 }
 
+static void sprout_emit_ack_water(const char *plot, int seconds)
+{
+    printf(
+        "ACK command=WATER plot=%s seconds=%d execution=DRY_RUN state=%s host_link=%s tank_level_pct=%d\n",
+        plot,
+        seconds,
+        sprout_state_name(s_state),
+        sprout_host_link_name(sprout_host_link_state()),
+        s_telemetry.tank_level_pct);
+    fflush(stdout);
+}
+
 static void sprout_emit_telemetry_report(const char *source)
 {
     printf(
-        "TELEMETRY_REPORT soil_a_raw=%d soil_b_raw=%d tank_level_raw=%d flow_pulses=%" PRIu32 " "
+        "TELEMETRY_REPORT soil_a_raw=%d soil_b_raw=%d tank_level_raw=%d tank_level_pct=%d flow_pulses=%" PRIu32 " "
         "bme280=%s host_link=%s host_age_ms=%" PRIi64 " source=%s\n",
         s_telemetry.soil_a_raw,
         s_telemetry.soil_b_raw,
         s_telemetry.tank_level_raw,
+        s_telemetry.tank_level_pct,
         s_telemetry.flow_pulses,
         s_telemetry.bme280_connected ? "CONNECTED" : "DISCONNECTED",
         sprout_host_link_name(sprout_host_link_state()),
@@ -224,6 +242,7 @@ static void sprout_reset_telemetry_stubs(void)
     s_telemetry.soil_a_raw = -1;
     s_telemetry.soil_b_raw = -1;
     s_telemetry.tank_level_raw = -1;
+    s_telemetry.tank_level_pct = -1;
     s_telemetry.flow_pulses = 0;
     s_telemetry.bme280_connected = false;
 }
@@ -298,6 +317,17 @@ static bool sprout_handle_set_sensor_stub(const char *line)
         return true;
     }
 
+    if (strcmp(field, "TANK_LEVEL_PCT") == 0) {
+        int parsed = -1;
+        if (!sprout_parse_int(value, &parsed) || parsed < 0 || parsed > 100) {
+            sprout_emit_reject("BAD_VALUE", line);
+            return true;
+        }
+        s_telemetry.tank_level_pct = parsed;
+        sprout_emit_ack_sensor_stub(field);
+        return true;
+    }
+
     if (strcmp(field, "FLOW_PULSES") == 0) {
         int parsed = -1;
         if (!sprout_parse_int(value, &parsed) || parsed < 0) {
@@ -327,6 +357,57 @@ static bool sprout_handle_set_sensor_stub(const char *line)
     }
 
     sprout_emit_reject("UNKNOWN_FIELD", line);
+    return true;
+}
+
+static bool sprout_handle_water_command(const char *line)
+{
+    const char *prefix = "WATER ";
+    const size_t prefix_len = strlen(prefix);
+    if (strncmp(line, prefix, prefix_len) != 0) {
+        return false;
+    }
+
+    char scratch[CONFIG_SPROUT_COMMAND_MAX_LINE_LENGTH];
+    strncpy(scratch, line + prefix_len, sizeof(scratch) - 1);
+    scratch[sizeof(scratch) - 1] = '\0';
+
+    char *plot = strtok(scratch, " ");
+    char *seconds_text = strtok(NULL, " ");
+    char *unexpected = strtok(NULL, " ");
+
+    if (plot == NULL || seconds_text == NULL || unexpected != NULL) {
+        sprout_emit_reject("FUERA_DE_RANGO", line);
+        return true;
+    }
+
+    if (!(strcmp(plot, "A") == 0 || strcmp(plot, "B") == 0 || strcmp(plot, "BOTH") == 0)) {
+        sprout_emit_reject("FUERA_DE_RANGO", line);
+        return true;
+    }
+
+    int seconds = 0;
+    if (!sprout_parse_int(seconds_text, &seconds) || seconds <= 0 || seconds > CONFIG_SPROUT_MAX_WATER_SECONDS) {
+        sprout_emit_reject("FUERA_DE_RANGO", line);
+        return true;
+    }
+
+    if (s_state == SPROUT_STATE_ALERT_LATCHED) {
+        sprout_emit_reject("ALERTA_LATCHED", line);
+        return true;
+    }
+
+    if (sprout_host_link_state() != SPROUT_HOST_LINK_FRESH) {
+        sprout_emit_reject("HEARTBEAT_PERDIDO", line);
+        return true;
+    }
+
+    if (s_telemetry.tank_level_pct >= 0 && s_telemetry.tank_level_pct < CONFIG_SPROUT_TANK_MINIMUM_PCT) {
+        sprout_emit_reject("DEPOSITO_BAJO", line);
+        return true;
+    }
+
+    sprout_emit_ack_water(plot, seconds);
     return true;
 }
 
@@ -424,6 +505,15 @@ static void sprout_command_loop(void)
         }
 
         if (sprout_handle_set_sensor_stub(line)) {
+            continue;
+        }
+
+        if (sprout_handle_water_command(line)) {
+            continue;
+        }
+
+        if (strcmp(line, "STOP") == 0) {
+            sprout_emit_ack("STOP");
             continue;
         }
 
