@@ -17,6 +17,12 @@ El primer hito es:
 
 Todavía **no** controla bomba, válvulas ni sensores.
 
+El siguiente hito inmediato añade:
+
+- `HOST_HEARTBEAT` / `JETSON_HEARTBEAT` para refrescar la presencia de Rhizome
+- `TELEMETRY` para devolver un snapshot stub de sensores mientras no haya cableado
+- `host_link` y `host_age_ms` en `STATUS_REPORT` y `HEARTBEAT`
+
 ## Stack
 
 - target: `ESP32-S3`
@@ -37,12 +43,17 @@ Entrada por línea ASCII terminada en `\n`:
 
 - `HELLO`
 - `STATUS`
+- `HOST_HEARTBEAT`
+- `JETSON_HEARTBEAT`
+- `TELEMETRY`
 
 Salida:
 
 - `HELLO fw=... state=SAFE_IDLE board=... uptime_ms=...`
-- `STATUS_REPORT state=SAFE_IDLE fw=... board=... uptime_ms=... flash_bytes=... psram_bytes=...`
-- `HEARTBEAT state=SAFE_IDLE board=... uptime_ms=...`
+- `STATUS_REPORT state=SAFE_IDLE fw=... board=... uptime_ms=... flash_bytes=... psram_bytes=... host_link=... host_age_ms=...`
+- `HEARTBEAT state=SAFE_IDLE board=... uptime_ms=... host_link=... host_age_ms=...`
+- `ACK command=HOST_HEARTBEAT state=... host_link=... host_age_ms=...`
+- `TELEMETRY_REPORT soil_a_raw=... soil_b_raw=... tank_level_raw=... flow_pulses=... bme280=...`
 - `REJECT reason=UNKNOWN_COMMAND cmd=...`
 
 ## Build y flash
@@ -95,7 +106,19 @@ HEARTBEAT state=SAFE_IDLE board=n16r8_usb_otg uptime_ms=...
 Y ante `STATUS`:
 
 ```text
-STATUS_REPORT state=SAFE_IDLE fw=0.1.0 board=n16r8_usb_otg uptime_ms=... flash_bytes=16777216 psram_bytes=8388608
+STATUS_REPORT state=SAFE_IDLE fw=0.1.0 board=n16r8_usb_otg uptime_ms=... flash_bytes=16777216 psram_bytes=8388608 host_link=MISSING host_age_ms=-1 hb_timeout_ms=5000
+```
+
+Y tras enviar `HOST_HEARTBEAT`:
+
+```text
+ACK command=HOST_HEARTBEAT state=SAFE_IDLE host_link=FRESH host_age_ms=0
+```
+
+Y ante `TELEMETRY`:
+
+```text
+TELEMETRY_REPORT soil_a_raw=-1 soil_b_raw=-1 tank_level_raw=-1 flow_pulses=0 bme280=DISCONNECTED host_link=FRESH host_age_ms=...
 ```
 
 Si el puerto USB no enumera a la primera en un S3 nuevo:

@@ -27,8 +27,15 @@ typedef enum {
     SPROUT_STATE_ALERT_LATCHED,
 } sprout_state_t;
 
+typedef enum {
+    SPROUT_HOST_LINK_MISSING = 0,
+    SPROUT_HOST_LINK_FRESH,
+    SPROUT_HOST_LINK_STALE,
+} sprout_host_link_t;
+
 static const char *TAG = "sprout_esp32";
 static sprout_state_t s_state = SPROUT_STATE_SAFE_IDLE;
+static int64_t s_last_host_heartbeat_ms = -1;
 
 static int64_t sprout_uptime_ms(void)
 {
@@ -50,6 +57,42 @@ static const char *sprout_state_name(sprout_state_t state)
         return "ALERT_LATCHED";
     default:
         return "UNKNOWN";
+    }
+}
+
+static int64_t sprout_host_age_ms(void)
+{
+    if (s_last_host_heartbeat_ms < 0) {
+        return -1;
+    }
+
+    return sprout_uptime_ms() - s_last_host_heartbeat_ms;
+}
+
+static sprout_host_link_t sprout_host_link_state(void)
+{
+    const int64_t host_age_ms = sprout_host_age_ms();
+    if (host_age_ms < 0) {
+        return SPROUT_HOST_LINK_MISSING;
+    }
+
+    if (host_age_ms <= CONFIG_SPROUT_HOST_HEARTBEAT_TIMEOUT_MS) {
+        return SPROUT_HOST_LINK_FRESH;
+    }
+
+    return SPROUT_HOST_LINK_STALE;
+}
+
+static const char *sprout_host_link_name(sprout_host_link_t link_state)
+{
+    switch (link_state) {
+    case SPROUT_HOST_LINK_FRESH:
+        return "FRESH";
+    case SPROUT_HOST_LINK_STALE:
+        return "STALE";
+    case SPROUT_HOST_LINK_MISSING:
+    default:
+        return "MISSING";
     }
 }
 
@@ -95,22 +138,48 @@ static void sprout_emit_status_report(const char *source)
         flash_bytes = 0;
     }
 
+    const int64_t host_age_ms = sprout_host_age_ms();
     printf(
         "STATUS_REPORT state=%s fw=%s board=%s uptime_ms=%" PRIi64 " flash_bytes=%" PRIu32
-        " psram_bytes=%u source=%s\n",
+        " psram_bytes=%u host_link=%s host_age_ms=%" PRIi64 " hb_timeout_ms=%d source=%s\n",
         sprout_state_name(s_state),
         fw_version,
         profile->id,
         sprout_uptime_ms(),
         flash_bytes,
         (unsigned int)psram_bytes,
+        sprout_host_link_name(sprout_host_link_state()),
+        host_age_ms,
+        CONFIG_SPROUT_HOST_HEARTBEAT_TIMEOUT_MS,
         source);
+    fflush(stdout);
+}
+
+static void sprout_emit_ack(const char *command)
+{
+    printf(
+        "ACK command=%s state=%s host_link=%s host_age_ms=%" PRIi64 "\n",
+        command,
+        sprout_state_name(s_state),
+        sprout_host_link_name(sprout_host_link_state()),
+        sprout_host_age_ms());
     fflush(stdout);
 }
 
 static void sprout_emit_reject(const char *reason, const char *command)
 {
     printf("REJECT reason=%s cmd=%s\n", reason, command);
+    fflush(stdout);
+}
+
+static void sprout_emit_telemetry_report(const char *source)
+{
+    printf(
+        "TELEMETRY_REPORT soil_a_raw=-1 soil_b_raw=-1 tank_level_raw=-1 flow_pulses=0 "
+        "bme280=DISCONNECTED host_link=%s host_age_ms=%" PRIi64 " source=%s\n",
+        sprout_host_link_name(sprout_host_link_state()),
+        sprout_host_age_ms(),
+        source);
     fflush(stdout);
 }
 
@@ -121,10 +190,12 @@ static void sprout_heartbeat_task(void *arg)
 
     while (true) {
         printf(
-            "HEARTBEAT state=%s board=%s uptime_ms=%" PRIi64 "\n",
+            "HEARTBEAT state=%s board=%s uptime_ms=%" PRIi64 " host_link=%s host_age_ms=%" PRIi64 "\n",
             sprout_state_name(s_state),
             profile->id,
-            sprout_uptime_ms());
+            sprout_uptime_ms(),
+            sprout_host_link_name(sprout_host_link_state()),
+            sprout_host_age_ms());
         fflush(stdout);
         vTaskDelay(pdMS_TO_TICKS(CONFIG_SPROUT_HEARTBEAT_INTERVAL_MS));
     }
@@ -185,6 +256,17 @@ static void sprout_command_loop(void)
 
         if (strcmp(line, "STATUS") == 0) {
             sprout_emit_status_report("command");
+            continue;
+        }
+
+        if (strcmp(line, "HOST_HEARTBEAT") == 0 || strcmp(line, "JETSON_HEARTBEAT") == 0) {
+            s_last_host_heartbeat_ms = sprout_uptime_ms();
+            sprout_emit_ack("HOST_HEARTBEAT");
+            continue;
+        }
+
+        if (strcmp(line, "TELEMETRY") == 0) {
+            sprout_emit_telemetry_report("command");
             continue;
         }
 

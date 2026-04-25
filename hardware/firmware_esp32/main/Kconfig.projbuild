@@ -29,4 +29,12 @@ config SPROUT_COMMAND_MAX_LINE_LENGTH
         Maximum ASCII line length accepted from the host for the hito-0
         serial protocol.
 
+config SPROUT_HOST_HEARTBEAT_TIMEOUT_MS
+    int "Host heartbeat freshness timeout (ms)"
+    range 1000 60000
+    default 5000
+    help
+        Maximum age of the most recent host heartbeat before the Rhizome
+        link is considered stale.
+
 endmenu

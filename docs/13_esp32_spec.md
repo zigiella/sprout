@@ -145,11 +145,20 @@ Primer milestone real del firmware:
 - comando `STATUS`
 - emisión periódica de `HEARTBEAT`
 
+Siguiente paso inmediato:
+
+- comando `HOST_HEARTBEAT` / `JETSON_HEARTBEAT`
+- comando `TELEMETRY`
+- `STATUS_REPORT` y `HEARTBEAT` con `host_link` y `host_age_ms`
+
 Antes de sensores y actuadores, el firmware debe ser un periférico serie estable y predecible.
 
 ### Comandos Jetson → ESP32
 - `HELLO`
 - `STATUS`
+- `HOST_HEARTBEAT`
+- `JETSON_HEARTBEAT`
+- `TELEMETRY`
 - `WATER A <seconds>`
 - `WATER B <seconds>`
 - `WATER BOTH <seconds>`
