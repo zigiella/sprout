@@ -10,12 +10,31 @@ import subprocess
 import time
 import urllib.error
 import urllib.request
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from .common import BENCHMARKS_DIR, DEFAULT_PROMPT_SET_PATH, MemorySampler, bytes_to_gib, detect_host, percentile, slugify, utc_now_iso
+from .common import (
+    BENCHMARKS_DIR,
+    DEFAULT_PROMPT_SET_PATH,
+    MemorySampler,
+    bytes_to_gib,
+    detect_host,
+    percentile,
+    slugify,
+    utc_now_iso,
+)
 
 DEFAULT_ENDPOINT = "http://127.0.0.1:11434"
+
+
+@dataclass(frozen=True)
+class PhaseConfig:
+    name: str
+    repeat_count: int
+    keep_alive: str
+    reset_before_phase: bool = False
+    warmup_before_phase: bool = False
 
 
 def _post_json(url: str, payload: dict[str, Any], timeout_s: int) -> dict[str, Any]:
@@ -103,6 +122,60 @@ def _build_output_path(model: str, hardware_label: str | None) -> Path:
     return BENCHMARKS_DIR / f"{date_prefix}_{model_slug}_{hardware_slug}.json"
 
 
+def build_phase_plan(phases: str | None, *, keep_alive: str, repeat_count: int) -> list[PhaseConfig]:
+    if not phases:
+        return []
+
+    phase_defs: dict[str, PhaseConfig] = {
+        "cold": PhaseConfig(name="cold", repeat_count=1, keep_alive="0", reset_before_phase=True),
+        "warm": PhaseConfig(name="warm", repeat_count=1, keep_alive=keep_alive, reset_before_phase=True, warmup_before_phase=True),
+        "repeat": PhaseConfig(name="repeat", repeat_count=max(1, repeat_count), keep_alive=keep_alive),
+    }
+    plan: list[PhaseConfig] = []
+    seen: set[str] = set()
+    for raw_name in phases.split(","):
+        name = raw_name.strip().lower()
+        if not name:
+            continue
+        if name not in phase_defs:
+            raise ValueError(f"Unsupported phase: {name}")
+        if name in seen:
+            raise ValueError(f"Duplicated phase: {name}")
+        seen.add(name)
+        plan.append(phase_defs[name])
+    return plan
+
+
+def _reset_model(endpoint: str, model: str, timeout_s: int) -> dict[str, Any]:
+    payload = {"model": model, "prompt": "", "stream": False, "keep_alive": 0}
+    try:
+        response = _post_json(f"{endpoint}/api/generate", payload, timeout_s)
+    except Exception as exc:  # pragma: no cover - depends on runtime availability
+        return {"ok": False, "error": str(exc)}
+    return {"ok": True, "done_reason": response.get("done_reason")}
+
+
+def _warmup_model(endpoint: str, model: str, timeout_s: int, keep_alive: str) -> dict[str, Any]:
+    payload = {
+        "model": model,
+        "prompt": "warmup",
+        "stream": False,
+        "keep_alive": keep_alive,
+        "options": {"temperature": 0.0, "num_predict": 1},
+    }
+    started = time.perf_counter()
+    try:
+        response = _post_json(f"{endpoint}/api/generate", payload, timeout_s)
+    except Exception as exc:  # pragma: no cover - depends on runtime availability
+        return {"ok": False, "error": str(exc)}
+    return {
+        "ok": True,
+        "wall_clock_ms": round((time.perf_counter() - started) * 1000, 3),
+        "load_duration_ms": _ns_to_ms(response.get("load_duration")),
+        "first_token_latency_ms": _approx_first_token_latency_ms(response),
+    }
+
+
 def benchmark_prompt(
     *,
     endpoint: str,
@@ -139,6 +212,7 @@ def benchmark_prompt(
         return {
             "id": prompt_record["id"],
             "category": prompt_record["category"],
+            "modality": prompt_record.get("modality", "text"),
             "ok": False,
             "wall_clock_ms": wall_clock_ms,
             "error": f"HTTP {exc.code}: {body}",
@@ -151,6 +225,7 @@ def benchmark_prompt(
         return {
             "id": prompt_record["id"],
             "category": prompt_record["category"],
+            "modality": prompt_record.get("modality", "text"),
             "ok": False,
             "wall_clock_ms": wall_clock_ms,
             "error": str(exc),
@@ -169,6 +244,7 @@ def benchmark_prompt(
     return {
         "id": prompt_record["id"],
         "category": prompt_record["category"],
+        "modality": prompt_record.get("modality", "text"),
         "ok": True,
         "max_tokens": prompt_record.get("max_tokens"),
         "temperature": prompt_record.get("temperature", 0.0),
@@ -191,20 +267,21 @@ def benchmark_prompt(
     }
 
 
-def summarize_results(results: list[dict[str, Any]], repeat_count: int) -> dict[str, Any]:
+def _slice_result_class(*, failures: int, repeat_count: int) -> str:
+    if failures:
+        return "failed"
+    if repeat_count > 1:
+        return "engineering-pass"
+    return "demo-pass"
+
+
+def _summarize_slice(results: list[dict[str, Any]], *, repeat_count: int) -> dict[str, Any]:
     successes = [result for result in results if result.get("ok")]
     failures = [result for result in results if not result.get("ok")]
     latency_values = [result["wall_clock_ms"] for result in successes if result.get("wall_clock_ms") is not None]
     first_token_values = [result["first_token_latency_ms"] for result in successes if result.get("first_token_latency_ms") is not None]
     tok_s_values = [result["tokens_per_second"] for result in successes if result.get("tokens_per_second") is not None]
     memory_values = [result["memory_peak_used_bytes"] for result in successes if result.get("memory_peak_used_bytes") is not None]
-
-    if failures:
-        result_class = "failed"
-    elif repeat_count > 1:
-        result_class = "engineering-pass"
-    else:
-        result_class = "demo-pass"
 
     return {
         "requests_total": len(results),
@@ -220,8 +297,63 @@ def summarize_results(results: list[dict[str, Any]], repeat_count: int) -> dict[
         "memory_peak_used_bytes_max": max(memory_values) if memory_values else None,
         "memory_peak_used_gib_max": bytes_to_gib(max(memory_values) if memory_values else None),
         "power_watts_avg": None,
-        "result_class": result_class,
+        "result_class": _slice_result_class(failures=len(failures), repeat_count=repeat_count),
     }
+
+
+def summarize_results(
+    results: list[dict[str, Any]],
+    *,
+    repeat_count: int,
+    phase_repeat_counts: dict[str, int] | None = None,
+) -> dict[str, Any]:
+    summary = _summarize_slice(results, repeat_count=repeat_count)
+    modalities = sorted({result.get("modality", "text") for result in results})
+    summary["by_modality"] = {
+        modality: _summarize_slice(
+            [result for result in results if result.get("modality", "text") == modality],
+            repeat_count=repeat_count,
+        )
+        for modality in modalities
+    }
+
+    phase_order = ["cold", "warm", "repeat"]
+    phase_names = [name for name in phase_order if any(result.get("phase") == name for result in results)]
+    phase_names.extend(
+        sorted(
+            {
+                result["phase"]
+                for result in results
+                if result.get("phase") and result["phase"] not in phase_order
+            }
+        )
+    )
+    if phase_names:
+        by_phase: dict[str, dict[str, Any]] = {}
+        by_phase_and_modality: dict[str, dict[str, dict[str, Any]]] = {}
+        for phase_name in phase_names:
+            phase_results = [result for result in results if result.get("phase") == phase_name]
+            phase_repeat = phase_repeat_counts.get(phase_name, 1) if phase_repeat_counts else 1
+            by_phase[phase_name] = _summarize_slice(phase_results, repeat_count=phase_repeat)
+            phase_modalities = sorted({result.get("modality", "text") for result in phase_results})
+            by_phase_and_modality[phase_name] = {
+                modality: _summarize_slice(
+                    [result for result in phase_results if result.get("modality", "text") == modality],
+                    repeat_count=phase_repeat,
+                )
+                for modality in phase_modalities
+            }
+        summary["by_phase"] = by_phase
+        summary["by_phase_and_modality"] = by_phase_and_modality
+
+    return summary
+
+
+def _iter_prompt_records(prompt_set_path: Path, limit: int | None) -> list[dict[str, Any]]:
+    prompt_records = _read_jsonl(prompt_set_path)
+    if limit is not None:
+        prompt_records = prompt_records[:limit]
+    return prompt_records
 
 
 def run_benchmark(
@@ -233,13 +365,54 @@ def run_benchmark(
     keep_alive: str,
     repeat_count: int,
     limit: int | None,
-) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    prompt_records = _read_jsonl(prompt_set_path)
-    if limit is not None:
-        prompt_records = prompt_records[:limit]
-
+    phase_plan: list[PhaseConfig] | None = None,
+) -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]]:
+    prompt_records = _iter_prompt_records(prompt_set_path, limit)
     results: list[dict[str, Any]] = []
-    for iteration in range(repeat_count):
+    phase_events: list[dict[str, Any]] = []
+
+    if phase_plan:
+        phase_repeat_counts = {phase.name: phase.repeat_count for phase in phase_plan}
+        for phase in phase_plan:
+            phase_event: dict[str, Any] = {
+                "name": phase.name,
+                "repeat_count": phase.repeat_count,
+                "keep_alive": phase.keep_alive,
+                "reset_before_phase": phase.reset_before_phase,
+                "warmup_before_phase": phase.warmup_before_phase,
+            }
+            if phase.reset_before_phase:
+                phase_event["reset"] = _reset_model(endpoint, model, timeout_s)
+            if phase.warmup_before_phase:
+                phase_event["warmup"] = _warmup_model(endpoint, model, timeout_s, phase.keep_alive)
+            phase_events.append(phase_event)
+
+            for iteration in range(phase.repeat_count):
+                for prompt_record in prompt_records:
+                    result = benchmark_prompt(
+                        endpoint=endpoint,
+                        model=model,
+                        prompt_record=prompt_record,
+                        prompt_set_path=prompt_set_path,
+                        timeout_s=timeout_s,
+                        keep_alive=phase.keep_alive,
+                    )
+                    result["phase"] = phase.name
+                    result["iteration"] = iteration + 1
+                    result["phase_keep_alive"] = phase.keep_alive
+                    results.append(result)
+                    status = "OK" if result["ok"] else "FAIL"
+                    print(
+                        f"[{phase.name.upper()}][{status}] {result['id']} "
+                        f"lat={result.get('wall_clock_ms')}ms "
+                        f"tok/s={result.get('tokens_per_second')} "
+                        f"mem_gib={result.get('memory_peak_used_gib')}"
+                    )
+
+        summary = summarize_results(results, repeat_count=max(1, repeat_count), phase_repeat_counts=phase_repeat_counts)
+        return results, summary, phase_events
+
+    for iteration in range(max(1, repeat_count)):
         for prompt_record in prompt_records:
             result = benchmark_prompt(
                 endpoint=endpoint,
@@ -259,8 +432,8 @@ def run_benchmark(
                 f"mem_gib={result.get('memory_peak_used_gib')}"
             )
 
-    summary = summarize_results(results, repeat_count=repeat_count)
-    return results, summary
+    summary = summarize_results(results, repeat_count=max(1, repeat_count))
+    return results, summary, phase_events
 
 
 def main() -> int:
@@ -270,14 +443,20 @@ def main() -> int:
     parser.add_argument("--prompt-set", type=Path, default=DEFAULT_PROMPT_SET_PATH, help="Path to the benchmark JSONL prompt set.")
     parser.add_argument("--output", type=Path, default=None, help="Path to save the benchmark JSON report.")
     parser.add_argument("--timeout-sec", type=int, default=300, help="Per-request timeout in seconds.")
-    parser.add_argument("--repeat", type=int, default=1, help="Number of full prompt-set passes.")
+    parser.add_argument("--repeat", type=int, default=1, help="Classic mode: full prompt-set passes. Phased mode: repeat phase passes.")
     parser.add_argument("--limit", type=int, default=None, help="Limit the run to the first N prompts.")
     parser.add_argument("--hardware-label", default=None, help="Optional label used in the output filename.")
     parser.add_argument("--keep-alive", default="30m", help="Ollama keep_alive value.")
+    parser.add_argument(
+        "--phases",
+        default=None,
+        help="Comma-separated phase plan such as cold,warm,repeat. When omitted the runner uses classic mode.",
+    )
     args = parser.parse_args()
 
     output_path = args.output or _build_output_path(args.model, args.hardware_label)
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    phase_plan = build_phase_plan(args.phases, keep_alive=args.keep_alive, repeat_count=args.repeat)
 
     host_info = detect_host()
     report = {
@@ -301,10 +480,11 @@ def main() -> int:
             "limit": args.limit,
             "timeout_sec": args.timeout_sec,
             "keep_alive": args.keep_alive,
+            "phases": [phase.name for phase in phase_plan] if phase_plan else None,
         },
     }
 
-    results, summary = run_benchmark(
+    results, summary, phase_events = run_benchmark(
         endpoint=args.endpoint,
         model=args.model,
         prompt_set_path=args.prompt_set,
@@ -312,9 +492,12 @@ def main() -> int:
         keep_alive=args.keep_alive,
         repeat_count=args.repeat,
         limit=args.limit,
+        phase_plan=phase_plan,
     )
     report["summary"] = summary
     report["results"] = results
+    if phase_events:
+        report["phase_runs"] = phase_events
     output_path.write_text(json.dumps(report, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
 
     print(f"Saved benchmark report to {output_path}")

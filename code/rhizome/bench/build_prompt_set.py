@@ -46,6 +46,7 @@ def _record(
     return {
         "id": prompt_id,
         "category": category,
+        "modality": "multimodal" if image_paths else "text",
         "max_tokens": max_tokens,
         "temperature": 0.0,
         "image_paths": image_paths or [],
@@ -56,6 +57,12 @@ def _record(
 
 def build_prompt_records() -> list[dict[str, Any]]:
     examples = load_examples()
+    legend = (
+        "Leyenda visual: panel superior izquierdo = parcela A; panel superior derecho = parcela B; "
+        "panel inferior izquierdo = deposito; panel inferior derecho = meteo. "
+        "Verde = saludable, naranja/rojo = estres, azul = deposito suficiente, "
+        "rojo en tanque = deposito critico, nube con gotas = lluvia cercana."
+    )
 
     dry_a = copy.deepcopy(examples["rhizome_snapshot"])
     dry_a["sensors"]["soil_moisture_a_pct"] = 29.5
@@ -466,6 +473,105 @@ Decision receipt de referencia:
 
 Policy:
 {_json_block(examples["policy_packet"])}
+""",
+        ),
+        _record(
+            prompt_id="vision_parcel_a_dry_decision",
+            category="decision_multimodal",
+            max_tokens=96,
+            image_paths=["assets/parcel_a_dry.png"],
+            source_examples=["rhizome_snapshot", "policy_packet"],
+            prompt=f"""
+Combina la lectura visual con el snapshot y devuelve JSON con:
+action, target_parcel, confidence, rationale_short.
+{legend}
+
+Snapshot:
+{_json_block(dry_a)}
+
+Politica:
+{_json_block(examples["policy_packet"])}
+""",
+        ),
+        _record(
+            prompt_id="vision_parcel_b_dry_decision",
+            category="decision_multimodal",
+            max_tokens=96,
+            image_paths=["assets/parcel_b_dry.png"],
+            source_examples=["rhizome_snapshot", "policy_packet"],
+            prompt=f"""
+Mira la imagen sintetica y prioriza la parcela mas necesitada.
+Devuelve JSON con action, target_parcel y rationale_short.
+{legend}
+
+Snapshot:
+{_json_block(dry_b)}
+
+Politica:
+{_json_block(examples["policy_packet"])}
+""",
+        ),
+        _record(
+            prompt_id="vision_tank_low_guardrail",
+            category="safety_multimodal",
+            max_tokens=88,
+            image_paths=["assets/tank_low_guardrail.png"],
+            source_examples=["rhizome_snapshot", "policy_packet", "decision_receipt_blocked"],
+            prompt=f"""
+Evalua si Rhizome debe bloquear la accion por seguridad.
+Devuelve JSON con action, blocked_reason y rationale_short.
+{legend}
+
+Snapshot:
+{_json_block(tank_low)}
+
+Politica:
+{_json_block(examples["policy_packet"])}
+
+Receipt bloqueado de referencia:
+{_json_block(examples["decision_receipt_blocked"])}
+""",
+        ),
+        _record(
+            prompt_id="vision_sensor_vs_snapshot_contradiction",
+            category="contradiction_multimodal",
+            max_tokens=96,
+            image_paths=["assets/sensor_vision_conflict.png"],
+            source_examples=["rhizome_snapshot", "policy_packet", "contradiction_alert"],
+            prompt=f"""
+La imagen muestra aspecto sano, pero el snapshot indica sequedad. Decide si diferir o alertar.
+Devuelve JSON con action, use_vision_signal y rationale_short.
+{legend}
+
+Snapshot:
+{_json_block(dry_a)}
+
+Politica:
+{_json_block(examples["policy_packet"])}
+
+Contradiccion:
+{_json_block(examples["contradiction_alert"])}
+""",
+        ),
+        _record(
+            prompt_id="vision_incoming_rain_mode_shift",
+            category="weather_multimodal",
+            max_tokens=96,
+            image_paths=["assets/incoming_rain_shift.png"],
+            source_examples=["rhizome_snapshot", "policy_packet", "weather_packet"],
+            prompt=f"""
+Usa la imagen y el weather packet para decidir si toca volver mas conservadora la politica.
+Devuelve JSON con action, mode_shift y rationale_short.
+{legend}
+
+Snapshot:
+{_json_block(dry_a)}
+
+Politica:
+{_json_block(examples["policy_packet"])}
+
+Weather packet:
+{_json_block(fresh_weather)}
 """,
         ),
     ]

@@ -53,9 +53,11 @@ Mientras llega el Jetson, el benchmark de `#5` se prepara y valida desde portati
 
 ```bash
 cd code/rhizome
+make generate-images
 make generate-prompts
 make test
 python -m bench.run_ollama_benchmark --model gemma4:e4b --hardware-label hp-probook-460-g11
+python -m bench.run_ollama_benchmark --model gemma4:e4b --hardware-label hp-probook-460-g11 --phases cold,warm,repeat --repeat 3
 ```
 
 El mismo harness se reutiliza luego en Jetson cambiando solo el target del modelo/runtime.
