@@ -24,16 +24,35 @@ DEFAULT_RESULTS = HERE / "results"
 
 
 def load_jsonl(path: Path) -> list[dict]:
+    """Carga JSONL y dedupe por run_id, prefiriendo el ultimo record OK (sin
+    error y http_status==200). Si hay duplicados, el ultimo OK gana sobre
+    cualquier fallo previo (caso tipico tras --resume).
+    """
     if not path.exists():
         return []
-    out = []
+    by_run_id: dict[str, dict] = {}
     with path.open("r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if not line:
                 continue
-            out.append(json.loads(line))
-    return out
+            rec = json.loads(line)
+            rid = rec.get("run_id") or f"_anon_{len(by_run_id)}"
+            existing = by_run_id.get(rid)
+            if existing is None:
+                by_run_id[rid] = rec
+                continue
+            # Si el existente fallo y el nuevo es OK, sustituye.
+            existing_ok = (
+                not existing.get("error") and existing.get("http_status") == 200
+            )
+            new_ok = not rec.get("error") and rec.get("http_status") == 200
+            if new_ok and not existing_ok:
+                by_run_id[rid] = rec
+            elif new_ok and existing_ok:
+                # Ambos OK -> queda el ultimo (mas reciente en el JSONL).
+                by_run_id[rid] = rec
+    return list(by_run_id.values())
 
 
 def fmt_pct(n: int, total: int) -> str:
