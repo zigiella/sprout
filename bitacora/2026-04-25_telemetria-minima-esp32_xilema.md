@@ -16,6 +16,7 @@ Tras cerrar el hito `SAFE_IDLE + HELLO + STATUS + HEARTBEAT` sobre la `ESP32-S3 
 - `SET_SENSOR_STUB ...` y `RESET_SENSOR_STUBS` para inyectar lecturas de prueba
 - `host_link` y `host_age_ms` en `STATUS_REPORT` y `HEARTBEAT`
 - `WATER A|B|BOTH <seconds>` en `DRY_RUN` con rechazo por `HEARTBEAT_PERDIDO`, `DEPOSITO_BAJO` o `FUERA_DE_RANGO`
+- `ALERT code=...` y `RESET_ALERT` para hacer visible y controlable el latch de seguridad
 - timeout configurable de frescura del host (`CONFIG_SPROUT_HOST_HEARTBEAT_TIMEOUT_MS`)
 
 ## Por que
@@ -27,6 +28,7 @@ Esto permite probar ya tres cosas importantes antes de leer sensores reales:
 3. que Rhizome tendra una base clara para decidir prudencia por perdida de heartbeat
 4. que el equipo puede ensayar logica de decision y receipts antes del cableado real
 5. que la capa fisica ya puede bloquear agua de forma demostrable sin conectar la bomba
+6. que el estado materializado del ESP32 ya cuente el ultimo rechazo y el ultimo intento de agua
 
 ## Lo que no hace aun
 

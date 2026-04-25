@@ -173,6 +173,7 @@ Antes de sensores y actuadores, el firmware debe ser un periférico serie establ
 - `WATER BOTH <seconds>`
 - `STOP`
 - `RESET_ALERT`
+- `RESET_ALERT`
 - `SET_LIMITS` opcional
 
 ### Respuestas ESP32 → Jetson

@@ -43,9 +43,18 @@ typedef struct {
     bool bme280_connected;
 } sprout_telemetry_snapshot_t;
 
+typedef struct {
+    bool present;
+    char plot[8];
+    int seconds;
+    char outcome[32];
+    int64_t at_ms;
+} sprout_water_attempt_t;
+
 static const char *TAG = "sprout_esp32";
 static sprout_state_t s_state = SPROUT_STATE_SAFE_IDLE;
 static int64_t s_last_host_heartbeat_ms = -1;
+static int64_t s_last_alert_ms = -1;
 static sprout_telemetry_snapshot_t s_telemetry = {
     .soil_a_raw = -1,
     .soil_b_raw = -1,
@@ -54,6 +63,15 @@ static sprout_telemetry_snapshot_t s_telemetry = {
     .flow_pulses = 0,
     .bme280_connected = false,
 };
+static sprout_water_attempt_t s_last_water_attempt = {
+    .present = false,
+    .plot = "NONE",
+    .seconds = -1,
+    .outcome = "NONE",
+    .at_ms = -1,
+};
+static char s_last_reject_reason[32] = "NONE";
+static char s_last_alert_code[32] = "NONE";
 
 static int64_t sprout_uptime_ms(void)
 {
@@ -114,6 +132,52 @@ static const char *sprout_host_link_name(sprout_host_link_t link_state)
     }
 }
 
+static void sprout_copy_token(char *destination, size_t destination_size, const char *source)
+{
+    snprintf(destination, destination_size, "%s", source);
+}
+
+static int64_t sprout_alert_age_ms(void)
+{
+    if (s_last_alert_ms < 0) {
+        return -1;
+    }
+
+    return sprout_uptime_ms() - s_last_alert_ms;
+}
+
+static int64_t sprout_last_water_age_ms(void)
+{
+    if (!s_last_water_attempt.present || s_last_water_attempt.at_ms < 0) {
+        return -1;
+    }
+
+    return sprout_uptime_ms() - s_last_water_attempt.at_ms;
+}
+
+static void sprout_record_reject(const char *reason)
+{
+    sprout_copy_token(s_last_reject_reason, sizeof(s_last_reject_reason), reason);
+}
+
+static void sprout_record_water_attempt(const char *plot, int seconds, const char *outcome)
+{
+    s_last_water_attempt.present = true;
+    sprout_copy_token(s_last_water_attempt.plot, sizeof(s_last_water_attempt.plot), plot);
+    sprout_copy_token(s_last_water_attempt.outcome, sizeof(s_last_water_attempt.outcome), outcome);
+    s_last_water_attempt.seconds = seconds;
+    s_last_water_attempt.at_ms = sprout_uptime_ms();
+}
+
+static void sprout_clear_alert_latch(void)
+{
+    sprout_copy_token(s_last_alert_code, sizeof(s_last_alert_code), "NONE");
+    s_last_alert_ms = -1;
+    if (s_state == SPROUT_STATE_ALERT_LATCHED) {
+        s_state = SPROUT_STATE_SAFE_IDLE;
+    }
+}
+
 static void sprout_trim_ascii(char *line)
 {
     size_t len = strlen(line);
@@ -160,7 +224,9 @@ static void sprout_emit_status_report(const char *source)
     printf(
         "STATUS_REPORT state=%s fw=%s board=%s uptime_ms=%" PRIi64 " flash_bytes=%" PRIu32
         " psram_bytes=%u telemetry_mode=STUB host_link=%s host_age_ms=%" PRIi64
-        " hb_timeout_ms=%d tank_min_pct=%d max_water_s=%d source=%s\n",
+        " hb_timeout_ms=%d tank_min_pct=%d max_water_s=%d last_reject=%s alert_code=%s alert_age_ms=%" PRIi64
+        " last_water_plot=%s last_water_seconds=%d last_water_outcome=%s last_water_age_ms=%" PRIi64
+        " source=%s\n",
         sprout_state_name(s_state),
         fw_version,
         profile->id,
@@ -172,6 +238,13 @@ static void sprout_emit_status_report(const char *source)
         CONFIG_SPROUT_HOST_HEARTBEAT_TIMEOUT_MS,
         CONFIG_SPROUT_TANK_MINIMUM_PCT,
         CONFIG_SPROUT_MAX_WATER_SECONDS,
+        s_last_reject_reason,
+        s_last_alert_code,
+        sprout_alert_age_ms(),
+        s_last_water_attempt.plot,
+        s_last_water_attempt.seconds,
+        s_last_water_attempt.outcome,
+        sprout_last_water_age_ms(),
         source);
     fflush(stdout);
 }
@@ -206,6 +279,27 @@ static void sprout_emit_reject(const char *reason, const char *command)
 {
     printf("REJECT reason=%s cmd=%s\n", reason, command);
     fflush(stdout);
+}
+
+static void sprout_emit_alert(const char *code, bool latched)
+{
+    printf(
+        "ALERT code=%s latched=%s state=%s uptime_ms=%" PRIi64 "\n",
+        code,
+        latched ? "true" : "false",
+        sprout_state_name(s_state),
+        sprout_uptime_ms());
+    fflush(stdout);
+}
+
+static void sprout_raise_alert(const char *code, bool latched)
+{
+    sprout_copy_token(s_last_alert_code, sizeof(s_last_alert_code), code);
+    s_last_alert_ms = sprout_uptime_ms();
+    if (latched) {
+        s_state = SPROUT_STATE_ALERT_LATCHED;
+    }
+    sprout_emit_alert(code, latched);
 }
 
 static void sprout_emit_ack_water(const char *plot, int seconds)
@@ -377,36 +471,49 @@ static bool sprout_handle_water_command(const char *line)
     char *unexpected = strtok(NULL, " ");
 
     if (plot == NULL || seconds_text == NULL || unexpected != NULL) {
+        sprout_record_reject("FUERA_DE_RANGO");
         sprout_emit_reject("FUERA_DE_RANGO", line);
         return true;
     }
 
     if (!(strcmp(plot, "A") == 0 || strcmp(plot, "B") == 0 || strcmp(plot, "BOTH") == 0)) {
+        sprout_record_reject("FUERA_DE_RANGO");
         sprout_emit_reject("FUERA_DE_RANGO", line);
         return true;
     }
 
     int seconds = 0;
     if (!sprout_parse_int(seconds_text, &seconds) || seconds <= 0 || seconds > CONFIG_SPROUT_MAX_WATER_SECONDS) {
+        sprout_record_reject("FUERA_DE_RANGO");
+        sprout_record_water_attempt(plot, seconds, "REJECT_FUERA_DE_RANGO");
         sprout_emit_reject("FUERA_DE_RANGO", line);
         return true;
     }
 
     if (s_state == SPROUT_STATE_ALERT_LATCHED) {
+        sprout_record_reject("ALERTA_LATCHED");
+        sprout_record_water_attempt(plot, seconds, "REJECT_ALERTA_LATCHED");
         sprout_emit_reject("ALERTA_LATCHED", line);
         return true;
     }
 
     if (sprout_host_link_state() != SPROUT_HOST_LINK_FRESH) {
+        sprout_record_reject("HEARTBEAT_PERDIDO");
+        sprout_record_water_attempt(plot, seconds, "REJECT_HEARTBEAT_PERDIDO");
         sprout_emit_reject("HEARTBEAT_PERDIDO", line);
+        sprout_raise_alert("HEARTBEAT_PERDIDO", false);
         return true;
     }
 
     if (s_telemetry.tank_level_pct >= 0 && s_telemetry.tank_level_pct < CONFIG_SPROUT_TANK_MINIMUM_PCT) {
+        sprout_record_reject("DEPOSITO_BAJO");
+        sprout_record_water_attempt(plot, seconds, "REJECT_DEPOSITO_BAJO");
         sprout_emit_reject("DEPOSITO_BAJO", line);
+        sprout_raise_alert("DEPOSITO_BAJO", true);
         return true;
     }
 
+    sprout_record_water_attempt(plot, seconds, "ACK_DRY_RUN");
     sprout_emit_ack_water(plot, seconds);
     return true;
 }
@@ -501,6 +608,12 @@ static void sprout_command_loop(void)
         if (strcmp(line, "RESET_SENSOR_STUBS") == 0) {
             sprout_reset_telemetry_stubs();
             sprout_emit_ack("RESET_SENSOR_STUBS");
+            continue;
+        }
+
+        if (strcmp(line, "RESET_ALERT") == 0) {
+            sprout_clear_alert_latch();
+            sprout_emit_ack("RESET_ALERT");
             continue;
         }
 

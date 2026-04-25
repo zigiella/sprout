@@ -59,6 +59,7 @@ Entrada por línea ASCII terminada en `\n`:
 - `WATER B <seconds>`
 - `WATER BOTH <seconds>`
 - `STOP`
+- `RESET_ALERT`
 
 Salida:
 
@@ -69,6 +70,7 @@ Salida:
 - `TELEMETRY_REPORT soil_a_raw=... soil_b_raw=... tank_level_raw=... flow_pulses=... bme280=...`
 - `ACK command=SET_SENSOR_STUB field=... soil_a_raw=... soil_b_raw=... tank_level_raw=... flow_pulses=... bme280=...`
 - `ACK command=WATER plot=... seconds=... execution=DRY_RUN ...`
+- `ALERT code=... latched=true|false state=... uptime_ms=...`
 - `REJECT reason=UNKNOWN_COMMAND cmd=...`
 
 ## Build y flash
@@ -121,7 +123,7 @@ HEARTBEAT state=SAFE_IDLE board=n16r8_usb_otg uptime_ms=...
 Y ante `STATUS`:
 
 ```text
-STATUS_REPORT state=SAFE_IDLE fw=0.1.0 board=n16r8_usb_otg uptime_ms=... flash_bytes=16777216 psram_bytes=8388608 host_link=MISSING host_age_ms=-1 hb_timeout_ms=5000
+STATUS_REPORT state=SAFE_IDLE fw=0.1.0 board=n16r8_usb_otg uptime_ms=... flash_bytes=16777216 psram_bytes=8388608 host_link=MISSING host_age_ms=-1 hb_timeout_ms=5000 tank_min_pct=20 max_water_s=30 last_reject=NONE alert_code=NONE
 ```
 
 Y tras enviar `HOST_HEARTBEAT`:
@@ -158,8 +160,14 @@ HOST_HEARTBEAT
 SET_SENSOR_STUB TANK_LEVEL_PCT 15
 WATER A 12
 REJECT reason=DEPOSITO_BAJO cmd=WATER A 12
+ALERT code=DEPOSITO_BAJO latched=true state=ALERT_LATCHED uptime_ms=...
 
 SET_SENSOR_STUB TANK_LEVEL_PCT 65
+HOST_HEARTBEAT
+WATER A 12
+REJECT reason=ALERTA_LATCHED cmd=WATER A 12
+RESET_ALERT
+ACK command=RESET_ALERT state=SAFE_IDLE host_link=FRESH host_age_ms=...
 HOST_HEARTBEAT
 WATER A 12
 ACK command=WATER plot=A seconds=12 execution=DRY_RUN state=SAFE_IDLE host_link=FRESH tank_level_pct=65
