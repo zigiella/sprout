@@ -130,14 +130,46 @@ static void sprout_heartbeat_task(void *arg)
     }
 }
 
+static bool sprout_read_command_line(char *line, size_t line_size)
+{
+    size_t index = 0;
+
+    while (true) {
+        int ch = fgetc(stdin);
+        if (ch == EOF) {
+            clearerr(stdin);
+            vTaskDelay(pdMS_TO_TICKS(50));
+            continue;
+        }
+
+        if (ch == '\r' || ch == '\n') {
+            if (index == 0) {
+                continue;
+            }
+
+            line[index] = '\0';
+            return true;
+        }
+
+        if (!isprint((unsigned char)ch)) {
+            continue;
+        }
+
+        if (index + 1 >= line_size) {
+            line[index] = '\0';
+            return true;
+        }
+
+        line[index++] = (char)ch;
+    }
+}
+
 static void sprout_command_loop(void)
 {
     char line[CONFIG_SPROUT_COMMAND_MAX_LINE_LENGTH];
 
     while (true) {
-        if (fgets(line, sizeof(line), stdin) == NULL) {
-            clearerr(stdin);
-            vTaskDelay(pdMS_TO_TICKS(50));
+        if (!sprout_read_command_line(line, sizeof(line))) {
             continue;
         }
 
