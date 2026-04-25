@@ -6,7 +6,15 @@ import net.sprout.pollen.schemas.*
 
 class RhizomeMockClient {
 
-    fun getSnapshot(): RhizomeSnapshot {
+    suspend fun getStatus(): Map<String, String> {
+        return mapOf(
+            "status" to "online",
+            "uptime_s" to "3600",
+            "version" to "0.2.0"
+        )
+    }
+
+    suspend fun getLatestSnapshot(): RhizomeSnapshot {
         return RhizomeSnapshot(
             schemaVersion = "1.0",
             createdAt = "2026-04-16T14:32:05Z",
@@ -40,8 +48,9 @@ class RhizomeMockClient {
         )
     }
 
-    fun getDecisionReceipt(): DecisionReceipt {
-        return DecisionReceipt(
+    suspend fun getReceipts(since: String? = null): List<DecisionReceipt> {
+        return listOf(
+            DecisionReceipt(
             schemaVersion = "1.0",
             createdAt = "2026-04-16T14:30:10Z",
             originNodeId = "rhizome_01",
@@ -72,5 +81,9 @@ class RhizomeMockClient {
                 estimatedLitersActual = 1.56f
             )
         )
+    }
+
+    suspend fun explainDecision(id: String): String {
+        return "El modelo Gemma 4 E2B en Rhizome decidió regar porque la humedad del suelo estaba por debajo del umbral de la política activa, y había agua suficiente en el depósito."
     }
 }

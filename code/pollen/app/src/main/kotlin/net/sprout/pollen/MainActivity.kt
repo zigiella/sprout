@@ -20,6 +20,15 @@ import net.sprout.pollen.llm.LiteRtSessionManager
 import net.sprout.pollen.llm.LiteRtChatService
 import net.sprout.pollen.voice.PollenVoiceInfra
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import net.sprout.pollen.ui.VisitarRhizomeScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -51,14 +60,33 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val uiState = viewModel.uiState.collectAsState().value
-                    ChatScreen(
-                        uiState = uiState,
-                        onPromptChanged = { viewModel.onPromptChanged(it) },
-                        onThinkingToggled = { viewModel.onThinkingToggled(it) },
-                        onSend = { viewModel.send() },
-                        onStartVoice = { viewModel.startListening() }
-                    )
+                    var selectedTab by remember { mutableStateOf(0) }
+                    val tabs = listOf("Chat Pollen", "Visitar Rhizome")
+
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        TabRow(selectedTabIndex = selectedTab) {
+                            tabs.forEachIndexed { index, title ->
+                                Tab(
+                                    selected = selectedTab == index,
+                                    onClick = { selectedTab = index },
+                                    text = { Text(title) }
+                                )
+                            }
+                        }
+                        
+                        if (selectedTab == 0) {
+                            val uiState = viewModel.uiState.collectAsState().value
+                            ChatScreen(
+                                uiState = uiState,
+                                onPromptChanged = { viewModel.onPromptChanged(it) },
+                                onThinkingToggled = { viewModel.onThinkingToggled(it) },
+                                onSend = { viewModel.send() },
+                                onStartVoice = { viewModel.startListening() }
+                            )
+                        } else {
+                            VisitarRhizomeScreen()
+                        }
+                    }
                 }
             }
         }
