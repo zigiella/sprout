@@ -7,6 +7,7 @@ idf_component_register(
     REQUIRES
         esp_app_format
         esp_psram
+        esp_timer
         nvs_flash
         spi_flash
 )
