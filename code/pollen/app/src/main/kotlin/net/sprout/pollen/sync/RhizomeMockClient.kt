@@ -80,6 +80,7 @@ class RhizomeMockClient {
                 flowObservedLpm = 3.1f,
                 estimatedLitersActual = 1.56f
             )
+            )
         )
     }
 
