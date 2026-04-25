@@ -51,35 +51,92 @@ class RhizomeMockClient {
     suspend fun getReceipts(since: String? = null): List<DecisionReceipt> {
         return listOf(
             DecisionReceipt(
-            schemaVersion = "1.0",
-            createdAt = "2026-04-16T14:30:10Z",
-            originNodeId = "rhizome_01",
-            decisionId = "rec_rhizome_01_20260416T143010_91ba",
-            snapshotId = "snap_rhizome_01_20260416T143005_a3f2",
-            activePolicyId = "pkt_rhizome_01_20260416T083015_d5e7",
-            action = ActionType.WATER_A,
-            actionParams = mapOf(
-                "duration_s" to JsonPrimitive(30),
-                "expected_liters" to JsonPrimitive(1.5f)
+                schemaVersion = "1.0",
+                createdAt = "2026-04-16T14:30:10Z",
+                originNodeId = "rhizome_01",
+                decisionId = "rec_rhizome_01_20260416T143010_91ba",
+                snapshotId = "snap_rhizome_01_20260416T143005_a3f2",
+                activePolicyId = "pkt_rhizome_01_20260416T083015_d5e7",
+                action = ActionType.WATER_A,
+                actionParams = mapOf(
+                    "duration_s" to JsonPrimitive(30),
+                    "expected_liters" to JsonPrimitive(1.5f)
+                ),
+                rationaleShort = "Humedad A en 38%, por debajo del umbral 45%.",
+                rationaleFull = "El snapshot reciente muestra humedad parcela A al 38.2%, umbral minimo 45%.",
+                policyRefs = listOf("rules.soil_moisture_thresholds.parcel_a.min_pct"),
+                contradictions = emptyList(),
+                confidence = 0.87f,
+                executed = true,
+                executionDetails = DecisionReceipt.ExecutionDetails(
+                    sentToEsp32At = "2026-04-16T14:30:10Z",
+                    esp32AckAt = "2026-04-16T14:30:11Z",
+                    esp32AckStatus = "OK",
+                    actualDurationS = 30.2f,
+                    flowObservedLpm = 3.1f,
+                    estimatedLitersActual = 1.56f
+                )
             ),
-            rationaleShort = "Humedad A en 38%, por debajo del umbral 45%. Dentro de ventana de riego. Deposito al 72%.",
-            rationaleFull = "El snapshot reciente muestra humedad parcela A al 38.2%, umbral minimo 45% segun politica vigente pkt_...d5e7. Hora local 08:32 dentro de ventana 06-09. Deposito al 72%, muy por encima del minimo 15%. Vision confirma planta sana. Sin alertas activas. Se autoriza riego parcela A por 30s.",
-            policyRefs = listOf(
-                "rules.soil_moisture_thresholds.parcel_a.min_pct",
-                "rules.watering_window",
-                "rules.tank_minimum_pct"
+            DecisionReceipt(
+                schemaVersion = "1.0",
+                createdAt = "2026-04-15T08:15:00Z",
+                originNodeId = "rhizome_01",
+                decisionId = "rec_rhizome_01_20260415T081500_82cd",
+                snapshotId = "snap_rhizome_01_20260415T081400_b4e1",
+                activePolicyId = "pkt_rhizome_01_20260414T090000_c3d6",
+                action = ActionType.SKIP,
+                actionParams = emptyMap(),
+                rationaleShort = "Previsión de lluvia en 2h. Riego cancelado.",
+                rationaleFull = "Humedad al 46%. Se detecta WeatherDigest advirtiendo de lluvia inminente.",
+                policyRefs = listOf("rules.weather_override.rain_expected"),
+                contradictions = emptyList(),
+                confidence = 0.95f,
+                executed = true,
+                executionDetails = null
             ),
-            contradictions = emptyList(),
-            confidence = 0.87f,
-            executed = true,
-            executionDetails = DecisionReceipt.ExecutionDetails(
-                sentToEsp32At = "2026-04-16T14:30:10Z",
-                esp32AckAt = "2026-04-16T14:30:11Z",
-                esp32AckStatus = "OK",
-                actualDurationS = 30.2f,
-                flowObservedLpm = 3.1f,
-                estimatedLitersActual = 1.56f
-            )
+            DecisionReceipt(
+                schemaVersion = "1.0",
+                createdAt = "2026-04-14T19:45:20Z",
+                originNodeId = "rhizome_01",
+                decisionId = "rec_rhizome_01_20260414T194520_73ef",
+                snapshotId = "snap_rhizome_01_20260414T194500_c5f2",
+                activePolicyId = "pkt_rhizome_01_20260414T090000_c3d6",
+                action = ActionType.WATER_B,
+                actionParams = mapOf(
+                    "duration_s" to JsonPrimitive(45),
+                    "expected_liters" to JsonPrimitive(2.2f)
+                ),
+                rationaleShort = "Humedad B crítica (22%). Ejecutando riego de emergencia.",
+                rationaleFull = "Humedad de parcela B descendió al 22%, activando regla de salvaguarda.",
+                policyRefs = listOf("rules.soil_moisture_thresholds.parcel_b.critical_pct"),
+                contradictions = emptyList(),
+                confidence = 0.99f,
+                executed = true,
+                executionDetails = DecisionReceipt.ExecutionDetails(
+                    sentToEsp32At = "2026-04-14T19:45:20Z",
+                    esp32AckAt = "2026-04-14T19:45:21Z",
+                    esp32AckStatus = "OK",
+                    actualDurationS = 45.0f,
+                    flowObservedLpm = 3.0f,
+                    estimatedLitersActual = 2.25f
+                )
+            ),
+            DecisionReceipt(
+                schemaVersion = "1.0",
+                createdAt = "2026-04-13T07:10:05Z",
+                originNodeId = "rhizome_01",
+                decisionId = "rec_rhizome_01_20260413T071005_12ab",
+                snapshotId = "snap_rhizome_01_20260413T070900_d6a3",
+                activePolicyId = "pkt_rhizome_01_20260410T100000_e7b8",
+                action = ActionType.BLOCK,
+                actionParams = emptyMap(),
+                rationaleShort = "Nivel de depósito insuficiente (8%) para ciclo de riego.",
+                rationaleFull = "Intento de riego en parcela A bloqueado por failsafe de bomba en vacío.",
+                policyRefs = listOf("rules.failsafe_defaults.tank_minimum_pct"),
+                contradictions = emptyList(),
+                confidence = 1.0f,
+                executed = true,
+                executionDetails = null
             )
         )
     }
