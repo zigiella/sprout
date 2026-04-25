@@ -150,6 +150,7 @@ Siguiente paso inmediato:
 - comando `HOST_HEARTBEAT` / `JETSON_HEARTBEAT`
 - comando `TELEMETRY`
 - `STATUS_REPORT` y `HEARTBEAT` con `host_link` y `host_age_ms`
+- `SET_SENSOR_STUB ...` y `RESET_SENSOR_STUBS` para pruebas sin cableado
 
 Antes de sensores y actuadores, el firmware debe ser un periférico serie estable y predecible.
 
@@ -159,6 +160,12 @@ Antes de sensores y actuadores, el firmware debe ser un periférico serie establ
 - `HOST_HEARTBEAT`
 - `JETSON_HEARTBEAT`
 - `TELEMETRY`
+- `SET_SENSOR_STUB SOIL_A <int>`
+- `SET_SENSOR_STUB SOIL_B <int>`
+- `SET_SENSOR_STUB TANK_LEVEL <int>`
+- `SET_SENSOR_STUB FLOW_PULSES <int>`
+- `SET_SENSOR_STUB BME280 CONNECTED|DISCONNECTED`
+- `RESET_SENSOR_STUBS`
 - `WATER A <seconds>`
 - `WATER B <seconds>`
 - `WATER BOTH <seconds>`

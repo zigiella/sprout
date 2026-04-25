@@ -2,6 +2,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -33,9 +34,24 @@ typedef enum {
     SPROUT_HOST_LINK_STALE,
 } sprout_host_link_t;
 
+typedef struct {
+    int soil_a_raw;
+    int soil_b_raw;
+    int tank_level_raw;
+    uint32_t flow_pulses;
+    bool bme280_connected;
+} sprout_telemetry_snapshot_t;
+
 static const char *TAG = "sprout_esp32";
 static sprout_state_t s_state = SPROUT_STATE_SAFE_IDLE;
 static int64_t s_last_host_heartbeat_ms = -1;
+static sprout_telemetry_snapshot_t s_telemetry = {
+    .soil_a_raw = -1,
+    .soil_b_raw = -1,
+    .tank_level_raw = -1,
+    .flow_pulses = 0,
+    .bme280_connected = false,
+};
 
 static int64_t sprout_uptime_ms(void)
 {
@@ -141,7 +157,8 @@ static void sprout_emit_status_report(const char *source)
     const int64_t host_age_ms = sprout_host_age_ms();
     printf(
         "STATUS_REPORT state=%s fw=%s board=%s uptime_ms=%" PRIi64 " flash_bytes=%" PRIu32
-        " psram_bytes=%u host_link=%s host_age_ms=%" PRIi64 " hb_timeout_ms=%d source=%s\n",
+        " psram_bytes=%u telemetry_mode=STUB host_link=%s host_age_ms=%" PRIi64
+        " hb_timeout_ms=%d source=%s\n",
         sprout_state_name(s_state),
         fw_version,
         profile->id,
@@ -166,6 +183,20 @@ static void sprout_emit_ack(const char *command)
     fflush(stdout);
 }
 
+static void sprout_emit_ack_sensor_stub(const char *field)
+{
+    printf(
+        "ACK command=SET_SENSOR_STUB field=%s soil_a_raw=%d soil_b_raw=%d tank_level_raw=%d "
+        "flow_pulses=%" PRIu32 " bme280=%s\n",
+        field,
+        s_telemetry.soil_a_raw,
+        s_telemetry.soil_b_raw,
+        s_telemetry.tank_level_raw,
+        s_telemetry.flow_pulses,
+        s_telemetry.bme280_connected ? "CONNECTED" : "DISCONNECTED");
+    fflush(stdout);
+}
+
 static void sprout_emit_reject(const char *reason, const char *command)
 {
     printf("REJECT reason=%s cmd=%s\n", reason, command);
@@ -175,12 +206,128 @@ static void sprout_emit_reject(const char *reason, const char *command)
 static void sprout_emit_telemetry_report(const char *source)
 {
     printf(
-        "TELEMETRY_REPORT soil_a_raw=-1 soil_b_raw=-1 tank_level_raw=-1 flow_pulses=0 "
-        "bme280=DISCONNECTED host_link=%s host_age_ms=%" PRIi64 " source=%s\n",
+        "TELEMETRY_REPORT soil_a_raw=%d soil_b_raw=%d tank_level_raw=%d flow_pulses=%" PRIu32 " "
+        "bme280=%s host_link=%s host_age_ms=%" PRIi64 " source=%s\n",
+        s_telemetry.soil_a_raw,
+        s_telemetry.soil_b_raw,
+        s_telemetry.tank_level_raw,
+        s_telemetry.flow_pulses,
+        s_telemetry.bme280_connected ? "CONNECTED" : "DISCONNECTED",
         sprout_host_link_name(sprout_host_link_state()),
         sprout_host_age_ms(),
         source);
     fflush(stdout);
+}
+
+static void sprout_reset_telemetry_stubs(void)
+{
+    s_telemetry.soil_a_raw = -1;
+    s_telemetry.soil_b_raw = -1;
+    s_telemetry.tank_level_raw = -1;
+    s_telemetry.flow_pulses = 0;
+    s_telemetry.bme280_connected = false;
+}
+
+static bool sprout_parse_int(const char *value_text, int *out_value)
+{
+    char *end_ptr = NULL;
+    long parsed = strtol(value_text, &end_ptr, 10);
+    if (end_ptr == value_text || *end_ptr != '\0') {
+        return false;
+    }
+
+    if (parsed < INT32_MIN || parsed > INT32_MAX) {
+        return false;
+    }
+
+    *out_value = (int)parsed;
+    return true;
+}
+
+static bool sprout_handle_set_sensor_stub(const char *line)
+{
+    const char *prefix = "SET_SENSOR_STUB ";
+    const size_t prefix_len = strlen(prefix);
+    if (strncmp(line, prefix, prefix_len) != 0) {
+        return false;
+    }
+
+    char scratch[CONFIG_SPROUT_COMMAND_MAX_LINE_LENGTH];
+    strncpy(scratch, line + prefix_len, sizeof(scratch) - 1);
+    scratch[sizeof(scratch) - 1] = '\0';
+
+    char *field = strtok(scratch, " ");
+    char *value = strtok(NULL, " ");
+    char *unexpected = strtok(NULL, " ");
+
+    if (field == NULL || value == NULL || unexpected != NULL) {
+        sprout_emit_reject("BAD_ARGS", line);
+        return true;
+    }
+
+    if (strcmp(field, "SOIL_A") == 0) {
+        int parsed = -1;
+        if (!sprout_parse_int(value, &parsed)) {
+            sprout_emit_reject("BAD_VALUE", line);
+            return true;
+        }
+        s_telemetry.soil_a_raw = parsed;
+        sprout_emit_ack_sensor_stub(field);
+        return true;
+    }
+
+    if (strcmp(field, "SOIL_B") == 0) {
+        int parsed = -1;
+        if (!sprout_parse_int(value, &parsed)) {
+            sprout_emit_reject("BAD_VALUE", line);
+            return true;
+        }
+        s_telemetry.soil_b_raw = parsed;
+        sprout_emit_ack_sensor_stub(field);
+        return true;
+    }
+
+    if (strcmp(field, "TANK_LEVEL") == 0) {
+        int parsed = -1;
+        if (!sprout_parse_int(value, &parsed)) {
+            sprout_emit_reject("BAD_VALUE", line);
+            return true;
+        }
+        s_telemetry.tank_level_raw = parsed;
+        sprout_emit_ack_sensor_stub(field);
+        return true;
+    }
+
+    if (strcmp(field, "FLOW_PULSES") == 0) {
+        int parsed = -1;
+        if (!sprout_parse_int(value, &parsed) || parsed < 0) {
+            sprout_emit_reject("BAD_VALUE", line);
+            return true;
+        }
+        s_telemetry.flow_pulses = (uint32_t)parsed;
+        sprout_emit_ack_sensor_stub(field);
+        return true;
+    }
+
+    if (strcmp(field, "BME280") == 0) {
+        if (strcmp(value, "CONNECTED") == 0) {
+            s_telemetry.bme280_connected = true;
+            sprout_emit_ack_sensor_stub(field);
+            return true;
+        }
+
+        if (strcmp(value, "DISCONNECTED") == 0) {
+            s_telemetry.bme280_connected = false;
+            sprout_emit_ack_sensor_stub(field);
+            return true;
+        }
+
+        sprout_emit_reject("BAD_VALUE", line);
+        return true;
+    }
+
+    sprout_emit_reject("UNKNOWN_FIELD", line);
+    return true;
 }
 
 static void sprout_heartbeat_task(void *arg)
@@ -270,6 +417,16 @@ static void sprout_command_loop(void)
             continue;
         }
 
+        if (strcmp(line, "RESET_SENSOR_STUBS") == 0) {
+            sprout_reset_telemetry_stubs();
+            sprout_emit_ack("RESET_SENSOR_STUBS");
+            continue;
+        }
+
+        if (sprout_handle_set_sensor_stub(line)) {
+            continue;
+        }
+
         sprout_emit_reject("UNKNOWN_COMMAND", line);
     }
 }
@@ -291,6 +448,7 @@ void app_main(void)
     setvbuf(stderr, NULL, _IONBF, 0);
 
     sprout_init_nvs();
+    sprout_reset_telemetry_stubs();
 
     const sprout_board_profile_t *profile = sprout_board_profile_active();
     ESP_LOGI(TAG, "booting board=%s state=%s", profile->id, sprout_state_name(s_state));

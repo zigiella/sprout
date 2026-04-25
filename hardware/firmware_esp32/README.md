@@ -22,6 +22,7 @@ El siguiente hito inmediato añade:
 - `HOST_HEARTBEAT` / `JETSON_HEARTBEAT` para refrescar la presencia de Rhizome
 - `TELEMETRY` para devolver un snapshot stub de sensores mientras no haya cableado
 - `host_link` y `host_age_ms` en `STATUS_REPORT` y `HEARTBEAT`
+- `SET_SENSOR_STUB ...` y `RESET_SENSOR_STUBS` para simular entradas antes del cableado real
 
 ## Stack
 
@@ -46,6 +47,12 @@ Entrada por línea ASCII terminada en `\n`:
 - `HOST_HEARTBEAT`
 - `JETSON_HEARTBEAT`
 - `TELEMETRY`
+- `SET_SENSOR_STUB SOIL_A <int>`
+- `SET_SENSOR_STUB SOIL_B <int>`
+- `SET_SENSOR_STUB TANK_LEVEL <int>`
+- `SET_SENSOR_STUB FLOW_PULSES <int>`
+- `SET_SENSOR_STUB BME280 CONNECTED|DISCONNECTED`
+- `RESET_SENSOR_STUBS`
 
 Salida:
 
@@ -54,6 +61,7 @@ Salida:
 - `HEARTBEAT state=SAFE_IDLE board=... uptime_ms=... host_link=... host_age_ms=...`
 - `ACK command=HOST_HEARTBEAT state=... host_link=... host_age_ms=...`
 - `TELEMETRY_REPORT soil_a_raw=... soil_b_raw=... tank_level_raw=... flow_pulses=... bme280=...`
+- `ACK command=SET_SENSOR_STUB field=... soil_a_raw=... soil_b_raw=... tank_level_raw=... flow_pulses=... bme280=...`
 - `REJECT reason=UNKNOWN_COMMAND cmd=...`
 
 ## Build y flash
@@ -119,6 +127,17 @@ Y ante `TELEMETRY`:
 
 ```text
 TELEMETRY_REPORT soil_a_raw=-1 soil_b_raw=-1 tank_level_raw=-1 flow_pulses=0 bme280=DISCONNECTED host_link=FRESH host_age_ms=...
+```
+
+Ejemplo de simulacion de sensores:
+
+```text
+SET_SENSOR_STUB SOIL_A 1234
+SET_SENSOR_STUB SOIL_B 1450
+SET_SENSOR_STUB TANK_LEVEL 820
+SET_SENSOR_STUB FLOW_PULSES 17
+SET_SENSOR_STUB BME280 CONNECTED
+TELEMETRY
 ```
 
 Si el puerto USB no enumera a la primera en un S3 nuevo:
