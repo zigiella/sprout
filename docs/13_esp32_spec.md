@@ -31,6 +31,7 @@ El ESP32 aporta lo que Jetson no debe prometer:
 - humedad suelo B
 - nivel de depósito
 - caudalímetro
+- BME280 opcional para temperatura, humedad atmosférica y presión
 - opcional: interruptor manual / E-stop / sensor de puerta de caja
 
 ### 3.2 Salidas físicas
@@ -56,9 +57,23 @@ El ESP32 aporta lo que Jetson no debe prometer:
 
 ## 5. Conexión recomendada
 
+## 5.0 Placas reales en juego
+
+Placas disponibles en el laboratorio:
+
+- **ESP32-S3 N16R8 con USB OTG**: placa de arranque inmediata para el firmware del MVP
+- **ESP32-S3-DevKitC-1 N8R8**: placa de banco alternativa si demuestra mejor flujo de flashing/debug
+
+Decisión de baseline para el repo:
+
+- **firmware en ESP-IDF**
+- **perfil inicial de board: `n16r8_usb_otg`**
+
+La elección de placa debe quedar separada de la lógica de estados y protocolo para poder añadir `devkitc_n8r8` después sin reescribir la state machine.
+
 ## 5.1 Jetson ↔ ESP32
 Recomendación MVP:
-- **USB serial CDC** entre Jetson y ESP32
+- **USB Serial/JTAG / CDC-ACM** entre Jetson y ESP32
 
 Ventajas:
 - evita problemas de nivel lógico,
@@ -72,6 +87,7 @@ Alternativa:
 ### Analógicos
 - sensores de humedad
 - sensor de nivel
+- BME280 opcional por I2C como sensor de contexto no crítico
 
 Recomendación:
 - ADS1115 por I2C al ESP32 si necesitas mejor estabilidad que el ADC interno.
@@ -92,6 +108,16 @@ Recomendación:
 - **masa común entre control y actuadores**
 - flyback y/o módulos adecuados para cargas inductivas
 
+## 5.4 Restricciones de pinout en ESP32-S3
+
+En el baseline `ESP32-S3 N16R8 USB OTG`:
+
+- **GPIO19 / GPIO20** quedan reservados para USB nativo
+- **GPIO35 / GPIO36 / GPIO37** no se usan por ir asociados a PSRAM Octal
+- **GPIO45 / GPIO46** se evitan al principio por ser pines sensibles de strapping / arranque
+
+La primera iteración del firmware debe asumir esas restricciones como no negociables.
+
 ## 6. Topología recomendada
 
 ```text
@@ -110,7 +136,19 @@ Recomendación:
 
 ## 7. Protocolo lógico
 
+## 7.0 Hito 0 de firmware
+
+Primer milestone real del firmware:
+
+- arranque siempre en `SAFE_IDLE`
+- banner `HELLO`
+- comando `STATUS`
+- emisión periódica de `HEARTBEAT`
+
+Antes de sensores y actuadores, el firmware debe ser un periférico serie estable y predecible.
+
 ### Comandos Jetson → ESP32
+- `HELLO`
 - `STATUS`
 - `WATER A <seconds>`
 - `WATER B <seconds>`
@@ -120,6 +158,7 @@ Recomendación:
 - `SET_LIMITS` opcional
 
 ### Respuestas ESP32 → Jetson
+- `HELLO`
 - `ACK`
 - `REJECT reason`
 - `ALERT code`

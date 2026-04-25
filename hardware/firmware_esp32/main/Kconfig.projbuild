@@ -1,0 +1,32 @@
+menu "Sprout firmware"
+
+choice SPROUT_BOARD_PROFILE
+    prompt "Sprout board profile"
+    default SPROUT_BOARD_PROFILE_N16R8_USB_OTG
+    help
+        Select the physical ESP32-S3 board profile without coupling the
+        firmware state machine to a single board layout.
+
+    config SPROUT_BOARD_PROFILE_N16R8_USB_OTG
+        bool "ESP32-S3 N16R8 USB OTG"
+
+    config SPROUT_BOARD_PROFILE_DEVKITC_N8R8
+        bool "ESP32-S3-DevKitC-1 N8R8"
+endchoice
+
+config SPROUT_HEARTBEAT_INTERVAL_MS
+    int "Heartbeat interval (ms)"
+    range 500 10000
+    default 2000
+    help
+        Cadence for HEARTBEAT lines emitted by the milestone-0 firmware.
+
+config SPROUT_COMMAND_MAX_LINE_LENGTH
+    int "Maximum serial command length"
+    range 32 512
+    default 128
+    help
+        Maximum ASCII line length accepted from the host for the hito-0
+        serial protocol.
+
+endmenu
