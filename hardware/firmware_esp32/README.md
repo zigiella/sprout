@@ -47,6 +47,19 @@ Salida:
 
 ## Build y flash
 
+## Primer bring-up recomendado
+
+Antes de mezclar la placa con Jetson, el arranque inicial debe hacerse en un host Windows para aislar variables de USB, drivers y toolchain.
+
+Secuencia recomendada para la `ESP32-S3 N16R8 USB OTG`:
+
+1. conectar la placa al PC Windows con cable de datos
+2. entrar en modo descarga con `BOOT + RESET` si el puerto no aparece a la primera
+3. verificar que el host enumera un puerto `COM`
+4. flashear el firmware milestone-0
+5. comprobar que `STATUS_REPORT` expone `flash_bytes ~= 16777216` y `psram_bytes ~= 8388608`
+6. solo despues pasar al host Jetson y validar `/dev/ttyACM*`
+
 ### Windows host
 
 ```powershell
@@ -84,6 +97,13 @@ Y ante `STATUS`:
 ```text
 STATUS_REPORT state=SAFE_IDLE fw=0.1.0 board=n16r8_usb_otg uptime_ms=... flash_bytes=16777216 psram_bytes=8388608
 ```
+
+Si el puerto USB no enumera a la primera en un S3 nuevo:
+
+1. mantener `BOOT`
+2. pulsar y soltar `RESET / EN`
+3. soltar `BOOT`
+4. volver a intentar `flash` o abrir monitor serie
 
 ## Fuentes operativas validadas
 
