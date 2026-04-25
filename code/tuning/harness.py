@@ -57,6 +57,35 @@ def index_by_id(items: list[dict]) -> dict[str, dict]:
     return {item["id"]: item for item in items}
 
 
+def load_completed_run_ids(path: Path) -> set[str]:
+    """Lee un JSONL existente y devuelve los run_id que terminaron sin error.
+
+    Una run con `error` o sin envelope válido se considera no completada y se
+    rerunea cuando se invoca con --resume. Si el archivo no existe, devuelve
+    set vacío (run desde cero).
+    """
+    if not path.exists():
+        return set()
+    completed: set[str] = set()
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rec = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if rec.get("error"):
+                continue
+            if rec.get("http_status") != 200:
+                continue
+            run_id = rec.get("run_id")
+            if run_id:
+                completed.add(run_id)
+    return completed
+
+
 # ---------------------------------------------------------------------------
 # Sobre común — parseo del JSON que el modelo emite en message.content
 # ---------------------------------------------------------------------------
@@ -120,7 +149,7 @@ def call_adapter(
     client: httpx.Client,
     adapter_url: str,
     payload: dict,
-    timeout: float = 180.0,
+    timeout: float = 300.0,
 ) -> tuple[dict, dict, int, str | None]:
     """Devuelve (body, sprout_headers, status_code, error_or_None)."""
     try:
@@ -256,17 +285,24 @@ def run_phase_1(matrix: dict, args) -> int:
     out_path = HERE / matrix["output"]["path"]
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
+    completed = load_completed_run_ids(out_path) if args.resume else set()
+    file_mode = "a" if args.resume else "w"
+    if args.resume and completed:
+        print(f"[resume] skipping {len(completed)} completed runs", flush=True)
+
     n_total = len(configs) * len(prompt_ids)
-    n_done = 0
+    n_done = len(completed)
     n_envelope_ok = 0
     n_status_match = 0
 
-    with httpx.Client() as client, out_path.open("w", encoding="utf-8") as out_f:
+    with httpx.Client() as client, out_path.open(file_mode, encoding="utf-8") as out_f:
         for config in configs:
             sys_prompt = sys_prompts[config["system_prompt_id"]]
             for prompt_id in prompt_ids:
                 prompt = pack[prompt_id]
                 run_id = f"phase1_{prompt_id}_{config['id']}"
+                if run_id in completed:
+                    continue
                 if args.dry_run:
                     print(f"[DRY] {run_id}", flush=True)
                     n_done += 1
@@ -313,10 +349,15 @@ def run_phase_1_5(matrix: dict, args) -> int:
     out_path = HERE / matrix["output"]["path"]
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    n_total = len(configs) * len(pivots)
-    n_done = 0
+    completed = load_completed_run_ids(out_path) if args.resume else set()
+    file_mode = "a" if args.resume else "w"
+    if args.resume and completed:
+        print(f"[resume] skipping {len(completed)} completed runs", flush=True)
 
-    with httpx.Client() as client, out_path.open("w", encoding="utf-8") as out_f:
+    n_total = len(configs) * len(pivots)
+    n_done = len(completed)
+
+    with httpx.Client() as client, out_path.open(file_mode, encoding="utf-8") as out_f:
         for config in configs:
             lang = config["language"]
             pack = pack_en if lang == "en" else pack_es
@@ -326,6 +367,8 @@ def run_phase_1_5(matrix: dict, args) -> int:
             for pivot in pivots:
                 prompt = pack[pivot["id"]]
                 run_id = f"phase1_5_{pivot['id']}_{config['id']}"
+                if run_id in completed:
+                    continue
                 if args.dry_run:
                     print(f"[DRY] {run_id} (lang={lang})", flush=True)
                     n_done += 1
@@ -364,10 +407,15 @@ def run_phase_3(matrix: dict, args) -> int:
     out_path = HERE / matrix["output"]["path"]
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    n_total = len(archetypes_tested) * len(depths) * len(configs)
-    n_done = 0
+    completed = load_completed_run_ids(out_path) if args.resume else set()
+    file_mode = "a" if args.resume else "w"
+    if args.resume and completed:
+        print(f"[resume] skipping {len(completed)} completed runs", flush=True)
 
-    with httpx.Client() as client, out_path.open("w", encoding="utf-8") as out_f:
+    n_total = len(archetypes_tested) * len(depths) * len(configs)
+    n_done = len(completed)
+
+    with httpx.Client() as client, out_path.open(file_mode, encoding="utf-8") as out_f:
         for archetype in archetypes_tested:
             warmup_prompt = pack[prompts_per_arch[archetype]["warmup"]]
             measured_prompt = pack[prompts_per_arch[archetype]["measured"]]
@@ -375,6 +423,8 @@ def run_phase_3(matrix: dict, args) -> int:
                 warmup_turns = depth["warmup_turns"]
                 for config in configs:
                     run_id = f"phase3_{archetype}_{depth['id']}_{config['id']}"
+                    if run_id in completed:
+                        continue
                     if args.dry_run:
                         print(
                             f"[DRY] {run_id} (warmups={warmup_turns})", flush=True
@@ -600,6 +650,12 @@ def main(argv: list[str] | None = None) -> int:
         "--smoke",
         action="store_true",
         help="Single round-trip smoke test, no matrix run.",
+    )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="Skip runs already present (without error) in the output JSONL "
+        "and append the missing ones.",
     )
     args = parser.parse_args(argv)
 
