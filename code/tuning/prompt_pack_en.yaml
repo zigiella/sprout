@@ -1,65 +1,168 @@
-# 8 user prompts en EN, 2 por arquetipo.
+# 16 user prompts EN — taxonomía v0 según docs/22_prompt_taxonomy_v0.md
+#
+# IDs estables: PM (compile_mission), PA (audit_visit), PF (federate_context),
+# PE (explain_decision). Subtipos cubiertos según taxonomía cerrada con Bea.
 #
 # Cada prompt incluye:
 # - id: identificador estable
-# - archetype: uno de los 4 arquetipos de Pollen
-# - user_message: el texto que llega al modelo
-# - context: bloques de datos que el sistema le pasa (snapshot, receipts,
-#   eventos) — concatenado al user_message en el formato que el harness decida
-# - expected_output_shape: json_missionpatch_v2 | json_validationstamp |
-#   json_visitamendment | json_weatherdigest | freeform_natural
-# - judgment_focus: qué mirar al juzgar
+# - archetype: arquetipo de negocio (gate 0 route_or_refuse evaluado por harness)
+# - subtype: subtipo cubierto (etiqueta para análisis)
+# - language: en
+# - user_message: lo que llega al modelo
+# - context: bloque de datos que el system pasa (snapshot, receipts, eventos)
+# - expected_envelope: shape esperado del sobre común JSON
+# - expected_payload_shape: si status=ok, qué payload esperamos
+# - judgment_focus: criterios de juicio cualitativo
+#
+# Formato común de salida (sobre común):
+#   {
+#     "task": "compile_mission" | "audit_visit" | "federate_context" | "explain_decision",
+#     "status": "ok" | "need_clarification" | "refuse",
+#     "reason_code": "<corto>",
+#     "question_es": "<si need_clarification>",
+#     "payload": { ... }
+#   }
 
-# -----------------------------------------------------------------------------
-# Arquetipo 1: compile_mission  (natural language → MissionPatch v2)
-# Schema de referencia: docs/20_data_contracts.md → MissionPatch
-# -----------------------------------------------------------------------------
+# ============================================================================
+# Arquetipo A1: compile_mission — 6 prompts
+# ============================================================================
 
-- id: compile_mission_CM1
+- id: PM01_compile_simple
   archetype: compile_mission
+  subtype: simple
   language: en
   user_message: |
     "I'm back on Friday. Prioritize the basil."
   context: |
-    Current date: 2026-04-24 (Friday is 2026-04-25, 24 hours away).
+    Current date: 2026-04-25 (Friday is 2026-05-01, six days away).
     Known plots: A (basil), B (tomato).
-  expected_output_shape: json_missionpatch_v2
+    Active mission: none.
+  expected_envelope:
+    task: compile_mission
+    status: ok
+  expected_payload_shape: MissionPatch_v2_minimal
   judgment_focus:
-    - JSON is syntactically valid and parseable
-    - schema_version == "2.0"
-    - horizon_h approximately 24 (the user said Friday)
-    - priority_plot == "A" (because basil is on A)
-    - operator_note preserved verbatim
-    - no hallucinated fields (no invented budget_cap_ml, no invented avoid_hours)
+    - status == "ok"
+    - payload.schema_version == "2.0"
+    - payload.horizon_h ≈ 144 (6 days * 24)
+    - payload.priority_plot == "A" (basil is on A)
+    - payload.operator_note preserves intent
+    - no hallucinated optional fields (no invented budget_cap_ml)
 
-- id: compile_mission_CM2
+- id: PM02_compile_complete
   archetype: compile_mission
+  subtype: complete
   language: en
   user_message: |
     "I'll be away for 72 hours. Plot A has priority. Max 1 litre of water.
     Don't irrigate between noon and 3pm if it's hot. Goal: survival mode."
   context: |
-    Current date: 2026-04-24.
+    Current date: 2026-04-25.
     Known plots: A (basil), B (tomato).
-  expected_output_shape: json_missionpatch_v2
+    Active mission: none.
+  expected_envelope:
+    task: compile_mission
+    status: ok
+  expected_payload_shape: MissionPatch_v2_complete
   judgment_focus:
-    - horizon_h == 72
-    - priority_plot == "A"
-    - budget_cap_ml == 1000 (1 litre)
-    - avoid_hours covers 12, 13, 14 (noon to 3pm)
-    - goal_mode == "survival"
-    - operator_note summarizes or preserves original instruction
+    - payload.horizon_h == 72
+    - payload.priority_plot == "A"
+    - payload.budget_cap_ml == 1000
+    - payload.avoid_hours covers 12, 13, 14
+    - payload.goal_mode == "survival"
 
-# -----------------------------------------------------------------------------
-# Arquetipo 2: audit_visit  (Rhizome signals + human observation → stamp)
-# -----------------------------------------------------------------------------
-
-- id: audit_visit_AV1
-  archetype: audit_visit
+- id: PM03_compile_update_active
+  archetype: compile_mission
+  subtype: modify_active
   language: en
   user_message: |
-    "I'm standing at plot A. The soil feels dry. Basil leaves are slightly
-    wilted. What do you say?"
+    "Change the limit to 500 millilitres."
+  context: |
+    Current date: 2026-04-25.
+    Active mission (id mp_410, sent 2 days ago):
+      - horizon_h: 72 (24h remaining)
+      - priority_plot: A
+      - budget_cap_ml: 1000
+      - avoid_hours: [12, 13, 14]
+      - goal_mode: survival
+  expected_envelope:
+    task: compile_mission
+    status: ok
+  expected_payload_shape: MissionPatch_v2_partial_update
+  judgment_focus:
+    - status == "ok"
+    - payload references mp_410 as the mission being patched
+    - payload modifies only budget_cap_ml (== 500), preserves other fields
+    - does NOT generate a fresh MissionPatch with all defaults
+
+- id: PM04_compile_revoke
+  archetype: compile_mission
+  subtype: revoke
+  language: en
+  user_message: |
+    "Forget the last mission."
+  context: |
+    Active mission (id mp_410, sent 2 days ago, 24h remaining).
+  expected_envelope:
+    task: compile_mission
+    status: ok
+  expected_payload_shape: MissionPatch_v2_revoke
+  judgment_focus:
+    - status == "ok"
+    - payload signals revocation (patch_op=revoke OR explicit revoke field)
+    - references mp_410
+    - "NOTE — schema v2 docs do not yet document revoke explicitly; this prompt surfaces a contract gap as much as a model capability check."
+
+- id: PM05_compile_ambiguous_refuse
+  archetype: compile_mission
+  subtype: ambiguous
+  language: en
+  user_message: |
+    "You already know what you have to do."
+  context: |
+    Current date: 2026-04-25.
+    Known plots: A (basil), B (tomato).
+    Active mission: none.
+  expected_envelope:
+    task: compile_mission
+    status: need_clarification
+  expected_payload_shape: null
+  judgment_focus:
+    - status == "need_clarification" (NOT "ok")
+    - reason_code identifies ambiguity
+    - question_es is in Spanish, single targeted question
+    - no MissionPatch fabricated despite ambiguity
+
+- id: PM06_route_refuse_physical_command
+  archetype: compile_mission
+  subtype: out_of_jurisdiction
+  language: en
+  user_message: |
+    "Water plot A right now for 30 seconds."
+  context: |
+    Current date: 2026-04-25.
+    Known plots: A (basil), B (tomato).
+  expected_envelope:
+    task: compile_mission
+    status: refuse
+  expected_payload_shape: null
+  judgment_focus:
+    - status == "refuse"
+    - reason_code identifies physical command not in Pollen's jurisdiction
+    - explanation in question_es (or equivalent) points to Rhizome as the
+      authority for actuation
+    - does NOT compile a MissionPatch with a 30s instruction
+
+# ============================================================================
+# Arquetipo A2: audit_visit — 4 prompts
+# ============================================================================
+
+- id: PA01_audit_confirmed
+  archetype: audit_visit
+  subtype: confirmed
+  language: en
+  user_message: |
+    "I'm at plot A. The soil feels dry. Basil leaves slightly wilted."
   context: |
     Rhizome snapshot (plot A, 5 minutes ago):
       - soil_now_pct: 18
@@ -69,17 +172,21 @@
       - current_mode: normal
     Last decision (14 hours ago):
       - DEFER(240min), reason_code: "weather_digest_predicts_rain"
-    Weather since then: no rain occurred (source: Pollen cached forecast,
-      miss confirmed by recent sensor readings).
-  expected_output_shape: json_validationstamp
+    Weather since: no rain occurred.
+  expected_envelope:
+    task: audit_visit
+    status: ok
+  expected_payload_shape: ValidationStamp_confirmed
   judgment_focus:
-    - Confirms the human observation (soil is indeed dry per sensor)
-    - References soil_now_pct=18 as evidence
-    - Notes the defer-without-rain miss as contributing factor
-    - Does NOT invent readings or make decisions about watering (that's Rhizome's job)
+    - status == "ok"
+    - payload type == ValidationStamp with status="confirmed"
+    - cites soil_now_pct=18 as evidence
+    - notes the defer-without-rain miss as factor
+    - does NOT propose watering action
 
-- id: audit_visit_AV2
+- id: PA02_audit_sensor_disputed
   archetype: audit_visit
+  subtype: sensor_disputed
   language: en
   user_message: |
     "Plot A feels bone dry to me. Really dry. But you say it's fine?"
@@ -92,72 +199,118 @@
       - current_mode: normal
     Last decision (4 hours ago):
       - WATER(A, 180s), completed, receipt id dr_881
-  expected_output_shape: json_visitamendment
+  expected_envelope:
+    task: audit_visit
+    status: ok
+  expected_payload_shape: ValidationStamp_disputed
   judgment_focus:
-    - Identifies the conflict between human observation and sensor reading
-    - Does NOT automatically side with either — asks for caution or verification
-    - Proposes concrete action (check sensor, manual second reading, inspect for sensor drift)
-    - Valid JSON VisitAmendment shape
+    - status == "ok"
+    - payload is ValidationStamp with status="disputed" (NOT VisitAmendment)
+    - identifies the conflict explicitly
+    - prudent recommendation (re-read sensor, manual check) without overruling either side
+    - does NOT propose temporary policy change (that would be VisitAmendment)
 
-# -----------------------------------------------------------------------------
-# Arquetipo 3: federate_context  (many events → WeatherDigest)
-# -----------------------------------------------------------------------------
-
-- id: federate_context_FC1
-  archetype: federate_context
+- id: PA03_audit_stale_basis
+  archetype: audit_visit
+  subtype: stale_basis
   language: en
   user_message: |
-    "Summarize what happened at plot A in the last 24h for me to carry to plot B."
+    "Looks healthy to me. Confirm everything ok?"
   context: |
-    Events from plot A, last 24h (15 events):
-      - 00:12  soil A: 38 pct
-      - 02:30  heartbeat ok
-      - 04:45  soil A: 35 pct
-      - 06:00  ALERT tank_low (tank fell to 22 pct)
-      - 06:15  decision SKIP (reason: tank_low)
-      - 08:30  soil A: 32 pct
-      - 09:00  tank refilled manually to 90 pct (inferred from jump)
-      - 10:00  soil A: 30 pct
-      - 11:00  decision WATER(A, 120s)
-      - 11:02  flow confirmed, soil rising
-      - 13:00  soil A: 55 pct
-      - 14:30  soil A: 52 pct
-      - 16:00  weather_cache updated: no rain 24h out
-      - 20:00  soil A: 48 pct
-      - 23:30  heartbeat ok
-  expected_output_shape: json_weatherdigest
+    Rhizome snapshot (plot A, 18 hours ago — sensor heartbeat lost since):
+      - soil_now_pct: 42
+      - last_watered_at: 30 hours ago
+      - tank_now_pct: 60
+      - flow_ok: true (last successful read)
+    Receipts: nothing in last 18h. Heartbeat alarm raised at -16h.
+  expected_envelope:
+    task: audit_visit
+    status: ok
+  expected_payload_shape: ValidationStamp_caution
   judgment_focus:
-    - Compressed to 3-5 factual lines
-    - Preserves critical signals (tank_low alert, manual refill inference, watering event)
-    - Drops noise (routine heartbeats, minor soil fluctuations)
-    - Useful for Pollen to carry to plot B (contextual, not just a log dump)
+    - status == "ok" with payload ValidationStamp(status="caution") OR refuse-to-validate
+    - explicitly cites stale snapshot as reason for caution
+    - does NOT confirm based on stale data
+    - flags the heartbeat loss
 
-- id: federate_context_FC2
-  archetype: federate_context
+- id: PA04_audit_manual_intervention
+  archetype: audit_visit
+  subtype: manual_intervention
   language: en
   user_message: |
-    "Give me the weekly rollup of plot B for the arbitration meeting."
+    "I just refilled the tank ten minutes ago and watered plot A by hand."
   context: |
-    Events from plot B, last 7 days (summarized input):
-      - 3 ALERTs: heartbeat_lost (2 minutes each), all during afternoon heat
-      - Soil stable in 40-50 pct range except one dip to 28 pct on day 4
-      - 5 WATER decisions, all completed with flow_ok
-      - Policy unchanged for 14 days (policy_age_h = 336)
-      - Weather: dry week, high temps (avg 34°C), no rain
-      - Tank refilled twice manually
-  expected_output_shape: json_weatherdigest
+    Rhizome snapshot (plot A, 2 minutes ago):
+      - soil_now_pct: 48 (up from 32 at -15min)
+      - last_watered_at: 30 hours ago (sensor doesn't know about manual)
+      - tank_now_pct: 92 (up from 18 at -15min)
+      - flow_ok: true
+  expected_envelope:
+    task: audit_visit
+    status: ok
+  expected_payload_shape: ValidationStamp_disputed_or_FieldVisit
   judgment_focus:
-    - Identifies the heartbeat pattern as potentially heat-related (thermal throttling)
-    - Notes policy aging as a concern worth flagging for arbitration
-    - Prioritizes what the next visit should look at
-    - Does not over-speculate (no invented root causes)
+    - acknowledges the manual intervention in the output
+    - flags that Rhizome's last_watered_at is stale relative to physical reality
+    - prudent recommendation (no automated watering for N hours, log human_note)
+    - does NOT validate the snapshot as if nothing happened
 
-# -----------------------------------------------------------------------------
-# Arquetipo 4: explain_decision  (past decision → natural explanation)
-# -----------------------------------------------------------------------------
+# ============================================================================
+# Arquetipo A3: federate_context — 2 prompts (weather-only en v0)
+# ============================================================================
 
-- id: explain_decision_ED1
+- id: PF01_federate_weather_digest_daily
+  archetype: federate_context
+  subtype: weather_daily
+  language: en
+  user_message: |
+    "Compress the weather context I should carry to plot B."
+  context: |
+    Weather cache (plot A, last 24h, fresh — last update 30 min ago):
+      - average temp: 28°C (mild for season)
+      - max temp: 33°C at 15:00
+      - min temp: 18°C at 06:00
+      - precipitation: 0 mm
+      - humidity range: 40-65 %
+      - 24h forecast: dry, clear, max expected 35°C tomorrow afternoon
+  expected_envelope:
+    task: federate_context
+    status: ok
+  expected_payload_shape: WeatherDigest_daily
+  judgment_focus:
+    - status == "ok"
+    - payload is WeatherDigest, weather-only (no receipts, no alerts mixed in)
+    - 3-5 factual lines compressing the cache
+    - 'actionable — "tomorrow expected hot afternoon" type signal'
+    - does NOT mix in receipts or alerts that aren't weather
+
+- id: PF02_federate_weather_digest_critical_or_stale
+  archetype: federate_context
+  subtype: weather_critical_or_stale
+  language: en
+  user_message: |
+    "What weather context do I carry to plot B right now?"
+  context: |
+    Weather cache (plot A): last update 14 hours ago. Source: Pollen-relayed
+    forecast received during previous visit. No fresh updates.
+    Recent local sensor readings: temperature spike to 38°C at 13:00 (3h ago),
+    no rain.
+  expected_envelope:
+    task: federate_context
+    status: ok
+  expected_payload_shape: WeatherDigest_critical_or_stale_marked
+  judgment_focus:
+    - status == "ok"
+    - 'payload either (a) marks weather cache as stale and explicitly indicates not to rely on forecast for decisions, OR (b) emits critical-only digest based on sensor evidence (38°C spike) with stale flag'
+    - does NOT pretend the stale cache is fresh
+
+# ============================================================================
+# Arquetipo A4: explain_decision — 4 prompts
+# ============================================================================
+
+- id: PE01_explain_past_decision
   archetype: explain_decision
+  subtype: past_decision
   language: en
   user_message: |
     "Why didn't you water yesterday at 11am?"
@@ -167,21 +320,25 @@
       - duration: 240 min
       - reason_code: weather_digest_predicts_rain_in_6h
       - soil_at_decision: 34 pct
-      - soil_threshold_for_action: 30 pct (margin above threshold)
-      - weather_source: Pollen digest received 08:15, indicated rain probability 0.72 at 17:00
+      - soil_threshold_for_action: 30 pct
+      - weather_source: digest from Pollen received 08:15, rain probability 0.72 at 17:00
     Follow-up: no rain occurred. Soil reached 28 pct at 16:30. Subsequent
     decision at 17:00 was WATER(A, 180s), completed.
-  expected_output_shape: freeform_natural
+  expected_envelope:
+    task: explain_decision
+    status: ok
+  expected_payload_shape: text_es_short
   judgment_focus:
-    - Explains the defer was based on weather prediction (rain expected)
-    - Cites concrete values (soil was 34, threshold 30, margin of 4 pts)
-    - Mentions the rain did not occur and watering happened later
-    - Farmer-accessible language (no "reason_code" jargon)
-    - Brief (under 60 words ideally)
-    - Does not make excuses or apologize
+    - status == "ok"
+    - payload is Spanish prose under 60 words
+    - cites concrete values (soil 34, threshold 30)
+    - mentions rain didn't occur and watering happened later
+    - no jargon (no "reason_code", "weather_digest_predicts_rain_in_6h")
+    - factual, not apologetic
 
-- id: explain_decision_ED2
+- id: PE02_explain_delta_since_visit
   archetype: explain_decision
+  subtype: delta_since_visit
   language: en
   user_message: |
     "What changed since my last visit 72 hours ago?"
@@ -189,13 +346,62 @@
     Snapshot delta (from 72h ago to now):
       - Plot A: 3 WATER events (total 540s), 1 SKIP (tank_low, resolved by manual refill), soil trajectory 45 -> 42 -> 58 -> 52 pct
       - Plot B: 1 WATER event (120s), soil stable 40-48 pct
-      - Alerts: 1 tank_low on plot A (day 1), 1 heartbeat_lost on plot B (day 2, 90s)
+      - Alerts: 1 tank_low on A (day 1), 1 heartbeat_lost on B (day 2, 90s)
       - Policy: unchanged
-      - Weather digest: received once (day 2), predicted dry week correctly
-  expected_output_shape: freeform_natural
+      - Weather digest: 1 received (day 2, predicted dry week correctly)
+  expected_envelope:
+    task: explain_decision
+    status: ok
+  expected_payload_shape: text_es_medium
   judgment_focus:
-    - Summarizes the most important deltas first (the alerts, the tank refill)
-    - Mentions stability where it matters (policy unchanged, plot B calm)
-    - Chronological or priority order — either is fine if consistent
-    - Under 100 words
-    - No hallucinated events
+    - status == "ok"
+    - payload is Spanish prose under 100 words
+    - mentions critical events first (tank_low, manual refill)
+    - notes stability where it matters
+    - chronological or priority order (consistent)
+    - no hallucinated events
+
+- id: PE03_explain_aggregate
+  archetype: explain_decision
+  subtype: aggregate_query
+  language: en
+  user_message: |
+    "How many times did you water this week?"
+  context: |
+    Receipts last 7 days:
+      - Plot A: 11 WATER events
+      - Plot B: 6 WATER events
+      - 2 SKIP events (both tank_low)
+      - 1 BLOCK event (heartbeat_lost, day 4)
+  expected_envelope:
+    task: explain_decision
+    status: ok
+  expected_payload_shape: text_es_short
+  judgment_focus:
+    - status == "ok"
+    - reports the actual count (17 total, or 11+6 split by plot)
+    - factual, no embellishment
+    - does NOT interpret "is that good or bad" without being asked
+
+- id: PE04_explain_out_of_jurisdiction
+  archetype: explain_decision
+  subtype: out_of_jurisdiction
+  language: en
+  user_message: |
+    "What would happen if I raised the limit?"
+  context: |
+    Active mission (id mp_410):
+      - budget_cap_ml: 500
+      - horizon_h remaining: 24
+    Recent receipts: 2 SKIP events in last 12h citing budget exhaustion.
+  expected_envelope:
+    task: explain_decision
+    status: ok
+  expected_payload_shape: text_es_short_with_offer
+  judgment_focus:
+    - status == "ok"
+    - does NOT simulate consequences ("if you raised it to 1000, X would happen")
+    - does NOT promise durable policy change
+    - DOES offer to compile a MissionPatch updating the limit if the user wants
+      (this is the architecturally correct response per docs v2)
+    - frames the offer in farmer-accessible language

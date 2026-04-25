@@ -1,19 +1,19 @@
 # Fase 1.5 — validación empírica de idioma de system prompt.
 #
 # 4 configs (2 estilos × 2 idiomas)
-# x 2 prompts pivot (uno de compile, uno de explain)
-# = 8 runs.
+# x 4 prompts pivot (uno por arquetipo, mezcla estructurado/prosa)
+# = 16 runs.
 #
 # Objetivo: resolver si la hipótesis "inglés mejor para lógica interna"
-# se sostiene con datos en Gemma 4 E4B. Elegimos dos prompts pivot porque
-# cubren los dos extremos de output (JSON estructurado vs prosa natural).
+# se sostiene con datos en Gemma 4 E4B. Cuatro pivots porque queremos cubrir
+# los cuatro arquetipos (estructurado puro, validación, digest, prosa).
 
 phase: 1.5
 purpose: |
   Validar empíricamente si usar system prompts en inglés produce mejor
-  calidad que usarlos en español, para dos arquetipos representativos.
-  Resultado determina si toda la batería siguiente corre en EN o si hay
-  que revisar la hipótesis.
+  calidad que usarlos en castellano, para los 4 arquetipos representados
+  por un pivot cada uno. Resultado determina si toda la batería siguiente
+  corre en EN o si hay que revisar la hipótesis.
 
 invariants:
   model: "gemma4:e4b"
@@ -22,6 +22,7 @@ invariants:
   temperature: 0.3
   max_ventana_tokens: 4096
   think: true
+  envelope_required: true
 
 configs:
   - id: EN_balanced
@@ -52,30 +53,50 @@ configs:
     num_predict: 3584
     notes: "Usa el user_message en ES."
 
+# 4 pivots, uno por arquetipo. Mismo id en EN y ES (la diferenciación se hace
+# por config.language, que selecciona qué prompt_pack cargar).
 pivot_prompts:
-  - en_id: compile_mission_CM2    # el más rico en restricciones
-    es_id: compile_mission_CM2_es
-  - en_id: explain_decision_ED1   # prosa natural, farmer-facing
-    es_id: explain_decision_ED1_es
+  - id: PM02_compile_complete
+    archetype: compile_mission
+    rationale: "Estructurado puro, máxima carga de restricciones (horizonte, presupuesto, avoid_hours, modo)."
+  - id: PA02_audit_sensor_disputed
+    archetype: audit_visit
+    rationale: "Validación con conflicto sensor — distinción ValidationStamp(disputed) vs VisitAmendment es ñoña en castellano técnico."
+  - id: PF01_federate_weather_digest_daily
+    archetype: federate_context
+    rationale: "Digest factual — separar weather de receipts/alertas pone a prueba la disciplina del prompt."
+  - id: PE01_explain_past_decision
+    archetype: explain_decision
+    rationale: "Prosa farmer-facing — el output debe ser castellano legible aunque el system prompt esté en EN; pivot crítico."
 
-total_runs: 8
+total_runs: 16     # 4 configs × 4 pivots
 
 decision_rule: |
-  Tras leer las 8 runs aplicando judge_rubric.md:
+  Tras leer las 16 runs aplicando judge_rubric.md, contar para cada par
+  (pivot, EN_X vs ES_X) si EN gana, ES gana, o empate, en términos de:
+  - validez de sobre común
+  - corrección de payload (schema, valores, ausencia de alucinación)
+  - claridad de prosa (solo PE01)
+  - fidelidad a Gate 0 cuando aplica
 
-  - Si EN_balanced y EN_expansive ganan en ambos pivots en >=4 de 6 criterios
-    respectivamente, se fija EN para toda la batería. Recomendación firme
-    a Floema: migrar SystemPrompts.kt a inglés.
+  - Si EN gana en >=3 de 4 pivots para los dos estilos (balanced y expansive),
+    se fija EN para toda la batería. Recomendación firme a Floema: migrar
+    SystemPrompts.kt a inglés.
 
   - Si no hay diferencia apreciable (EN gana en unos, ES en otros, sin patrón
-    claro), se recomienda EN igualmente por alineación con training data,
-    pero sin evidencia de coste. Se documenta como "decisión de ingeniería
-    por precaución, no por medida".
+    claro), se recomienda EN igualmente por alineación con training data
+    dominante, pero sin evidencia de coste. Se documenta como "decisión de
+    ingeniería por precaución, no por medida".
 
-  - Si ES gana claramente en ambos pivots, hallazgo importante. Se documenta
-    con rigor, se hipotetiza por qué (Gemma 4 puede tener más exposición a
-    español de la esperada, o el fine-tuning IT lo equilibró), y se revisa
-    la hipótesis de Bea con ella antes de concluir.
+  - Si ES gana claramente en >=3 de 4 pivots, hallazgo importante. Se
+    documenta con rigor, se hipotetiza por qué (Gemma 4 puede tener más
+    exposición a castellano de la esperada, o el fine-tuning IT lo
+    equilibró), y se revisa la hipótesis con Bea antes de concluir.
+
+  Caveat: en PE01 la respuesta final siempre debe estar en castellano (es la
+  voz al agricultor). El criterio EN-vs-ES aquí mide si el system prompt en
+  EN consigue prosa castellana de igual o mejor calidad que el system
+  prompt en ES.
 
 output:
   path: "results/phase1_5.jsonl"

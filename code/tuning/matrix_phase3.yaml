@@ -12,7 +12,10 @@ purpose: |
   Medir empíricamente cómo degrada la calidad (o se produce corte) cuando
   la conversación acumula turnos y se acerca al techo de 4096 tokens
   (num_ctx + num_predict invariante). Comparar thinking on vs off en
-  acumulación para ver si el razonamiento persiste en el KV cache.
+  acumulación para verificar empíricamente la hipótesis "el thinking se
+  acumula en KV si no se filtra explícitamente" (filter_channel_content_from_kv_cache
+  no está documentado públicamente como default; esta fase aporta evidencia
+  indirecta).
 
 invariants:
   model: "gemma4:e4b"
@@ -22,9 +25,10 @@ invariants:
   max_ventana_tokens: 4096
   language: en   # fijado tras fase 1.5, sujeto a revisión si 1.5 pivota
   system_prompt_id: auditor_standard_en
+  envelope_required: true
 
 archetypes_tested:
-  - explain_decision   # naturalmente conversacional
+  - explain_decision   # naturalmente conversacional, prosa farmer-facing
   - audit_visit        # receipts cargados, KV se llena rápido
 
 depths:
@@ -53,25 +57,28 @@ configs:
     num_predict: 596
     rationale: |
       Con thinking, misma ventana. Si el razonamiento se acumula en KV
-      cache (filter_channel_content_from_kv_cache no seteado a true),
-      deberíamos ver degradación antes que T_OFF_HIGH_CTX.
+      cache (hipótesis: filter_channel_content_from_kv_cache no seteado por
+      defecto), deberíamos ver degradación antes que T_OFF_HIGH_CTX. Si las
+      curvas se parecen, indicio de que el flag está activo o el comportamiento
+      es benigno.
 
 prompts_per_archetype:
   explain_decision:
-    warmup: explain_decision_ED2     # el contexto largo (delta de 72h)
-    measured: explain_decision_ED1   # pregunta más directa, medimos calidad de respuesta
+    warmup: PE02_explain_delta_since_visit     # el contexto largo (delta de 72h)
+    measured: PE01_explain_past_decision       # pregunta más directa, medimos calidad
   audit_visit:
-    warmup: audit_visit_AV1
-    measured: audit_visit_AV2
+    warmup: PA01_audit_confirmed
+    measured: PA02_audit_sensor_disputed       # validación con conflicto, exige razonamiento
 
 total_runs: 12
 
 measurements_per_run:
   - tokens_in (header Sprout-Inference-Tokens-In, incluye KV previo)
   - tokens_out (header Sprout-Inference-Tokens-Out)
-  - thinking_tokens (header, relevante solo cuando think=true en runtime con cloud — en local es 0, limitación conocida)
+  - thinking_tokens (header — en local-ollama siempre 0 por contrato del adapter, asimetría documentada en test_smoke_parity.py)
   - duration_ms (header)
   - was_truncated (bool — detectar si el output se corta por límite)
+  - envelope_valid (bool — sobre común se mantiene tras acumulación)
   - hallucination_count (juicio manual — cuántos datos inventados)
   - subjective_quality (juicio manual 1-5 vs baseline D1)
 
@@ -84,10 +91,11 @@ output:
 
 expected_findings:
   - "A profundidad D5, T_ON probablemente degrada antes que T_OFF si el thinking no se filtra del KV."
-  - "Si T_ON y T_OFF degradan similar, el thinking se está filtrando ok y el muro es solo el input."
+  - "Si T_ON y T_OFF degradan similar, indicio (no prueba) de que filter_channel_content_from_kv_cache está activo o el comportamiento es benigno; complementar con pregunta directa a Floema/Google."
   - "audit_visit probablemente toca el muro antes que explain_decision por carga de receipts."
+  - "El sobre común podría romperse antes que el contenido (formato JSON es lo primero que se degrada en saturación) — métrica `envelope_valid` lo captura."
 
 decision_outputs:
-  - "Recomendación concreta a Floema sobre si llamar a resetConversation() entre arquetipos."
-  - "Recomendación sobre si verificar filter_channel_content_from_kv_cache explícitamente."
+  - "Recomendación concreta a Floema sobre si llamar a resetConversation() entre arquetipos en LiteRtInfra.kt."
+  - "Pregunta dirigida a Floema/SDK: confirmar default de filter_channel_content_from_kv_cache y cómo cambiarlo (no aparece en docs públicas)."
   - "Recomendación sobre si maxNumTokens=4096 es suficiente o hay que elevarlo por arquetipo."
