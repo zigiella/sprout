@@ -195,9 +195,15 @@ Rhizome no es chat generalista. Su taxonomia debe reflejar sus cuatro trabajos r
 Y un gate transversal:
 - `hard_refuse`
 
-### 5.2 Arquetipos
+### 5.2 Gate transversal: `hard_refuse`
 
-#### R0. `hard_refuse`
+**No es un arquetipo de negocio**, es un gate previo y prioritario que
+corta antes de que el LLM arbitre. La respuesta correcta ya está
+determinada por la frontera fisica o por safety dura, y el LLM no debe
+introducir variabilidad. Aclaracion incorporada tras feedback de Xilema
+(2026-04-26): la version anterior de este documento listaba `hard_refuse`
+como "R0" dentro de los arquetipos, lo que era inconsistente con §5.1
+("gate transversal"). Queda explicitamente fuera de la lista de arquetipos.
 
 Casos donde el LLM no deberia arbitrar:
 - deposito bajo
@@ -209,6 +215,8 @@ Casos donde el LLM no deberia arbitrar:
 Salida esperada:
 - rechazo estructurado o `BLOCK`
 - motivo corto y exacto
+
+### 5.3 Arquetipos
 
 #### R1. `decide_action`
 
