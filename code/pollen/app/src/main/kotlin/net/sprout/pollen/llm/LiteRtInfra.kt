@@ -51,6 +51,7 @@ class LiteRtMetricsCollector {
         completedAt: Long,
         output: String,
         temperatureCelsius: Float? = null,
+        samplerTemperature: Float? = null,
     ): GenerationMetrics {
         return GenerationMetrics(
             backendMode = backendMode,
@@ -59,6 +60,7 @@ class LiteRtMetricsCollector {
             totalMillis = completedAt - initializeEnd,
             outputChars = output.length,
             temperatureCelsius = temperatureCelsius,
+            samplerTemperature = samplerTemperature,
         )
     }
     fun now(): Long = SystemClock.elapsedRealtime()
