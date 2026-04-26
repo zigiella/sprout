@@ -582,6 +582,19 @@ Floema: incorporar los párrafos canónicos al `SystemPrompts.kt` en
 `feat/pollen-f4-voice`. Reproducible al 100% en `gemma-3n-E4B-it-int4`
 porque depende del texto, no del modelo.
 
+### Corrección posterior (2026-04-26 tarde) — enum `caution`, no `inconclusive`
+
+Al revisar la rama `feat/pollen-f5-rhizome` tras la respuesta de Floema,
+detecté una inconsistencia interna mía en el párrafo R4: yo escribí
+"confirmed | disputed | inconclusive", pero el enum del prompt base
+(y el del `ValidationStamp.kt` que Floema acaba de materializar) usa
+`confirmed | disputed | caution`. El sistema correcto es `caution`.
+Corregido en `code/tuning/system_prompts.yaml` (todas las variantes
+`_r4r6`). El cambio textual a aplicar en `SystemPrompts.kt` en la
+rama de Floema es de una sola palabra: `inconclusive` → `caution`,
+en las dos líneas del párrafo R4. Detalle en
+`bitacora/2026-04-26_mensaje-floema-fix-inconclusive-caution_meristem.md`.
+
 ### Observación nueva — R10 (manual_intervention)
 
 Salida del análisis cualitativo de PA04 C3: el system prompt no

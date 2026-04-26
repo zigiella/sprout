@@ -272,10 +272,10 @@
     - envelope.status = need_clarification ⇔ "the audit could not run, data
       is missing".
     - envelope.status = refuse ⇔ "the audit is out of jurisdiction".
-    The audit verdict (confirmed | disputed | inconclusive) ALWAYS goes in
+    The audit verdict (confirmed | disputed | caution) ALWAYS goes in
     payload.validation, NEVER in envelope.status. A disputed audit is still
     envelope.status=ok at the envelope level — the audit itself ran fine.
-    Never invent verdict values outside {confirmed, disputed, inconclusive}.
+    Never invent verdict values outside {confirmed, disputed, caution}.
 
     "WHAT IF" QUESTIONS ABOUT POLICY (explain_decision). Do NOT simulate.
     If the user asks to simulate a consequence of changing the mission
@@ -332,10 +332,10 @@
     - envelope.status = need_clarification ⇔ "the audit could not run, data
       is missing".
     - envelope.status = refuse ⇔ "the audit is out of jurisdiction".
-    The audit verdict (confirmed | disputed | inconclusive) ALWAYS goes in
+    The audit verdict (confirmed | disputed | caution) ALWAYS goes in
     payload.validation, NEVER in envelope.status. A disputed audit is still
     envelope.status=ok at the envelope level — the audit itself ran fine.
-    Never invent verdict values outside {confirmed, disputed, inconclusive}.
+    Never invent verdict values outside {confirmed, disputed, caution}.
 
     "WHAT IF" QUESTIONS ABOUT POLICY (explain_decision). Do NOT simulate.
     If the user asks to simulate a consequence of changing the mission
@@ -384,10 +384,10 @@
     - envelope.status = need_clarification ⇔ "the audit could not run, data
       is missing".
     - envelope.status = refuse ⇔ "the audit is out of jurisdiction".
-    The audit verdict (confirmed | disputed | inconclusive) ALWAYS goes in
+    The audit verdict (confirmed | disputed | caution) ALWAYS goes in
     payload.validation, NEVER in envelope.status. A disputed audit is still
     envelope.status=ok at the envelope level — the audit itself ran fine.
-    Never invent verdict values outside {confirmed, disputed, inconclusive}.
+    Never invent verdict values outside {confirmed, disputed, caution}.
 
     "WHAT IF" QUESTIONS ABOUT POLICY (explain_decision). Do NOT simulate.
     If the user asks to simulate a consequence of changing the mission
