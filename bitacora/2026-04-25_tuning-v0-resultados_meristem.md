@@ -8,8 +8,10 @@
 `bitacora/2026-04-25_tuning-blocked-memory_meristem.md`,
 `docs/22_prompt_taxonomy_v0.md`
 
-> **Estado**: cerrado, 76/76 runs (Phase 1: 48; Phase 1.5: 16; Phase 3: 12).
-> Las 9 recomendaciones (R1-R9) cerradas con scoring HIGH/MEDIUM/LOW final.
+> **Estado**: cerrado, 76/76 runs principales (Phase 1: 48; Phase 1.5: 16;
+> Phase 3: 12) + 18 runs micro-test 2026-04-26 que validan R4 y R6 con datos.
+> Las 9 recomendaciones (R1-R9) cerradas con scoring HIGH/MEDIUM/LOW final +
+> R10 nueva propuesta (manual_intervention) al backlog v1.
 > Hallazgo sorpresa en Phase 1.5: la hipótesis "EN mejor para lógica interna"
 > queda **refutada** con esta evidencia (ES 8/8 vs EN 7/8).
 > Hallazgo crítico en Phase 3: con `think=true` el modelo en Ollama emite
@@ -405,7 +407,7 @@ sobre "no necesario hasta D5 dentro del mismo arquetipo".
    tras cada turno, para que MissionAssembler decida si llamar reset.
 
 ### R4 — Separación `envelope.status` vs `payload.validation` en el system prompt
-**Confianza: HIGH** (depende del contrato del sobre, no del modelo).
+**Confianza: HIGH validado empíricamente** (micro-test 2026-04-26).
 
 **Evidencia (Phase 1)**: `audit_visit` solo acierta 5/12 (41%) status_match,
 con los 4 subtipos del audit cayendo entre 33% y 66%. El error consistente
@@ -440,7 +442,7 @@ operación válida del compile_mission". En el perfil recomendado
 (`reason_exhaustive`) este punto ya queda cubierto.
 
 ### R6 — `PE04 out_of_jurisdiction` debe ofrecer `MissionPatch`
-**Confianza: HIGH**.
+**Confianza: HIGH validado empíricamente** (micro-test 2026-04-26: 1/3 → 3/3).
 
 **Evidencia (Phase 1)**: PE04 acierta 1/3 (33%). Bajo C1 entra en
 refuse genérico; bajo C2 también. Sólo C3_expansive lo resuelve.
@@ -527,6 +529,71 @@ seguridad pero no es esencial bajo el system prompt cuidado.
   consume sin tests propios.
 - Streaming real en producción si el feedback de la Escena 7 lo pide.
 
+## 7.4 Micro-test 2026-04-26 — validación empírica de R4 + R6
+
+Ejecutado tras detectar que R4 y R6 estaban "HIGH propuesto sobre
+intuición" pero sin medida directa. 18 runs (6 prompts × 3 configs)
+con párrafos canónicos de R4 y R6 inyectados al final de los 3 system
+prompts EN. Comparable 1-a-1 con Phase 1 (mismo language, mismas configs
+en cuanto a num_ctx/num_predict/think). Output:
+`code/tuning/results/microtest_r4r6.jsonl`. System prompts modificados:
+`brief_direct_en_r4r6`, `auditor_standard_en_r4r6`,
+`reason_exhaustive_en_r4r6` en `code/tuning/system_prompts.yaml`.
+
+### Resultados
+
+| Bloque | Phase 1 baseline | + R4/R6 | Δ |
+|---|:-:|:-:|:-:|
+| Hot zones (PA02/03/04 + PE04) × 3 cfg = 12 cells | 4/12 (33%) | **10/12 (83%)** | **+6** |
+| Controles (PA01 + PM02) × 3 cfg = 6 cells | 5/6 | **6/6** | +1 |
+| **Total 18 runs** | **9/18 (50%)** | **16/18 (89%)** | **+7 (+39 pp)** |
+
+### Por prompt
+
+- **PE04 (R6 directo)**: 1/3 → **3/3** (100%). Las 3 configs ofrecen
+  ahora `payload.action="propose_mission_patch"` en vez de `refuse`.
+  R6 validado al 100%.
+- **PA02 sensor_disputed (R4 directo)**: 1/3 → **3/3** (100%). El
+  modelo ya no mete `disputed` en `envelope.status`; va al
+  `payload.validation`. R4 validado en sensor_disputed.
+- **PA01 audit_confirmed (control audit)**: 2/3 → **3/3**. Mejora
+  inesperada — el párrafo R4 también ayuda al caso "audit corrió OK"
+  porque elimina ambigüedad.
+- **PM02 compile_complete (control compile)**: 3/3 → **3/3**. Sin
+  regresión — los párrafos no rompen lo que iba bien.
+- **PA03 stale_basis**: 1/3 → 2/3. C1 y C3 acertaron; **C2 regresionó**
+  (antes ok, ahora `need_clarification` ante datos de 18h + heartbeat
+  perdido). Cualitativamente defendible — datos stale son razón legítima
+  para clarificar. Caso fronterizo, no fallo grueso.
+- **PA04 manual_intervention**: 1/3 → 2/3. C1 y C2 acertaron; **C3
+  sigue diciendo `need_clarification`** ("¿registro la intervención
+  manual a pesar del conflicto con el snapshot?"). El patrón es
+  diferente del que aborda R4 — el modelo no está confundiendo
+  envelope/payload, está siendo cauteloso ante una decisión normativa
+  que el system prompt no aclara: "si el agricultor reporta acciones,
+  ¿registro VisitAmendment o pido confirmación?". Queda como **R10
+  propuesta** para v1 (no scope de R4/R6).
+
+### Decisión
+
+R4 y R6 **validadas con datos**. Suben de "HIGH propuesto sobre
+intuición" a **HIGH validado empíricamente**. Recomendación firme a
+Floema: incorporar los párrafos canónicos al `SystemPrompts.kt` en
+`feat/pollen-f4-voice`. Reproducible al 100% en `gemma-3n-E4B-it-int4`
+porque depende del texto, no del modelo.
+
+### Observación nueva — R10 (manual_intervention)
+
+Salida del análisis cualitativo de PA04 C3: el system prompt no
+clarifica qué hacer cuando el operador reporta intervención manual
+que contradice el snapshot del sensor. El modelo por defecto pide
+clarificación. **Propuesta**: añadir un párrafo "Si el operador
+reporta intervención manual (riego a mano, recarga de tanque,
+movimiento de planta), registra `VisitAmendment` con la información
+reportada y nota como `evidence: operator_report`; no pidas
+confirmación adicional". Queda en backlog para tuning v1 — fuera
+del scope de v0 demo.
+
 ## 7.5 Cómo se ejecutó el día 11 (histórico)
 
 Plan original: lanzar `code/tuning/run_pending.ps1` "a pelo" (sin Claude
@@ -568,9 +635,9 @@ por defecto en futuros harnesses.
 | R1 — Mantener system prompt en castellano | MEDIUM | Cerrada | Floema no migrar `SystemPrompts.kt` a EN |
 | R2 — `reason_exhaustive` como perfil base | MEDIUM-HIGH | Cerrada | Adoptar texto de `system_prompts.yaml` |
 | R3 — `resetConversation()` entre arquetipos | MEDIUM-HIGH | Cerrada | Reset al cambiar arquetipo; no necesario hasta D5 dentro |
-| R4 — Separar `envelope.status` vs `payload.validation` | HIGH | Cerrada | Floema añadir contraste textual al prompt |
+| R4 — Separar `envelope.status` vs `payload.validation` | **HIGH validado** | Cerrada (micro-test 2026-04-26) | Floema añadir contraste textual al prompt |
 | R5 — `PM04 revoke` afordancia explícita | HIGH | Cerrada | Solo aplica si se usa prompt minimal |
-| R6 — `PE04 out_of_jurisdiction` ofrece `MissionPatch` | HIGH | Cerrada | Patrón canónico textual al prompt |
+| R6 — `PE04 out_of_jurisdiction` ofrece `MissionPatch` | **HIGH validado** | Cerrada (micro-test 1/3 → 3/3) | Patrón canónico textual al prompt |
 | R7 — `filter_channel_content_from_kv_cache` | LOW | Inconcluso | Pregunta a Floema/Google sigue activa |
 | R7-bis — Política assistant con thinking en multi-turn | HIGH | Nueva | Decisión a/b/c en `LiteRtInfra.kt` |
 | R8 — `samplerConfig` en `sendPrompt` | MEDIUM/HIGH | Cerrada | Petición 3 a Floema sigue activa |
