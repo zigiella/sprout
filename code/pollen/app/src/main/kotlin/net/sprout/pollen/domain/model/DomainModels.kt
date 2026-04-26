@@ -12,5 +12,6 @@ data class GenerationMetrics(
     val ttftMillis: Long,
     val totalMillis: Long,
     val outputChars: Int,
-    val temperatureCelsius: Float?,
+    val temperatureCelsius: Float? = null,
+    val samplerTemperature: Float? = null,
 )

@@ -165,7 +165,7 @@ class LiteRtChatService(
                 firstTokenAt = firstTokenAt ?: completedAt,
                 completedAt = completedAt,
                 output = output,
-                temperatureCelsius = temperature
+                samplerTemperature = temperature
             ).copy(initializeMillis = initialMetrics?.initializeMillis ?: 0L)
             
             emit("" to finalMetrics)
