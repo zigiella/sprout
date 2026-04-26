@@ -217,38 +217,87 @@ def summarize_phase_3(records: list[dict]) -> None:
     print(f"PHASE 3 — {len(records)} runs (2 archetypes × 3 depths × T_OFF/T_ON)")
     print("=" * 72)
 
-    by_arch_depth_think = defaultdict(list)
+    # Phase 3 schema: measured_headers (no headers), depth_id, config_think (bool),
+    # warmup_failed (bool). Cada record es 1 turno medido + N warmup turns previos.
+    rows = []
     for r in records:
-        cfg = r.get("config_id", "?")
         arch = r.get("archetype", "?")
-        # config_id pattern: "D{N}_T_{OFF|ON}_HIGH_CTX"
-        depth = "?"
-        thinking = "?"
-        for tok in cfg.split("_"):
-            if tok.startswith("D") and tok[1:].isdigit():
-                depth = tok
-            if tok in ("OFF", "ON"):
-                thinking = tok
-        by_arch_depth_think[(arch, depth, thinking)].append(r)
+        depth = r.get("depth_id", "?")
+        think = "ON" if r.get("config_think") else "OFF"
+        mh = r.get("measured_headers") or {}
+        env = r.get("envelope") or {}
+        rows.append({
+            "arch": arch,
+            "depth": depth,
+            "think": think,
+            "warmup_failed": bool(r.get("warmup_failed")),
+            "tokens_in": int(mh.get("tokens-in", 0) or 0),
+            "tokens_out": int(mh.get("tokens-out", 0) or 0),
+            "thinking_tok": int(mh.get("thinking-tokens", 0) or 0),
+            "duration_ms": int(mh.get("duration-ms", 0) or 0),
+            "client_ms": r.get("client_elapsed_ms", 0),
+            "env_valid": bool(env.get("valid")),
+            "warmup_turns": r.get("warmup_turns", 0),
+        })
 
-    print(f"\n  {'archetype':25s} {'depth':6s} {'think':6s} {'env_ok':10s} {'avg_ms':10s} {'tok_out':10s} {'think_tok':10s}")
-    for key in sorted(by_arch_depth_think.keys()):
-        runs = by_arch_depth_think[key]
-        arch, depth, thinking = key
-        env_ok = sum(1 for r in runs if r["envelope"].get("valid"))
-        avg_ms = sum(r.get("client_elapsed_ms", 0) for r in runs) / max(len(runs), 1)
-        avg_tok_out = sum(
-            int(r["headers"].get("tokens-out", 0) or 0) for r in runs
-        ) / max(len(runs), 1)
-        avg_think = sum(
-            int(r["headers"].get("thinking-tokens", 0) or 0) for r in runs
-        ) / max(len(runs), 1)
+    # Tabla detalle por (arch, depth, think) — N=1 por celda en Phase 3
+    print(
+        f"\n  {'archetype':18s} {'depth':5s} {'think':5s} "
+        f"{'tok_in':>7s} {'tok_out':>7s} {'env_ok':>6s} {'wm_fail':>7s} {'dur_ms':>8s}"
+    )
+    rows.sort(key=lambda x: (x["arch"], x["depth"], x["think"]))
+    for r in rows:
         print(
-            f"  {arch:25s} {depth:6s} {thinking:6s} "
-            f"{fmt_pct(env_ok, len(runs)):10s} {avg_ms:>8.0f}ms {avg_tok_out:>8.0f}  {avg_think:>8.0f}"
+            f"  {r['arch']:18s} {r['depth']:5s} {r['think']:5s} "
+            f"{r['tokens_in']:>7d} {r['tokens_out']:>7d} "
+            f"{('OK' if r['env_valid'] else 'NO'):>6s} "
+            f"{('YES' if r['warmup_failed'] else 'no'):>7s} "
+            f"{r['duration_ms']:>8d}"
         )
 
-    print("\n  hipotesis filter_channel: si T_ON degrada con depth >> T_OFF, KV cache acumula thinking")
+    # Resumen R7 (filter_channel hypothesis): T_OFF vs T_ON a depth creciente
+    print("\n  -- R7 (filter_channel KV hypothesis) --")
+    print("  Si T_ON degrada >> T_OFF a D5 vs D1: indicio de acumulacion KV.")
+    print("  Si curvas similares: hipotesis NO respaldada por estos datos.")
+
+    by_pair = defaultdict(dict)
+    for r in rows:
+        by_pair[(r["arch"], r["depth"])][r["think"]] = r
+
+    for arch in sorted({r["arch"] for r in rows}):
+        print(f"\n  [{arch}]")
+        for depth in ["D1", "D3", "D5"]:
+            pair = by_pair.get((arch, depth), {})
+            t_off = pair.get("OFF")
+            t_on = pair.get("ON")
+            if t_off and t_on:
+                d_in = t_on["tokens_in"] - t_off["tokens_in"]
+                d_out = t_on["tokens_out"] - t_off["tokens_out"]
+                d_ms = t_on["duration_ms"] - t_off["duration_ms"]
+                print(
+                    f"    {depth}: tok_in OFF={t_off['tokens_in']:>5d} ON={t_on['tokens_in']:>5d} (d={d_in:+d})  "
+                    f"tok_out OFF={t_off['tokens_out']:>5d} ON={t_on['tokens_out']:>5d} (d={d_out:+d})  "
+                    f"dur OFF={t_off['duration_ms']:>6d}ms ON={t_on['duration_ms']:>6d}ms (d={d_ms:+d}ms)  "
+                    f"env OFF={'OK' if t_off['env_valid'] else 'NO'} ON={'OK' if t_on['env_valid'] else 'NO'}"
+                )
+
+    # Resumen R3 (resetConversation): crecimiento tokens_in D1 -> D5 por arquetipo
+    print("\n  -- R3 (acumulacion KV, decisión resetConversation()) --")
+    for arch in sorted({r["arch"] for r in rows}):
+        for think in ["OFF", "ON"]:
+            d1 = by_pair.get((arch, "D1"), {}).get(think)
+            d5 = by_pair.get((arch, "D5"), {}).get(think)
+            if d1 and d5:
+                growth = d5["tokens_in"] - d1["tokens_in"]
+                pct = (d5["tokens_in"] / max(d1["tokens_in"], 1) - 1) * 100
+                print(
+                    f"    {arch:18s} T_{think}: D1 tok_in={d1['tokens_in']:>4d} -> D5 tok_in={d5['tokens_in']:>4d} "
+                    f"(+{growth} = +{pct:.0f}%)"
+                )
+
+    n_warmup_failed = sum(1 for r in rows if r["warmup_failed"])
+    n_env_invalid = sum(1 for r in rows if not r["env_valid"])
+    print(f"\n  Outliers: warmup_failed={n_warmup_failed}/{len(rows)}  envelope_invalid={n_env_invalid}/{len(rows)}")
 
 
 def main():
