@@ -1,0 +1,120 @@
+{
+  "id": "guardian_demo",
+  "description": "Demuestra heartbeat perdido, deposito bajo latched, reset y ACK_DRY_RUN.",
+  "startup_capture_s": 0.8,
+  "steps": [
+    {
+      "type": "command",
+      "name": "status_inicial",
+      "send": "STATUS",
+      "expect_all": [
+        "STATUS_REPORT state=SAFE_IDLE"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "heartbeat_perdido",
+      "send": "WATER A 12",
+      "expect_all": [
+        "REJECT reason=HEARTBEAT_PERDIDO cmd=WATER A 12"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "tank_15",
+      "send": "SET_SENSOR_STUB TANK_LEVEL_PCT 15",
+      "expect_all": [
+        "ACK command=SET_SENSOR_STUB field=TANK_LEVEL_PCT",
+        "tank_level_pct=15"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "host_heartbeat_para_deposito_bajo",
+      "send": "HOST_HEARTBEAT",
+      "expect_all": [
+        "ACK command=HOST_HEARTBEAT",
+        "host_link=FRESH"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "deposito_bajo_latched",
+      "send": "WATER A 12",
+      "expect_all": [
+        "REJECT reason=DEPOSITO_BAJO cmd=WATER A 12",
+        "ALERT code=DEPOSITO_BAJO latched=true state=ALERT_LATCHED"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "status_latched",
+      "send": "STATUS",
+      "expect_all": [
+        "STATUS_REPORT state=ALERT_LATCHED",
+        "last_reject=DEPOSITO_BAJO",
+        "alert_code=DEPOSITO_BAJO"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "segundo_intento_latched",
+      "send": "WATER A 12",
+      "expect_all": [
+        "REJECT reason=ALERTA_LATCHED cmd=WATER A 12"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "reset_alert",
+      "send": "RESET_ALERT",
+      "expect_all": [
+        "ACK command=RESET_ALERT state=SAFE_IDLE"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "status_post_reset",
+      "send": "STATUS",
+      "expect_all": [
+        "STATUS_REPORT state=SAFE_IDLE",
+        "alert_code=NONE"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "tank_65",
+      "send": "SET_SENSOR_STUB TANK_LEVEL_PCT 65",
+      "expect_all": [
+        "ACK command=SET_SENSOR_STUB field=TANK_LEVEL_PCT",
+        "tank_level_pct=65"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "host_heartbeat_para_ack",
+      "send": "HOST_HEARTBEAT",
+      "expect_all": [
+        "ACK command=HOST_HEARTBEAT",
+        "host_link=FRESH"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "water_ack_dry_run",
+      "send": "WATER A 12",
+      "expect_all": [
+        "ACK command=WATER plot=A seconds=12 execution=DRY_RUN"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "status_final",
+      "send": "STATUS",
+      "expect_all": [
+        "STATUS_REPORT state=SAFE_IDLE",
+        "last_water_outcome=ACK_DRY_RUN"
+      ]
+    }
+  ]
+}
