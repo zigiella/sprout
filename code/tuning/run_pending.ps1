@@ -104,12 +104,16 @@ $p3_log          = Join-Path $results_dir 'phase3.console.log'
 $analyze_log     = Join-Path $results_dir 'analyze.console.log'
 
 Write-Section 'Arrancando adapter en :12000'
+# Nota: usamos -NoNewWindow + redireccion de stdio. El patron alternativo
+# (-WindowStyle Hidden + redireccion) lo bloquea AMSI/Defender por similitud
+# con loaders sigilosos. Mismo efecto practico: el adapter corre en background
+# sin ventana propia, sus logs van a $adapter_log / $adapter_log_err.
 $adapter = Start-Process -FilePath 'python' `
     -ArgumentList '-m','src.main' `
     -WorkingDirectory (Join-Path $repo 'code\meristem_inference_adapter') `
     -RedirectStandardOutput $adapter_log `
     -RedirectStandardError  $adapter_log_err `
-    -PassThru -WindowStyle Hidden
+    -PassThru -NoNewWindow
 
 # Esperar hasta 30s a que /api/tags responda
 $ready = $false
