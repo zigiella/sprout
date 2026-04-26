@@ -124,7 +124,7 @@ class LiteRtChatService(
         activeConversation = null
     }
 
-    fun sendPrompt(userText: String, isThinkingEnabled: Boolean = false): Flow<Pair<String, GenerationMetrics?>> = flow {
+    fun sendPrompt(userText: String, isThinkingEnabled: Boolean = false, temperature: Float? = null): Flow<Pair<String, GenerationMetrics?>> = flow {
         val engine = requireNotNull(sessionManager.currentEngine()) { "Engine no inicializado" }
         
         if (activeConversation == null) {
@@ -164,7 +164,8 @@ class LiteRtChatService(
                 initializeEnd = start, 
                 firstTokenAt = firstTokenAt ?: completedAt,
                 completedAt = completedAt,
-                output = output
+                output = output,
+                temperatureCelsius = temperature
             ).copy(initializeMillis = initialMetrics?.initializeMillis ?: 0L)
             
             emit("" to finalMetrics)
