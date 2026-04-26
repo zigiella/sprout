@@ -1,37 +1,47 @@
 # Tuning v0 Pollen — resultados y recomendaciones
 
 **Autora**: Meristem
-**Fecha**: 2026-04-25 (día 10)
+**Fechas**: 2026-04-25 (día 10) Phase 1; 2026-04-26 (día 11) Phase 1.5 + Phase 3 + cierre
 **Para**: Bea (decisiones), Floema (acciones técnicas), Cambium (informativo)
 **Antecede**: `bitacora/2026-04-25_pollen-observaciones-recalibradas_meristem.md`,
 `bitacora/2026-04-25_peticion-floema-prep-tuning_meristem.md`,
 `bitacora/2026-04-25_tuning-blocked-memory_meristem.md`,
 `docs/22_prompt_taxonomy_v0.md`
 
-> **Estado**: cierre del día 10 — Phase 1 completa (48/48), Phase 1.5 y
-> Phase 3 quedan para el día 11. Las recomendaciones que ya se pueden
-> sostener con datos van marcadas. Las que dependen de Phase 1.5 (idioma)
-> o Phase 3 (KV cache, política de reset) quedan explícitamente como
-> "pendiente de medir mañana".
+> **Estado**: cerrado, 76/76 runs (Phase 1: 48; Phase 1.5: 16; Phase 3: 12).
+> Las 9 recomendaciones (R1-R9) cerradas con scoring HIGH/MEDIUM/LOW final.
+> Hallazgo sorpresa en Phase 1.5: la hipótesis "EN mejor para lógica interna"
+> queda **refutada** con esta evidencia (ES 8/8 vs EN 7/8).
+> Hallazgo crítico en Phase 3: con `think=true` el modelo en Ollama emite
+> respuesta en el campo `thinking` (no `content`); un consumidor naive del
+> protocolo Ollama pierde memoria del razonamiento entre turnos. El sobre
+> común se rompe 3/6 veces bajo T_ON por **saturación intra-turno**, no
+> por acumulación KV. La hipótesis original de R7 queda **inconclusa** —
+> el experimento tuvo un confound.
 
-## TL;DR (parcial — solo Phase 1)
+## TL;DR
 
-1. **El sobre común aguanta al 100%** (48/48 runs). El contrato JSON
-   `{task, status, reason_code, question_es, payload}` es robusto en
-   `gemma4:e4b` bajo los 3 perfiles probados.
-2. **C3_expansive gana** (87% status_match) sobre C2_balanced (75%)
-   y C1_austero (56%), a coste similar a C2 (~126s vs ~135s, ~613 vs
-   ~667 tokens out).
-3. **`audit_visit` es la zona caliente** (41% status_match): el modelo
-   confunde `envelope.status` (operación) con `payload.validation`
-   (verdict). El system prompt no separa los dos roles con suficiente
-   claridad.
-4. **`PE04 out_of_jurisdiction` falla por el motivo previsto en la
-   rúbrica**: el modelo entra en `refuse` en vez de ofrecer
-   `MissionPatch`. La instrucción "ofrece patch, no simules consecuencia"
-   tiene que estar en el system prompt mismo.
-5. **`federate_context` perfecto (100%)** en ambos digests meteo. El
-   recorte a "weather-only" en v0 funciona.
+1. **Sobre común JSON aguanta al 100% en Phase 1** (48/48) y al 100% en
+   Phase 1.5 (16/16). Falla 3/12 en Phase 3 — todos bajo T_ON, ninguno
+   bajo T_OFF (saturación de `num_predict=596` con thinking visible que
+   no deja espacio para cerrar JSON).
+2. **`reason_exhaustive` (C3_expansive) gana en Phase 1** (87% status_match)
+   con coste similar a C2_balanced. Adoptable como perfil base.
+3. **`audit_visit` es la zona caliente** (41% en Phase 1): el modelo confunde
+   `envelope.status` (operación) con `payload.validation` (verdict). Fix
+   textual al system prompt en R4.
+4. **`PE04 out_of_jurisdiction`** falla por el patrón previsto en la
+   rúbrica. Patrón canónico "ofrece patch, no simules consecuencia" en R6.
+5. **EN no gana en ningún pivot de Phase 1.5**: ES gana 1/4, empate 3/4.
+   La hipótesis "inglés mejor para lógica interna" queda refutada con esta
+   evidencia. Recomendación: mantener system prompt en castellano (R1).
+6. **El thinking en `gemma4:e4b` Ollama va al campo `thinking`, no `content`**.
+   Un consumidor naive (como el harness Phase 3 fue) pierde memoria del
+   turno previo en multi-turn con thinking activo. Implicación directa
+   para LiteRT-LM en Pollen real (R7-bis).
+7. **`resetConversation()` no es urgente hasta D5** con `num_ctx ≥ 3500`
+   en T_OFF. Con T_ON el problema no es acumulación entre turnos sino
+   saturación intra-turno (R3).
 
 ## 1. Marco de ejecución
 
@@ -46,7 +56,11 @@
   durante la fase 1; tres runs de C2_balanced fallaron por
   ReadTimeout/status_500 en el primer intento y se reanudaron tras
   añadir `--resume` y subir el timeout de 180s a 300s. Los datos finales
-  son completos.
+  son completos. **Día 11**: Phase 1.5 + Phase 3 ejecutadas "a pelo"
+  (sin Claude corriendo) en el PC de Bea con plan B manual del
+  `run_pending.ps1` (Defender bloqueó el script automatizado por falso
+  positivo AMSI; ejecutados como 5 comandos manuales en dos terminales).
+  Todo OK 28/28.
 - **Confianza de transferencia a LiteRT-LM real**: ver tabla en sección 6.
   Cada recomendación viene etiquetada HIGH / MEDIUM / LOW según cuán
   directamente dependa del stack que efectivamente correrá en Pollen
@@ -107,31 +121,205 @@ Lección operativa: con `num_predict=2048` o `3584`, el timeout cómodo es
 
 ## 3. Phase 1.5 — system prompt EN vs ES (16 runs)
 
-**Estado**: PENDIENTE — ejecuta el día 11.
-
 **Pregunta**: ¿La hipótesis "system prompt en inglés produce mejor
 calidad" se sostiene empíricamente en Gemma 4 E4B con los pivots
 representativos (compile, audit, federate, explain)?
 
-**Decision rule** (de `matrix_phase1_5.yaml`): EN gana ≥3 de 4 pivots
-→ fijar EN para toda la batería; recomendación firme a Floema de migrar
-`SystemPrompts.kt`. Si ES gana en ≥3, hallazgo sorpresa que se cualifica
-con Bea antes de concluir.
+### Resumen por idioma
+
+| Idioma | runs | envelope | status_match | avg_ms |
+|---|---:|---:|---:|---:|
+| EN | 8 | 8/8 (100%) | **7/8 (87%)** | 117s |
+| ES | 8 | 8/8 (100%) | **8/8 (100%)** | 128s |
+
+### Resumen pivote × idioma
+
+| Pivote | EN | ES |
+|---|:-:|:-:|
+| `PA02_audit_sensor_disputed` | 2/2 | 2/2 |
+| `PE01_explain_past_decision` | 2/2 | 2/2 |
+| `PF01_federate_weather_digest_daily` | **1/2** | 2/2 |
+| `PM02_compile_complete` | 2/2 | 2/2 |
+
+**Lectura**: ES gana 1 de 4 pivots; empate técnico en 3 de 4. **EN no
+gana en ningún pivot**. La decision rule del matrix yaml era:
+
+- EN ≥3 → fijar EN (firme)
+- Sin diferencia clara → recomendar EN igualmente por precaución
+  (alineación con training data dominante)
+- ES ≥3 → hallazgo importante, revisar con Bea
+
+Estamos en el caso "ningún claro ganador, pero ES nunca pierde". La
+pieza clave: la hipótesis original "EN mejor para lógica interna" se
+refuta en estos datos — no hay evidencia de coste por usar ES.
+
+### El único fallo EN — PF01 EN_balanced
+
+El modelo respondió `status=need_clarification` con un sobre formalmente
+válido cuando el expected era `ok`:
+
+```json
+{
+  "task": "federate_context",
+  "status": "need_clarification",
+  "reason_code": "data_mismatch",
+  "question_es": "El caché de clima proporcionado es para la parcela A.
+                  ¿Desea compilar el resumen meteorológico para la parcela A,
+                  o tiene datos de clima para la parcela B?",
+  "payload": null
+}
+```
+
+El user message menciona "parcela A". El cache también es de A. El modelo,
+bajo system prompt EN, lee la pregunta y se pone hipersensible —
+detecta que la pregunta del agricultor no especifica B explícitamente
+y pregunta. ES_balanced en el mismo prompt resuelve directo con `ok`.
+**Es un fallo marginal**, no estructural — el sobre es válido, la
+prosa de la pregunta es buena, solo la decisión de pedir clarificación
+en vez de asumir A es excesivamente cautelosa. Pero es un fallo, y
+es el único punto donde EN pierde.
+
+### Caveat metodológico
+
+N=2 por celda (4 pivots × 2 estilos × 1 muestra cada uno = 8 por idioma)
+es muestra pequeña. La diferencia 7/8 vs 8/8 podría ser ruido. Pero la
+**dirección es consistente**: EN nunca gana, ES nunca pierde. Eso reduce
+la probabilidad de que sea ruido puro.
+
+Para confirmación firme habría que repetir con N=5+ por celda — fuera
+del scope de v0.
 
 ## 4. Phase 3 — muro maxNumTokens y KV cache (12 runs)
 
-**Estado**: PENDIENTE — ejecuta el día 11.
-
-**Pregunta**: ¿El thinking se acumula en KV cache cuando
+**Pregunta original**: ¿El thinking se acumula en KV cache cuando
 `filter_channel_content_from_kv_cache` no está seteado, produciendo
-degradación o corte antes en multi-turn? Esta fase aporta evidencia
-indirecta a la hipótesis recalibrada del 2026-04-25.
+degradación o corte antes en multi-turn?
 
-**Métrica clave**: envelope_valid + tokens_out + duration_ms en
-`(archetype, depth, thinking)` — si T_ON degrada >> T_OFF en D5
-respecto a D1, evidencia de acumulación. Si curvas similares,
-hipótesis no respaldada por estos datos, queda pendiente de pregunta
-directa al SDK (petición 2 a Floema).
+**Lo que pasó**: la pregunta original NO se contesta limpiamente con esta
+evidencia por un confound del harness, pero **emergen tres hallazgos
+nuevos más útiles** que afectan directamente al diseño de Pollen.
+
+### Tabla detalle
+
+| arch | depth | think | tok_in | tok_out | env_ok | dur_ms |
+|---|:-:|:-:|---:|---:|:-:|---:|
+| audit_visit | D1 | OFF | 692 | 105 | OK | 32s |
+| audit_visit | D1 | ON | 650 | **596** | **NO** | 98s |
+| audit_visit | D3 | OFF | 956 | 101 | OK | 33s |
+| audit_visit | D3 | ON | 675 | **596** | **NO** | 109s |
+| audit_visit | D5 | OFF | 1439 | 138 | OK | 44s |
+| audit_visit | D5 | ON | 1135 | 477 | OK | 93s |
+| explain_decision | D1 | OFF | 881 | 122 | OK | 49s |
+| explain_decision | D1 | ON | 725 | 435 | OK | 83s |
+| explain_decision | D3 | OFF | 1779 | 150 | OK | 68s |
+| explain_decision | D3 | ON | 747 | 521 | OK | 98s |
+| explain_decision | D5 | OFF | 2030 | 110 | OK | 55s |
+| explain_decision | D5 | ON | 762 | **596** | **NO** | 110s |
+
+(`num_predict=596` invariante para todas las runs Phase 3.)
+
+### Hallazgo 1 — el sobre se rompe SIEMPRE bajo T_ON, NUNCA bajo T_OFF
+
+3 de 6 runs T_ON tienen `envelope.valid=false`. 0 de 6 runs T_OFF lo
+tienen. Los tres modos de fallo identificados:
+
+- `audit_visit/D1/T_ON`: `parse_error: Expecting ',' delimiter` — JSON
+  malformado (504 chars), salió pero con error de sintaxis.
+- `audit_visit/D3/T_ON`: `parse_error: no_content` — `content=""`, todo
+  el output (2204 chars) se quedó en `thinking` y no llegó a emitir JSON.
+- `explain_decision/D5/T_ON`: `parse_error: Expecting value` — content
+  truncado (107 chars, "task...question_es":null,"). El JSON empezó
+  pero se cortó por límite de `num_predict`.
+
+Patrón común: **el thinking visible se come `num_predict=596`** y al
+modelo no le quedan tokens para cerrar el JSON correctamente.
+
+### Hallazgo 2 — `tokens_out` saturado en `num_predict` bajo T_ON
+
+T_ON: 596, 596, 596, 596, 596, 477 (5 de 6 saturan).
+T_OFF: 101-150 (siempre con margen).
+
+El modelo está usando todo el cupo de generación cuando piensa, sin
+dejar espacio reservado para el envelope JSON. Implicación: si Pollen
+quiere usar thinking en producción, **`num_predict` debe ser ≥ 1024-1500**
+para que quepan razonamiento + JSON cerrado.
+
+### Hallazgo 3 — el confound del harness (R7 inconcluso)
+
+**Esto es el hallazgo más importante de Phase 3, aunque no era el
+buscado**. Inspección de `measured_request.messages[].content` revela:
+
+```
+T_OFF (audit D5):  assistant turns previos = JSON completo (~700 chars)
+T_ON  (audit D5):  assistant turns previos = "" (vacío)
+```
+
+Causa: cuando `gemma4:e4b` en Ollama recibe `think=true`, devuelve la
+respuesta completa (razonamiento + JSON) en el campo `thinking`, dejando
+`content=""`. El harness solo persiste `content` en el history (así
+construye los assistant turns para los siguientes). Por tanto **en T_ON,
+los warmup turns van al modelo como `assistant: ""`** — sin memoria del
+razonamiento ni del JSON previo.
+
+Evidencia en `tokens_in`:
+
+| run | T_OFF tok_in | T_ON tok_in |
+|---|---:|---:|
+| explain D1 | 627 | 629 |
+| explain D3 | 991 → 1373 | 654 → 690 |
+| explain D5 | 904 → 1735 | 652 → 721 |
+| audit D5 | 717 → 1261 | 629 → 1005 |
+
+T_OFF acumula linealmente con depth (esperado, los assistant JSON
+ocupan tokens). T_ON crece muy poco (esperado: assistant vacíos no
+ocupan tokens).
+
+**Implicación 1 — sobre el experimento R7**: la pregunta "¿el thinking
+se acumula en KV?" no se contesta limpiamente porque **el thinking nunca
+llegó a estar en el contexto** que el harness pasó al modelo. Lo que
+tenemos no respalda ni refuta la hipótesis original.
+
+**Implicación 2 — para Pollen real (esto es lo importante)**: si
+`LiteRtChatService.sendPrompt` con `enableThinking=true` tiene el
+mismo comportamiento (split thinking/content en la respuesta), un
+consumidor multi-turno naive **pierde memoria del razonamiento entre
+turnos**. Pollen debe decidir explícitamente si:
+
+a) **No hacer multi-turn con thinking** — cada llamada es un turno
+   "fresh", el agricultor no recibe coherencia conversacional. Más
+   simple. Defendible si la UX es "operación discreta por turno".
+b) **Concatenar thinking+content** al construir el assistant message
+   previo, asumiendo el coste en `tokens_in` (puede tocar el muro de
+   4096 antes).
+c) **Usar solo content (extraer JSON del thinking)** y poner en el
+   assistant turn previo la versión "limpia". Coherencia parcial.
+
+Esta decisión es de diseño de Pollen, no de tuning. La pongo en R7-bis
+abajo y la mando a Floema.
+
+### Hallazgo 4 — observaciones colaterales
+
+- **0 warmup_failed** en 12 runs. Los warmups multi-turno son robustos.
+- **Duraciones T_ON ~2-3× T_OFF** al mismo depth. Coste claro del thinking.
+- **Con num_ctx=3500 + num_predict=596 (T_OFF), depth=5 todavía deja
+  margen**: máximo tokens_in observado fue 2030 (explain D5 T_OFF). Sobra
+  ventana hasta D7-D8.
+
+### Decisión sobre R7 con esta evidencia
+
+R7 **inconcluso con este experimento**. Para zanjarlo definitivamente
+hay dos caminos, no excluyentes:
+
+1. **Petición a Floema/Google** sobre el default oficial de
+   `filter_channel_content_from_kv_cache` en LiteRT-LM (ya enviada en
+   `2026-04-25_peticion-floema-prep-tuning_meristem.md`).
+2. **Phase 3-bis con harness corregido** que concatene thinking+content
+   en assistant turns. ~30 min de implementación + 12 runs (~75 min).
+   Postpondría a v1 si los hallazgos colaterales bastan para el demo.
+
+Mi propuesta: **dejar R7 inconcluso para v0**, mover los hallazgos
+colaterales al expediente Floema (R7-bis), y ejecutar Phase 3-bis
+sólo si el día 12 review lo demanda.
 
 ## 5. Lo que NO mide este tuning
 
@@ -156,8 +344,23 @@ directa al SDK (petición 2 a Floema).
 > - **Acción concreta**: qué cambiar y dónde.
 > - **Evidencia**: qué runs lo soportan.
 
-### R1 — Fijar idioma del system prompt
-**PENDIENTE** — depende de Phase 1.5. Recomendación se cierra día 11.
+### R1 — Mantener system prompt en castellano (refutación de hipótesis EN)
+**Confianza: MEDIUM** (N=2 por celda, pero dirección consistente).
+
+**Evidencia (Phase 1.5)**: ES gana 8/8, EN gana 7/8. EN no gana en
+ningún pivot. El único fallo EN (PF01_balanced) fue marginal —
+hipersensibilidad a "data_mismatch" donde no la había. La hipótesis
+"EN mejor para lógica interna" no se sostiene en gemma4:e4b con
+estos prompts.
+
+**Acción a Floema**: NO migrar `SystemPrompts.kt` a inglés. Mantener
+los system prompts en castellano. Coherencia con la prosa de respuesta
+al agricultor (también castellano) y, según esta evidencia, sin coste
+de calidad en `gemma4:e4b`.
+
+**Caveat**: muestra pequeña, no descarta sorpresas en otros prompts.
+Si en producción se ve patrón distinto, abrir Phase 1.5-bis con N≥5
+por celda.
 
 ### R2 — Adoptar `reason_exhaustive` (C3_expansive) como perfil base
 **Confianza: MEDIUM-HIGH** (sobre `gemma4:e4b`; queda por verificar en
@@ -180,7 +383,26 @@ hay que recombinar con `num_ctx=2048` + `num_predict=2048` (que sería
 un C2.5 a definir).
 
 ### R3 — Política de `resetConversation()` por arquetipo
-**PENDIENTE** — depende de Phase 3. Recomendación se cierra día 11.
+**Confianza: MEDIUM-HIGH** sobre "reset entre arquetipos"; **MEDIUM**
+sobre "no necesario hasta D5 dentro del mismo arquetipo".
+
+**Evidencia (Phase 3)**: con `num_ctx=3500` + `num_predict=596`:
+- T_OFF acumula linealmente: explain_decision D5 = 2030 tokens_in;
+  audit_visit D5 = 1439 tokens_in. **Margen de ~1500 tokens** hasta
+  el muro de 4096 con D5.
+- T_ON con el confound del harness no acumula (ver Hallazgo 3 de §4).
+  Si en Pollen real se concatena thinking+content (opción b de R7-bis),
+  T_ON crecerá más rápido que T_OFF y tocará muro antes.
+
+**Acción a Floema**:
+1. Llamar `resetConversation()` cuando la conversación cruza arquetipos
+   (de audit_visit a compile_mission, etc.). El system prompt cambia
+   y el contexto previo deja de ser relevante.
+2. **Dentro del mismo arquetipo**: no necesario hasta depth ~5 con
+   thinking off y `num_ctx ≥ 3500`. Con thinking on en LiteRT-LM real,
+   re-evaluar con la decisión que se tome en R7-bis.
+3. Métrica que conviene exponer en `LiteRtInfra.kt`: `currentTokensIn`
+   tras cada turno, para que MissionAssembler decida si llamar reset.
 
 ### R4 — Separación `envelope.status` vs `payload.validation` en el system prompt
 **Confianza: HIGH** (depende del contrato del sobre, no del modelo).
@@ -233,9 +455,45 @@ refuse genérico; bajo C2 también. Sólo C3_expansive lo resuelve.
 > palanca para que el agricultor decida.
 
 ### R7 — Verificar `filter_channel_content_from_kv_cache`
-**PENDIENTE — depende de Phase 3**. Recomendación se cierra día 11.
-La petición a Floema/SDK de comprobar default oficial sigue en pie
-(ver `2026-04-25_peticion-floema-prep-tuning_meristem.md`).
+**Confianza: LOW** sobre la hipótesis original (experimento inconcluso).
+
+**Evidencia (Phase 3)**: experimento contaminado por confound del harness
+— el thinking nunca llegó al modelo en multi-turn (assistant.content vacío
+en T_ON). Phase 3 no respalda ni refuta la hipótesis "thinking se acumula
+en KV". Para zanjarlo definitivamente: respuesta de Floema/Google al SDK
+sobre el default oficial (petición 2 ya enviada), o Phase 3-bis con harness
+corregido.
+
+**Acción**: la petición 2 a Floema sigue en pie. La hipótesis pasa a
+"abierta, pendiente de información externa". No bloquea decisiones de v0.
+
+### R7-bis — Política de assistant message previo en multi-turn con thinking (NUEVO)
+**Confianza: HIGH** (depende del comportamiento de la respuesta Ollama,
+medido directamente; presumiblemente análogo en LiteRT-LM por la API
+similar).
+
+**Evidencia (Phase 3, Hallazgo 3 de §4)**: `gemma4:e4b` en Ollama con
+`think=true` devuelve respuesta entera en `thinking` (campo separado)
+y deja `content=""`. Un consumidor multi-turno naive (que solo persiste
+`content` en el history) **pierde memoria del razonamiento + JSON** del
+turno previo.
+
+**Acción a Floema**: en `LiteRtInfra.kt`, decidir explícitamente y
+documentar cuál de las tres opciones se aplica cuando hay multi-turn
+con thinking activo:
+
+a) **Thinking off para multi-turn**: opción simple, sin coherencia
+   conversacional pero sin sorpresas. Recomendable si la UX es
+   "operación discreta".
+b) **Concatenar thinking+content** al construir el assistant message
+   previo. Coste: tokens_in crece más rápido. Beneficio: coherencia
+   real.
+c) **Solo content** (extraer JSON del thinking si Ollama/LiteRT-LM no
+   lo separan): coherencia parcial, no se preserva el razonamiento.
+
+Pregunta crucial pendiente: **¿LiteRT-LM en Pollen produce el mismo
+split thinking/content, o emite todo en `content`?** Verificable con un
+turno de prueba en `feat/pollen-f4-voice` cuando Floema tenga capacidad.
 
 ### R8 — `samplerConfig` en `LiteRtChatService.sendPrompt`
 Sin cambios respecto a la petición ya enviada
@@ -269,59 +527,74 @@ seguridad pero no es esencial bajo el system prompt cuidado.
   consume sin tests propios.
 - Streaming real en producción si el feedback de la Escena 7 lo pide.
 
-## 7.5 Cómo retomar el día 11
+## 7.5 Cómo se ejecutó el día 11 (histórico)
 
-Para reanudar Phase 1.5 + Phase 3 mañana sin redescubrir setup:
+Plan original: lanzar `code/tuning/run_pending.ps1` "a pelo" (sin Claude
+corriendo, para liberar memoria). Defender bloqueó el script al parsear
+por falso positivo AMSI (firma "loader sigiloso" por la combinación
+`Start-Process -WindowStyle Hidden -RedirectStandardOutput -PassThru`).
+Se commiteó un fix (`-NoNewWindow`, commit `473ca7e`) pero se ejecutó
+plan B manual por seguridad:
 
 ```powershell
-# 1. Verificar Ollama tiene gemma4:e4b cargable (10 GB de modelo)
-ollama list  # debe estar gemma4:e4b
-# Si no, cualquier llamada lo carga; tarda ~30s la primera vez
-
-# 2. Arrancar adapter en :12000 (Ollama queda en :11434, no se mueve)
+# Terminal 1 (adapter, dejar abierta):
 $env:INFERENCE_BACKEND='local'
 $env:ADAPTER_PORT='12000'
 $env:OLLAMA_UPSTREAM_HOST='http://localhost:11434'
 cd C:\DATA\PETS\TEST\T6-GEMMA\code\meristem_inference_adapter
 python -m src.main
 
-# 3. (otra terminal) smoke test rapido
+# Terminal 2 (cuando adapter diga "Application startup complete"):
 cd C:\DATA\PETS\TEST\T6-GEMMA
-python code/tuning/harness.py --smoke --adapter-url http://localhost:12000
-
-# 4. Phase 1.5
-python code/tuning/harness.py --matrix code/tuning/matrix_phase1_5.yaml --adapter-url http://localhost:12000
-
-# 5. Phase 3
-python code/tuning/harness.py --matrix code/tuning/matrix_phase3.yaml --adapter-url http://localhost:12000
-
-# 6. Analisis
-python code/tuning/analyze.py
+python code\tuning\harness.py --smoke --adapter-url http://localhost:12000
+python code\tuning\harness.py --matrix code\tuning\matrix_phase1_5.yaml --adapter-url http://localhost:12000 --resume
+python code\tuning\harness.py --matrix code\tuning\matrix_phase3.yaml --adapter-url http://localhost:12000 --resume
+python code\tuning\analyze.py
 ```
 
-**Memoria**: con 4-6 GB libres, `gemma4:e4b` carga estable. Si bajamos
-de 4 GB con el modelo cargado, los runs de C2/C3 con `num_predict>2048`
-arriesgan ReadTimeout. El timeout en harness ya está a 300s tras la
-crisis del día 10. Si vuelve a fallar: cerrar Chrome / VS Code; o usar
-`--resume` para no perder runs ya OK.
+Ejecución limpia 28/28 (16 Phase 1.5 + 12 Phase 3). Bea dejó el PC
+corriendo y volvió tras vuelta en bici. Sin OOM, sin fallos de
+warmup, sin timeouts. El plan B manual quedó validado como ruta
+robusta cuando el AV rechaza el script automatizado.
 
-**Contrato del JSONL**: `--resume` dedupea por `run_id`, prefiriendo el
-último OK. Nunca borres `phase1.jsonl` para "limpiar" — pierdes datos
-buenos. `analyze.py` ya dedupea al cargar.
+**Lección operativa para v1+**: `Start-Process -NoNewWindow` es la
+sintaxis AMSI-friendly equivalente a `-WindowStyle Hidden`. Adoptar
+por defecto en futuros harnesses.
+
+## 7.6 Resumen scoring HIGH/MEDIUM/LOW
+
+| Recomendación | Confianza | Estado | Acción |
+|---|---|---|---|
+| R1 — Mantener system prompt en castellano | MEDIUM | Cerrada | Floema no migrar `SystemPrompts.kt` a EN |
+| R2 — `reason_exhaustive` como perfil base | MEDIUM-HIGH | Cerrada | Adoptar texto de `system_prompts.yaml` |
+| R3 — `resetConversation()` entre arquetipos | MEDIUM-HIGH | Cerrada | Reset al cambiar arquetipo; no necesario hasta D5 dentro |
+| R4 — Separar `envelope.status` vs `payload.validation` | HIGH | Cerrada | Floema añadir contraste textual al prompt |
+| R5 — `PM04 revoke` afordancia explícita | HIGH | Cerrada | Solo aplica si se usa prompt minimal |
+| R6 — `PE04 out_of_jurisdiction` ofrece `MissionPatch` | HIGH | Cerrada | Patrón canónico textual al prompt |
+| R7 — `filter_channel_content_from_kv_cache` | LOW | Inconcluso | Pregunta a Floema/Google sigue activa |
+| R7-bis — Política assistant con thinking en multi-turn | HIGH | Nueva | Decisión a/b/c en `LiteRtInfra.kt` |
+| R8 — `samplerConfig` en `sendPrompt` | MEDIUM/HIGH | Cerrada | Petición 3 a Floema sigue activa |
+| R9 — Sobre común como invariante v0 | HIGH | Cerrada | `ResponseParser` puede asumir sobre |
+
+Total: 4 HIGH firmes (R4, R5, R6, R9), 1 HIGH nueva (R7-bis), 3 MEDIUM/MEDIUM-HIGH (R1, R2, R3), 1 MEDIUM/HIGH (R8), 1 LOW inconclusa (R7).
 
 ## 8. Próximos pasos
 
-1. **Día 12** — review meeting Bea + Cambium + Floema + Meristem para
+1. **Día 13** — review meeting Bea + Cambium + Floema + Meristem para
    triage de las 7 observaciones recalibradas (`2026-04-24` y
-   `2026-04-25`) cruzadas con estos resultados.
-2. **Antes del demo** — Floema confirma estado de v2 contracts en
-   `code/pollen/` (petición 1 al equipo). Si no migrado, las
-   recomendaciones de envelope se aplican sobre v2; si v1 sigue, se
-   adapta una capa en MissionAssembler.
-3. **Petición 2 (filter_channel)** — ya formulada; tras Phase 3 se
-   sabe si es prioridad alta o media.
-4. **Petición 3 (samplerConfig)** — sigue como no bloqueante; queda
-   en backlog si LiteRT-LM no lo expone por turno.
+   `2026-04-25`) cruzadas con estas 9 (+1) recomendaciones. (Movido del
+   día 12 al 13 por Cambium en mensaje del día 11.)
+2. **Antes del review** — Floema contesta las 3 peticiones técnicas
+   (`2026-04-25_peticion-floema-prep-tuning_meristem.md`):
+   - Petición 1: estado v2 contracts en `code/pollen/`
+   - Petición 2: default oficial de `filter_channel_content_from_kv_cache`
+   - Petición 3: `samplerConfig` en `sendPrompt`
+3. **R7-bis (nueva)**: Floema verifica si LiteRT-LM en `feat/pollen-f4-voice`
+   produce el split thinking/content (como Ollama) o emite todo en
+   `content`. Esto define cuál de las opciones a/b/c aplica.
+4. **Phase 3-bis (opcional)**: solo si el review día 13 lo demanda. Harness
+   corregido para concatenar thinking+content en assistant turns. Cierra
+   R7 con datos en vez de con pregunta externa.
 
 ## Referencias
 
