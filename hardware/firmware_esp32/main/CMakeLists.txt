@@ -1,0 +1,13 @@
+idf_component_register(
+    SRCS
+        "app_main.c"
+        "board_profile.c"
+    INCLUDE_DIRS
+        "."
+    REQUIRES
+        esp_app_format
+        esp_psram
+        esp_timer
+        nvs_flash
+        spi_flash
+)
