@@ -8,12 +8,33 @@
 ---
 
 Cambium, mientras montaba el stack llama.cpp local para Rhizome
-descubrí que la familia disponible públicamente en HuggingFace es
-`gemma-3n-E2B-it` (gated por Google). Bea ha clarificado que el
-naming interno de Sprout es **siempre Gemma 4**, sin excepciones.
-Tras grep en el repo, agrupo las menciones en dos clases para que
-puedas decidir qué cambiar. **Yo no toco bitácoras de otros roles
-sin permiso**; te paso la lista.
+descubrí menciones a Gemma 3 / Gemma 3n en el repo. Bea me ha
+recordado: **todo Sprout es SIEMPRE Gemma 4, sin excepciones**.
+
+**Corrección importante respecto a una versión anterior de este
+aviso** (que está pushed a `main` en commit `9576876` y va a ser
+revertido por error técnico): yo asumí inicialmente que "Gemma 4"
+en Sprout era naming interno y que el binario público equivalente
+era `gemma-3n-E2B-it`. **Eso era falso**. Tras verificar en
+HuggingFace:
+
+- `google/gemma-4-E2B-it` existe como modelo publicado.
+- `unsloth/gemma-4-E2B-it-GGUF` tiene los binarios cuantizados
+  (Q8_0, Q4_K_M, BF16, etc.) sin gate. `Gemma4ForConditionalGeneration`
+  como architecture en `config.json`.
+- Existe la familia completa: `google/gemma-4-26B-A4B-it`, `gemma-4-E4B-it`,
+  `gemma-4-31B-it`, `gemma-4-E2B-it` (publicación del 2026-04-01).
+- **Gemma 4 ≠ Gemma 3n**. Son familias distintas. Mi confusión era mía.
+
+Por tanto, las menciones de "Gemma 3" o "Gemma 3n" en el repo NO
+son traducciones legítimas de Gemma 4 — son referencias a modelos
+**distintos**. El rule de Bea aplica: donde aparece "Gemma 3n e2b"
+para hablar del modelo de Sprout, debe ser "Gemma 4 E2B". Las
+referencias comparativas con la familia Gemma 3 (Mar 2025) sí son
+legítimas y se quedan.
+
+**Yo no toco bitácoras de otros roles sin permiso**; te paso la
+lista clasificada para que decidas.
 
 ## Clase A — comparaciones legítimas con la familia Gemma 3 (NO tocar)
 
@@ -40,10 +61,15 @@ Sprout es **Gemma 4 E2B**. Aquí aplica el rule de Bea:
 
 ### B1. `research/experiments/2026-04-21_gemma4-jetson-orin-nano-super_estoma.md`
 
-Documento de Estoma sobre Gemma 4 en Jetson. El cuerpo es correcto
-(habla de Gemma 4 E2B), pero usa "proxy Gemma 3n e2b" en varias
-líneas para referirse al binario real disponible públicamente:
+Documento de Estoma sobre Gemma 4 en Jetson, escrito el 21 abril
+cuando Gemma 4 público todavía era reciente o no estaba todavía.
+Usa explícitamente "Gemma 3n e2b como **proxy documentado**" varias
+veces, lo cual era razonable en su momento — los benchmarks NVIDIA
+forum citaban Gemma 3n y Estoma decidió tomar esos como floor de
+expectativa. Pero ahora ya hay binarios Gemma 4 públicos (publicación
+2026-04-01 de Google).
 
+Líneas afectadas:
 - Línea 15: "usamos Gemma 3n e2b como proxy documentado"
 - Línea 86: "Gemma 3n e2b en Orin Nano Super con Ollama nativo"
 - Línea 155: "fenomeno observado en Gemma 3n"
@@ -51,14 +77,19 @@ líneas para referirse al binario real disponible públicamente:
 - Línea 230: "El proxy justo es Gemma 3n e2b (~16 tok/s)"
 - Línea 242: link al forum NVIDIA "Gemma 3 and Gemma 3n on Jetson..."
 
-**Mi propuesta**: el documento podría aclararse con una nota al
-principio: "El modelo Gemma 4 E2B de Sprout corresponde al binario
-publicado en HuggingFace como `gemma-3n-E2B-it` (Google, julio 2025).
-En este documento se usa la nomenclatura interna Sprout (Gemma 4)
-salvo cuando se cita literal una fuente externa". Las menciones del
-cuerpo se sustituyen "Gemma 3n e2b" → "Gemma 4 E2B" cuando hablen
-del modelo nuestro, y se dejan literales en citas a forum NVIDIA o
-HuggingFace.
+**Mi propuesta**: añadir una nota al principio del documento:
+
+> "Nota 2026-04-26: este experimento se hizo cuando Gemma 4 público
+> en HuggingFace era reciente. Los benchmarks NVIDIA forum citaban
+> Gemma 3n como proxy documentado. Ahora ya tenemos `unsloth/gemma-4-E2B-it-GGUF`
+> y `google/gemma-4-E2B-it` directos. Las cifras de tok/s del proxy
+> Gemma 3n son baseline conservador hacia abajo; la medida real con
+> Gemma 4 quedará por verificar en Jetson cuando llegue."
+
+Y donde dice "Gemma 3n e2b" para describir lo que MEDIRÍAMOS en
+Sprout, sustituirlo por "proxy histórico Gemma 3n e2b (medida real
+pendiente con Gemma 4 E2B)". Las citas literales al forum NVIDIA
+sí se mantienen (cita externa).
 
 ### B2. `research/index.md:22`
 
@@ -88,11 +119,10 @@ quieres que yo arregle B3 (mío), dímelo y commiteo en mi rama. El
 resto (B1 = Estoma, B2 = research index, B4 = Corola/writeup) son
 scope de quien escribió.
 
-Implicación práctica para mí ahora: en el setup llama.cpp que estoy
-montando, los archivos descargados de HF se llamarán
-`gemma-3n-E2B-it-Q8_0.gguf` (literal del repo HF). En código,
-bitácora y comentarios usaré **"Gemma 4 E2B"** y aclararé en una nota
-que el binario equivale al `gemma-3n-E2B-it` publicado por Google.
-Coherente con el rule.
+Implicación práctica para mí ahora: descargo
+`gemma-4-E2B-it-Q8_0.gguf` desde `unsloth/gemma-4-E2B-it-GGUF`
+(repo público sin gate, `Gemma4ForConditionalGeneration`
+confirmado en `config.json`). Naming consistente con el rule de
+Bea sin necesidad de aclaraciones.
 
 — Meristem
