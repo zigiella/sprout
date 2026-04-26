@@ -81,7 +81,8 @@ class MainActivity : ComponentActivity() {
                                 onPromptChanged = { viewModel.onPromptChanged(it) },
                                 onThinkingToggled = { viewModel.onThinkingToggled(it) },
                                 onSend = { viewModel.send() },
-                                onStartVoice = { viewModel.startListening() }
+                                onStartVoice = { viewModel.startListening() },
+                                onArchetypeSelected = { viewModel.onArchetypeSelected(it) }
                             )
                         } else {
                             VisitarRhizomeScreen()

@@ -31,6 +31,7 @@ data class ChatUiState(
     val error: String? = null,
     val metrics: GenerationMetrics? = null,
     val isThinkingEnabled: Boolean = false,
+    val selectedArchetype: String = "Chat Libre",
     val voiceLogs: List<String> = emptyList()
 )
 
@@ -74,6 +75,15 @@ class ChatViewModel(
 
     fun onThinkingToggled(enabled: Boolean) {
         _uiState.update { it.copy(isThinkingEnabled = enabled) }
+        chatService.resetConversation()
+    }
+
+    fun onArchetypeSelected(archetype: String) {
+        val newThinkingState = when (archetype) {
+            "Misión", "Auditoría" -> true
+            else -> false
+        }
+        _uiState.update { it.copy(selectedArchetype = archetype, isThinkingEnabled = newThinkingState) }
         chatService.resetConversation()
     }
 
@@ -132,8 +142,26 @@ fun ChatScreen(
     onThinkingToggled: (Boolean) -> Unit,
     onStartVoice: () -> Unit,
     onSend: () -> Unit,
+    onArchetypeSelected: (String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        val archetypes = listOf("Chat Libre", "Misión", "Auditoría", "Contexto")
+        ScrollableTabRow(
+            selectedTabIndex = archetypes.indexOf(uiState.selectedArchetype).takeIf { it >= 0 } ?: 0,
+            edgePadding = 8.dp,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            archetypes.forEach { archetype ->
+                Tab(
+                    selected = uiState.selectedArchetype == archetype,
+                    onClick = { onArchetypeSelected(archetype) },
+                    text = { Text(archetype) }
+                )
+            }
+        }
+
+        Spacer(Modifier.height(12.dp))
+
         OutlinedTextField(
             value = uiState.prompt,
             onValueChange = onPromptChanged,
