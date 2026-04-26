@@ -97,13 +97,11 @@ class ChatViewModel(
         val prompt = _uiState.value.prompt.trim()
         if (prompt.isEmpty()) return
 
-        voiceInfra.stopSpeaking() // Cortar si estaba hablando
+        // voiceInfra.stopSpeaking() // Eliminado por petición de usuario
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, output = "", error = null, metrics = null) }
             
-            var sentenceBuffer = ""
-
             withContext(Dispatchers.IO) {
                 runCatching {
                     chatService.sendPrompt(prompt, _uiState.value.isThinkingEnabled).collect { (chunk, metricsUpdate) ->
@@ -114,25 +112,9 @@ class ChatViewModel(
                                 metrics = metricsUpdate ?: state.metrics
                             )
                         }
-
-                        // Acumular para TTS (reproducir frases completas)
-                        sentenceBuffer += chunk
-                        if (sentenceBuffer.contains(Regex("[.?!\\n]"))) {
-                            val parts = sentenceBuffer.split(Regex("(?<=[.?!\\n])"))
-                            for (i in 0 until parts.size - 1) {
-                                val sentence = parts[i].trim()
-                                if (sentence.isNotEmpty()) {
-                                    voiceInfra.speak(sentence)
-                                }
-                            }
-                            sentenceBuffer = parts.last() // lo que sobra
-                        }
                     }
                     
-                    // Al finalizar, hablar lo que quede
-                    if (sentenceBuffer.trim().isNotEmpty()) {
-                        voiceInfra.speak(sentenceBuffer.trim())
-                    }
+                    // Al finalizar, (TTS eliminado)
 
                 }.onFailure { t ->
                     _uiState.update { it.copy(error = t.message) }
