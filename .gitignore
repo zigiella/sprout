@@ -91,3 +91,6 @@ video/cache/
 *.mov
 # Keep final exports
 !video/final/*.mp4
+
+# Local models for tuning (downloaded from HF, large binaries)
+models/
