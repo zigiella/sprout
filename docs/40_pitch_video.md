@@ -17,14 +17,15 @@ En nuestra demo usamos dos macetas como dos parcelas lógicas — una con estaci
 ## 3. Frases fuertes
 
 - **Rhizome mantiene viva la parcela cuando nadie está.**
-- **Pollen convierte la visita en inteligencia útil.**
+- **Cada visita puede cambiar el criterio local.**
 - **La IA propone; el agua la gobierna una capa física prudente.**
 - **Toda inteligencia tiene jurisdicción y fecha de caducidad.**
-- **Inteligencia federada con Pollen.**
+- **Pollen convierte esas visitas en inteligencia federada.**
 
 > Notas operativas:
-> - La frase 4 mantiene su forma en el writeup. En el VO de la escena 8 dice *"Toda inteligencia tiene jurisdicción y fecha de caducidad"* sin "En Sprout"; el nombre del producto vive en cartela final, no en VO previo.
-> - La frase 5 es la única que se repite en el vídeo: aparece en VO al final de la escena 6 (remate del ferry) y en cartela progresiva durante la escena 9 (cenital federado).
+> - **Frases 2 y 5 funcionan como par** (reformulación dia 12 tras feedback DEV externa). La 2 se afirma en VO escena 4 — afirmacion testable, no promesa — y la prueba la da escena 5 inmediatamente despues. La 5 cierra la cadena en VO al final de escena 6 con eco "esas" hacia escena 4 (coherencia interna fuerte).
+> - **Frase 4** mantiene su forma en el writeup. En el VO de la escena 8 dice *"Toda inteligencia tiene jurisdicción y fecha de caducidad"* sin "En Sprout"; el nombre del producto vive en cartela final, no en VO previo.
+> - **La cartela progresiva final de escena 9** mantiene la formulacion *"Inteligencia federada con Pollen"* como eco visual textual — la frase 5 ya esta dicha en VO escena 6, la cartela es remate visual, no repeticion literal.
 
 ## 4. Estructura del vídeo (3 minutos · 9 escenas)
 
@@ -37,9 +38,9 @@ En nuestra demo usamos dos macetas como dos parcelas lógicas — una con estaci
 | 1 | La ausencia | 0:00–0:20 (20s) | apertura silenciosa, una parcela visitada periódicamente |
 | 2 | Rhizome decide offline | 0:20–0:45 (25s) | sensor → estado → decisión → orden → `DecisionReceipt` + frase fuerte 1 |
 | 3 | ESP32 SAFE LIMIT | 0:45–1:00 (15s) | modulación (no rechazo) + frase fuerte 3 |
-| 4 | Llega Pollen | 1:00–1:30 (30s) | "¿qué pasó desde mi última visita?" + resumen receipts + frase fuerte 2 |
-| 5 | La persona da una misión | 1:30–1:50 (20s) | voz humana coloquial → `MissionPatch` traducido (`operator_note` literal) |
-| 6 | Ferry A→B | 1:50–2:10 (20s) | Pollen lleva `WeatherDigest` de `rhizome_01` (con meteo) a `rhizome_02` (sin meteo) + corte limpio + *"Inteligencia federada con Pollen"* (1ª vez) |
+| 4 | Llega Pollen | 1:00–1:30 (30s) | "¿qué pasó desde mi última visita?" + resumen receipts + frase fuerte 2 ("Cada visita puede cambiar el criterio local") |
+| 5 | La persona da una misión | 1:30–1:50 (20s) | voz humana coloquial → `MissionPatch` traducido (`operator_note` literal) — **prueba la frase 2** |
+| 6 | Ferry A→B | 1:50–2:10 (20s) | Pollen lleva `WeatherDigest` de `rhizome_01` (con meteo) a `rhizome_02` (sin meteo) + corte limpio + frase fuerte 5 ("Pollen convierte esas visitas en inteligencia federada") |
 | 7 | Criterio modificado | 2:10–2:30 (20s) | side-by-side política antes/después + cartela ancla **"Criterio modificado"** + acción física distinta |
 | 8 | Caducidad | 2:30–2:40 (10s) | `expired → rejected` + frase fuerte 4 (sin "En Sprout") |
 | 9 | Cenital federado | 2:40–3:00 (20s) | Veo3 flat editorial · 8 parcelas vistas en cenital · Pollen recorriendo · cartela progresiva: *"Una parcela. Dos. Ocho. Autónomas. Inteligencia federada con Pollen."* |
@@ -50,9 +51,19 @@ En nuestra demo usamos dos macetas como dos parcelas lógicas — una con estaci
 
 **Escena 2 — Rhizome decide offline (0:20–0:45).** Se ve sensor, estado local, decisión, orden al ESP32, `DecisionReceipt`. Cierre con frase fuerte 1.
 
+Cartelas (esquina superior derecha, ~3s, en ingles para jurado anglo):
+- *"Gemma 4 E2B · local · llama.cpp"*
+- sub-cartela: *"LLM called only when ambiguous"*
+
 **Escena 3 — ESP32 SAFE LIMIT (0:45–1:00).** Modulación, no rechazo: el ESP32 reduce los segundos pedidos por seguridad (`candidate_action.seconds=30 → final_action.seconds=12`) y la diferencia es donde la capa física trabaja. Cartela: *"ESP32 SAFE LIMIT"*. Frase fuerte 3.
 
-**Escena 4 — Llega Pollen (1:00–1:30).** En el móvil: *"¿qué pasó desde mi última visita?"*. Rhizome responde a través del teléfono, se ve resumen de decisiones. Frase fuerte 2.
+Cartela narrativa central (3s, sobre plano del ESP32 modulando): ***"Cuando duda, riega menos."*** — refuerza la frase fuerte 3 sin sumar carga al pitch §3.
+
+Cartela esquina (3s): *"function/read tools · no actuator tools"* — explicita que la IA solo lee, no actua sobre hardware.
+
+**Escena 4 — Llega Pollen (1:00–1:30).** En el móvil: *"¿qué pasó desde mi última visita?"*. Rhizome responde a través del teléfono, se ve resumen de decisiones. VO con frase fuerte 2: *"Cada visita puede cambiar el criterio local."*
+
+Cartela esquina (3s): *"Gemma 4 E4B · LiteRT-LM · on-device"*.
 
 **Escena 5 — La persona da una misión (1:30–1:50).** Voz humana coloquial real:
 
