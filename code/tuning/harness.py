@@ -274,12 +274,21 @@ def run_single_turn(
 
 
 def run_phase_1(matrix: dict, args) -> int:
-    """Phase 1: 3 configs × 16 prompts = 48 runs (EN)."""
+    """Phase 1: 3 configs × 16 prompts = 48 runs (EN).
+
+    Soporta prompt pack custom via matrix["prompt_pack"] (ej. para Rhizome,
+    "prompt_pack_rhizome_es.yaml"). Si no se especifica, usa el default por
+    idioma de invariants (es -> prompt_pack_es.yaml, en -> prompt_pack_en.yaml).
+    """
     invariants = matrix["invariants"]
     configs = matrix["configs"]
     prompt_ids = matrix["prompts"]
 
-    pack = index_by_id(load_yaml(HERE / "prompt_pack_en.yaml"))
+    pack_filename = matrix.get("prompt_pack")
+    if not pack_filename:
+        lang = invariants.get("language", "en")
+        pack_filename = f"prompt_pack_{lang}.yaml"
+    pack = index_by_id(load_yaml(HERE / pack_filename))
     sys_prompts = index_by_id(load_yaml(HERE / "system_prompts.yaml"))
 
     out_path = HERE / matrix["output"]["path"]
