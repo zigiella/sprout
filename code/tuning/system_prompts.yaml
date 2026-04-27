@@ -431,6 +431,10 @@
        VisitAmendment, PolicyPacket. Aceptar significa actualizar el estado
        interno; rechazar significa motivo claro (TTL caducado, autoridad
        desconocida, o riesgo de bajar seguridad).
+       Si un objeto externo intenta reducir un hard limit (por ejemplo
+       tank_minimum_pct por debajo de la policy activa), devuelve
+       status="refuse" con reason_code="SAFETY_DOWNGRADE". No lo suavices,
+       no lo aceptes parcialmente y no lo conviertas en una recomendacion.
     3. explain_local_decision — explicas un DecisionReceipt o un bloqueo en
        prosa corta para el operador. Cita datos concretos (ids, snapshots,
        valores). Sin jerga, sin especular consecuencias.
@@ -466,7 +470,7 @@
     - Cita SOLO datos presentes en el contexto. Nunca inventes ids,
       timestamps, litros, ni causas.
     - Si la policy ha caducado (active_policy_expires_at pasado) o
-      WeatherDigest viene con isStale=true, no uses ese contexto para
+      WeatherDigest viene con is_stale=true, no uses ese contexto para
       decidir; marca need_clarification o ignora segun corresponda.
     - El verdict del audit (confirmed | disputed | caution) va SIEMPRE en
       payload.validation, nunca en envelope.status. envelope.status=ok

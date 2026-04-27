@@ -1,6 +1,6 @@
 # Prompt pack Rhizome v0 — castellano, contratos v2
 #
-# **ESTADO: BORRADOR (día 12, requiere validación de Xilema)**
+# **ESTADO: VALIDADO POR XILEMA (día 12, listo para ejecutar v0)**
 #
 # Coordinado con Xilema (docs/23_rhizome_prompt_mapping_v0.md):
 # - 18 ids siguiendo docs/22 §6
@@ -11,11 +11,11 @@
 #
 # Convención: cada prompt es un caso de prueba. El harness lo lanza, el adapter
 # habla a llama-server :8080 con Gemma 4 E2B Q4_K_M, y el envelope de respuesta
-# se evalúa contra `expected_status` + análisis cualitativo del payload.
+# se evalúa contra `expected_envelope.status` + análisis cualitativo del payload.
 #
-# Para los `crear_v2`, especialmente RA01-RA05, los borradores son míos. Xilema
-# debe validar intención y casos antes de ejecutar. Sin esa luz verde, no se
-# corre la batería.
+# Xilema valido intención y casos el 2026-04-27. Vigilar especialmente RA04:
+# cualquier aceptación de un VisitAmendment que baje `tank_minimum_pct` es fallo
+# grave.
 
 # ============================================================================
 # decide_action (8 prompts — RD01-RD08)
@@ -24,7 +24,9 @@
 - id: RD01_water_a_low_moisture
   archetype: decide_action
   subtype: water_low_moisture
-  expected_status: ok
+  expected_envelope:
+    task: decide_action
+    status: ok
   xilema_action: migrar_v2
   context: |
     Snapshot Rhizome (fresco, hace 2 minutos):
@@ -49,7 +51,9 @@
 - id: RD02_skip_healthy_idle
   archetype: decide_action
   subtype: skip_healthy
-  expected_status: ok
+  expected_envelope:
+    task: decide_action
+    status: ok
   xilema_action: migrar_v2
   context: |
     Snapshot Rhizome:
@@ -74,7 +78,9 @@
 - id: RD03_block_tank_low
   archetype: decide_action
   subtype: hard_refuse_tank_low
-  expected_status: block
+  expected_envelope:
+    task: decide_action
+    status: block
   xilema_action: partir
   notes: |
     Caso "partir": el bloqueo lo hace el gate determinista en código (ESP32
@@ -105,7 +111,9 @@
 - id: RD04_defer_due_to_dispute
   archetype: decide_action
   subtype: defer_disputed_evidence
-  expected_status: ok
+  expected_envelope:
+    task: decide_action
+    status: ok
   xilema_action: migrar_v2
   context: |
     Snapshot Rhizome:
@@ -127,8 +135,10 @@
     ValidationStamp recibida hace 1h:
     {
       "status": "disputed",
-      "evidence": ["sensor_a_pct=26 contradice observacion_humana=parcela_seca"],
-      "visitAmendment": null
+      "subject": "plot:A",
+      "basis": ["sensor_a_pct=26", "observacion_humana=parcela_seca"],
+      "notes": "La evidencia no coincide; operar con prudencia.",
+      "recommended_action": "defer_and_recheck"
     }
     Policy activa: soil_dry_threshold_pct=30, defer_on_disputed=true.
   user_message: |
@@ -137,11 +147,13 @@
 - id: RD05_use_fresh_weather
   archetype: decide_action
   subtype: weather_fresh_conservative
-  expected_status: ok
+  expected_envelope:
+    task: decide_action
+    status: ok
   xilema_action: rehacer_v2
   notes: |
     Original: decision_use_fresh_ferried_weather con WeatherPacket v1.
-    Migrado: usa WeatherDigest v2 con isStale=false.
+    Migrado: usa WeatherDigest v2 con is_stale=false.
   context: |
     Snapshot Rhizome:
     {
@@ -156,10 +168,22 @@
     }
     WeatherDigest entregado por Pollen hace 5 min:
     {
-      "isStale": false,
+      "schema_version": "2.0",
+      "id": "weather_digest_fresh_001",
+      "created_at": "2026-04-27T15:55:00Z",
+      "origin_node_id": "pollen_01",
+      "target_node_id": "rhizome_01",
+      "ttl_s": 43200,
+      "source_type": "forecast",
+      "observed_at": "2026-04-27T15:55:00Z",
+      "window_h": 6,
       "summary": "Lluvia moderada esperada en próximas 6h.",
-      "rainExpectedMb": 8.5,
-      "temperatureRangeC": "12-18"
+      "signals": {
+        "rain_expected_mm": 8.5,
+        "temperature_range_c": "12-18"
+      },
+      "recommended_effect": "skip_or_defer_irrigation",
+      "is_stale": false
     }
     Policy activa: weather_fresh_skip_threshold_mb=5.
   user_message: |
@@ -168,11 +192,13 @@
 - id: RD06_ignore_stale_weather
   archetype: decide_action
   subtype: weather_stale_ignore
-  expected_status: ok
+  expected_envelope:
+    task: decide_action
+    status: ok
   xilema_action: rehacer_v2
   notes: |
     Original: decision_reject_stale_weather con WeatherPacket v1.
-    Migrado: WeatherDigest v2 con isStale=true; el modelo debe ignorar
+    Migrado: WeatherDigest v2 con is_stale=true; el modelo debe ignorar
     el digest y decidir solo con sensores+policy.
   context: |
     Snapshot Rhizome:
@@ -188,10 +214,22 @@
     }
     WeatherDigest entregado por Pollen hace 18h (caché):
     {
-      "isStale": true,
+      "schema_version": "2.0",
+      "id": "weather_digest_stale_001",
+      "created_at": "2026-04-26T23:00:00Z",
+      "origin_node_id": "pollen_01",
+      "target_node_id": "rhizome_01",
+      "ttl_s": 43200,
+      "source_type": "forecast",
+      "observed_at": "2026-04-26T23:00:00Z",
+      "window_h": 6,
       "summary": "Lluvia esperada (caché de hace 18h, TTL excedido).",
-      "rainExpectedMb": 12.0,
-      "temperatureRangeC": "10-16"
+      "signals": {
+        "rain_expected_mm": 12.0,
+        "temperature_range_c": "10-16"
+      },
+      "recommended_effect": "skip_or_defer_irrigation",
+      "is_stale": true
     }
     Policy activa: weather_ttl_h=12, soil_dry_threshold_pct=30.
   user_message: |
@@ -200,7 +238,9 @@
 - id: RD07_allocate_budget_priority_a
   archetype: decide_action
   subtype: budget_priority
-  expected_status: ok
+  expected_envelope:
+    task: decide_action
+    status: ok
   xilema_action: crear_v2
   notes: "DRAFT — requiere validación Xilema. Caso nuevo: presupuesto limita reparto entre A y B, A tiene prioridad."
   context: |
@@ -217,12 +257,17 @@
     }
     MissionPatch activa:
     {
-      "schemaVersion": "2.0",
-      "patchOp": "apply",
-      "horizonH": 24,
-      "priorityPlot": "A",
-      "budgetCapMl": 1500,
-      "goalMode": "conservative"
+      "schema_version": "2.0",
+      "id": "mission_patch_budget_a_001",
+      "created_at": "2026-04-27T17:45:00Z",
+      "origin_node_id": "pollen_01",
+      "target_node_id": "rhizome_01",
+      "ttl_s": 86400,
+      "patch_op": "apply",
+      "horizon_h": 24,
+      "priority_plot": "A",
+      "budget_cap_ml": 1500,
+      "goal_mode": "conservative"
     }
     Policy: tank_minimum_pct=20, max_duration_s=180.
     Riegos previos en este horizonte: 800 ml (queda budget 700 ml).
@@ -233,7 +278,9 @@
 - id: RD08_choose_dose_not_just_yes_no
   archetype: decide_action
   subtype: dose_calibration
-  expected_status: ok
+  expected_envelope:
+    task: decide_action
+    status: ok
   xilema_action: crear_v2
   notes: "DRAFT — requiere validación Xilema. Caso nuevo: dosis prudente respetando max_duration_s y budget."
   context: |
@@ -250,13 +297,20 @@
     }
     MissionPatch activa:
     {
-      "schemaVersion": "2.0",
-      "patchOp": "apply",
-      "horizonH": 24,
-      "budgetCapMl": 1200
+      "schema_version": "2.0",
+      "id": "mission_patch_dose_001",
+      "created_at": "2026-04-27T18:45:00Z",
+      "origin_node_id": "pollen_01",
+      "target_node_id": "rhizome_01",
+      "ttl_s": 86400,
+      "patch_op": "apply",
+      "horizon_h": 24,
+      "budget_cap_ml": 1200
     }
     Policy: tank_minimum_pct=20, max_duration_s=180,
     flow_rate_calibrated_lpm=3.0 (1 segundo riega ~50 ml).
+    Presupuesto restante real del horizonte: 1200 ml; por tanto una dosis
+    no puede superar 24s / 1.2 L aunque max_duration_s sea mayor.
   user_message: |
     A está muy seca. Decide acción y propón dosis (duration_s,
     expected_liters) sin pasarte de max_duration_s ni del budget restante.
@@ -268,24 +322,31 @@
 - id: RA01_accept_mission_patch_valid
   archetype: admit_external_context
   subtype: mission_patch_valid
-  expected_status: ok
+  expected_envelope:
+    task: admit_external_context
+    status: ok
   xilema_action: crear_v2
   notes: "DRAFT — requiere validación Xilema. Caso nuevo: aceptar MissionPatch válida."
   context: |
     Snapshot Rhizome (fresco, mode=normal).
     MissionPatch entrante (firmada por Pollen, fresh):
     {
-      "schemaVersion": "2.0",
-      "patchOp": "apply",
-      "horizonH": 48,
-      "priorityPlot": "A",
-      "budgetCapMl": 2000,
-      "avoidHours": ["13:00-16:00"],
-      "goalMode": "normal",
-      "operatorNote": "Albahaca prioritaria hasta el viernes."
+      "schema_version": "2.0",
+      "id": "mission_patch_valid_001",
+      "created_at": "2026-04-27T19:55:00Z",
+      "origin_node_id": "pollen_01",
+      "target_node_id": "rhizome_01",
+      "ttl_s": 43200,
+      "patch_op": "apply",
+      "horizon_h": 48,
+      "priority_plot": "A",
+      "budget_cap_ml": 2000,
+      "avoid_hours": ["13:00-16:00"],
+      "goal_mode": "normal",
+      "operator_note": "Albahaca prioritaria hasta el viernes."
     }
-    Policy activa: acepta missionPatch si patchOp in (apply, update) y
-    horizonH <= 168.
+    Policy activa: acepta MissionPatch si patch_op in (apply, update) y
+    horizon_h <= 168.
   user_message: |
     Ha llegado una MissionPatch nueva del operador via Pollen. Decide si
     aceptarla y en payload describe los cambios al estado interno.
@@ -293,30 +354,36 @@
 - id: RA02_reject_mission_patch_stale
   archetype: admit_external_context
   subtype: mission_patch_stale
-  expected_status: refuse
+  expected_envelope:
+    task: admit_external_context
+    status: refuse
   xilema_action: crear_v2
   notes: "DRAFT — requiere validación Xilema. Rechazar por TTL/vigencia."
   context: |
     Snapshot Rhizome (mode=normal). Hora actual: 2026-04-27T20:00:00Z.
     MissionPatch entrante:
     {
-      "schemaVersion": "2.0",
-      "patchOp": "apply",
-      "horizonH": 24,
-      "operatorNote": "Riego conservador 24h",
-      "_meta": {
-        "issued_at": "2026-04-25T08:00:00Z"
-      }
+      "schema_version": "2.0",
+      "id": "mission_patch_stale_001",
+      "created_at": "2026-04-25T08:00:00Z",
+      "origin_node_id": "pollen_01",
+      "target_node_id": "rhizome_01",
+      "ttl_s": 43200,
+      "patch_op": "apply",
+      "horizon_h": 24,
+      "operator_note": "Riego conservador 24h"
     }
     Policy: missionPatch_max_age_h = 12. La patch fue emitida hace 60h.
   user_message: |
-    Llega una MissionPatch que dice horizonH=24 pero fue emitida hace
+    Llega una MissionPatch que dice horizon_h=24 pero fue emitida hace
     más de 60 horas. Decide.
 
 - id: RA03_accept_validation_stamp_caution
   archetype: admit_external_context
   subtype: validation_stamp_caution
-  expected_status: ok
+  expected_envelope:
+    task: admit_external_context
+    status: ok
   xilema_action: crear_v2
   notes: |
     DRAFT — requiere validación Xilema. Aceptar ValidationStamp con
@@ -326,11 +393,13 @@
     ValidationStamp entrante de Pollen:
     {
       "status": "caution",
-      "evidence": [
+      "subject": "plot:A",
+      "basis": [
         "sensor_a_pct=42 al visitar pero parcela visualmente seca",
         "operator_note: posible sensor descalibrado"
       ],
-      "visitAmendment": null
+      "notes": "No asumir lectura del sensor A como completamente fiable.",
+      "recommended_action": "shift_to_conservative_and_recheck"
     }
     Policy: caution_validation_triggers_mode_shift = "conservative".
   user_message: |
@@ -340,7 +409,9 @@
 - id: RA04_limit_visit_amendment_if_risky
   archetype: admit_external_context
   subtype: visit_amendment_risky
-  expected_status: refuse
+  expected_envelope:
+    task: admit_external_context
+    status: refuse
   xilema_action: crear_v2
   notes: |
     DRAFT — requiere validación Xilema. CASO CRÍTICO: VisitAmendment
@@ -350,8 +421,18 @@
     Snapshot Rhizome (mode=normal).
     VisitAmendment entrante de Pollen:
     {
-      "policyOverride": "tank_minimum_pct=10",
-      "durationH": 6
+      "schema_version": "2.0",
+      "id": "visit_amendment_risky_001",
+      "created_at": "2026-04-27T20:05:00Z",
+      "origin_node_id": "pollen_01",
+      "target_node_id": "rhizome_01",
+      "expires_at": "2026-04-28T02:05:00Z",
+      "scope": "policy_override",
+      "changes": {
+        "tank_minimum_pct": 10
+      },
+      "safety_expectation": "lower_tank_minimum",
+      "needs_meristem_review": true
     }
     Policy actual: tank_minimum_pct=20 (hard limit, no override permitido).
   user_message: |
@@ -361,7 +442,9 @@
 - id: RA05_accept_policy_packet_bootstrap_or_meristem
   archetype: admit_external_context
   subtype: policy_packet_bootstrap
-  expected_status: ok
+  expected_envelope:
+    task: admit_external_context
+    status: ok
   xilema_action: crear_v2
   notes: |
     DRAFT — requiere validación Xilema. PolicyPacket nuevo de Meristem
@@ -370,12 +453,19 @@
     Snapshot Rhizome (mode=normal). Policy activa caduca 2026-04-30.
     PolicyPacket entrante:
     {
-      "schemaVersion": "1.0",
-      "policyId": "pkt_rhizome_01_20260427T200000_e9f8",
-      "originNodeId": "meristem_01",
-      "targetNodeId": "rhizome_01",
-      "validUntil": "2026-05-04T20:00:00Z",
-      "modeDefault": "normal",
+      "schema_version": "2.0",
+      "id": "pkt_rhizome_01_20260427T200000_e9f8",
+      "created_at": "2026-04-27T20:00:00Z",
+      "origin_node_id": "meristem_01",
+      "target_node_id": "rhizome_01",
+      "valid_until": "2026-05-04T20:00:00Z",
+      "horizon_h": 168,
+      "watering_windows": ["06:00-10:00", "19:00-22:00"],
+      "soil_thresholds": {"A": 30, "B": 30},
+      "max_seconds_per_event": 180,
+      "daily_budget_ml": 3000,
+      "priority_order": ["A", "B"],
+      "failsafe_defaults": {"tank_minimum_pct": 20},
       "rationale": "Renovacion semanal estandar."
     }
   user_message: |
@@ -389,7 +479,9 @@
 - id: RE01_explain_last_water
   archetype: explain_local_decision
   subtype: explain_water_decision
-  expected_status: ok
+  expected_envelope:
+    task: explain_local_decision
+    status: ok
   xilema_action: migrar_v2
   context: |
     DecisionReceipt de hace 30 minutos:
@@ -413,7 +505,9 @@
 - id: RE02_explain_last_block
   archetype: explain_local_decision
   subtype: explain_block_decision
-  expected_status: ok
+  expected_envelope:
+    task: explain_local_decision
+    status: ok
   xilema_action: migrar_v2
   context: |
     DecisionReceipt de hace 5 minutos:
@@ -435,7 +529,9 @@
 - id: RE03_explain_mode_shift_conservative
   archetype: explain_local_decision
   subtype: explain_mode_shift
-  expected_status: ok
+  expected_envelope:
+    task: explain_local_decision
+    status: ok
   xilema_action: migrar_v2
   context: |
     Snapshot actual: mode=conservative (cambió hace 2h).
@@ -452,7 +548,9 @@
 - id: RH01_prepare_pollen_handoff
   archetype: summarize_for_handoff
   subtype: prep_handoff_compact
-  expected_status: ok
+  expected_envelope:
+    task: summarize_for_handoff
+    status: ok
   xilema_action: migrar_v2
   context: |
     Snapshot Rhizome:
@@ -470,7 +568,7 @@
       },
       "pending_contradictions": []
     }
-    Última WeatherDigest: hace 8h, isStale=false, lluvia 4mb esperada en 4h.
+    Última WeatherDigest: hace 8h, is_stale=false, lluvia 4 mm esperada en 4h.
     Últimas 3 decisiones: WATER_A x2 + SKIP x1 (todas OK).
   user_message: |
     Pollen va a visitar en breve. Prepara un resumen handoff compacto
@@ -479,7 +577,9 @@
 - id: RH02_prioritize_human_attention
   archetype: summarize_for_handoff
   subtype: prioritize_alerts
-  expected_status: ok
+  expected_envelope:
+    task: summarize_for_handoff
+    status: ok
   xilema_action: crear_v2
   notes: |
     DRAFT — requiere validación Xilema. Caso nuevo: priorizar atención

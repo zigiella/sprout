@@ -1,6 +1,6 @@
 # Matrix Rhizome v0 — bateria de quality contra Gemma 4 E2B Q4_K_M (llama.cpp local)
 #
-# **ESTADO: BORRADOR (día 12, requiere validación de Xilema antes de ejecutar)**
+# **ESTADO: VALIDADO POR XILEMA (día 12, listo para ejecutar v0)**
 #
 # 1 config base (rhizome_balanced_es, thinking off, castellano)
 # x 18 prompts (prompt_pack_rhizome_es.yaml, 4 arquetipos + gate hard_refuse)
@@ -115,5 +115,5 @@ output:
 # Pre-flight requirements antes de ejecutar:
 # 1. llama-server :8080 con gemma-4-E2B-it-Q4_K_M.gguf cargado
 # 2. adapter :12000 con INFERENCE_BACKEND=llamacpp
-# 3. Validación de Xilema sobre los crear_v2 (especialmente RA01-RA05)
+# 3. Validación de Xilema sobre los crear_v2 (especialmente RA01-RA05): OK 2026-04-27
 # 4. Confirmación de Bea para arrancar
