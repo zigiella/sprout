@@ -1,6 +1,6 @@
 package net.sprout.pollen.sync
 
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import net.sprout.pollen.schemas.DecisionReceipt
