@@ -5,6 +5,7 @@ Integracion fisica del proyecto: firmware ESP32, diagramas de cableado, fotos de
 ## Estructura
 
 - `firmware_esp32/` — proyecto **ESP-IDF** de la capa dura de seguridad
+- `host_tools/` — harness y utilidades host-side para hablar con el ESP32 por serie
 - `wiring_diagrams/` — esquematicos (Fritzing, KiCad o imagenes)
 - `photos/` — fotos del montaje real en Castellar de n'Hug (evidencia + B-roll de video)
 
