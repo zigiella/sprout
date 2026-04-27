@@ -4,9 +4,9 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import net.sprout.pollen.schemas.*
 
-class RhizomeMockClient {
+class RhizomeMockClient : RhizomeClient {
 
-    suspend fun getStatus(): Map<String, String> {
+    override suspend fun getStatus(): Map<String, String> {
         return mapOf(
             "status" to "online",
             "uptime_s" to "3600",
@@ -14,7 +14,7 @@ class RhizomeMockClient {
         )
     }
 
-    suspend fun getLatestSnapshot(): RhizomeSnapshot {
+    override suspend fun getLatestSnapshot(): RhizomeSnapshot {
         return RhizomeSnapshot(
             schemaVersion = "1.0",
             createdAt = "2026-04-16T14:32:05Z",
@@ -48,7 +48,7 @@ class RhizomeMockClient {
         )
     }
 
-    suspend fun getReceipts(since: String? = null): List<DecisionReceipt> {
+    override suspend fun getReceipts(since: String?): List<DecisionReceipt> {
         return listOf(
             DecisionReceipt(
                 schemaVersion = "1.0",
@@ -141,7 +141,7 @@ class RhizomeMockClient {
         )
     }
 
-    suspend fun explainDecision(id: String): String {
+    override suspend fun explainDecision(id: String): String {
         return "El modelo Gemma 4 E2B en Rhizome decidió regar porque la humedad del suelo estaba por debajo del umbral de la política activa, y había agua suficiente en el depósito."
     }
 }

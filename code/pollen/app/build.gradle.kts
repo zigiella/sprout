@@ -63,6 +63,11 @@ dependencies {
     // LiteRT-LM (Gemma 4)
     implementation("com.google.ai.edge.litertlm:litertlm-android:+")
 
+    // Retrofit para conexión con Rhizome (Jetson/ESP32)
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-kotlinx-serialization:2.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

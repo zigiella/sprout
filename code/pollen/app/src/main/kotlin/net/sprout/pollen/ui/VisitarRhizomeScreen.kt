@@ -18,11 +18,14 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import net.sprout.pollen.schemas.DecisionReceipt
 import net.sprout.pollen.schemas.RhizomeSnapshot
+import net.sprout.pollen.sync.RhizomeClient
 import net.sprout.pollen.sync.RhizomeMockClient
+import net.sprout.pollen.sync.RhizomeNetworkClient
 
 @Composable
 fun VisitarRhizomeScreen() {
-    val mockClient = remember { RhizomeMockClient() }
+    // Para conectar con la placa real, cambiar a RhizomeNetworkClient("http://<IP>:8080")
+    val client: RhizomeClient = remember { RhizomeMockClient() }
     val scope = rememberCoroutineScope()
     
     var status by remember { mutableStateOf<Map<String, String>?>(null) }
@@ -35,9 +38,9 @@ fun VisitarRhizomeScreen() {
     
     LaunchedEffect(Unit) {
         // "Descubrir Rhizome"
-        status = mockClient.getStatus()
-        snapshot = mockClient.getLatestSnapshot()
-        receipts = mockClient.getReceipts()
+        status = client.getStatus()
+        snapshot = client.getLatestSnapshot()
+        receipts = client.getReceipts()
         isLoading = false
     }
 
@@ -94,7 +97,7 @@ fun VisitarRhizomeScreen() {
                         
                         OutlinedButton(onClick = {
                             scope.launch {
-                                explanationText = mockClient.explainDecision(receipt.decisionId)
+                                explanationText = client.explainDecision(receipt.decisionId)
                                 showExplanationDialog = true
                             }
                         }) {
