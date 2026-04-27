@@ -131,7 +131,10 @@ class LiteRtChatService(
         
         if (activeConversation == null) {
             val config = com.google.ai.edge.litertlm.ConversationConfig(
-                extraContext = if (isThinkingEnabled) mapOf("enable_thinking" to true) else emptyMap()
+                extraContext = if (isThinkingEnabled) mapOf(
+                    "enable_thinking" to true,
+                    "filter_channel_content_from_kv_cache" to true
+                ) else emptyMap()
             )
             activeConversation = engine.createConversation(config)
         }
