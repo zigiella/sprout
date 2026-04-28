@@ -35,11 +35,11 @@ Tras reboot del ESP32 o Jetson:
 
 ### 2.6 Rechazo explícito
 Toda orden inválida debe producir motivo legible:
-- `DEPOSITO_BAJO`
-- `HEARTBEAT_PERDIDO`
-- `FUERA_DE_RANGO`
-- `SIN_CAUDAL`
-- `ALERTA_LATCHED`
+- `TANK_LOW`
+- `JETSON_HEARTBEAT_LOST`
+- `EVENT_DURATION_OUT_OF_RANGE`
+- `NO_FLOW_DETECTED`
+- `ALERT_LATCHED`
 
 ## 3. Reglas de prudencia de Rhizome
 
