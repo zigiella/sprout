@@ -51,11 +51,46 @@
 
 ## Bloque 2 — `rhizome_balanced_es_v05` como base v1
 
-*[Cambium escribe aquí cuando Bea avise que ambas miembras han respondido. Decisión binaria + condición opcional.]*
+**Cerrado.** Dos respuestas en `CAJON/review_meeting_dia13/bloque_2_v05_base_v1/respuesta_{meristem,xilema}.md`. Convergencia total: ambas votan `aprobado` sin condición. Bea aprueba la decisión y autoriza una acción derivada opcional (los 12 prompts adicionales en PC de Meristem antes de Jetson).
 
-### Resultado
+### Hallazgos colaterales del bloque
 
-*[pendiente]*
+- **Las dos miembras llegan a la misma conclusión técnica con palabras distintas**: el delta semántico entre v0 y v0.5 es nulo, el delta de formato es lo que arregla RD01. Meristem lo cuantifica por inspección directa del prompt: los 4 párrafos semánticos clave (R4, R5, R6, SAFETY_DOWNGRADE) son idénticos. Xilema lo cuantifica por análisis del fallo: *"el fallo único de v0 era de formato/salida, no de criterio. La regla de brevedad corrige justo eso sin debilitar safety."* Las dos lecturas validan la misma decisión desde frentes distintos.
+- **Xilema propuso fórmula limpia para el review**, citada literalmente para el writeup: *"v0 demostró 95% semántica con todos los críticos OK; v0.5 corrigió formato y truncamiento a 100% en el mini-test; por tanto Rhizome v1 base queda aceptable hasta validación en Jetson."*
+- **Convergencia también sobre rendimiento decreciente.** Las dos coinciden en que más iteración local sería trabajo del mismo tipo que ya tienen. La siguiente verdad la dice el Jetson cuando llegue, no más runs en x86 CPU.
+
+### Inquietud registrada (no condicional)
+
+Xilema añade una observación que **no condiciona la aprobación pero queda registrada como deuda compartida**:
+
+> *"Cuando pasemos a sensores reales, el prompt no debe compensar datos malos. Si humedad, nivel o caudal llegan incoherentes, Rhizome debe degradar o pedir validación, no inventar confianza."*
+
+Pertenece al contrato `RhizomeSnapshot` y a las flags de `sensor_state` (frescura, rango, procedencia), no al prompt de Rhizome v1. Se cierra cuando lleguen sensores reales (día 15+) y se valide que los snapshots traen flags suficientes para que el modelo pueda degradar correctamente.
+
+### Confirmaciones a Xilema
+
+- **¿"base v1" significa congelado operativo hasta Jetson, no "prompt perfecto"?** Sí, eso es exactamente lo que aprobamos.
+- **¿El backlog de Jetson incluye re-ejecución completa de la batería con el mismo prompt?** Sí, registrado explícitamente en acciones derivadas más abajo.
+
+### Resultado — decisión + acciones derivadas
+
+**Etiqueta acordada:** `aprobado` (sin condición).
+
+**`rhizome_balanced_es_v05` queda como prompt base v1 de Rhizome** hasta validación contra Jetson real. Sin más iteración local hasta hardware.
+
+| # | Acción derivada | Dueña | Plazo | Origen |
+|---|-----------------|-------|-------|--------|
+| 1 | **Correr los 12 prompts no testados con v0.5 en PC** (RA01, RA03, RA05, RD02, RD04-07, RE01-03, RH01) — ~10 min, certeza máxima de transferencia a Jetson sin sorpresas | Meristem | Antes del día 15 | Anotación 2 de Meristem, aprobada por Bea |
+| 2 | **Versionar el system prompt exacto de v0.5 + matriz de ejecución** | Meristem | Cuando ejecute la acción 1 | Dependencia de Xilema |
+| 3 | **Marcar RA04, RD03, RD08 y RD01 como smoke cases obligatorios** cuando la batería se ejecute en Jetson | Meristem | Backlog Jetson | Dependencia de Xilema |
+| 4 | **No más tuning local sobre este prompt** salvo fallo nuevo o decisión explícita de review futuro | Meristem | Permanente hasta Jetson | Dependencia de Xilema |
+| 5 | **Re-ejecutar batería completa de 18 prompts en Jetson** con `rhizome_balanced_es_v05`, primera vez contra hardware real | Meristem + Xilema | Cuando llegue Jetson | Confirmación a Xilema |
+| 6 | **Comparación lado a lado tok/s y latencia**: PC Meristem (CPU x86) vs Jetson (ARM + GPU offload) | Meristem | Cuando llegue Jetson | Anotación natural del cambio de hardware |
+| 7 | **Crear entry separada `rhizome_balanced_es_v1`** post-Jetson cuando el prompt se promueva oficialmente. Limpieza de naming para no confundir "v05 testeado en PC" con "v1 confirmado en Jetson" | Meristem | Post-Jetson | Anotación 3 de Meristem |
+| 8 | **Si `num_predict=1024` satura en Jetson**: subir a 1500. Mitigación trivial, no requiere cambio del prompt | Meristem | Solo si pasa, durante backlog Jetson | Anotación 1 de Meristem |
+| 9 | **Validar que `RhizomeSnapshot` trae flags de frescura/rango/procedencia suficientes** para que Rhizome degrade correctamente con datos malos. Pertenece al contrato de entrada + firmware, no al prompt | Xilema (firmware) + Meristem (verificar comportamiento) | Cuando lleguen sensores reales (día 15+) | Inquietud de Xilema |
+
+**Acción 1 es la única con plazo activo (antes del día 15).** Las demás son backlog Jetson o permanentes.
 
 ---
 
