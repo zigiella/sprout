@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "bme280_sensor.h"
 #include "board_profile.h"
 #include "sdkconfig.h"
 #include "esp_app_desc.h"
@@ -41,6 +42,10 @@ typedef struct {
     int tank_level_pct;
     uint32_t flow_pulses;
     bool bme280_connected;
+    bool bme280_measurement_valid;
+    int32_t bme280_temp_c_x100;
+    int32_t bme280_humidity_pct_x100;
+    int32_t bme280_pressure_pa;
 } sprout_telemetry_snapshot_t;
 
 typedef struct {
@@ -62,6 +67,10 @@ static sprout_telemetry_snapshot_t s_telemetry = {
     .tank_level_pct = -1,
     .flow_pulses = 0,
     .bme280_connected = false,
+    .bme280_measurement_valid = false,
+    .bme280_temp_c_x100 = -1,
+    .bme280_humidity_pct_x100 = -1,
+    .bme280_pressure_pa = -1,
 };
 static sprout_water_attempt_t s_last_water_attempt = {
     .present = false,
@@ -210,20 +219,26 @@ static void sprout_emit_hello(void)
 static void sprout_emit_status_report(const char *source)
 {
     const sprout_board_profile_t *profile = sprout_board_profile_active();
+    const sprout_bme280_report_t *bme280_report = sprout_bme280_last_report();
     uint32_t flash_bytes = 0;
     const size_t psram_bytes = esp_psram_get_size();
     const esp_app_desc_t *app_desc = esp_app_get_description();
     const char *fw_version = (app_desc != NULL && app_desc->version[0] != '\0') ? app_desc->version : SPROUT_FW_VERSION;
+    char bme280_addr_text[8] = "NONE";
 
     esp_err_t flash_err = esp_flash_get_physical_size(NULL, &flash_bytes);
     if (flash_err != ESP_OK) {
         flash_bytes = 0;
     }
 
+    if (bme280_report->sensor_present) {
+        snprintf(bme280_addr_text, sizeof(bme280_addr_text), "0x%02X", bme280_report->address);
+    }
+
     const int64_t host_age_ms = sprout_host_age_ms();
     printf(
         "STATUS_REPORT state=%s fw=%s board=%s uptime_ms=%" PRIi64 " flash_bytes=%" PRIu32
-        " psram_bytes=%u telemetry_mode=STUB host_link=%s host_age_ms=%" PRIi64
+        " psram_bytes=%u telemetry_mode=HYBRID i2c_bus=%s i2c_sda=%d i2c_scl=%d bme280_addr=%s host_link=%s host_age_ms=%" PRIi64
         " hb_timeout_ms=%d tank_min_pct=%d max_water_s=%d last_reject=%s alert_code=%s alert_age_ms=%" PRIi64
         " last_water_plot=%s last_water_seconds=%d last_water_outcome=%s last_water_age_ms=%" PRIi64
         " source=%s\n",
@@ -233,6 +248,10 @@ static void sprout_emit_status_report(const char *source)
         sprout_uptime_ms(),
         flash_bytes,
         (unsigned int)psram_bytes,
+        bme280_report->bus_ready ? "READY" : "ERROR",
+        profile->i2c_sda_gpio,
+        profile->i2c_scl_gpio,
+        bme280_addr_text,
         sprout_host_link_name(sprout_host_link_state()),
         host_age_ms,
         CONFIG_SPROUT_HOST_HEARTBEAT_TIMEOUT_MS,
@@ -264,14 +283,19 @@ static void sprout_emit_ack_sensor_stub(const char *field)
 {
     printf(
         "ACK command=SET_SENSOR_STUB field=%s soil_a_raw=%d soil_b_raw=%d tank_level_raw=%d tank_level_pct=%d "
-        "flow_pulses=%" PRIu32 " bme280=%s\n",
+        "flow_pulses=%" PRIu32 " bme280=%s bme280_valid=%s bme280_temp_c_x100=%" PRIi32
+        " bme280_humidity_pct_x100=%" PRIi32 " bme280_pressure_pa=%" PRIi32 "\n",
         field,
         s_telemetry.soil_a_raw,
         s_telemetry.soil_b_raw,
         s_telemetry.tank_level_raw,
         s_telemetry.tank_level_pct,
         s_telemetry.flow_pulses,
-        s_telemetry.bme280_connected ? "CONNECTED" : "DISCONNECTED");
+        s_telemetry.bme280_connected ? "CONNECTED" : "DISCONNECTED",
+        s_telemetry.bme280_measurement_valid ? "true" : "false",
+        s_telemetry.bme280_temp_c_x100,
+        s_telemetry.bme280_humidity_pct_x100,
+        s_telemetry.bme280_pressure_pa);
     fflush(stdout);
 }
 
@@ -318,13 +342,18 @@ static void sprout_emit_telemetry_report(const char *source)
 {
     printf(
         "TELEMETRY_REPORT soil_a_raw=%d soil_b_raw=%d tank_level_raw=%d tank_level_pct=%d flow_pulses=%" PRIu32 " "
-        "bme280=%s host_link=%s host_age_ms=%" PRIi64 " source=%s\n",
+        "bme280=%s bme280_valid=%s bme280_temp_c_x100=%" PRIi32 " bme280_humidity_pct_x100=%" PRIi32
+        " bme280_pressure_pa=%" PRIi32 " host_link=%s host_age_ms=%" PRIi64 " source=%s\n",
         s_telemetry.soil_a_raw,
         s_telemetry.soil_b_raw,
         s_telemetry.tank_level_raw,
         s_telemetry.tank_level_pct,
         s_telemetry.flow_pulses,
         s_telemetry.bme280_connected ? "CONNECTED" : "DISCONNECTED",
+        s_telemetry.bme280_measurement_valid ? "true" : "false",
+        s_telemetry.bme280_temp_c_x100,
+        s_telemetry.bme280_humidity_pct_x100,
+        s_telemetry.bme280_pressure_pa,
         sprout_host_link_name(sprout_host_link_state()),
         sprout_host_age_ms(),
         source);
@@ -339,6 +368,30 @@ static void sprout_reset_telemetry_stubs(void)
     s_telemetry.tank_level_pct = -1;
     s_telemetry.flow_pulses = 0;
     s_telemetry.bme280_connected = false;
+    s_telemetry.bme280_measurement_valid = false;
+    s_telemetry.bme280_temp_c_x100 = -1;
+    s_telemetry.bme280_humidity_pct_x100 = -1;
+    s_telemetry.bme280_pressure_pa = -1;
+}
+
+static void sprout_apply_bme280_report(const sprout_bme280_report_t *report)
+{
+    if (report == NULL) {
+        return;
+    }
+
+    s_telemetry.bme280_connected = report->sensor_present;
+    s_telemetry.bme280_measurement_valid = report->measurement_valid;
+    if (report->measurement_valid) {
+        s_telemetry.bme280_temp_c_x100 = report->temperature_c_x100;
+        s_telemetry.bme280_humidity_pct_x100 = report->humidity_pct_x100;
+        s_telemetry.bme280_pressure_pa = report->pressure_pa;
+        return;
+    }
+
+    s_telemetry.bme280_temp_c_x100 = -1;
+    s_telemetry.bme280_humidity_pct_x100 = -1;
+    s_telemetry.bme280_pressure_pa = -1;
 }
 
 static bool sprout_parse_int(const char *value_text, int *out_value)
@@ -518,6 +571,56 @@ static bool sprout_handle_water_command(const char *line)
     return true;
 }
 
+static void sprout_emit_i2c_scan_report(const char *addresses, uint8_t count)
+{
+    printf("I2C_SCAN count=%u addrs=%s\n", count, addresses);
+    fflush(stdout);
+}
+
+static void sprout_emit_bme280_probe_report(const sprout_bme280_report_t *report)
+{
+    char addr_text[8] = "NONE";
+    char chip_id_text[8] = "NONE";
+    if (report->sensor_present) {
+        snprintf(addr_text, sizeof(addr_text), "0x%02X", report->address);
+        snprintf(chip_id_text, sizeof(chip_id_text), "0x%02X", report->chip_id);
+    }
+
+    printf(
+        "BME280_PROBE status=%s address=%s chip_id=%s i2c_bus=%s error=%s sensor_rslt=%d\n",
+        report->sensor_present ? "CONNECTED" : "NOT_FOUND",
+        addr_text,
+        chip_id_text,
+        report->bus_ready ? "READY" : "ERROR",
+        esp_err_to_name(report->last_error),
+        report->last_sensor_result);
+    fflush(stdout);
+}
+
+static void sprout_emit_bme280_read_report(const sprout_bme280_report_t *report, const char *source)
+{
+    char addr_text[8] = "NONE";
+    char chip_id_text[8] = "NONE";
+    if (report->sensor_present) {
+        snprintf(addr_text, sizeof(addr_text), "0x%02X", report->address);
+        snprintf(chip_id_text, sizeof(chip_id_text), "0x%02X", report->chip_id);
+    }
+
+    printf(
+        "BME280_REPORT status=%s address=%s chip_id=%s temp_c_x100=%" PRIi32
+        " humidity_pct_x100=%" PRIi32 " pressure_pa=%" PRIi32 " error=%s sensor_rslt=%d source=%s\n",
+        report->measurement_valid ? "CONNECTED" : (report->sensor_present ? "PROBED" : "NOT_FOUND"),
+        addr_text,
+        chip_id_text,
+        report->temperature_c_x100,
+        report->humidity_pct_x100,
+        report->pressure_pa,
+        esp_err_to_name(report->last_error),
+        report->last_sensor_result,
+        source);
+    fflush(stdout);
+}
+
 static void sprout_heartbeat_task(void *arg)
 {
     (void)arg;
@@ -605,6 +708,35 @@ static void sprout_command_loop(void)
             continue;
         }
 
+        if (strcmp(line, "I2C_SCAN") == 0) {
+            char addresses[CONFIG_SPROUT_I2C_SCAN_BUFFER_BYTES];
+            uint8_t count = 0;
+            const esp_err_t err = sprout_bme280_scan(addresses, sizeof(addresses), &count);
+            if (err != ESP_OK) {
+                sprout_emit_reject("I2C_BUS_ERROR", line);
+                continue;
+            }
+
+            sprout_emit_i2c_scan_report(addresses, count);
+            continue;
+        }
+
+        if (strcmp(line, "BME280_PROBE") == 0) {
+            sprout_bme280_report_t report = { 0 };
+            (void)sprout_bme280_probe(&report);
+            sprout_apply_bme280_report(&report);
+            sprout_emit_bme280_probe_report(&report);
+            continue;
+        }
+
+        if (strcmp(line, "BME280_READ") == 0) {
+            sprout_bme280_report_t report = { 0 };
+            (void)sprout_bme280_read(&report);
+            sprout_apply_bme280_report(&report);
+            sprout_emit_bme280_read_report(&report, "command");
+            continue;
+        }
+
         if (strcmp(line, "RESET_SENSOR_STUBS") == 0) {
             sprout_reset_telemetry_stubs();
             sprout_emit_ack("RESET_SENSOR_STUBS");
@@ -654,6 +786,8 @@ void app_main(void)
     sprout_reset_telemetry_stubs();
 
     const sprout_board_profile_t *profile = sprout_board_profile_active();
+    ESP_ERROR_CHECK(sprout_bme280_init(profile));
+    esp_log_level_set("i2c.master", ESP_LOG_NONE);
     ESP_LOGI(TAG, "booting board=%s state=%s", profile->id, sprout_state_name(s_state));
 
     sprout_emit_hello();

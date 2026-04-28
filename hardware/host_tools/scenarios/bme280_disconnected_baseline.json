@@ -1,0 +1,73 @@
+{
+  "id": "bme280_disconnected_baseline",
+  "description": "Valida el contrato I2C/BME280 cuando todavia no hay sensor cableado.",
+  "startup_capture_s": 0.8,
+  "steps": [
+    {
+      "type": "command",
+      "name": "reset_stubs",
+      "send": "RESET_SENSOR_STUBS",
+      "expect_all": [
+        "ACK command=RESET_SENSOR_STUBS"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "status_i2c_ready",
+      "send": "STATUS",
+      "expect_all": [
+        "STATUS_REPORT state=SAFE_IDLE",
+        "telemetry_mode=HYBRID",
+        "i2c_bus=READY",
+        "i2c_sda=8",
+        "i2c_scl=9",
+        "bme280_addr=NONE"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "i2c_scan_empty",
+      "send": "I2C_SCAN",
+      "expect_all": [
+        "I2C_SCAN count=0 addrs=NONE"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "probe_not_found",
+      "send": "BME280_PROBE",
+      "expect_all": [
+        "BME280_PROBE status=NOT_FOUND",
+        "address=NONE",
+        "chip_id=NONE",
+        "i2c_bus=READY"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "read_not_found",
+      "send": "BME280_READ",
+      "expect_all": [
+        "BME280_REPORT status=NOT_FOUND",
+        "address=NONE",
+        "chip_id=NONE",
+        "temp_c_x100=-1",
+        "humidity_pct_x100=-1",
+        "pressure_pa=-1"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "telemetry_disconnected",
+      "send": "TELEMETRY",
+      "expect_all": [
+        "TELEMETRY_REPORT",
+        "bme280=DISCONNECTED",
+        "bme280_valid=false",
+        "bme280_temp_c_x100=-1",
+        "bme280_humidity_pct_x100=-1",
+        "bme280_pressure_pa=-1"
+      ]
+    }
+  ]
+}

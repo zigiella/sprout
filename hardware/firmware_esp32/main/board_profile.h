@@ -9,6 +9,10 @@ typedef struct {
     const int *reserved_gpios;
     size_t reserved_gpio_count;
     bool uses_usb_serial_jtag;
+    int i2c_port;
+    int i2c_sda_gpio;
+    int i2c_scl_gpio;
+    int i2c_speed_hz;
 } sprout_board_profile_t;
 
 const sprout_board_profile_t *sprout_board_profile_active(void);

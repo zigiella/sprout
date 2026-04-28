@@ -10,6 +10,10 @@ static const sprout_board_profile_t ACTIVE_PROFILE = {
     .reserved_gpios = ACTIVE_RESERVED_GPIOS,
     .reserved_gpio_count = sizeof(ACTIVE_RESERVED_GPIOS) / sizeof(ACTIVE_RESERVED_GPIOS[0]),
     .uses_usb_serial_jtag = true,
+    .i2c_port = 0,
+    .i2c_sda_gpio = 8,
+    .i2c_scl_gpio = 9,
+    .i2c_speed_hz = 100000,
 };
 #else
 static const int ACTIVE_RESERVED_GPIOS[] = {19, 20, 35, 36, 37, 45, 46};
@@ -19,6 +23,10 @@ static const sprout_board_profile_t ACTIVE_PROFILE = {
     .reserved_gpios = ACTIVE_RESERVED_GPIOS,
     .reserved_gpio_count = sizeof(ACTIVE_RESERVED_GPIOS) / sizeof(ACTIVE_RESERVED_GPIOS[0]),
     .uses_usb_serial_jtag = true,
+    .i2c_port = 0,
+    .i2c_sda_gpio = 8,
+    .i2c_scl_gpio = 9,
+    .i2c_speed_hz = 100000,
 };
 #endif
 

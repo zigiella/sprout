@@ -46,6 +46,8 @@ class FakeSerial:
 
 def test_bundled_scenarios_include_guardian_demo() -> None:
     scenarios = harness.bundled_scenarios()
+    assert "bme280_connected_smoke" in scenarios
+    assert "bme280_disconnected_baseline" in scenarios
     assert "guardian_demo" in scenarios
     assert "telemetry_stub_roundtrip" in scenarios
 

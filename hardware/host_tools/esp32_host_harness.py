@@ -88,7 +88,14 @@ def open_serial_port(port: str, baud: int, timeout_s: float) -> SerialPort:
             "`python -m pip install -r hardware/host_tools/requirements.txt`."
         ) from exc
 
-    return serial.Serial(port=port, baudrate=baud, timeout=timeout_s)
+    try:
+        return serial.Serial(port=port, baudrate=baud, timeout=timeout_s)
+    except Exception as exc:  # pragma: no cover - depende del host/USB
+        raise HarnessError(
+            f"No se pudo abrir el puerto serie {port} a {baud} baud. "
+            "Comprueba que el ESP32 esta conectado, que el COM no es fantasma "
+            "y que no hay otro monitor usando el puerto."
+        ) from exc
 
 
 def now_iso() -> str:
@@ -362,4 +369,8 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except HarnessError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        raise SystemExit(2)

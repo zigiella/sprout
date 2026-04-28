@@ -1,0 +1,66 @@
+{
+  "id": "bme280_connected_smoke",
+  "description": "Smoke test del BME280 real cuando ya este cableado por I2C.",
+  "startup_capture_s": 0.8,
+  "steps": [
+    {
+      "type": "command",
+      "name": "status_i2c_ready",
+      "send": "STATUS",
+      "expect_all": [
+        "STATUS_REPORT state=SAFE_IDLE",
+        "telemetry_mode=HYBRID",
+        "i2c_bus=READY",
+        "i2c_sda=8",
+        "i2c_scl=9"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "i2c_scan_finds_device",
+      "send": "I2C_SCAN",
+      "expect_all": [
+        "I2C_SCAN count=1",
+        "addrs=0x"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "probe_connected",
+      "send": "BME280_PROBE",
+      "expect_all": [
+        "BME280_PROBE status=CONNECTED",
+        "address=0x",
+        "chip_id=0x60",
+        "i2c_bus=READY"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "read_connected",
+      "send": "BME280_READ",
+      "expect_all": [
+        "BME280_REPORT status=CONNECTED",
+        "address=0x",
+        "chip_id=0x60",
+        "temp_c_x100=",
+        "humidity_pct_x100=",
+        "pressure_pa=",
+        "source=command"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "telemetry_connected",
+      "send": "TELEMETRY",
+      "expect_all": [
+        "TELEMETRY_REPORT",
+        "bme280=CONNECTED",
+        "bme280_valid=true",
+        "bme280_temp_c_x100=",
+        "bme280_humidity_pct_x100=",
+        "bme280_pressure_pa="
+      ]
+    }
+  ]
+}
