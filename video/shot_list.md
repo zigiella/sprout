@@ -1,10 +1,12 @@
-# Shot list — Sprout v1.0 (apilado parcial: escenas 1-3)
+# Shot list — Sprout v1.1 (apilado parcial: escenas 1-3)
 
-**Versión:** v1.0 (apilado parcial — escenas 1, 2, 3 desarrolladas. Escenas 4-9 pendientes de apilar días 14-16.)
+**Versión:** v1.1 (apilado parcial — escenas 1, 2, 3 desarrolladas. Escenas 4-9 pendientes de apilar días 14-16.)
 **Fecha:** 2026-04-28 (día 13)
 **Autora:** Corola
-**Rodaje previsto:** días 26-27 abril 2026 (días 11-12 del hackathon, según calendario zigiella)
-**Equipo de rodaje:** Bea (dirección + voz humana real escena 5) + Corola (dirección de arte + segunda cámara) + apoyo técnico de Xilema/Floema en sus nodos.
+**Rodaje previsto:** días 26-27 abril 2026
+**Equipo de rodaje:** Bea (dirección + VO castellano + posible voz humana real escena 5) + Corola (dirección de arte + segunda cámara) + apoyo técnico de Xilema/Floema en sus nodos.
+
+**Regla de idiomas (proyecto v1.1):** todas las cartelas, overlays, textos on-screen y el cartel físico van en **inglés**. VO en **castellano** (Bea).
 
 ---
 
@@ -12,13 +14,16 @@
 
 Las dos parcelas lógicas (`rhizome_01` con estación meteo + `rhizome_02` sin meteo) que aparecen en escena 6 se filman con **un solo Rhizome físico**. La diferenciación visual se resuelve con:
 
+- **Cartel físico identificador** en cada maceta — **"PLOT 1"** en la primera (visible desde escena 1), **"PLOT 2"** en la segunda (aparece en escena 6). Impresión sobria, tipografía limpia, fijado a la maceta o clavado al lado en estaca. Decisión Bea: el cartel físico real ancla la identidad lógica de cada parcela en el plano físico, hace la diferenciación inmediata para el espectador, y refuerza coherencia con los IDs `rhizome_01` y `rhizome_02` que aparecen en pantalla.
 - **Distinto ángulo de cámara** (frontal vs lateral, o cenital corto vs medio).
-- **Distinta maceta** (planta visualmente diferente — mejor si una más frondosa que la otra para que el ojo distinga).
+- **Distinta planta** (visualmente diferente — mejor si una más frondosa que la otra para que el ojo distinga).
 - **Distinta zona de la terraza** como fondo (mover el Rhizome y los accesorios entre tomas).
-- **IDs distintos en pantalla** (`rhizome_01` y `rhizome_02` aparecen literal en cartelas, log y receipts) — los IDs hacen el trabajo lógico.
-- **Estación meteo presente/ausente al lado** (con anemómetro y panel solar visible para `rhizome_01`; sin nada al lado para `rhizome_02`).
+- **IDs distintos en pantalla** (`rhizome_01` y `rhizome_02` aparecen literal en cartelas, log y receipts) — los IDs hacen el trabajo lógico, y el cartel físico hace el trabajo visual.
+- **Estación meteo presente/ausente al lado** (con anemómetro y panel solar visible para `rhizome_01` (PLOT 1); sin nada al lado para `rhizome_02` (PLOT 2)).
 
 Honesto con el MVP: simula la federación tal como ocurriría en una explotación que empezó con un nodo y añadió otro más adelante. Misma decisión documentada en `docs/40_pitch_video.md §4` cabecera.
+
+**Producción:** preparar dos carteles físicos (PLOT 1 y PLOT 2) antes del rodaje — pueden ser laminados o estampados sobre madera/cartón rígido. El estilo del cartel debe ser sobrio (no rotulación de huerto turístico, no infantil), coherente con la estética técnica del proyecto.
 
 ---
 
@@ -44,13 +49,15 @@ Honesto con el MVP: simula la federación tal como ocurriría en una explotació
 
 | Plano | t | Tipo | Descripción | Duración | Cámara / Equipo | Notas |
 |-------|---|------|-------------|----------|-----------------|-------|
-| 01a | 0:00–0:10 | real, plano fijo | Maceta sola sobre la terraza. Tarde temprana, luz ámbar suave. La hoja se mueve con el aire. Encuadre limpio con el horizonte ligeramente desenfocado al fondo. | 10s | Cámara fija, trípode, lente normal. Sin movimiento. | **Hora ideal de rodaje: 17:00–18:30 abril** para captar la luz ámbar suave. Si el rodaje 26-27 toca otra hora, elegir parcela con luz favorable. |
-| 01b | 0:10–0:15 | real + cartela | Mismo plano. Cartela central bilingüe entra y se mantiene. | 5s | Mismo encuadre. | Cartela diseñada en post: tipografía sobria, espacio negativo generoso, castellano arriba + inglés abajo. |
-| 01c | 0:15–0:20 | real, plano fijo | Cartela se desvanece. Plano final sobre la maceta sola. La hoja sigue moviéndose. | 5s | Mismo encuadre. | — |
+| 01a | 0:00–0:06 | real, plano fijo | Maceta sola sobre la terraza con cartel físico **"PLOT 1"** visible (laminado, sobrio, junto a la maceta o fijado a ella). Tarde temprana, luz ámbar suave. La hoja se mueve con el aire. Encuadre limpio con el horizonte ligeramente desenfocado al fondo. | 6s | Cámara fija, trípode, lente normal. Sin movimiento. | **Hora ideal de rodaje: 17:00–18:30 abril** para captar la luz ámbar suave. El cartel "PLOT 1" debe ser legible al primer vistazo pero no dominar el plano. |
+| 01b | 0:06–0:11 | real + cartela | Mismo plano. Cartela central inglés entra. | 5s | Mismo encuadre. | **Cartela central** (5s): *"Imagine this pot is a whole plot."* Tipografía sobria, espacio negativo generoso. Es invitación al espectador y contrato narrativo: aceptar el truco visual. |
+| 01c | 0:11–0:16 | real + cartela | Mismo plano. Primera cartela se desvanece, entra la segunda. | 5s | Mismo encuadre. | **Cartela central** (5s): *"This plot is visited periodically by a human."* Afirmación sobre la parcela ya aceptada. |
+| 01d | 0:16–0:20 | real, plano fijo | Cartela se desvanece. Plano final sobre la maceta sola con el cartel "PLOT 1" visible. La hoja sigue moviéndose. | 4s | Mismo encuadre. | — |
 
 **Notas de dirección de arte:**
-- La maceta tiene que estar **sola** en cuadro. Sin macetas vecinas visibles. El espectador entiende: una parcela, sola.
+- La maceta tiene que estar **sola** en cuadro, con su cartel "PLOT 1". Sin macetas vecinas visibles. El espectador entiende: una parcela, sola, identificada.
 - La planta debe verse viva pero no exuberante. La estética es de cuidado humilde, no de jardín de revista.
+- El cartel **"PLOT 1"** debe estar diseñado para coherencia con la estética técnica del proyecto — tipografía limpia (Helvetica/Inter o similar), todo mayúsculas, sobre fondo neutro (blanco roto, beige, kraft natural). No rotulación de huerto turístico.
 - Sonido: silencio o ambiente muy sutil del exterior (viento muy suave, lejano). Cero música.
 
 ---
@@ -78,12 +85,12 @@ Honesto con el MVP: simula la federación tal como ocurriría en una explotació
 |-------|---|------|-------------|----------|-----------------|-------|
 | 03a | 0:45–0:48 | real, plano cerrado | Cajita ESP32. LED ámbar encendido — atención, no alarma. Detalle de los relés y conectores. | 3s | Cámara con foco corto. Plano detalle. | **Cartela esquina sup. der. (3s)**: `function/read tools · no actuator tools`. Explica que la IA solo lee, no actúa directamente. |
 | 03b | 0:48–0:53 | screen capture | Pantalla del Jetson. Comando `WATER A 30s` viajando al ESP32. ESP32 verifica: *"depósito al 30%. Caudal nominal."* Devuelve `ACK` con cap aplicado. | 5s | Screen capture o mock fiel. | **Overlay esquina sup. der. (a partir de 0:48)**: `ESP32 SAFE LIMIT`. **VO sobre el plano**: frase fuerte 3 — *"La IA propone. El agua la gobierna una capa física prudente."* |
-| 03c | 0:53–0:56 | screen capture | `DecisionReceipt` post-ejecución llenando un cuadrante. Tres campos resaltados: `candidate_action: 30s`, `esp32_outcome: ACK (limited by tank level)`, `final_action: 12s`. | 3s | Screen capture o mock fiel. | **Cartela central dominante (3s)**: *"Cuando duda, riega menos."* — tipografía editorial, sobre el receipt en gris atenuado. |
+| 03c | 0:53–0:56 | screen capture | `DecisionReceipt` post-ejecución llenando un cuadrante. Tres campos resaltados: `candidate_action: 30s`, `esp32_outcome: ACK (limited by tank level)`, `final_action: 12s`. | 3s | Screen capture o mock fiel. | **Cartela central dominante (3s)**: *"When in doubt, water less."* — tipografía editorial, sobre el receipt en gris atenuado. |
 | 03d | 0:56–1:00 | real, plano medio | Plano de la válvula. Se abre. **Pero menos tiempo del propuesto.** Chorro corto, calculado, casi mezquino. | 4s | Cámara fija. Sonido en directo. | El chorro corto es la prueba física del SAFE LIMIT. La diferencia con el chorro largo de escena 2 hace el trabajo narrativo. |
 
 **Notas de dirección de arte:**
 - El LED ámbar del ESP32 debe estar **encendido fijo, no parpadeante** durante el plano 03a. Atención calmada, no alarma. Si parpadea en el sistema real, lo gestionamos en post o mockeamos.
-- La cartela *"Cuando duda, riega menos."* es **dominante**. Más grande que las cartelas técnicas de las esquinas. Vive en el centro del plano durante 3 segundos enteros. Es la traducción del SAFE LIMIT a principio operativo del sistema.
+- La cartela *"When in doubt, water less."* es **dominante**. Más grande que las cartelas técnicas de las esquinas. Vive en el centro del plano durante 3 segundos enteros. Es la traducción del SAFE LIMIT a principio operativo del sistema. Tipografía editorial sobre el `DecisionReceipt` atenuado al fondo.
 - El chorro de la válvula tiene que ser **visiblemente más corto** que el de la escena 2. Cronometrar en rodaje: 18s en escena 2, 12s en escena 3. La diferencia (6 segundos menos de agua) es la prueba.
 
 ---
@@ -109,7 +116,8 @@ Las escenas 4-9 quedan pendientes de apilar con detalle equivalente. Ver `docs/4
 - 1 ESP32 con firmware (Xilema) — coprocesador de seguridad
 - 1 Pixel 10 Pro (Floema) — Pollen real con Gemma 4 E4B vía LiteRT-LM
 - 2 macetas con planta (visualmente diferenciables — sugerencia: una más frondosa que otra)
-- 1 estación meteo simple (anemómetro + panel solar) — para `rhizome_01`
+- **2 carteles físicos identificadores: "PLOT 1" y "PLOT 2"** (preparar antes del rodaje, estilo sobrio editorial)
+- 1 estación meteo simple (anemómetro + panel solar) — para `rhizome_01` (PLOT 1)
 - 1 cámara principal + 1 cámara secundaria
 - Trípode + estabilizador para planos cerrados de la maceta
 - Material de captura de pantalla del Jetson (HDMI o software de screencast)
@@ -129,5 +137,11 @@ Las escenas 4-9 quedan pendientes de apilar con detalle equivalente. Ver `docs/4
 
 ## Historial de versiones
 
-- **v1.0 — apilado parcial** (2026-04-28, día 13, Corola) — primer apilado real en `shot_list.md` tras pitch doc consolidado en main (commit `8bf1fe3`). Escenas 1, 2, 3 desarrolladas con planos concretos, dirección de arte, equipo. Escenas 4-9 con notas operativas y planificación de rodaje. Decisión de rodaje (un Rhizome físico haciendo dos roles) en cabecera explícita.
+- **v1.1 — apilado parcial** (2026-04-28, día 13, Corola) — ajustes tras review de Bea en PR #59:
+  - **Regla de idiomas (proyecto):** cartelas/overlays/textos on-screen y cartel físico en inglés. VO en castellano (Bea).
+  - **Cartel físico "PLOT 1" / "PLOT 2"** añadido como elemento de producción visible. PLOT 1 desde escena 1; PLOT 2 entra en escena 6. Coherencia con IDs `rhizome_01` y `rhizome_02` que aparecen en pantalla.
+  - **Escena 1 reestructurada:** dos cartelas en cascada en lugar de una bilingüe. Beat 1 (0:00–0:06) plano sin cartela / Beat 2 (0:06–0:11) cartela *"Imagine this pot is a whole plot."* / Beat 3 (0:11–0:16) cartela *"This plot is visited periodically by a human."* / Beat 4 (0:16–0:20) plano final.
+  - Cartela escena 3 *"Cuando duda, riega menos."* → *"When in doubt, water less."*.
+  - Material para rodaje incluye los dos carteles físicos.
+- **v1.0 — apilado parcial inicial** (2026-04-28, día 13, Corola) — primer apilado real en `shot_list.md` tras pitch doc consolidado en main (commit `8bf1fe3`). Escenas 1, 2, 3 desarrolladas. Decisión de rodaje (un Rhizome físico haciendo dos roles) en cabecera explícita.
 - **v0.x descartados** — versiones del v0 cerradas en PRs #40/#41 sin merge tras pivote v2 día 8.
