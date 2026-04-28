@@ -68,6 +68,18 @@ Campos clave:
 - `priority_order`
 - `failsafe_defaults`
 
+### Barandilla sobre hard limits físicos
+
+**Ningún campo de un `PolicyPacket` emitido por Meristem puede reducir hard limits del firmware ESP32.** Específicamente:
+
+- `soil_thresholds.tank_minimum_pct` no puede caer por debajo del umbral del firmware.
+- `max_seconds_per_event` no puede exceder el tiempo máximo del firmware.
+- Cualquier campo que rebase un hard limit es **rechazado por Rhizome al validar el paquete** (regla de aceptación §5).
+
+Meristem puede recomendar **más conservador** (umbrales más altos, ventanas más cortas, presupuestos más bajos). No puede relajar safety. Esta cláusula es invariante del MVP, registrada en el review meeting del día 13 (`bitacora/2026-04-28_review-meeting-tuning_cambium.md`) tras propuesta de Xilema desde el frente firmware.
+
+Patrón general: *lo físico manda, Rhizome arbitra, Pollen media, Meristem afina.* La autoridad fluye de arriba a abajo cuando se trata de afinar criterio; se invierte cuando se trata de seguridad física.
+
 ## 3.5 MissionPatch
 Intención humana compilada por Pollen.
 
