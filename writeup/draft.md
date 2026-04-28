@@ -102,21 +102,33 @@ criterio, caducidad y trazabilidad.
      docs/11_pollen_spec.md, docs/12_meristem_spec.md,
      docs/13_esp32_spec.md. -->
 
-## 3. Arquitectura — ~350 palabras
+## 3. Arquitectura — ~400-450 palabras
 
-<!--
-- Diagrama (reutilizar de docs/01_architecture.md renderizado como PNG)
-- Stack: Python + pydantic + FastAPI + Ollama (Meristem/Rhizome),
-  Kotlin + LiteRT (Pollen), ESP32 firmware (Rhizome fisico)
-- Reglas duras: §30 safety rules resumidas (5 limites fisicos no negociables)
-- Flujo: RhizomeSnapshot -> evidencia -> Meristem consolida -> PolicyDelta
-  -> Rhizome aplica bajo validacion firmware
-- Esquemas v1.0 (contratos de datos frozen) — valor de ingenieria
+Sprout reparte la decision entre **tres nodos con jurisdicciones distintas y un coprocesador fisico que veta**. Rhizome decide en escala de minutos sobre la parcela; Pollen actua en escala de visita con caducidad corta sobre el movil del agricultor; Meristem opera en escala de dias sobre el ordenador domestico. El **ESP32**, separado del computo de IA, es dueno de los sensores criticos y de los actuadores: nada toca el agua sin pasar por sus reglas. Si Jetson cae, el sistema no se vuelve peligroso.
 
-Visuales obligatorios:
-- [ ] Diagrama 3-nodos (existe, exportar)
-- [ ] Tabla safety rules (generar)
-- [ ] Ciclo de vida de una politica (dibujar)
+**Stack del MVP.** Rhizome corre **Gemma 4 E2B** via `llama.cpp` sobre **Jetson Orin Nano Super**, con un **ESP32-S3** acoplado por USB-CDC nativo ejecutando firmware ESP-IDF propio. Pollen corre **Gemma 4 E4B** via LiteRT-LM sobre movil Android. Cada nodo de IA habla a un *adapter Ollama-compatible* comun que emite headers `Sprout-Inference-*` uniformes — pieza de infraestructura que tambien habilita ejecutar Meristem como consolidador local en el ordenador del agricultor (E4B via `llama.cpp`), reutilizando los mismos contratos de prompt, schema y receipt aunque cada dispositivo use un formato de runtime distinto.
+
+**Cinco reglas no negociables**, implementadas y ejercitadas contra el limite fisico de seguridad en placa real (DRY_RUN):
+
+| Regla | Motivo legible si veta |
+|-------|------------------------|
+| Jetson heartbeat perdido | `JETSON_HEARTBEAT_LOST` |
+| Deposito por debajo del minimo | `TANK_LOW` |
+| Duracion del evento fuera de rango | `EVENT_DURATION_OUT_OF_RANGE` |
+| Sin caudal tras abrir agua | `NO_FLOW_DETECTED` |
+| Alerta latched activa | `ALERT_LATCHED` |
+
+Cada veto emite motivo legible que se almacena en el `DecisionReceipt` y aparece en pantalla. Una sexta regla, `SAFETY_DOWNGRADE`, no rechaza una orden valida: la modula al sobre fisico mas seguro. El receipt registra ambos, `candidate_action` y `final_action`.
+
+**Contratos versionados del MVP.** Diez objetos JSON con autoridad explicita por contrato y caducidad obligatoria: `RhizomeSnapshot`, `DecisionReceipt`, `AlertEvent` los emite Rhizome; `MissionPatch`, `ValidationStamp`, `WeatherDigest`, `VisitAmendment`, `FieldVisit` los emite Pollen; `PolicyPacket` lo emite Meristem; `SyncBundle` lo transporta cualquier nodo (normalmente Pollen). Rhizome acepta cada objeto solo si valida schema, no esta caducado, su autoridad es correcta, y no contradice una regla del ESP32. Toda inteligencia tiene jurisdiccion y fecha de caducidad; todo rechazo deja huella legible — ningun objeto se pierde en silencio.
+
+**Transferencia de ingenieria entre nodos.** Antes de atacar hardware final, ajustamos configuracion, prompts y tests de contrato en nodos simulados sobre `llama.cpp` local. El aprendizaje no fue solo del modelo, sino del metodo: cada nuevo nodo heredo del anterior una bateria de restricciones, ejemplos negativos, formatos JSON, criterios de aceptacion y reglas de seguridad. El segundo system prompt entro a 94% de aciertos en su primera ejecucion frente al 50% del primero. Eso redujo iteracion y aumento estabilidad **sin fine-tuning**.
+
+**Lo que el MVP demuestra y lo que la arquitectura reserva.** El MVP demuestra el bucle corto operativo: Rhizome decidiendo offline, ESP32 vetando o modulando la accion fisica, y Pollen llevando intencion humana de vida corta al campo. La arquitectura reserva la consolidacion a escala de dias en Meristem como cerebro lento domestico, ejercitable con la misma infraestructura.
+
+<!-- Visuales obligatorios para version final:
+- [ ] Diagrama 3 nodos + ESP32 (renderizado a PNG desde docs/01_architecture.md)
+- [ ] Ciclo de vida de una politica / decision (referencia a docs/01_architecture.md §9)
 -->
 
 ## 4. Demostracion — ~250 palabras

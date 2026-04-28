@@ -4,9 +4,17 @@ Integracion fisica del proyecto: firmware ESP32, diagramas de cableado, fotos de
 
 ## Estructura
 
-- `firmware_esp32/` — codigo Arduino/PlatformIO de la capa dura de seguridad
+- `firmware_esp32/` — proyecto **ESP-IDF** de la capa dura de seguridad
+- `host_tools/` — harness y utilidades host-side para hablar con el ESP32 por serie
 - `wiring_diagrams/` — esquematicos (Fritzing, KiCad o imagenes)
 - `photos/` — fotos del montaje real en Castellar de n'Hug (evidencia + B-roll de video)
+
+### Baseline del firmware
+
+- framework: **ESP-IDF**
+- target: **ESP32-S3**
+- board profile inicial: `n16r8_usb_otg`
+- hito 0: `SAFE_IDLE + HELLO + STATUS + HEARTBEAT`
 
 ## Rol de la capa dura
 
@@ -21,9 +29,12 @@ Reglas minimas del firmware:
 
 ## Comunicacion Jetson <-> ESP32
 
-- UART (9600 o 115200 baud) o I2C
-- Protocolo simple: comandos + ACK + timeouts
+- **USB Serial/JTAG / CDC-ACM** como baseline MVP
+- UART 3V3 solo como fallback si el USB nativo da problemas
+- Protocolo simple: `HELLO`, `STATUS`, `STATUS_REPORT`, `HEARTBEAT`, `REJECT`
 - Cada comando lleva ID, duracion maxima, parcela objetivo
+
+Para el primer milestone no hay control de agua todavia. Solo arranque seguro, consola serie y estado observable.
 
 ## Fotos obligatorias para el video
 

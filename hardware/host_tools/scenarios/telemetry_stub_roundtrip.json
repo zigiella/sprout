@@ -1,0 +1,84 @@
+{
+  "id": "telemetry_stub_roundtrip",
+  "description": "Rellena telemetria stub, la lee y la devuelve al baseline.",
+  "startup_capture_s": 0.8,
+  "steps": [
+    {
+      "type": "command",
+      "name": "soil_a",
+      "send": "SET_SENSOR_STUB SOIL_A 1234",
+      "expect_all": [
+        "ACK command=SET_SENSOR_STUB field=SOIL_A",
+        "soil_a_raw=1234"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "soil_b",
+      "send": "SET_SENSOR_STUB SOIL_B 1450",
+      "expect_all": [
+        "ACK command=SET_SENSOR_STUB field=SOIL_B",
+        "soil_b_raw=1450"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "tank_level_pct",
+      "send": "SET_SENSOR_STUB TANK_LEVEL_PCT 65",
+      "expect_all": [
+        "ACK command=SET_SENSOR_STUB field=TANK_LEVEL_PCT",
+        "tank_level_pct=65"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "flow_pulses",
+      "send": "SET_SENSOR_STUB FLOW_PULSES 17",
+      "expect_all": [
+        "ACK command=SET_SENSOR_STUB field=FLOW_PULSES",
+        "flow_pulses=17"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "bme280_connected",
+      "send": "SET_SENSOR_STUB BME280 CONNECTED",
+      "expect_all": [
+        "ACK command=SET_SENSOR_STUB field=BME280",
+        "bme280=CONNECTED"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "telemetry_populated",
+      "send": "TELEMETRY",
+      "expect_all": [
+        "TELEMETRY_REPORT soil_a_raw=1234",
+        "soil_b_raw=1450",
+        "tank_level_pct=65",
+        "flow_pulses=17",
+        "bme280=CONNECTED"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "reset_stubs",
+      "send": "RESET_SENSOR_STUBS",
+      "expect_all": [
+        "ACK command=RESET_SENSOR_STUBS"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "telemetry_reset",
+      "send": "TELEMETRY",
+      "expect_all": [
+        "TELEMETRY_REPORT soil_a_raw=-1",
+        "soil_b_raw=-1",
+        "tank_level_raw=-1",
+        "flow_pulses=0",
+        "bme280=DISCONNECTED"
+      ]
+    }
+  ]
+}
