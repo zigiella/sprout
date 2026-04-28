@@ -144,6 +144,23 @@ Campos clave:
 - `acked_ids`
 - `bundle_kind`: `visit | return | meristem_sync`
 
+## 3.11 DecisionExplanationResponse
+Respuesta de la API local de Rhizome para `GET /explain/decision/{id}`.
+
+Campos clave:
+- `explanation`: texto breve y legible para Pollen / operador
+
+Regla de interoperabilidad:
+- la respuesta debe ser JSON object
+- no se acepta texto plano crudo
+- forma exacta mínima:
+
+```json
+{
+  "explanation": "El modelo decidió regar A porque el suelo estaba bajo el umbral y el depósito era suficiente."
+}
+```
+
 ## 4. Autoridad por contrato
 
 - `RhizomeSnapshot`: Rhizome
