@@ -53,4 +53,12 @@ config SPROUT_MAX_WATER_SECONDS
     help
         Hard upper bound for a single WATER event in the ESP32 safety layer.
 
+config SPROUT_I2C_SCAN_BUFFER_BYTES
+    int "I2C scan output buffer bytes"
+    range 16 256
+    default 96
+    help
+        Maximum number of bytes reserved to serialise the output list of
+        detected I2C addresses for the `I2C_SCAN` command.
+
 endmenu

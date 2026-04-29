@@ -25,6 +25,18 @@ El siguiente hito inmediato añade:
 - `SET_SENSOR_STUB ...` y `RESET_SENSOR_STUBS` para simular entradas antes del cableado real
 - `WATER A|B|BOTH <seconds>` en modo `DRY_RUN`, con rechazo por safety aunque todavia no se activen relés
 
+El primer sensor real integrado en esta fase es:
+
+- `BME280` por `I2C`
+- comandos:
+  - `I2C_SCAN`
+  - `BME280_PROBE`
+  - `BME280_READ`
+- baseline de pines en ambos board profiles:
+  - `SDA = GPIO8`
+  - `SCL = GPIO9`
+  - `I2C port = 0`
+
 ## Stack
 
 - target: `ESP32-S3`
@@ -48,6 +60,13 @@ Entrada por línea ASCII terminada en `\n`:
 - `HOST_HEARTBEAT`
 - `JETSON_HEARTBEAT`
 - `TELEMETRY`
+- `I2C_SCAN`
+- `I2C_SCAN` escanea de momento solo las direcciones candidatas del `BME280`
+  (`0x76`, `0x77`) para evitar ruido de probe en un bus sin cableado. Cuando
+  entre `ADS1115`, este comando se ampliara a un scan general o se dividira por
+  familia de sensor.
+- `BME280_PROBE`
+- `BME280_READ`
 - `SET_SENSOR_STUB SOIL_A <int>`
 - `SET_SENSOR_STUB SOIL_B <int>`
 - `SET_SENSOR_STUB TANK_LEVEL <int>`
@@ -64,10 +83,13 @@ Entrada por línea ASCII terminada en `\n`:
 Salida:
 
 - `HELLO fw=... state=SAFE_IDLE board=... uptime_ms=...`
-- `STATUS_REPORT state=SAFE_IDLE fw=... board=... uptime_ms=... flash_bytes=... psram_bytes=... host_link=... host_age_ms=...`
+- `STATUS_REPORT state=SAFE_IDLE fw=... board=... uptime_ms=... flash_bytes=... psram_bytes=... telemetry_mode=HYBRID i2c_bus=... i2c_sda=... i2c_scl=... bme280_addr=... host_link=... host_age_ms=...`
 - `HEARTBEAT state=SAFE_IDLE board=... uptime_ms=... host_link=... host_age_ms=...`
 - `ACK command=HOST_HEARTBEAT state=... host_link=... host_age_ms=...`
-- `TELEMETRY_REPORT soil_a_raw=... soil_b_raw=... tank_level_raw=... flow_pulses=... bme280=...`
+- `TELEMETRY_REPORT soil_a_raw=... soil_b_raw=... tank_level_raw=... flow_pulses=... bme280=... bme280_valid=... bme280_temp_c_x100=... bme280_humidity_pct_x100=... bme280_pressure_pa=...`
+- `I2C_SCAN count=... addrs=...`
+- `BME280_PROBE status=... address=... chip_id=... i2c_bus=...`
+- `BME280_REPORT status=... address=... chip_id=... temp_c_x100=... humidity_pct_x100=... pressure_pa=...`
 - `ACK command=SET_SENSOR_STUB field=... soil_a_raw=... soil_b_raw=... tank_level_raw=... flow_pulses=... bme280=...`
 - `ACK command=WATER plot=... seconds=... execution=DRY_RUN ...`
 - `ALERT code=... latched=true|false state=... uptime_ms=...`
@@ -109,6 +131,7 @@ idf.py -p /dev/ttyACM0 flash monitor
 - `GPIO19 / GPIO20` reservados para USB nativo
 - `GPIO35 / GPIO36 / GPIO37` no se usan por PSRAM Octal
 - `GPIO45 / GPIO46` se evitan en el primer arranque
+- `GPIO8 / GPIO9` quedan reservados para `I2C` del `BME280` / futuros periféricos `ADS1115`
 - no conectar actuadores en este hito
 
 ## Validación esperada
@@ -123,7 +146,7 @@ HEARTBEAT state=SAFE_IDLE board=n16r8_usb_otg uptime_ms=...
 Y ante `STATUS`:
 
 ```text
-STATUS_REPORT state=SAFE_IDLE fw=0.1.0 board=n16r8_usb_otg uptime_ms=... flash_bytes=16777216 psram_bytes=8388608 host_link=MISSING host_age_ms=-1 hb_timeout_ms=5000 tank_min_pct=20 max_water_s=30 last_reject=NONE alert_code=NONE
+STATUS_REPORT state=SAFE_IDLE fw=0.1.0 board=n16r8_usb_otg uptime_ms=... flash_bytes=16777216 psram_bytes=8388608 telemetry_mode=HYBRID i2c_bus=READY i2c_sda=8 i2c_scl=9 bme280_addr=NONE host_link=MISSING host_age_ms=-1 hb_timeout_ms=5000 tank_min_pct=20 max_water_s=30 last_reject=NONE alert_code=NONE
 ```
 
 Y tras enviar `HOST_HEARTBEAT`:
@@ -135,7 +158,7 @@ ACK command=HOST_HEARTBEAT state=SAFE_IDLE host_link=FRESH host_age_ms=0
 Y ante `TELEMETRY`:
 
 ```text
-TELEMETRY_REPORT soil_a_raw=-1 soil_b_raw=-1 tank_level_raw=-1 flow_pulses=0 bme280=DISCONNECTED host_link=FRESH host_age_ms=...
+TELEMETRY_REPORT soil_a_raw=-1 soil_b_raw=-1 tank_level_raw=-1 tank_level_pct=-1 flow_pulses=0 bme280=DISCONNECTED bme280_valid=false bme280_temp_c_x100=-1 bme280_humidity_pct_x100=-1 bme280_pressure_pa=-1 host_link=FRESH host_age_ms=...
 ```
 
 Ejemplo de simulacion de sensores:
@@ -150,22 +173,58 @@ SET_SENSOR_STUB BME280 CONNECTED
 TELEMETRY
 ```
 
+Ejemplo de `BME280` real por `I2C`:
+
+```text
+I2C_SCAN
+I2C_SCAN count=1 addrs=0x76
+
+BME280_PROBE
+BME280_PROBE status=CONNECTED address=0x76 chip_id=0x60 i2c_bus=READY error=ESP_OK sensor_rslt=0
+
+BME280_READ
+BME280_REPORT status=CONNECTED address=0x76 chip_id=0x60 temp_c_x100=2314 humidity_pct_x100=4587 pressure_pa=100812 error=ESP_OK sensor_rslt=0 source=command
+
+TELEMETRY
+TELEMETRY_REPORT soil_a_raw=-1 soil_b_raw=-1 tank_level_raw=-1 tank_level_pct=-1 flow_pulses=0 bme280=CONNECTED bme280_valid=true bme280_temp_c_x100=2314 bme280_humidity_pct_x100=4587 bme280_pressure_pa=100812 host_link=... source=command
+```
+
+Mientras no haya protoboard ni cables Dupont, el contrato esperado es el
+baseline desconectado:
+
+```text
+STATUS
+STATUS_REPORT ... telemetry_mode=HYBRID i2c_bus=READY i2c_sda=8 i2c_scl=9 bme280_addr=NONE ...
+
+I2C_SCAN
+I2C_SCAN count=0 addrs=NONE
+
+BME280_PROBE
+BME280_PROBE status=NOT_FOUND address=NONE chip_id=NONE i2c_bus=READY ...
+
+BME280_READ
+BME280_REPORT status=NOT_FOUND address=NONE chip_id=NONE temp_c_x100=-1 humidity_pct_x100=-1 pressure_pa=-1 ...
+```
+
+Este baseline no es un fallo: demuestra que el firmware no inventa sensor ni
+lecturas cuando el bus esta vivo pero no hay periferico conectado.
+
 Ejemplos de seguridad para `WATER`:
 
 ```text
 WATER A 12
-REJECT reason=HEARTBEAT_PERDIDO cmd=WATER A 12
+REJECT reason=JETSON_HEARTBEAT_LOST cmd=WATER A 12
 
 HOST_HEARTBEAT
 SET_SENSOR_STUB TANK_LEVEL_PCT 15
 WATER A 12
-REJECT reason=DEPOSITO_BAJO cmd=WATER A 12
-ALERT code=DEPOSITO_BAJO latched=true state=ALERT_LATCHED uptime_ms=...
+REJECT reason=TANK_LOW cmd=WATER A 12
+ALERT code=TANK_LOW latched=true state=ALERT_LATCHED uptime_ms=...
 
 SET_SENSOR_STUB TANK_LEVEL_PCT 65
 HOST_HEARTBEAT
 WATER A 12
-REJECT reason=ALERTA_LATCHED cmd=WATER A 12
+REJECT reason=ALERT_LATCHED cmd=WATER A 12
 RESET_ALERT
 ACK command=RESET_ALERT state=SAFE_IDLE host_link=FRESH host_age_ms=...
 HOST_HEARTBEAT
@@ -186,3 +245,5 @@ Si el puerto USB no enumera a la primera en un S3 nuevo:
 - Espressif, `ESP-IDF Get Started for ESP32-S3 (stable v6.0)`, leída el `2026-04-25`: https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/get-started/index.html
 - Espressif, `USB Serial/JTAG Controller Console`, leída el `2026-04-25`: https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/usb-serial-jtag-console.html
 - Espressif, `SPI Flash and External SPI RAM Configuration`, leída el `2026-04-25`: https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/flash_psram_config.html
+- Espressif, `I2C Master Driver`, leída el `2026-04-27`: https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-reference/peripherals/i2c.html
+- Bosch Sensortec, `BME280_SensorAPI`, commit `c90d419492e26dd95586598a794e65eb2760753a`, leído el `2026-04-27`: https://github.com/boschsensortec/BME280_SensorAPI

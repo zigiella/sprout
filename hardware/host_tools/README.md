@@ -46,6 +46,11 @@ python hardware/host_tools/esp32_host_harness.py --port /dev/ttyACM0 --scenario 
 
 ## Escenarios incluidos
 
+- `bme280_disconnected_baseline`
+  - valida el contrato `I2C_SCAN` / `BME280_PROBE` / `BME280_READ` cuando todavia no
+    hay sensor cableado
+- `bme280_connected_smoke`
+  - smoke test previsto para el dia de cableado real del `BME280`
 - `guardian_demo`
   - enseña el hilo completo del guardián: heartbeat perdido, depósito bajo latched,
     reset y `ACK_DRY_RUN`
@@ -84,3 +89,42 @@ Ejemplo real validado:
 
 El firmware mantiene `host_link` fresco solo durante `5000 ms`. El harness envía los
 comandos mucho más rápido que una prueba manual y evita falsos rechazos por tecleo lento.
+
+## Troubleshooting de puerto serie
+
+Si Windows lista un `COM` pero el harness responde que no puede abrirlo, trátalo
+como puerto fantasma o ocupado:
+
+- desconectar y reconectar el USB
+- cerrar cualquier monitor serie abierto
+- volver a listar puertos en el Administrador de dispositivos
+- usar el `COM` que aparece activo tras reconectar, no uno recordado de sesiones previas
+
+El caso observado en la `N16R8` fue: Windows mostraba `COM3`, `COM4` y `COM5`,
+pero `esptool` y el harness recibían `FileNotFoundError` al abrirlos.
+
+## Trabajo sin protoboard / Dupont
+
+Hasta que haya cableado físico, el escenario útil para el carril BME280 es:
+
+```powershell
+python hardware/host_tools/esp32_host_harness.py --port COM5 --scenario bme280_disconnected_baseline --label pre_cableado
+```
+
+Ese transcript debe demostrar:
+
+- el bus `I2C` arranca en `READY`
+- `GPIO8/GPIO9` quedan publicados en `STATUS_REPORT`
+- `I2C_SCAN` no inventa dispositivos
+- `BME280_PROBE` y `BME280_READ` devuelven `NOT_FOUND`
+- `TELEMETRY` conserva `bme280=DISCONNECTED` y lecturas centinela `-1`
+
+Cuando llegue el cableado, este mismo escenario debe fallar de forma informativa
+en `I2C_SCAN` y se sustituye por el escenario conectado con `count=1` y
+`BME280_REPORT status=CONNECTED`.
+
+Escenario previsto para el primer test real:
+
+```powershell
+python hardware/host_tools/esp32_host_harness.py --port COM5 --scenario bme280_connected_smoke --label primer_bme280
+```

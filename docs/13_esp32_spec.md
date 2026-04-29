@@ -118,6 +118,16 @@ En el baseline `ESP32-S3 N16R8 USB OTG`:
 
 La primera iteración del firmware debe asumir esas restricciones como no negociables.
 
+Para el primer sensor real del MVP:
+
+- `GPIO8` -> `I2C SDA`
+- `GPIO9` -> `I2C SCL`
+- `I2C port = 0`
+- `100 kHz`
+
+La idea es dejar validado el patrón `I2C` con un periférico de bajo riesgo
+(`BME280`) antes de pasar a `ADS1115` y entradas críticas.
+
 ## 6. Topología recomendada
 
 ```text
@@ -149,6 +159,9 @@ Siguiente paso inmediato:
 
 - comando `HOST_HEARTBEAT` / `JETSON_HEARTBEAT`
 - comando `TELEMETRY`
+- comando `I2C_SCAN`
+- comando `BME280_PROBE`
+- comando `BME280_READ`
 - `STATUS_REPORT` y `HEARTBEAT` con `host_link` y `host_age_ms`
 - `SET_SENSOR_STUB ...` y `RESET_SENSOR_STUBS` para pruebas sin cableado
 - `WATER A|B|BOTH <seconds>` en `DRY_RUN` con rechazo por safety rules
@@ -161,6 +174,9 @@ Antes de sensores y actuadores, el firmware debe ser un periférico serie establ
 - `HOST_HEARTBEAT`
 - `JETSON_HEARTBEAT`
 - `TELEMETRY`
+- `I2C_SCAN`
+- `BME280_PROBE`
+- `BME280_READ`
 - `SET_SENSOR_STUB SOIL_A <int>`
 - `SET_SENSOR_STUB SOIL_B <int>`
 - `SET_SENSOR_STUB TANK_LEVEL <int>`
@@ -183,6 +199,20 @@ Antes de sensores y actuadores, el firmware debe ser un periférico serie establ
 - `ALERT code`
 - `HEARTBEAT`
 - `STATUS_REPORT`
+- `I2C_SCAN`
+- `BME280_PROBE`
+- `BME280_REPORT`
+
+Hito siguiente ya implementado a nivel de firmware:
+
+- bus `I2C` inicializado al arrancar
+- `BME280` vendorizado desde la `SensorAPI` oficial de Bosch
+- `probe` y `read` bajo comandos explícitos
+- telemetría enriquecida con:
+  - `bme280_valid`
+  - `bme280_temp_c_x100`
+  - `bme280_humidity_pct_x100`
+  - `bme280_pressure_pa`
 
 ## 8. Reglas duras mínimas
 
