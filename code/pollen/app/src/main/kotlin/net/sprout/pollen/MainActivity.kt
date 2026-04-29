@@ -28,6 +28,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import net.sprout.pollen.schemas.DecisionReceipt
+import net.sprout.pollen.schemas.RhizomeSnapshot
+import net.sprout.pollen.ui.VisitarMeristemScreen
 import net.sprout.pollen.ui.VisitarRhizomeScreen
 
 class MainActivity : ComponentActivity() {
@@ -61,7 +64,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     var selectedTab by remember { mutableStateOf(0) }
-                    val tabs = listOf("Chat Pollen", "Visitar Rhizome")
+                    val tabs = listOf("Chat Pollen", "Visitar Rhizome", "Visitar Meristem")
+                    
+                    var globalSnapshot by remember { mutableStateOf<RhizomeSnapshot?>(null) }
+                    var globalReceipts by remember { mutableStateOf<List<DecisionReceipt>>(emptyList()) }
 
                     Column(modifier = Modifier.fillMaxSize()) {
                         TabRow(selectedTabIndex = selectedTab) {
@@ -84,8 +90,18 @@ class MainActivity : ComponentActivity() {
                                 onStartVoice = { viewModel.startListening() },
                                 onArchetypeSelected = { viewModel.onArchetypeSelected(it) }
                             )
+                        } else if (selectedTab == 1) {
+                            VisitarRhizomeScreen(
+                                onDataFetched = { snap, rec -> 
+                                    globalSnapshot = snap
+                                    globalReceipts = rec 
+                                }
+                            )
                         } else {
-                            VisitarRhizomeScreen()
+                            VisitarMeristemScreen(
+                                currentSnapshot = globalSnapshot,
+                                currentReceipts = globalReceipts
+                            )
                         }
                     }
                 }

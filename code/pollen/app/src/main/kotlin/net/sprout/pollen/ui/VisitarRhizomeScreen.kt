@@ -23,7 +23,9 @@ import net.sprout.pollen.sync.RhizomeMockClient
 import net.sprout.pollen.sync.RhizomeNetworkClient
 
 @Composable
-fun VisitarRhizomeScreen() {
+fun VisitarRhizomeScreen(
+    onDataFetched: (RhizomeSnapshot, List<DecisionReceipt>) -> Unit = { _, _ -> }
+) {
     // Para conectar con la placa real, cambiar a RhizomeNetworkClient("http://<IP>:8080")
     val client: RhizomeClient = remember { RhizomeMockClient() }
     val scope = rememberCoroutineScope()
@@ -42,6 +44,9 @@ fun VisitarRhizomeScreen() {
         snapshot = client.getLatestSnapshot()
         receipts = client.getReceipts()
         isLoading = false
+        if (snapshot != null) {
+            onDataFetched(snapshot!!, receipts)
+        }
     }
 
     if (isLoading) {
