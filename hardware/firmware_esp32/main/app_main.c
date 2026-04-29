@@ -524,45 +524,45 @@ static bool sprout_handle_water_command(const char *line)
     char *unexpected = strtok(NULL, " ");
 
     if (plot == NULL || seconds_text == NULL || unexpected != NULL) {
-        sprout_record_reject("FUERA_DE_RANGO");
-        sprout_emit_reject("FUERA_DE_RANGO", line);
+        sprout_record_reject("EVENT_DURATION_OUT_OF_RANGE");
+        sprout_emit_reject("EVENT_DURATION_OUT_OF_RANGE", line);
         return true;
     }
 
     if (!(strcmp(plot, "A") == 0 || strcmp(plot, "B") == 0 || strcmp(plot, "BOTH") == 0)) {
-        sprout_record_reject("FUERA_DE_RANGO");
-        sprout_emit_reject("FUERA_DE_RANGO", line);
+        sprout_record_reject("EVENT_DURATION_OUT_OF_RANGE");
+        sprout_emit_reject("EVENT_DURATION_OUT_OF_RANGE", line);
         return true;
     }
 
     int seconds = 0;
     if (!sprout_parse_int(seconds_text, &seconds) || seconds <= 0 || seconds > CONFIG_SPROUT_MAX_WATER_SECONDS) {
-        sprout_record_reject("FUERA_DE_RANGO");
-        sprout_record_water_attempt(plot, seconds, "REJECT_FUERA_DE_RANGO");
-        sprout_emit_reject("FUERA_DE_RANGO", line);
+        sprout_record_reject("EVENT_DURATION_OUT_OF_RANGE");
+        sprout_record_water_attempt(plot, seconds, "REJECT_EVENT_DURATION_OUT_OF_RANGE");
+        sprout_emit_reject("EVENT_DURATION_OUT_OF_RANGE", line);
         return true;
     }
 
     if (s_state == SPROUT_STATE_ALERT_LATCHED) {
-        sprout_record_reject("ALERTA_LATCHED");
-        sprout_record_water_attempt(plot, seconds, "REJECT_ALERTA_LATCHED");
-        sprout_emit_reject("ALERTA_LATCHED", line);
+        sprout_record_reject("ALERT_LATCHED");
+        sprout_record_water_attempt(plot, seconds, "REJECT_ALERT_LATCHED");
+        sprout_emit_reject("ALERT_LATCHED", line);
         return true;
     }
 
     if (sprout_host_link_state() != SPROUT_HOST_LINK_FRESH) {
-        sprout_record_reject("HEARTBEAT_PERDIDO");
-        sprout_record_water_attempt(plot, seconds, "REJECT_HEARTBEAT_PERDIDO");
-        sprout_emit_reject("HEARTBEAT_PERDIDO", line);
-        sprout_raise_alert("HEARTBEAT_PERDIDO", false);
+        sprout_record_reject("JETSON_HEARTBEAT_LOST");
+        sprout_record_water_attempt(plot, seconds, "REJECT_JETSON_HEARTBEAT_LOST");
+        sprout_emit_reject("JETSON_HEARTBEAT_LOST", line);
+        sprout_raise_alert("JETSON_HEARTBEAT_LOST", false);
         return true;
     }
 
     if (s_telemetry.tank_level_pct >= 0 && s_telemetry.tank_level_pct < CONFIG_SPROUT_TANK_MINIMUM_PCT) {
-        sprout_record_reject("DEPOSITO_BAJO");
-        sprout_record_water_attempt(plot, seconds, "REJECT_DEPOSITO_BAJO");
-        sprout_emit_reject("DEPOSITO_BAJO", line);
-        sprout_raise_alert("DEPOSITO_BAJO", true);
+        sprout_record_reject("TANK_LOW");
+        sprout_record_water_attempt(plot, seconds, "REJECT_TANK_LOW");
+        sprout_emit_reject("TANK_LOW", line);
+        sprout_raise_alert("TANK_LOW", true);
         return true;
     }
 

@@ -13,10 +13,10 @@
     },
     {
       "type": "command",
-      "name": "heartbeat_perdido",
+      "name": "jetson_heartbeat_lost",
       "send": "WATER A 12",
       "expect_all": [
-        "REJECT reason=HEARTBEAT_PERDIDO cmd=WATER A 12"
+        "REJECT reason=JETSON_HEARTBEAT_LOST cmd=WATER A 12"
       ]
     },
     {
@@ -30,7 +30,7 @@
     },
     {
       "type": "command",
-      "name": "host_heartbeat_para_deposito_bajo",
+      "name": "host_heartbeat_for_tank_low",
       "send": "HOST_HEARTBEAT",
       "expect_all": [
         "ACK command=HOST_HEARTBEAT",
@@ -39,11 +39,11 @@
     },
     {
       "type": "command",
-      "name": "deposito_bajo_latched",
+      "name": "tank_low_latched",
       "send": "WATER A 12",
       "expect_all": [
-        "REJECT reason=DEPOSITO_BAJO cmd=WATER A 12",
-        "ALERT code=DEPOSITO_BAJO latched=true state=ALERT_LATCHED"
+        "REJECT reason=TANK_LOW cmd=WATER A 12",
+        "ALERT code=TANK_LOW latched=true state=ALERT_LATCHED"
       ]
     },
     {
@@ -52,8 +52,8 @@
       "send": "STATUS",
       "expect_all": [
         "STATUS_REPORT state=ALERT_LATCHED",
-        "last_reject=DEPOSITO_BAJO",
-        "alert_code=DEPOSITO_BAJO"
+        "last_reject=TANK_LOW",
+        "alert_code=TANK_LOW"
       ]
     },
     {
@@ -61,7 +61,7 @@
       "name": "segundo_intento_latched",
       "send": "WATER A 12",
       "expect_all": [
-        "REJECT reason=ALERTA_LATCHED cmd=WATER A 12"
+        "REJECT reason=ALERT_LATCHED cmd=WATER A 12"
       ]
     },
     {

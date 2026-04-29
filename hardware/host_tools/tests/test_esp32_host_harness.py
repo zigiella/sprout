@@ -56,7 +56,7 @@ def test_run_scenario_saves_success_artifacts(tmp_path: Path) -> None:
     serial_port = FakeSerial(
         {
             "STATUS": ["STATUS_REPORT state=SAFE_IDLE"],
-            "WATER A 12": ["REJECT reason=HEARTBEAT_PERDIDO cmd=WATER A 12"],
+            "WATER A 12": ["REJECT reason=JETSON_HEARTBEAT_LOST cmd=WATER A 12"],
         },
         initial_lines=["HELLO fw=0.1.0 state=SAFE_IDLE"],
     )
@@ -75,7 +75,7 @@ def test_run_scenario_saves_success_artifacts(tmp_path: Path) -> None:
                 "type": "command",
                 "name": "water",
                 "send": "WATER A 12",
-                "expect_all": ["REJECT reason=HEARTBEAT_PERDIDO cmd=WATER A 12"],
+                "expect_all": ["REJECT reason=JETSON_HEARTBEAT_LOST cmd=WATER A 12"],
             },
         ],
     }
