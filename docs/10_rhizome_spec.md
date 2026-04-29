@@ -129,6 +129,26 @@ Solo entra cuando hay arbitraje o explicación.
 - `GET /outbox`
 - `GET /explain/decision/{id}`
 
+#### `GET /explain/decision/{id}`
+
+Este endpoint debe responder siempre `application/json`, no texto plano.
+
+Respuesta correcta:
+
+```json
+{
+  "explanation": "El modelo decidió bloquear el riego porque el depósito está por debajo del mínimo seguro."
+}
+```
+
+Contrato:
+
+- `explanation` es obligatorio
+- `explanation` es string
+- no devolver `text/plain`
+- no devolver el texto crudo del modelo como body raiz
+- si la decisión no existe, devolver error HTTP estructurado, no una explicación vacía
+
 ### Escritura
 - `POST /mission_patch`
 - `POST /weather_digest`
