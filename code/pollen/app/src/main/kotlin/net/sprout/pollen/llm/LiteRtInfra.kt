@@ -157,7 +157,7 @@ class LiteRtChatService(
                     emit(textChunk to null)
                 }
             } catch(e: Exception) {
-                // Ignore chunk errors
+                android.util.Log.e("LiteRtChatService", "generation chunk failed", e)
             }
 
             val completedAt = metricsCollector.now()
@@ -175,7 +175,7 @@ class LiteRtChatService(
             
             emit("" to finalMetrics)
         } catch(t: Throwable) {
-            // handle error if needed
+                android.util.Log.e("LiteRtChatService", "generation failed", t)
         }
     }
 }
