@@ -38,8 +38,30 @@ El build emite una advertencia no bloqueante sobre `ESP_ROM_ELF_DIR` al generar
 gdbinit, derivada del entorno local ESP-IDF, no del firmware. La imagen
 `sprout_esp32.bin` se genera correctamente.
 
-## Pendiente
+## Evidencia física posterior
 
-Cuando la placa esté conectada, flashear esta versión y correr `guardian_demo`
-para guardar transcript físico con los códigos nuevos.
+Placa ESP32-S3 N16R8 flasheada por `COM3` con firmware `09a4cca`.
+
+Escenarios host harness ejecutados por `COM5`:
+
+- `guardian_demo` -> `success=True`
+  - `hardware/host_tools/reports/20260429_172914_guardian_demo_day14_english_veto_codes.log`
+  - `hardware/host_tools/reports/20260429_172914_guardian_demo_day14_english_veto_codes.json`
+- `telemetry_stub_roundtrip` -> `success=True`
+  - `hardware/host_tools/reports/20260429_172923_telemetry_stub_roundtrip_day14_after_veto_rename.log`
+  - `hardware/host_tools/reports/20260429_172923_telemetry_stub_roundtrip_day14_after_veto_rename.json`
+
+Líneas relevantes del transcript físico:
+
+```text
+REJECT reason=JETSON_HEARTBEAT_LOST cmd=WATER A 12
+ALERT code=JETSON_HEARTBEAT_LOST latched=false state=SAFE_IDLE
+REJECT reason=TANK_LOW cmd=WATER A 12
+ALERT code=TANK_LOW latched=true state=ALERT_LATCHED
+REJECT reason=ALERT_LATCHED cmd=WATER A 12
+ACK command=WATER plot=A seconds=12 execution=DRY_RUN state=SAFE_IDLE
+```
+
+Los reportes quedan como artefactos locales ignorados por git; se citan por ruta
+para trazabilidad operativa.
 
