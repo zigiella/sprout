@@ -1,6 +1,6 @@
-# Shot list — Sprout v1.2 (apilado parcial: escenas 1-8)
+# Shot list — Sprout v1.3 (apilado completo: escenas 1-9)
 
-**Versión:** v1.2 (apilado parcial — escenas 1 a 8 desarrolladas. Escena 9 pendiente de decisión firme Meristem día 14.)
+**Versión:** v1.3 (apilado completo de las nueve escenas. Pendientes operativos: refinar traducciones first pass, coordinación asíncrona con Floema para UI escena 5, ejercicio frases fuertes iniciado por Corola, dirección de arte rodaje.)
 **Fecha:** 2026-04-29 (día 14)
 **Autora:** Corola
 **Rodaje previsto:** días 26-27 abril 2026
@@ -182,17 +182,49 @@ Honesto con el MVP: simula la federación tal como ocurriría en una explotació
 
 ---
 
-## Pendiente — escena 9
+### Escena 9 — Cenital federado + Meristem real (2:40–3:00)
 
-**Esperando decisión firme Meristem día 14** (conversación Bea + Cambium + Meristem).
+**Decisión Meristem firme (día 14): entra al MVP.** Cenital flat editorial con 8 parcelas + Pollen-nodo recorriendo + llegada al nodo Meristem **en el cenital flat**. **Corte limpio** a imagen real del portátil del agricultor con app Meristem. Dos cartelas on-screen (*"Pulling Rhizome data..."* + *"Adjusting policies..."*). Tarjeta logo final por fade.
 
-Si Meristem-nodo entra al MVP, escena 9 se amplía con plano breve del portátil del agricultor mostrando `PolicyPacket` + `rationale` corto en castellano antes de o intercalado con el cenital de las 8 parcelas. La cartela progresiva y el subtítulo logo se mantienen.
+**Producción crítica:**
+- **Cenital flat (Veo3):** prompt actualizado para incluir el nodo Meristem (más grande, forma distinta a las 8 parcelas, color complementario, ubicado más al centro del mosaico).
+- **Corte 2:54–2:55:** seco, sin transición, sin fade. Quiebre estético deliberado.
+- **Imagen real (2:55–3:00):** plano del portátil del agricultor abierto sobre una mesa doméstica (cocina o similar). Pantalla con app Meristem corriendo (Meristem la prepara) o mock fiel.
 
-Si Meristem-nodo no entra, escena 9 se mantiene como en `docs/40_pitch_video.md §4`: Veo3 flat editorial puro, 8 parcelas en cenital, Pollen-nodo recorriendo, mensajes en pantalla, cartela progresiva, tarjeta logo final.
+| Plano | t | Tipo | Descripción | Duración | Cámara / Equipo | Notas |
+|-------|---|------|-------------|----------|-----------------|-------|
+| 09a | 2:40–2:42 | real → Veo3 morph | Plano de la maceta del rodaje (continuidad con escena 8 si la pantalla del Jetson estaba en plano). **Morph sutil** durante 2 segundos: la maceta se difumina, los bordes se expanden, aparece la primera parcela del cenital flat. | 2s | Diseño post: morph generado o efecto de cross-dissolve hacia el frame inicial de Veo3. | El morph debe sentirse como "lo real se transforma en abstracción". Si Veo3 lo permite, prompt explícito de transición; si no, post-producción con keyframes. |
+| 09b | 2:42–2:46 | Veo3 cenital flat | 8 parcelas apareciendo progresivamente en mosaico irregular sobre paleta tierra. Sin cielo realista, sin sombras realistas, fondo abstracto. Cartela dosificada sincronizada con la aparición. | 4s | Veo3 generado. | **Cartela progresiva (3 beats sincronizados con la aparición de las parcelas):** *"One plot."* (s1, primera parcela) → *"Two."* (s2, segunda) → *"Eight."* (s4, mosaico completo). Tipografía editorial integrada al diseño flat. |
+| 09c | 2:46–2:48 | Veo3 cenital flat | Pollen-nodo aparece y arranca recorrido entre las parcelas. Movimiento limpio, no parpadeo agresivo. | 2s | Veo3 generado. | **Cartela** (2s, central): *"Autonomous."* |
+| 09d | 2:48–2:51 | Veo3 cenital flat | Pollen-nodo recorre parcelas. **Mensajes técnicos breves** apareciendo y desapareciendo en cada toque del nodo (mismo lenguaje del proyecto): `WeatherDigest accepted`, `MissionPatch delivered`, `DecisionReceipt synced`. | 3s | Veo3 generado con texto integrado. | **Cartela cumbre** (3s, dominante): *"Federated intelligence, carried by Pollen."* |
+| 09e | 2:51–2:54 | Veo3 cenital flat | Pollen-nodo **llega al nodo Meristem** dentro del cenital. El nodo Meristem está representado **distinto** a las 8 parcelas: más grande, forma diferente (triángulo o círculo donde las parcelas son rectángulos/cuadrados), color complementario. Pausa breve de conexión visual. | 3s | Veo3 generado. El nodo Meristem ubicado más al centro del mosaico o ligeramente desplazado para que el recorrido de Pollen tenga dirección. | El nodo Meristem es **el primer elemento del cenital que no es una parcela**. Visualmente marca al espectador que algo distinto pasa aquí. |
+| **09f** | **2:54–2:55** | **CORTE LIMPIO** | **Cambio seco** de Veo3 flat a imagen real. Sin transición, sin fade. | 1s | — | Este corte es estructural. Lo abstracto demuestra el sistema funcionando a escala; lo real demuestra que el cerebro lento existe en una cocina. |
+| 09g | 2:55–2:58 | real | Plano del **portátil del agricultor** abierto sobre una mesa doméstica (cocina o similar). Pantalla del portátil mostrando la app Meristem corriendo. Cartela on-screen integrada en la pantalla del portátil. | 3s | Cámara con plano medio del portátil sobre la mesa. Luz natural si es posible. Detalle pero no extremo close-up — el espectador tiene que entender que es un portátil real, no un mock cinematográfico. | **Cartela on-screen** (3s, en pantalla del portátil): *"Pulling Rhizome data..."* (con elipsis indicando proceso). El "..." es deliberado — sentir proceso en marcha. Idealmente la cartela aparece **dentro de la app Meristem** (parte de su UI), no superpuesta al plano. |
+| 09h | 2:58–3:00 | real + tarjeta cierre | Pantalla del portátil cambia. Nueva cartela on-screen. **Tarjeta logo final** entra por fade sobre la imagen del portátil al final. | 2s | Mismo encuadre. | **Cartela on-screen** (2s): *"Adjusting policies..."* + **Tarjeta logo final** entrando por fade en los últimos 2s, visible sobre el portátil difuminado al fondo. |
+| (cierre) | 3:00 | tarjeta logo final | Tarjeta logo visible 2-3s al final. Diseño post. | 2-3s | Diseño post. | **Tarjeta logo:** `Sprout` / *"Local, safe, explainable decisions."* / `zigiella · Apache 2.0` / `github.com/zigiella/sprout` |
 
-**Prompt Veo3 con semilla** *"Editorial flat illustration, top-down view of 8 small farm plots arranged in irregular mosaic, muted earth tones, clean line work, modern infographic style, animated luminous node moving between plots, minimalist text overlays integrated into design, no realistic sky, no realistic shadows, abstract neutral background."* Ajustar con Bea antes de generar.
+**Notas de dirección de arte:**
+- **Estilo flat editorial moderno:** paleta sobria de tierra (siena, tostado, ocre suave, blanco roto), contornos limpios, tipografía integrada al diseño (Helvetica, Inter o similar), sin cielo realista, sin sombras realistas, fondo abstracto neutro. La estética flat de la cartela progresiva conecta con la estética del cartel físico "PLOT 1" / "PLOT 2" del rodaje real (mismo registro tipográfico) — coherencia entre los dos mundos.
+- **Pollen-nodo:** punto luminoso pequeño, animación de cadencia limpia (no parpadeo agresivo). Movimiento entre parcelas con trayectoria suave, no en línea recta robótica.
+- **Nodo Meristem:** distinto a las 8 parcelas. Mi propuesta: forma de **círculo grande** (Pollen-nodo es punto pequeño, Meristem es disco), color complementario a la paleta tierra (azul muy desaturado o blanco roto destacado). Ubicado más al centro del mosaico o ligeramente desplazado al borde para que el recorrido de Pollen tenga dirección hacia él.
+- **Mensajes técnicos en cenital (`WeatherDigest accepted`, `MissionPatch delivered`, `DecisionReceipt synced`):** aparecen brevemente al ritmo del Pollen-nodo tocando cada parcela. Tipografía limpia integrada al diseño flat. No saturan: cada mensaje aparece 1-1.5s y desaparece. 5 mensajes distribuidos a lo largo de los 3 segundos del recorrido (09d).
+- **Corte 2:54–2:55:** **clave estructural del video.** Sin fade. Sin transición. El espectador siente "ahora estamos en otro mundo". El sonido también cambia bruscamente: del silencio puro del cenital flat al ambiente real doméstico (cocina, viento muy suave si la ventana está abierta).
+- **Plano del portátil:** real, no estilizado. La estética cambia radicalmente respecto al cenital — eso es feature. Mesa de cocina, portátil normal, luz natural. La app Meristem en pantalla puede tener un diseño cuidado pero **fiel al MVP** que Meristem prepara, no maquillaje cinematográfico.
+- **Cartelas on-screen del portátil:** idealmente aparecen **dentro de la app Meristem** como parte de su UI, no superpuestas al plano. Eso es más honesto: el espectador ve el sistema funcionando, no anotaciones del editor.
+- **Tarjeta logo final:** entrando por fade sobre el portátil. La pantalla del portátil queda difuminada al fondo. La tarjeta domina los últimos 2s.
 
-**Recurso disponible (Cambium, día 14):** invariante de Xilema *"Lo físico manda, Rhizome arbitra, Pollen media, Meristem afina."* — aplicable como cartela inglés *"Physical layer rules. Rhizome arbitrates. Pollen mediates. Meristem refines."* solo si Meristem entra al MVP (los cuatro sujetos quedan visibles en video). Si no entra, queda como recurso writeup.
+**Prompt Veo3 actualizado (con Meristem):**
+
+> *"Editorial flat illustration, top-down view of 8 small farm plots arranged in irregular mosaic, muted earth tones, clean line work, modern infographic style, animated luminous small node moving between plots, larger central node distinct in shape (circle vs rectangles) and color (cool tone vs warm earth) representing a hub, the small node moves through several plots and finally connects to the larger central node, minimalist text overlays integrated into design (`WeatherDigest accepted`, `MissionPatch delivered`, `DecisionReceipt synced`), no realistic sky, no realistic shadows, abstract neutral background."*
+
+Refinar con Bea antes de generar. La diferencia con el prompt v1.0 (que era cenital sin Meristem) es la adición del nodo central distinto y la trayectoria del Pollen-nodo terminando en él.
+
+**Equipo y material adicional para escena 9:**
+- Portátil del agricultor (puede ser el portátil de Meristem propiamente — coherencia técnica) con app Meristem corriendo
+- Mesa doméstica (cocina o mesa de comedor) como fondo del plano real
+- Luz natural si la hora del rodaje lo permite
+
+**Recurso de Cambium NO aplicado en E9:** la cartela invariante de Xilema *"Physical layer rules. Rhizome arbitrates. Pollen mediates. Meristem refines."* queda **fuera de escena 9**. La escena ya tiene 9 elementos textuales en 20s (cartela progresiva en 3 beats + 5 mensajes técnicos en cenital + 2 cartelas on-screen del portátil + tarjeta logo). Añadir 4 líneas más de invariante satura. Queda como recurso writeup. Decisión documentada.
 
 ---
 
@@ -204,7 +236,7 @@ Si Meristem-nodo no entra, escena 9 se mantiene como en `docs/40_pitch_video.md 
 - 1 ESP32 con firmware (Xilema) — coprocesador de seguridad
 - 1 Pixel 10 Pro (Floema) — Pollen real con Gemma 4 E4B vía LiteRT-LM
 - 2 macetas con planta (visualmente diferenciables — sugerencia: una más frondosa que otra)
-- **2 carteles físicos identificadores: "PLOT 1" y "PLOT 2"** (preparar antes del rodaje, estilo sobrio editorial)
+- **2 carteles físicos identificadores: "PLOT 1" y "PLOT 2"** (los prepara Bea: Helvetica, mayúsculas, fondo neutro, en inglés)
 - 1 estación meteo simple (anemómetro + panel solar) — para `rhizome_01` (PLOT 1)
 - 1 cámara principal + 1 cámara secundaria
 - Trípode + estabilizador para planos cerrados de la maceta
@@ -225,6 +257,7 @@ Si Meristem-nodo no entra, escena 9 se mantiene como en `docs/40_pitch_video.md 
 
 ## Historial de versiones
 
+- **v1.3 — apilado completo** (2026-04-29, día 14, Corola) — escena 9 reescrita con Meristem entrando al MVP (decisión firme Bea + Cambium + Meristem día 14). Estructura: cenital flat editorial con 8 parcelas + Pollen-nodo recorriendo + llegada al nodo Meristem en cenital, **corte limpio** a imagen real del portátil del agricultor con app Meristem ejecutando, dos cartelas on-screen (*"Pulling Rhizome data..."* + *"Adjusting policies..."*), tarjeta logo final por fade. Tres niveles narrativos en el cierre: máquina (E1-E7) → abstracción de red (E9 inicio) → cerebro lento doméstico real (E9 final). Prompt Veo3 actualizado para incluir nodo Meristem distinto a las 8 parcelas. Cartela invariante de Xilema NO aplicada — saturación de elementos textuales. Carteles físicos PLOT 1 / PLOT 2 los prepara Bea (Helvetica, mayúsculas, fondo neutro, inglés). Escena 5 con TBD UI compilador pendiente de coordinación asíncrona con Floema (mensaje preparado por Corola para que Bea relaye).
 - **v1.2 — apilado parcial extendido** (2026-04-29, día 14, Corola) — apilado de escenas 4, 5 (parcial), 6, 7, 8 con detalle equivalente a 1-3. Escena 5 con TBD en UI del compilador `MissionPatch` pendiente de llamada con Floema (F5 cerrada). Escena 9 pendiente de decisión firme Meristem día 14: si entra al MVP, ampliación con plano portátil + `rationale`; si no entra, mantiene Veo3 flat puro. Recurso disponible para escena 9: invariante de Xilema *"Lo físico manda, Rhizome arbitra, Pollen media, Meristem afina."* (cartela inglés *"Physical layer rules. Rhizome arbitrates. Pollen mediates. Meristem refines."*) — aplicable solo si Meristem entra (cuatro sujetos visibles). Origen recado: Cambium tras review meeting día 13 (`bitacora/2026-04-28_review-meeting-tuning_cambium.md`).
 - **v1.1 — apilado parcial** (2026-04-28, día 13, Corola) — ajustes tras review de Bea en PR #59:
   - **Regla de idiomas (proyecto):** cartelas/overlays/textos on-screen y cartel físico en inglés. VO en castellano (Bea).

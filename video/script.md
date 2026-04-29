@@ -1,6 +1,6 @@
-# Script — Sprout v1.2 (apilado parcial: escenas 1-8)
+# Script — Sprout v1.3 (apilado completo: escenas 1-9)
 
-**Versión:** v1.2 (apilado parcial — escenas 1 a 8 desarrolladas. Escena 9 pendiente de decisión firme Meristem día 14.)
+**Versión:** v1.3 (apilado completo de las nueve escenas. Pendientes operativos: refinar traducciones first pass, coordinación asíncrona con Floema para UI escena 5, ejercicio frases fuertes iniciado por Corola para review Bea + Cambium, dirección de arte rodaje.)
 **Fecha:** 2026-04-29 (día 14)
 **Autora:** Corola
 **Duración objetivo:** 3:00 exactos.
@@ -223,19 +223,44 @@ Guion definitivo del vídeo de presentación del proyecto al jurado técnico.
 
 ---
 
-### Escena 9 — Cenital federado (2:40–3:00)
+### Escena 9 — Cenital federado + Meristem (2:40–3:00)
 
-**Pendiente de apilar — esperando decisión firme Meristem día 14.**
+**Decisión Meristem firme (día 14):** Meristem-nodo entra al MVP. Bea cierra la visión de la escena: el cenital flat editorial mantiene su comienzo (8 parcelas + Pollen recorriendo), pero después Pollen llega al nodo Meristem **en el cenital flat**, hay **corte limpio a imagen real** del portátil del agricultor donde Meristem ejecuta, dos mensajes en pantalla con la operación, y cierre con tarjeta logo. Tres niveles narrativos: máquina (E1-E7) → abstracción de red (E9 inicio) → cerebro lento doméstico real (E9 final).
 
-Si Meristem-nodo entra al MVP (decisión Bea + Cambium + Meristem día 14), la escena se amplía con plano breve del portátil del agricultor mostrando `PolicyPacket` + `rationale` en castellano antes de o intercalado con el cenital de las 8 parcelas. La cartela progresiva *"One plot. Two. Eight. Autonomous. Federated intelligence, carried by Pollen."* se mantiene tal cual.
+**Beat narrativo:** el video pasa de **filmado** a **diagramado** (corte 2:40 al cenital flat) y de **diagramado** a **filmado otra vez** (corte 2:54 al portátil real). El segundo corte es estructural: lo abstracto demuestra el sistema funcionando a escala; lo real demuestra que el cerebro lento existe en una cocina, no en una nube.
 
-Si Meristem-nodo no entra, la escena se mantiene exactamente como está en `docs/40_pitch_video.md §4`: Veo3 flat editorial, 8 parcelas en cenital, Pollen-nodo recorriendo, mensajes en pantalla, cartela progresiva, tarjeta logo final con subtítulo *"Local, safe, explainable decisions."*
+**Cronología:**
 
-**Recurso disponible (Cambium, día 14):** la frase invariante de Xilema *"Lo físico manda, Rhizome arbitra, Pollen media, Meristem afina."* puede usarse como cartela esquina o VO en escena 9 si Meristem entra al MVP — los cuatro sujetos quedan visibles en el video. Si Meristem no entra, la frase pierde uno de los sujetos y queda solo como recurso writeup. Decisión condicional al día 14.
+| t | Acción / VO | Cartela / Overlay |
+|---|-------------|-------------------|
+| 2:40–2:42 | Plano real de la maceta del rodaje (continuidad con la última imagen de E8 si la hubiera, o transición desde la pantalla del Jetson). **Morph sutil** durante 2 segundos: la maceta se difumina, los bordes se expanden, aparece la parcela vista en cenital. Fondo neutro abstracto. | — |
+| 2:42–2:46 | Cenital flat editorial. Parcelas apareciendo progresivamente: una, dos, hasta ocho en mosaico irregular. Paleta tierra sobria. Cartela dosificada sincronizada con la aparición. | **Cartela progresiva (4s, dosificada en 3 beats al ritmo de las parcelas):** *"One plot."* (s1) → *"Two."* (s2) → *"Eight."* (s4) |
+| 2:46–2:48 | Pollen-nodo aparece y **arranca recorrido** entre las parcelas. Cartela única en s47. | **Cartela** (2s): *"Autonomous."* |
+| 2:48–2:51 | Pollen-nodo recorre parcelas. Mensajes técnicos breves apareciendo y desapareciendo en cada toque (mismo lenguaje del proyecto): `WeatherDigest accepted`, `MissionPatch delivered`, `DecisionReceipt synced`. Cartela cumbre. | **Cartela** (3s): *"Federated intelligence, carried by Pollen."* |
+| 2:51–2:54 | Pollen-nodo **llega al nodo Meristem** dentro del cenital flat. El nodo Meristem está representado como un punto distinto a las 8 parcelas — más grande, con forma diferente (triángulo o cuadrado donde las parcelas son rectángulos), color complementario. Pausa de conexión visual. | — |
+| **2:54–2:55** | **Corte limpio.** Quiebre estético deliberado. Cambio de Veo3 flat a imagen real. | — |
+| 2:55–2:58 | Plano real del **portátil del agricultor abierto sobre una mesa de cocina** (o equivalente doméstico). Pantalla del portátil mostrando la app Meristem. **Cartela en pantalla del portátil** (3s): *"Pulling Rhizome data..."* (con elipsis indicando proceso). | **Cartela on-screen** (3s): *"Pulling Rhizome data..."* |
+| 2:58–3:00 | Pantalla cambia. **Cartela on-screen** (2s): *"Adjusting policies..."* La tarjeta logo final entra por fade sobre la pantalla del portátil al final. | **Cartela on-screen** (2s): *"Adjusting policies..."* + **Tarjeta logo** entrando por fade |
+| (cierre) | Tarjeta logo final visible 2-3s sobre la pantalla del portátil difuminada al fondo. | **Tarjeta logo:** `Sprout` / *"Local, safe, explainable decisions."* / `zigiella · Apache 2.0` / `github.com/zigiella/sprout` |
+
+**Lo que se siente:** el video pasa de **abstracción** a **realidad doméstica**. El cerebro lento no vive en la nube — vive en un portátil sobre una mesa. Eso es lo más Sprout que el video puede demostrar al final: la inteligencia consolidada está al alcance de una persona, en su casa, no en un data center remoto. La cartela progresiva cierra la tesis (federación), los dos mensajes de Meristem cierran la operación (consolidación), y la tarjeta logo cierra el producto (firma).
+
+**VO:** 0 palabras (la escena 9 es puramente visual + cartelas).
+**Cartelas:** 6 en total (cartela progresiva en 3 beats + 2 mensajes Meristem + tarjeta logo).
+**Overlays:** ninguno.
+
+**Producción:**
+
+- **Cenital flat (Veo3, 2:40–2:54):** prompt con semilla *"Editorial flat illustration, top-down view of 8 small farm plots arranged in irregular mosaic, muted earth tones, clean line work, modern infographic style, animated luminous node moving between plots and reaching a larger central node (Meristem), minimalist text overlays integrated into design, no realistic sky, no realistic shadows, abstract neutral background."* Refinar con Bea antes de generar.
+- **Corte 2:54–2:55:** corte limpio, sin transición, sin fade. El quiebre estético es feature.
+- **Imagen real (2:55–3:00):** plano del portátil del agricultor abierto sobre una mesa (cocina o similar doméstico). Luz natural si es posible. La pantalla del portátil tiene que mostrar **algo real** — la app Meristem corriendo (Meristem la prepara) o mock fiel.
+- **Tarjeta logo:** diseño en post. Mantiene la regla de idiomas (todo en inglés excepto el VO que aquí no hay).
+
+**Recurso de Cambium NO aplicado:** la cartela invariante de Xilema *"Physical layer rules. Rhizome arbitrates. Pollen mediates. Meristem refines."* queda **fuera de escena 9**. Razonamiento: la escena ya tiene cartela progresiva (3 beats) + 2 mensajes Meristem + tarjeta logo (4 líneas) = 9 elementos textuales en 20 segundos. Añadir una cartela invariante de 4 líneas más satura. La invariante queda como recurso writeup donde tiene más espacio. Si Bea o Cambium reabren la decisión, busco hueco.
 
 ---
 
-## Conteo VO actualizado (escenas 1-8 apiladas, escena 9 pending)
+## Conteo VO completo (escenas 1-9 apiladas)
 
 VO en castellano grabado por Bea. Cartelas/overlays/textos on-screen en inglés (regla de proyecto v1.1).
 
@@ -247,28 +272,28 @@ VO en castellano grabado por Bea. Cartelas/overlays/textos on-screen en inglés 
 - E6: 14 palabras castellano (6 + 8 frase fuerte 5).
 - E7: 5 palabras castellano (sobrio).
 - E8: 8 palabras castellano (frase fuerte 4 sin "En Sprout").
-- E9: pending — cartela progresiva + subtítulo logo, sin VO esperado.
-- **Total apilado v1.2:** 92 palabras castellano + 14 voz humana real = **106 palabras totales castellano**. Margen sigue holgado para doblaje EN.
+- E9: 0 palabras VO (escena puramente visual + cartelas inglés).
+- **Total apilado v1.3:** 92 palabras castellano + 14 voz humana real = **106 palabras totales castellano**. Margen sigue holgado para doblaje EN.
 
 ---
 
 ## Pendientes antes de grabar
 
-- [x] Apilar escenas 1-3 (día 13). Apilar escenas 4, 5 (parcial), 6, 7, 8 (día 14).
-- [ ] **Escena 9** pendiente de decisión firme Meristem (día 14, conversación Bea + Cambium + Meristem).
-- [ ] **Llamada con Floema** para sincronizar UI del compilador `MissionPatch` en escena 5 (Floema cerró F5 — agendable cuando os cuadre).
-- [ ] Ejercicio de calidad narrativa con Cambium (30 min, día 14): pasar las cinco frases fuertes por el filtro *"¿el vídeo demuestra esto, o solo lo afirma?"*. Ahora con escenas 2-8 apiladas, el ejercicio puede cotejar literal contra cada plano.
+- [x] Apilar escenas 1-3 (día 13). Apilar escenas 4, 5 (parcial), 6, 7, 8 (día 14). Apilar escena 9 con Meristem (día 14, decisión firme).
+- [ ] **Coordinación asíncrona con Floema** para UI del compilador `MissionPatch` en escena 5 (Bea relaya mensaje).
+- [ ] **Ejercicio de calidad narrativa de las cinco frases fuertes** — Bea me pide que tome la iniciativa. Pasar cada frase por el filtro *"¿el vídeo demuestra esto, o solo lo afirma?"*. Iniciado en `bitacora/2026-04-29_corola-frases-fuertes-ejercicio_corola.md`. Bea + Cambium revisan después.
 - [x] Persona VO castellano confirmada: **Bea**.
 - [ ] Confirmar voz humana de escena 5 (propuesta: persona del equipo grabando literal en castellano).
 - [ ] **Refinar traducciones inglés** marcadas como *first pass* (cartela ancla E7 *"Criterion updated."*, cartela progresiva E9, subtítulo logo).
-- [ ] Producir cartel físico **"PLOT 1"** y **"PLOT 2"** (impresión sobria, tipografía limpia) antes del rodaje 26-27.
+- [x] **Carteles físicos PLOT 1 y PLOT 2:** Bea los prepara (Helvetica, mayúsculas, fondo neutro, en inglés).
 - [ ] Coordinar dirección de arte de la pantalla del Jetson en escenas 2, 3, 7 (resaltado fuerte de campos clave, cadencia musical de líneas, cartelas dominantes sobre log).
-- [ ] **Decidir si aplicar invariante Xilema** *"Physical layer rules. Rhizome arbitrates. Pollen mediates. Meristem refines."* como cartela en escena 9 — condicional a decisión Meristem.
+- [x] **Invariante Xilema NO aplicada en E9** — la escena ya tiene 9 elementos textuales en 20s. La invariante queda como recurso writeup. Decisión documentada en E9.
 
 ---
 
 ## Historial de versiones
 
+- **v1.3 — apilado completo** (2026-04-29, día 14, Corola) — escena 9 reescrita con Meristem entrando al MVP (decisión firme Bea + Cambium + Meristem día 14). Estructura: cenital flat editorial con 8 parcelas + Pollen-nodo recorriendo + llegada al nodo Meristem en el cenital, **corte limpio a imagen real** del portátil del agricultor con app Meristem ejecutando, dos cartelas on-screen (*"Pulling Rhizome data..."* + *"Adjusting policies..."*), tarjeta logo final entrando por fade. Tres niveles narrativos en el cierre: máquina (E1-E7) → abstracción de red (E9 inicio) → cerebro lento doméstico real (E9 final). Cartela invariante de Xilema NO aplicada en E9 (saturación de elementos textuales) — queda como recurso writeup. **Cambium es ella** — corrección registrada. Persona VO confirmada Bea. Carteles físicos PLOT 1 / PLOT 2 los prepara Bea (Helvetica, mayúsculas, fondo neutro, inglés). Coordinación con Floema asíncrona — mensaje preparado para que Bea relaye.
 - **v1.2 — apilado parcial extendido** (2026-04-29, día 14, Corola) — apilado de escenas 4, 5 (parcial), 6, 7, 8 con detalle equivalente al de escenas 1-3. Escena 5 con TBD en UI del compilador `MissionPatch` pendiente de llamada con Floema (F5 cerrada). Escena 9 pendiente de decisión firme Meristem (conversación Bea + Cambium + Meristem día 14): si Meristem-nodo entra al MVP, se amplía con plano breve del portátil del agricultor; si no entra, se mantiene como en pitch doc. Recurso disponible para escena 9: invariante de Xilema *"Lo físico manda, Rhizome arbitra, Pollen media, Meristem afina."* — aplicable como cartela inglés *"Physical layer rules. Rhizome arbitrates. Pollen mediates. Meristem refines."* solo si Meristem entra (cuatro sujetos visibles en video). Conteo VO: 92 palabras castellano + 14 voz humana real = 106 palabras totales. Origen del recado Meristem: Cambium tras review meeting día 13 (`bitacora/2026-04-28_review-meeting-tuning_cambium.md`).
 - **v1.1 — apilado parcial** (2026-04-28, día 13, Corola) — ajustes tras review de Bea en PR #59:
   - Eliminada referencia al hackathon y al jurado del encabezado del documento (decisión: no documentos públicos con datos sensibles).
