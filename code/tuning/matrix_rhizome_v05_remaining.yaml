@@ -1,0 +1,73 @@
+# Matrix Rhizome v0.5 — 12 prompts restantes (acción cerrada bloque 2 review día 13)
+#
+# Bea aprobó en review día 13: correr los 12 prompts no testados con v0.5
+# en mi PC antes del día 15 para máxima certeza de transferencia a Jetson.
+#
+# Lista exacta del review:
+# RD02, RD04, RD05, RD06, RD07, RA01, RA03, RA05, RE01, RE02, RE03, RH01.
+#
+# Misma config R1_balanced_v05 que el mini-test (rhizome_balanced_es_v05).
+# Output a results/rhizome_v05_remaining.jsonl para no pisar el v05.jsonl
+# anterior (6 prompts seleccionados).
+
+phase: 1
+prompt_pack: prompt_pack_rhizome_es.yaml
+purpose: |
+  Cerrar la acción derivada del bloque 2 del review día 13: confirmar
+  que rhizome_balanced_es_v05 funciona en los 12 prompts no testados
+  directamente en el mini-test de v0.5. Confianza alta esperada (la
+  regla de brevedad solo refuerza el cierre del JSON, no toca semántica).
+
+invariants:
+  model: "gemma4:e2b"
+  backend: local-llamacpp
+  adapter_url: "http://localhost:12000"
+  llamacpp_server_url: "http://localhost:8080"
+  temperature: 0.3
+  language: es
+  envelope_required: true
+
+configs:
+  - id: R1_balanced_v05
+    system_prompt_id: rhizome_balanced_es_v05
+    think: false
+    num_ctx: 2048
+    num_predict: 1024
+    rationale: |
+      Mismo perfil que mini-test v0.5. Validación de transferencia a los
+      12 prompts no testados.
+
+prompts:
+  # decide_action restantes (5)
+  - RD02_skip_healthy_idle
+  - RD04_defer_due_to_dispute
+  - RD05_use_fresh_weather
+  - RD06_ignore_stale_weather
+  - RD07_allocate_budget_priority_a
+  # admit_external_context restantes (3)
+  - RA01_accept_mission_patch_valid
+  - RA03_accept_validation_stamp_caution
+  - RA05_accept_policy_packet_bootstrap_or_meristem
+  # explain_local_decision (3)
+  - RE01_explain_last_water
+  - RE02_explain_last_block
+  - RE03_explain_mode_shift_conservative
+  # summarize_for_handoff restantes (1)
+  - RH01_prepare_pollen_handoff
+
+total_runs: 12
+
+decision_rule: |
+  Aceptación: 12/12 envelope_valid + 12/12 status_match.
+
+  Si pasa: confirmamos transferencia v0 → v0.5 sin regresión semántica.
+  El prompt v0.5 queda firme como base v1 para Jetson.
+
+  Si falla: investigar caso a caso. La regla de brevedad NO debería
+  romper semántica (los 4 párrafos clave R4/R5/R6/SAFETY_DOWNGRADE
+  están idénticos entre v0 y v0.5). Si rompe, habría regresión
+  inesperada que merece análisis.
+
+output:
+  path: "results/rhizome_v05_remaining.jsonl"
+  one_record_per_run: true
