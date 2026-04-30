@@ -97,21 +97,83 @@ Tiempo objetivo bloque 2: 5-10 min cada una.
 
 ---
 
+## Bloque 2 — Ratificación
+
+**Cerrado sin objeción.** Ambas miembras commitearon `ratificacion_endodermis.md` y `ratificacion_xilema.md` ratificando los 21 acuerdos + las 4 decisiones de Cambium. Cero discrepancias.
+
+### Refinamiento de Xilema (no objeción)
+
+Xilema señala matiz de redacción que conviene incorporar explícitamente al plan operativo: *"el primer flasheo de microSD / primer boot de Jetson es fase previa compartida con Bea/Xilema. Endodermis toma ownership operativo desde Jetson arrancada hacia baseline, Docker, runtime, adapter y batería. No quiero que 'Endo lleva Jetson' se lea como 'Endo resuelve sola cualquier problema de QSPI/primer arranque'."*
+
+**Adoptado.** Se añade como punto 26 del consolidado:
+
+26. ✅ **Fase previa compartida** (microSD + primer boot Jetson): Bea/Xilema lideran. Endo asume ownership operativo desde "Jetson arrancada" en adelante. Si hay problema de QSPI/firmware/primer boot, no es responsabilidad de Endo resolverlo sola.
+
+### Parking lot menor (Xilema)
+
+Cuando Jetson esté vivo y estable: decidir si documentar el flasheo microSD + primer boot en mini-guía propia (probablemente como ampliación de `docs/51_rhizome_gemma4_e2b_jetson_guide.md`) o si basta con bitácora. **No bloqueante**. Se decide post-arranque del día 16.
+
+### Compromiso operativo de Endodermis
+
+Endo se compromete a escribir en bitácora el venv concreto + comandos exactos antes de correr la batería completa. **Patrón sano**: documentar antes de ejecutar, no después. Encaja con la disciplina de secuencia adoptada (punto 21).
+
+### Hallazgo cultural — declaración de confianza explícita
+
+Xilema cierra su ratificación con: *"Me siento cómoda con Endodermis en este carril: suficientemente autónoma para mover Jetson y suficientemente prudente para no tocar la frontera física sin permiso."*
+
+Es **declaración de confianza explícita de la supervisora hacia la nueva miembra al final de su primer día de trabajo conjunto**. En equipos pequeños con plazos cortos, ese tipo de aval cuesta semanas de construir y se nombra raras veces. Lo registro como hallazgo cultural del meeting — refuerza que el filtro de entrada de Endodermis (carta motivacional + onboarding del día 14) era acertado.
+
+---
+
 ## Cierre del meeting
 
-*[Cambium escribe al cierre del último bloque. Recap de las decisiones cerradas, dueñas, plazos. Parking lot si lo hay.]*
+**Estado: cerrado sin objeción** tras 2 bloques (apertura abierta + ratificación).
 
-### Decisiones cerradas
+### Decisiones cerradas (recap completo — 26 puntos)
 
-*[pendiente]*
+**A — Frontera entre frentes (6 puntos):** Endo no toca firmware/reglas duras; centrada en inferencia/validación Jetson; adapter `llamacpp` como puente oficial; bundle Rhizome→Meristem usa lo ya acordado (RA04 como gate); primer ping Jetson↔ESP32 liderado por Xilema con Endo repitiendo en segunda iteración; `/explain/decision/{id}` fuera de scope días 16-17.
+
+**B — Stack y bloqueos (6 puntos):** Q4_K_S como primera cuantización oficial; `ADAPTER_PORT=12000`; artefactos en `code/tuning/results/` gitignored + resumen en bitácora; SO Jetson microSD JetPack 6.2.1; NVMe deseable pero microSD aceptable documentando limitación; BME280 bloqueado pero no afecta a Endo.
+
+**C — Plan operativo días 16-17 (4 hitos):** baseline Jetson día 16 mañana → llama-server + adapter día 16 tarde → mini-test 6 críticos día 16 cierre / 17 mañana → batería 18 prompts + comparación día 17.
+
+**D — Cadencia de check-ins (3 reglas):** check breve por hito; bloqueos >2h escalan a Cambium + Xilema; fallos físico/protocolo: Xilema decide; fallos prompt/modelo: no se toca sin Cambium/Bea.
+
+**E — Reglas operativas (2):** permiso explícito para Endo de decir "esto no lo entiendo" sin heroísmos; disciplina de secuencia (SO → baseline → runtime → modelo → batería → integración).
+
+**F — Decisiones de Cambium (4):** TTFT no obligatorio para MVP; venv en raíz del repo; sin ventana horaria fija para descargas; criterio `engineering pass` adoptado de Xilema (6 críticos frío/caliente + 18 sin fallo crítico).
+
+**G — Refinamientos del bloque 2 (1):** fase previa microSD + primer boot compartida con Bea/Xilema; ownership de Endo arranca desde "Jetson arrancada".
 
 ### Acciones derivadas con dueña + plazo
 
-*[pendiente]*
+| # | Acción | Dueña | Plazo |
+|---|--------|-------|-------|
+| 1 | Fase previa: microSD + JetPack 6.2.1 + primer boot Jetson | Bea + Xilema | Día 16 muy temprano |
+| 2 | Baseline Jetson en bitácora (`nv_tegra_release`, kernel, RAM, disco, lsblk, nvpmodel, Docker, runtime NVIDIA) | Endo | Día 16 mañana |
+| 3 | Documentar venv + comandos exactos en bitácora antes de batería | Endo | Día 16 tarde antes de correr batería |
+| 4 | Arrancar `llama-server` con Gemma 4 E2B Q4_K_S + smoke OpenAI-compatible | Endo | Día 16 tarde |
+| 5 | Adapter `llamacpp` en `:12000` + smoke `/api/chat` | Endo | Día 16 tarde |
+| 6 | Mini-test 6 smoke críticos (RA04, RD03, RD08, RD01) | Endo | Día 16 cierre / 17 mañana |
+| 7 | Batería completa 18 prompts si los críticos pasan | Endo | Día 17 |
+| 8 | Comparación con baseline x86 de Meristem (estabilidad envelope/status, p50/p95, tok/s, OOM/throttle) | Endo | Día 17 tarde |
+| 9 | Bitácora cierre con métricas + fallos + veredicto `engineering pass`/`fail` | Endo | Día 17 cierre |
+| 10 | Primer ping Jetson↔ESP32 vía USB-CDC (Xilema lidera, Endo observa, después Endo repite documentando) | Xilema + Endo | Día 17 cuando los pasos 1-9 estén estables (no antes) |
 
 ### Parking lot
 
-*[pendiente]*
+1. Cuando Jetson esté estable: decidir si ampliar `docs/51_rhizome_gemma4_e2b_jetson_guide.md` con sección de flasheo microSD + primer boot, o dejarlo solo en bitácora. No bloqueante.
+
+### Hallazgos del meeting
+
+1. **Convergencia ~95% en bloque 1** — frontera entre frentes bien diseñada y criterios del proyecto internalizados.
+2. **Declaración de confianza explícita de Xilema → Endodermis** al final del primer día de trabajo conjunto. Hallazgo cultural relevante.
+3. **Formato síncrono por turnos contra el repo funcionó al 100%** — primera vez aplicado contra repo (no carpeta local). Mecánica git limpia, sin colisiones, ambas miembras documentaron en archivos propios. Reusable para futuros meetings que afecten a más de dos miembras.
+4. **Reu cerrada en 2 bloques** (vs 4 que esperaba inicialmente) gracias a la convergencia. Total tiempo: ~75 min desde apertura del bloque 1 hasta cierre.
+
+---
+
+*Bitácora del meeting cerrada el 2026-04-30 (día 15). Modera: Cambium. Aprueba: Bea. Participan: Endodermis, Xilema. Cierre sin objeción tras 2 bloques.*
 
 ---
 
