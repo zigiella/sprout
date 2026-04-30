@@ -1,0 +1,86 @@
+# Fase 1 — exploración de dials en turno único.
+#
+# 3 configs (perfiles que cruzan varias palancas a la vez)
+# x 16 prompts (prompt_pack_en.yaml completo, taxonomía v0)
+# = 48 runs.
+#
+# Todas respetan num_ctx + num_predict <= 4096 (techo LiteRT-LM real).
+# Todas temperature = 0.3 (decisión fija en v0, se barre en fase 2 si importa).
+# Todas en EN (hipótesis: inglés mejor para lógica interna, se valida en 1.5).
+
+phase: 1
+purpose: |
+  Explorar qué perfil de configuración produce respuestas utilizables por
+  arquetipo. Tres perfiles que cruzan varias palancas para no barrer a ciegas.
+  Cubre los 4 arquetipos + Gate 0 (route_or_refuse) según docs/22_prompt_taxonomy_v0.md.
+
+invariants:
+  model: "gemma4:e4b"
+  backend: local-ollama
+  adapter_url: "http://localhost:11434"
+  temperature: 0.3
+  max_ventana_tokens: 4096    # num_ctx + num_predict <= 4096
+  language: en
+  envelope_required: true     # toda salida debe tener {task,status,reason_code,question_es,payload}
+
+configs:
+  - id: C1_austero
+    system_prompt_id: brief_direct_en
+    think: false
+    num_ctx: 2048
+    num_predict: 512
+    rationale: |
+      Perfil minimalista. Sin razonamiento extendido, system prompt directo,
+      respuesta corta. Hipótesis: suficiente para compile_mission y
+      explain_decision si el modelo parsea la intención sin pensar en voz
+      alta. Riesgo: queda corto en audit_visit (más datos a cruzar).
+
+  - id: C2_balanced
+    system_prompt_id: auditor_standard_en
+    think: true
+    num_ctx: 2048
+    num_predict: 2048
+    rationale: |
+      Perfil de compromiso. Thinking activo, system prompt con cobertura de
+      los 4 arquetipos + Gate 0, reparto equilibrado de ventana. Hipótesis:
+      baseline razonable para los 4 arquetipos. Es el candidato a producción
+      si no hay un ganador claro por arquetipo.
+
+  - id: C3_expansive
+    system_prompt_id: reason_exhaustive_en
+    think: true
+    num_ctx: 512
+    num_predict: 3584
+    rationale: |
+      Perfil de respuesta generosa. Poco contexto, mucho margen de output.
+      Hipótesis: útil para explain_decision (prosa) y federate_context
+      (digest) si el modelo aprovecha espacio. Riesgo: se queda corto de
+      contexto en audit_visit (snapshots y receipts ocupan).
+
+prompts:
+  # compile_mission (6)
+  - PM01_compile_simple
+  - PM02_compile_complete
+  - PM03_compile_update_active
+  - PM04_compile_revoke
+  - PM05_compile_ambiguous_refuse
+  - PM06_route_refuse_physical_command
+  # audit_visit (4)
+  - PA01_audit_confirmed
+  - PA02_audit_sensor_disputed
+  - PA03_audit_stale_basis
+  - PA04_audit_manual_intervention
+  # federate_context (2 — weather-only en v0)
+  - PF01_federate_weather_digest_daily
+  - PF02_federate_weather_digest_critical_or_stale
+  # explain_decision (4)
+  - PE01_explain_past_decision
+  - PE02_explain_delta_since_visit
+  - PE03_explain_aggregate
+  - PE04_explain_out_of_jurisdiction
+
+total_runs: 48     # 16 prompts × 3 configs
+
+output:
+  path: "results/phase1.jsonl"
+  one_record_per_run: true

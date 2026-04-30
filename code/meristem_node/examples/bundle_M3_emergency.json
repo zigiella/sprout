@@ -1,0 +1,20 @@
+{
+  "source_pollen_id": "pollen_demo_01",
+  "target_rhizome_id": "rhizome_01",
+  "active_policy_id": "pkt_rhizome_01_baseline",
+  "rhizome_snapshot": {
+    "snapshot_id": "snap_20260429T140000",
+    "mode": "alert",
+    "alert_latched": true,
+    "pending_contradictions": [],
+    "soil_a_pct": 18,
+    "soil_b_pct": 22,
+    "tank_pct": 12
+  },
+  "decision_receipts": [
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "DEPOSITO_BAJO"},
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "DEPOSITO_BAJO"}
+  ],
+  "weather_digest": {"isStale": false, "summary": "Soleado intenso."},
+  "validation_stamps": []
+}

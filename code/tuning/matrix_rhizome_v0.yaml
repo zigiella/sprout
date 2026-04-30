@@ -1,0 +1,119 @@
+# Matrix Rhizome v0 — bateria de quality contra Gemma 4 E2B Q4_K_M (llama.cpp local)
+#
+# **ESTADO: VALIDADO POR XILEMA (día 12, listo para ejecutar v0)**
+#
+# 1 config base (rhizome_balanced_es, thinking off, castellano)
+# x 18 prompts (prompt_pack_rhizome_es.yaml, 4 arquetipos + gate hard_refuse)
+# = 18 runs.
+#
+# Reusa la maquinaria de Phase 1 Pollen al 100%: misma estructura phase=1,
+# mismos JSONL append-only con dedupe por run_id, mismo scoring HIGH/MEDIUM/LOW
+# que cerró Pollen. Solo cambia el backend del adapter (llamacpp en vez de
+# local-ollama) y el prompt pack (es vez de en).
+#
+# Stack:
+#   harness.py
+#     -> adapter:12000 (INFERENCE_BACKEND=llamacpp, LLAMACPP_SERVER_URL=:8080)
+#     -> llama-server:8080 (gemma-4-E2B-it-Q4_K_M.gguf, --no-mmproj, -c 4096)
+
+phase: 1   # estructura idéntica a Phase 1 Pollen
+prompt_pack: prompt_pack_rhizome_es.yaml   # pack específico Rhizome
+purpose: |
+  Validar que el sobre común JSON aguanta en Gemma 4 E2B Q4_K_M con un
+  system prompt diseñado para Rhizome (castellano, thinking off,
+  contratos v2). Detectar zonas calientes por arquetipo: dónde falla el
+  modelo y qué patrón textual lo arregla (analogía con R4/R6 de Pollen).
+
+  Este v0 es indicativo, no cierre — el cierre de calidad final es contra
+  Jetson + llama.cpp con el target real (acuerdo con Xilema, día 11).
+
+invariants:
+  model: "gemma4:e2b"
+  backend: local-llamacpp
+  adapter_url: "http://localhost:12000"
+  llamacpp_server_url: "http://localhost:8080"
+  temperature: 0.3
+  language: es
+  envelope_required: true
+
+configs:
+  - id: R1_balanced
+    system_prompt_id: rhizome_balanced_es
+    think: false                     # decisión de Xilema + R7-bis A
+    num_ctx: 2048
+    num_predict: 1024
+    rationale: |
+      Perfil único v0. System prompt detallado (rhizome_balanced_es) con los
+      4 arquetipos + gate hard_refuse explícito. Thinking off por defecto.
+      num_ctx=2048 cubre snapshot+policy+weather digest. num_predict=1024 da
+      espacio para envelope completo + receipt embedido si aplica.
+
+prompts:
+  # decide_action (8)
+  - RD01_water_a_low_moisture
+  - RD02_skip_healthy_idle
+  - RD03_block_tank_low                       # caso "partir" — LLM explica, no decide
+  - RD04_defer_due_to_dispute
+  - RD05_use_fresh_weather
+  - RD06_ignore_stale_weather
+  - RD07_allocate_budget_priority_a
+  - RD08_choose_dose_not_just_yes_no
+  # admit_external_context (5) — gap principal según Xilema
+  - RA01_accept_mission_patch_valid
+  - RA02_reject_mission_patch_stale
+  - RA03_accept_validation_stamp_caution
+  - RA04_limit_visit_amendment_if_risky
+  - RA05_accept_policy_packet_bootstrap_or_meristem
+  # explain_local_decision (3)
+  - RE01_explain_last_water
+  - RE02_explain_last_block
+  - RE03_explain_mode_shift_conservative
+  # summarize_for_handoff (2)
+  - RH01_prepare_pollen_handoff
+  - RH02_prioritize_human_attention
+
+total_runs: 18
+
+decision_rule: |
+  Tras leer las 18 runs aplicando criterios de Xilema (docs/23 §7) +
+  judge_rubric.md adaptado:
+
+  1. Sobre común JSON: ¿aguanta al 100%? (analogía con R9 Pollen — esperamos
+     que sí dado que Gemma 4 E2B tiene la misma capacidad de seguir contrato
+     que Gemma 4 E4B).
+  2. status_match por arquetipo:
+     - decide_action: % de aciertos en acción correcta + dosis prudente
+     - admit_external_context: TTL respetado + autoridad respetada + no
+       acepta patches que bajan seguridad (RA04 es el más crítico)
+     - explain_local_decision: groundedness vs alucinación (RE01-03)
+     - summarize_for_handoff: compacto + transportable + prioriza alertas
+  3. hard_refuse vía RD03: ¿el LLM emite status=block con reason_code
+     correcto, o intenta arbitrar?
+
+  Hot zones esperadas (hipótesis a verificar):
+  - RA01-RA05 son nuevos (crear_v2), pueden tener desalineación entre
+    intención del prompt y respuesta del modelo. Si sale <60%, iterar
+    sobre los user_message y/o el system prompt.
+  - RD03: el modelo puede tender a "arbitrar" en lugar de bloquear. Si
+    falla, considerar que el gate determinista tiene que estar
+    obligatoriamente fuera del LLM (lo cual ya es el plan).
+  - RD08 dosis: el modelo puede inventar valores no calibrados. Verificar
+    con Xilema si los números emitidos son razonables.
+
+  Confianza de transferencia a Jetson:
+  - HIGH: hallazgos sobre el contrato del envelope (sobre común aguanta o
+    no, modos de fallo textual).
+  - MEDIUM: hallazgos sobre comportamiento de Gemma 4 E2B Q4_K_M concreto
+    (puede diferir entre x86 CPU y Jetson GPU offload, aunque la calidad
+    de generación es idéntica).
+  - LOW: hallazgos de latencia/tok/s (mi PC es CPU, Jetson tiene GPU).
+
+output:
+  path: "results/rhizome_v0.jsonl"
+  one_record_per_run: true
+
+# Pre-flight requirements antes de ejecutar:
+# 1. llama-server :8080 con gemma-4-E2B-it-Q4_K_M.gguf cargado
+# 2. adapter :12000 con INFERENCE_BACKEND=llamacpp
+# 3. Validación de Xilema sobre los crear_v2 (especialmente RA01-RA05): OK 2026-04-27
+# 4. Confirmación de Bea para arrancar

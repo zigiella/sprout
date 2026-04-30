@@ -1,0 +1,29 @@
+{
+  "source_pollen_id": "pollen_demo_01",
+  "target_rhizome_id": "rhizome_01",
+  "active_policy_id": "pkt_rhizome_01_baseline",
+  "rhizome_snapshot": {
+    "snapshot_id": "snap_20260429T130000",
+    "mode": "normal",
+    "alert_latched": false,
+    "pending_contradictions": ["sensor_vs_observation"],
+    "soil_a_pct": 26,
+    "soil_b_pct": 40,
+    "tank_pct": 72
+  },
+  "decision_receipts": [
+    {"action": "WATER_A", "duration_s": 22, "confidence": 0.85}
+  ],
+  "weather_digest": {"isStale": false, "summary": "Variable."},
+  "validation_stamps": [
+    {
+      "status": "disputed",
+      "subject": "plot:A",
+      "basis": [
+        "sensor_a=26% indica seco",
+        "operador anotó parcela visualmente normal"
+      ],
+      "notes": "Discrepancia entre sensor y observación humana."
+    }
+  ]
+}

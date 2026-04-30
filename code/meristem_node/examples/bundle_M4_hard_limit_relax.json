@@ -1,0 +1,30 @@
+{
+  "source_pollen_id": "pollen_demo_01",
+  "target_rhizome_id": "rhizome_01",
+  "active_policy_id": "pkt_rhizome_01_baseline",
+  "rhizome_snapshot": {
+    "snapshot_id": "snap_20260429T150000",
+    "mode": "normal",
+    "alert_latched": false,
+    "pending_contradictions": [],
+    "soil_a_pct": 28,
+    "soil_b_pct": 32,
+    "tank_pct": 70
+  },
+  "decision_receipts": [
+    {"action": "WATER_A", "duration_s": 20, "confidence": 0.88}
+  ],
+  "weather_digest": {"isStale": false, "summary": "Estable."},
+  "validation_stamps": [
+    {
+      "status": "confirmed",
+      "subject": "plot:A",
+      "basis": ["sensor_a=28% acorde"],
+      "visit_amendment": {
+        "policy_override": "tank_minimum_pct=10",
+        "duration_h": 6,
+        "rationale_humano": "Operador quiere extender riego en periodo seco"
+      }
+    }
+  ]
+}

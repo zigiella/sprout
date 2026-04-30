@@ -1,0 +1,79 @@
+# Matrix Rhizome v0.5 — mini-test propuesto por Xilema (2026-04-27 tarde)
+#
+# Tras v0 (17/18 status_match, 18/18 envelope_valid), el único fallo fue
+# RD01 por truncamiento (modelo prosa demasiado, satura num_predict=1024).
+# Xilema propone línea de brevedad en system prompt + 6 runs selectos
+# para validar que v0.5 corrige formato sin romper semántica.
+#
+# 1 config (R1_balanced_v05 con system prompt rhizome_balanced_es_v05)
+# x 6 prompts (RD01 fallo, RD03 block, RD08 dosis, RA02 stale, RA04 SAFETY,
+#              RH02 verbosidad potencial)
+# = 6 runs.
+#
+# Criterio de aceptación (Xilema):
+# - 6/6 envelope_valid
+# - 6/6 status_match
+# - RA04 mantiene reason_code="SAFETY_DOWNGRADE"
+# - RD01 no trunca y no añade texto fuera del JSON
+#
+# Si pasa: promovemos rhizome_balanced_es_v05 como base v1.
+# Si falla: iteramos antes del review día 13.
+
+phase: 1   # estructura idéntica a Phase 1
+prompt_pack: prompt_pack_rhizome_es.yaml   # mismo pack de v0
+purpose: |
+  Validar que la regla de brevedad ("Devuelve JSON compacto, sin Markdown
+  fences, sin texto fuera del JSON. Cierra el objeto y termina") elimina
+  el truncamiento por verbosidad de RD01 sin alterar la semántica de los
+  casos críticos (RA04, RD03, RD08, RA02) ni romper los verbosos (RH02).
+
+invariants:
+  model: "gemma4:e2b"
+  backend: local-llamacpp
+  adapter_url: "http://localhost:12000"
+  llamacpp_server_url: "http://localhost:8080"
+  temperature: 0.3
+  language: es
+  envelope_required: true
+
+configs:
+  - id: R1_balanced_v05
+    system_prompt_id: rhizome_balanced_es_v05   # NUEVO: con regla de brevedad
+    think: false
+    num_ctx: 2048
+    num_predict: 1024
+    rationale: |
+      Mismo perfil que v0 (R1_balanced) salvo system prompt v0.5 que
+      añade la regla de brevedad propuesta por Xilema. num_predict
+      sigue en 1024 — la apuesta es que con la regla de cierre estricto
+      el modelo no satura. Si satura igual, el problema es más profundo
+      que verbosidad.
+
+prompts:
+  # 6 prompts seleccionados por Xilema:
+  - RD01_water_a_low_moisture          # caso del fallo en v0
+  - RD03_block_tank_low                 # hard block crítico
+  - RD08_choose_dose_not_just_yes_no    # dosis con límites
+  - RA02_reject_mission_patch_stale     # stale TTL refuse
+  - RA04_limit_visit_amendment_if_risky # SAFETY_DOWNGRADE
+  - RH02_prioritize_human_attention     # potencial verbosidad
+
+total_runs: 6
+
+decision_rule: |
+  Aceptación v0.5 pass:
+  1. 6/6 envelope_valid (parser JSON OK en todas)
+  2. 6/6 status_match (envelope.status == expected)
+  3. RA04 reason_code == "SAFETY_DOWNGRADE" (literal)
+  4. RD01 finish_reason != "length" (no trunca)
+  5. RD01 content NO contiene texto fuera del JSON (sin Markdown fences,
+     sin prosa antes/después)
+
+  Si pasa: rhizome_balanced_es_v05 promovido a base v1.
+  Si falla en RD01 truncamiento: subir num_predict a 2048 como mitigación
+  de fallback y revisar si el modelo respeta la regla.
+  Si falla en otros casos (semántica): regresión, retroceder a v0.
+
+output:
+  path: "results/rhizome_v05.jsonl"
+  one_record_per_run: true

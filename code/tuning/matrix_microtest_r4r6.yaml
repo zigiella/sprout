@@ -1,0 +1,73 @@
+# Micro-test 2026-04-26 — validar fix textual R4 + R6 sobre hot zones de Phase 1.
+#
+# 3 configs (las mismas de Phase 1 pero con system_prompt _r4r6)
+# x 6 prompts (4 hot zones audit + 1 hot PE04 + 2 controles)
+# = 18 runs (~30 min estimado).
+#
+# Comparable 1-a-1 con Phase 1: misma estructura (1 sample por celda,
+# language=en, mismas 3 configs en cuanto a num_ctx/num_predict/think).
+# El UNICO delta es el system_prompt con R4 y R6 inyectados al final.
+#
+# Decision rule:
+#   - audit_visit hot zones (PA02/03/04) pasan de 1/3 a >=2/3 cada uno
+#     -> R4 validado, fix entra a SystemPrompts.kt para Pollen.
+#   - PE04 pasa de 1/3 a >=2/3 -> R6 validado.
+#   - Controles (PA01, PM02) NO regresionan (siguen al mismo o mejor).
+#   - Si todo pasa, recomendaciones R4/R6 suben de "HIGH propuesto" a
+#     "HIGH validado". Si fallan, replantear el patch textual.
+
+phase: 1   # estructura idéntica a Phase 1
+purpose: |
+  Confirmar empíricamente que las recomendaciones R4 (separación
+  envelope.status vs payload.validation) y R6 (PE04 ofrece MissionPatch)
+  mueven las hot zones de Phase 1 al rango aceptable, sin regresión en
+  zonas que ya funcionaban. Los párrafos canónicos están al final de los
+  3 prompts EN _r4r6 en system_prompts.yaml.
+
+invariants:
+  model: "gemma4:e4b"
+  backend: local-ollama
+  adapter_url: "http://localhost:11434"
+  temperature: 0.3
+  max_ventana_tokens: 4096
+  language: en
+  envelope_required: true
+
+configs:
+  - id: C1_austero_r4r6
+    system_prompt_id: brief_direct_en_r4r6
+    think: false
+    num_ctx: 2048
+    num_predict: 512
+    rationale: "Mismo perfil C1 de Phase 1 pero con párrafos R4+R6."
+
+  - id: C2_balanced_r4r6
+    system_prompt_id: auditor_standard_en_r4r6
+    think: true
+    num_ctx: 2048
+    num_predict: 2048
+    rationale: "Mismo perfil C2 de Phase 1 pero con párrafos R4+R6."
+
+  - id: C3_expansive_r4r6
+    system_prompt_id: reason_exhaustive_en_r4r6
+    think: true
+    num_ctx: 512
+    num_predict: 3584
+    rationale: "Mismo perfil C3 de Phase 1 pero con párrafos R4+R6."
+
+prompts:
+  # 4 hot zones audit_visit (Phase 1 status_match: 33% cada una)
+  - PA02_audit_sensor_disputed       # R4 directo
+  - PA03_audit_stale_basis           # R4 directo
+  - PA04_audit_manual_intervention   # R4 directo
+  # 1 hot zone explain_decision (Phase 1 status_match: 33%)
+  - PE04_explain_out_of_jurisdiction # R6 directo
+  # 2 controles para detectar regresión
+  - PA01_audit_confirmed             # control audit (Phase 1: 66%)
+  - PM02_compile_complete            # control compile (Phase 1: 100%)
+
+total_runs: 18     # 6 prompts × 3 configs
+
+output:
+  path: "results/microtest_r4r6.jsonl"
+  one_record_per_run: true
