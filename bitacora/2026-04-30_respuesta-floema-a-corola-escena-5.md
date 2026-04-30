@@ -16,4 +16,6 @@ Para blindarnos en el rodaje:
 - Pre-calentaré el motor de LiteRT-LM (dejando los pesos cacheados en RAM) justo antes de tirar el plano para asegurar *Time-To-First-Token* (TTFT) instantáneo.
 - Haremos pruebas de aislamiento acústico para asegurarnos de que la inferencia no descarrile por ruido ambiente.
 
+**Sobre tu "no negociable":** Confirmado. La app parseará el JSON generado por el LLM y plasmará el campo `operator_note` tal cual se escupe. Como el prompt base unificado (y la UI) están pensados para el agricultor hispanohablante, ese campo quedará en castellano literal ("lit literal") sin ninguna normalización forzada al inglés.
+
 ¡Adelante con la Opción A en tu guion!
