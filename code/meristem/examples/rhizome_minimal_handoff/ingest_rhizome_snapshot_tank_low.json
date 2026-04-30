@@ -1,0 +1,36 @@
+{
+  "kind": "rhizome_snapshot",
+  "payload": {
+    "schema_version": "1.0",
+    "created_at": "2026-04-30T08:15:00Z",
+    "origin_node_id": "rhizome_01",
+    "signature": null,
+    "snapshot_id": "snap_rhizome_01_d15_tank_low",
+    "mode": "normal",
+    "active_policy_id": "pkt_rhizome_01_demo_d15_base",
+    "active_policy_expires_at": "2026-05-07T08:00:00Z",
+    "sensors": {
+      "soil_moisture_a_pct": 29.0,
+      "soil_moisture_b_pct": 44.0,
+      "tank_level_pct": 18.0,
+      "flow_rate_lpm": 0.0,
+      "last_reading_at": "2026-04-30T08:14:50Z"
+    },
+    "vision": {
+      "last_capture_at": null,
+      "parcel_a_status": null,
+      "parcel_b_status": null,
+      "visual_notes": "Camara fuera de ruta critica MVP; decision basada en sensores y safety ESP32."
+    },
+    "health": {
+      "cpu_temp_c": 52.0,
+      "cpu_load_pct": 32.0,
+      "ram_used_gb": 3.1,
+      "ram_total_gb": 7.4,
+      "esp32_heartbeat_ok": true,
+      "last_esp32_ack_at": "2026-04-30T08:14:55Z"
+    },
+    "last_decision_id": "rec_rhizome_01_d15_tank_low_block",
+    "pending_contradictions": []
+  }
+}

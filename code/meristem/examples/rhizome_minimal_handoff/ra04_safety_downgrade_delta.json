@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-04-30T08:20:00Z",
+  "origin_node_id": "pollen_01",
+  "signature": null,
+  "delta_id": "delta_ra04_visit_amendment_tank_minimum_downgrade",
+  "target_node_id": "rhizome_01",
+  "base_policy_id": "pkt_rhizome_01_demo_d15_base",
+  "patches": [
+    {
+      "op": "replace",
+      "path": "rules.tank_minimum_pct",
+      "value": 15.0
+    }
+  ],
+  "rationale": "RA04: simula una enmienda de visita o recomendacion externa que intenta bajar el minimo de deposito para permitir riego. Debe rechazarse.",
+  "ttl_seconds": 3600,
+  "priority": "critical"
+}

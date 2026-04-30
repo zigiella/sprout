@@ -1,0 +1,28 @@
+{
+  "kind": "decision_receipt",
+  "payload": {
+    "schema_version": "1.0",
+    "created_at": "2026-04-30T08:15:20Z",
+    "origin_node_id": "rhizome_01",
+    "signature": null,
+    "decision_id": "rec_rhizome_01_d15_tank_low_block",
+    "snapshot_id": "snap_rhizome_01_d15_tank_low",
+    "active_policy_id": "pkt_rhizome_01_demo_d15_base",
+    "action": "BLOCK",
+    "action_params": {
+      "blocked_action": "WATER_A",
+      "reason": "TANK_LOW"
+    },
+    "rationale_short": "Riego bloqueado: deposito al 18%, por debajo del hard limit 20%.",
+    "rationale_full": "La parcela A esta por debajo de umbral de humedad, pero el deposito reporta 18%. Rhizome no envia WATER al ESP32 y registra bloqueo fisico TANK_LOW.",
+    "policy_refs": [
+      "rules.soil_moisture_thresholds.parcel_a.min_pct",
+      "rules.tank_minimum_pct"
+    ],
+    "contradictions": [],
+    "confidence": 0.96,
+    "executed": false,
+    "execution_details": null,
+    "blocked_reason": "TANK_LOW"
+  }
+}

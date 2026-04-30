@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-04-30T08:00:00Z",
+  "origin_node_id": "meristem_01",
+  "signature": null,
+  "policy_id": "pkt_rhizome_01_demo_d15_base",
+  "target_node_id": "rhizome_01",
+  "valid_until": "2026-05-07T08:00:00Z",
+  "version_chain": [
+    "pkt_rhizome_01_demo_d15_base"
+  ],
+  "mode_default": "normal",
+  "rules": {
+    "watering_window": {
+      "start_hour_local": 6,
+      "end_hour_local": 9
+    },
+    "soil_moisture_thresholds": {
+      "parcel_a": {
+        "min_pct": 35.0,
+        "target_pct": 55.0
+      },
+      "parcel_b": {
+        "min_pct": 32.0,
+        "target_pct": 52.0
+      }
+    },
+    "max_watering_duration_s": 30,
+    "daily_water_budget_liters": 6.0,
+    "tank_minimum_pct": 20.0,
+    "require_vision_confirmation": false,
+    "conservative_triggers": [
+      "tank_level_below_30",
+      "jetson_heartbeat_stale",
+      "policy_expires_within_3h"
+    ]
+  },
+  "rationale": "Baseline MVP seguro: respeta los hard limits ESP32 y evita riegos largos durante demo.",
+  "notes": "Fixture de handoff Rhizome->Meristem dia 15. No reduce safety."
+}
