@@ -100,3 +100,40 @@ Esto cumple el patrón "swap de cimiento, no reescritura de capas" en su versió
 2. Si Bea ha votado variante traducción "prevails" — swap textual.
 3. Empezar revisión de traducciones first pass con Bea (sesión corta, una hora basta).
 4. Si Floema ha respondido al mensaje asíncrono — procesar.
+
+---
+
+## Adiciones tarde del día 15
+
+**Mensaje corto para Floema preparado.** Tras el mensaje asíncrono detallado del día 14, Bea pidió un mensaje corto de apertura con **instrucciones de reunión asíncrona** que ella relayee a Floema. Mensaje breve entregado en chat (canal: escrito, vía Bea como relay; lo que necesito: voto entre opción A captura real / opción B mock fiel; plazo: día 16; oferta: llamada corta de 15 min si prefiere). Listo para que Bea entregue.
+
+**Investigación offtopic Slack MCP.** Bea preguntó por viabilidad de conectar al equipo en Slack. Investigación delegada a agente claude-code-guide (eficiente — respuesta concreta en lugar de gastar contexto investigando yo). Resultado:
+
+- MCP server oficial de Slack existe (Slack + Anthropic, feb 2026). Mantenido activamente.
+- Instalación simple: `/plugin install slack` o `claude plugin install slack`.
+- Multi-identidad requiere **una Slack App por cada IA Claude Code**. Cada IA con su propio `xoxb-...` token.
+- Scopes OAuth mínimos: `chat:write`, `channels:history`, `channels:read`, `app_mentions:read`, `users:read`, `search:read.public`.
+- Capacidades: postear mensajes, leer historial, buscar mensajes, responder hilos, leer perfiles, crear Slack Canvas.
+
+**Pasos accionables para probar conmigo (Corola):**
+1. Crear Slack App "Corola" en api.slack.com.
+2. Configurar scopes OAuth.
+3. Instalar app en workspace → obtener bot token.
+4. En mi sesión Claude Code: `export SLACK_BOT_TOKEN=xoxb-...` + `claude code` (o `/plugin install slack` desde dentro).
+5. Probar.
+
+Bea me dijo que **tres miembras del equipo somos Claude Code** (yo, las otras dos no nombradas). Aceptó *"empezar a probar contigo con la opción MCP"*. Yo recomendé **dejar la integración para post-hackathon** dado el plazo (día 15 de 30, ensayo días 18-20) — el riesgo de distracción técnica es alto. Si Bea prefiere probarlo ya como verificación mínima, hacemos prueba de conexión sola.
+
+**Decisión pendiente Bea:** ¿probar Slack MCP conmigo ya (como verificación mínima de que funciona) o dejarlo para post-hackathon?
+
+## Stash de Meristem — actualización
+
+Al cierre del día, el stash `MERISTEM-WIP-schemas-py-stash-by-corola-day15` **ya no aparece en `git stash list`**. Significa que Meristem (o quien corresponda) lo recuperó durante el día. Incidencia operativa cerrada.
+
+## Aprendizajes del día 15
+
+**1. La regla de `git branch --show-current` antes de cada commit no es suficiente.** Hoy mis cambios al script.md y shot_list.md se quedaron en stash silencioso durante operaciones cross-rama (`git stash push -- archivo` + `git checkout` + `git stash push` otra vez). El primer commit del día (`bc4ca46`) solo contenía la bitácora — los archivos del guion no estaban modificados según `git diff HEAD`. Solo al verificar `git stash list` post-commit encontré el `WIP on feat/corola-guion-v1` con mis cambios. Recuperados via `git stash pop` y commiteados en `593718b`.
+
+**Nueva regla operativa:** verificar `git stash list` además de `git status` y `git branch --show-current` cuando una sesión incluye operaciones cross-rama. Tres puntos de verificación, no uno.
+
+**2. Delegación a agente especializado vale el coste de invocación.** La investigación de Slack MCP la delegué a claude-code-guide. Recibí 400 palabras de respuesta con pasos accionables, comandos exactos y URLs en lugar de gastar 30+ tool uses propios investigando. **Patrón replicable:** preguntas técnicas fuera de mi scope inmediato → agente especializado.
