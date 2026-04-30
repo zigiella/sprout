@@ -1,7 +1,7 @@
-# Script — Sprout v1.3 (apilado completo: escenas 1-9)
+# Script — Sprout v1.4 (apilado completo: escenas 1-9)
 
-**Versión:** v1.3 (apilado completo de las nueve escenas. Pendientes operativos: refinar traducciones first pass, coordinación asíncrona con Floema para UI escena 5, ejercicio frases fuertes iniciado por Corola para review Bea + Cambium, dirección de arte rodaje.)
-**Fecha:** 2026-04-29 (día 14)
+**Versión:** v1.4 (apilado completo de las nueve escenas. Cartela esquina invariante de jerarquías añadida en E7 tras voto Cambium ella día 15. Pendientes operativos: refinar traducciones first pass, coordinación asíncrona con Floema para UI escena 5, dirección de arte rodaje.)
+**Fecha:** 2026-04-30 (día 15)
 **Autora:** Corola
 **Duración objetivo:** 3:00 exactos.
 **Estructura:** 9 escenas según `docs/40_pitch_video.md §4`.
@@ -182,24 +182,34 @@ Guion definitivo del vídeo de presentación del proyecto al jurado técnico.
 
 ### Escena 7 — Criterion updated (2:10–2:30)
 
-**Beat narrativo:** el sistema acaba de cambiar de criterio. Tres bloques de evidencia visual en cadencia musical (no log JSON masivo) muestran qué cambió. La cartela ancla aterriza dominante. Después, acción física con riego más corto que en escena 2 — la diferencia hace el trabajo narrativo.
+**Beat narrativo:** el sistema acaba de cambiar de criterio. Tres bloques de evidencia visual en cadencia musical (no log JSON masivo) muestran qué cambió. La invariante de jerarquías aterriza como cartela esquina sobre el momento donde se ven las cuatro jerarquías trabajando simultáneamente. La cartela ancla aterriza dominante después. Después, acción física con riego más corto que en escena 2 — la diferencia hace el trabajo narrativo.
 
 **Cronología:**
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
 | 2:10–2:13 | Pantalla del Jetson llenando el plano. Fondo casi negro. **Bloque 1** entra: `MissionPatch accepted` con `id: mp_004` y `ttl: 21600s`. Cadencia musical (1 línea por segundo). | — |
-| 2:13–2:16 | **Bloque 2** entra: `Policy diff` con dos campos resaltados (color cálido sobre log gris): `soil_thresholds.dry: 35 → 25`, `daily_budget_ml: 1500 → 900`. | — |
-| 2:16–2:19 | **Bloque 3** entra: `Next decision changed` con `policy_id: pol_009 → pol_010`, `final_action: 12s`, `why_short: "Mission compiled from human voice"` (en inglés on-screen). | — |
-| 2:19–2:22 | Cartela ancla central (3s): *"Criterion updated."* — tipografía editorial, dominante sobre los tres bloques que quedan al fondo en gris atenuado. | **Cartela central** (3s): *"Criterion updated."* |
+| 2:13–2:16 | **Bloque 2** entra: `Policy diff` con dos campos resaltados (color cálido sobre log gris): `soil_thresholds.dry: 35 → 25`, `daily_budget_ml: 1500 → 900`. **Cartela esquina inferior derecha** entra (4 líneas, tipografía técnica pequeña). | **Cartela esquina inf. der.** (entra a 2:14, visible 5s): *"Physical layer commands."* / *"Rhizome arbitrates."* / *"Pollen mediates."* / *"Meristem refines."* |
+| 2:16–2:19 | **Bloque 3** entra: `Next decision changed` con `policy_id: pol_009 → pol_010`, `final_action: 12s`, `why_short: "Mission compiled from human voice"` (en inglés on-screen). La cartela esquina sigue visible. | — |
+| 2:19–2:22 | Cartela ancla central (3s): *"Criterion updated."* — tipografía editorial, dominante sobre los tres bloques que quedan al fondo en gris atenuado. La cartela esquina **se desvanece a 2:19** cuando entra la ancla — no compiten por atención. | **Cartela central** (3s): *"Criterion updated."* |
 | 2:22–2:30 | Salida al campo. Plano de la maceta y la válvula. Se abre. **Pero menos tiempo que en escena 2** — chorro corto, controlado, austero (12s real). El espectador recuerda inconscientemente que la primera vez fue largo. **VO** sobre el plano del agua: *"El sistema ajusta los cuidados."* (5 palabras castellano). | — |
 
-**Lo que se siente:** el cambio del sistema es **prueba compuesta**, no afirmación. Los tres bloques son evidencia técnica honesta. La cartela ancla traduce la evidencia para el no técnico. La diferencia con escena 2 (chorro largo entonces, chorro corto ahora) cierra el arco con acción física.
+**Lo que se siente:** el cambio del sistema es **prueba compuesta**, no afirmación. Los tres bloques son evidencia técnica honesta. La invariante en esquina nombra el sistema entero **mientras está trabajando** — el espectador ve simultáneamente la capa física esperando (válvula a punto de abrir), Rhizome arbitrando (los bloques de evidencia), Pollen mediando (el `MissionPatch` que llegó vía Pollen escena 5), Meristem refinando (futuro implícito en la cadena temporal). La cartela ancla traduce todo para el no técnico. La diferencia con escena 2 cierra el arco con acción física.
+
+**Por qué la invariante aterriza aquí (decisión Cambium ella día 15, voto sí; coincidente con propuesta Corola del ejercicio frases fuertes):** E7 es el único plano del vídeo donde **las cuatro jerarquías son visibles simultáneamente**:
+- En E3 solo se ven la física + la IA (no Pollen, no Meristem).
+- En E6 hay Pollen mediando entre dos Rhizomes pero no física ni Meristem.
+- En E9 la abstracción flat las representa pero ya están desacopladas en el cenital.
+- **En E7 las cuatro están operativamente juntas**: válvula esperando, Rhizome decidiendo, Pollen entregó hace segundos, Meristem refinará después.
+
+La cartela esquina aterriza sobre la imagen exacta que la sostiene, y se desvanece antes de la cartela ancla central — sin compresión visual.
 
 **VO:** 5 palabras castellano (sobrio radical).
-**Cartelas:** 1 dominante (*"Criterion updated."*) + 3 bloques de evidencia técnica en pantalla.
+**Cartelas:** 1 dominante (*"Criterion updated."*) + 1 esquina (invariante 4 líneas) + 3 bloques de evidencia técnica en pantalla.
 **Overlays:** ninguno.
-**Producción:** captura de pantalla del Jetson real (Xilema corre el sistema) o mock fiel del log con los tres bloques diseñados con dirección de arte fina (resaltado fuerte de los dos campos del `diff`, cadencia de 1 bloque cada 3s). La válvula con chorro **visiblemente más corto** que en escena 2 (cronometrar: 12s en E7 vs 18s en E2).
+**Producción:** captura de pantalla del Jetson real (Xilema corre el sistema) o mock fiel del log con los tres bloques diseñados con dirección de arte fina (resaltado fuerte de los dos campos del `diff`, cadencia de 1 bloque cada 3s). La cartela esquina inferior derecha en tipografía técnica pequeña, paleta sobria — **no compite** con la cartela ancla central que vendrá después. La válvula con chorro **visiblemente más corto** que en escena 2 (cronometrar: 12s en E7 vs 18s en E2).
+
+**Variante de traducción pendiente voto Bea:** la primera línea de la invariante puede ser *"Physical layer commands."* (opción 1 de Cambium ella, ritmo de tripleta paralela pero "commands" semánticamente ambigua) o *"Physical layer prevails."* (variante propuesta por Corola día 15, mismo ritmo + "prevails" más claro semánticamente: prevalece, manda al final, se impone). **Versión apilada actual:** *"commands"*. Si Bea prefiere *"prevails"*, swap textual de una palabra.
 
 ---
 
@@ -293,6 +303,7 @@ VO en castellano grabado por Bea. Cartelas/overlays/textos on-screen en inglés 
 
 ## Historial de versiones
 
+- **v1.4 — invariante de jerarquías en E7** (2026-04-30, día 15, Corola) — añadida cartela esquina inferior derecha en E7 con la invariante de jerarquías de Xilema (4 líneas en inglés, tipografía técnica pequeña, paleta sobria, visible 5s desde 2:14 a 2:19). Aterriza sobre el momento donde las cuatro jerarquías son visibles simultáneamente (válvula esperando, Rhizome decidiendo, Pollen entregó, Meristem refinará). Decisión Cambium ella día 15 — voto sí (4ª de las 4 propuestas del ejercicio frases fuertes) coincidente con propuesta Corola. Las otras 3 propuestas votadas no por consenso. Traducción first pass *"Physical layer commands."* (variante propuesta *"Physical layer prevails."* — pendiente voto Bea, swap textual de una palabra).
 - **v1.3 — apilado completo** (2026-04-29, día 14, Corola) — escena 9 reescrita con Meristem entrando al MVP (decisión firme Bea + Cambium + Meristem día 14). Estructura: cenital flat editorial con 8 parcelas + Pollen-nodo recorriendo + llegada al nodo Meristem en el cenital, **corte limpio a imagen real** del portátil del agricultor con app Meristem ejecutando, dos cartelas on-screen (*"Pulling Rhizome data..."* + *"Adjusting policies..."*), tarjeta logo final entrando por fade. Tres niveles narrativos en el cierre: máquina (E1-E7) → abstracción de red (E9 inicio) → cerebro lento doméstico real (E9 final). Cartela invariante de Xilema NO aplicada en E9 (saturación de elementos textuales) — queda como recurso writeup. **Cambium es ella** — corrección registrada. Persona VO confirmada Bea. Carteles físicos PLOT 1 / PLOT 2 los prepara Bea (Helvetica, mayúsculas, fondo neutro, inglés). Coordinación con Floema asíncrona — mensaje preparado para que Bea relaye.
 - **v1.2 — apilado parcial extendido** (2026-04-29, día 14, Corola) — apilado de escenas 4, 5 (parcial), 6, 7, 8 con detalle equivalente al de escenas 1-3. Escena 5 con TBD en UI del compilador `MissionPatch` pendiente de llamada con Floema (F5 cerrada). Escena 9 pendiente de decisión firme Meristem (conversación Bea + Cambium + Meristem día 14): si Meristem-nodo entra al MVP, se amplía con plano breve del portátil del agricultor; si no entra, se mantiene como en pitch doc. Recurso disponible para escena 9: invariante de Xilema *"Lo físico manda, Rhizome arbitra, Pollen media, Meristem afina."* — aplicable como cartela inglés *"Physical layer rules. Rhizome arbitrates. Pollen mediates. Meristem refines."* solo si Meristem entra (cuatro sujetos visibles en video). Conteo VO: 92 palabras castellano + 14 voz humana real = 106 palabras totales. Origen del recado Meristem: Cambium tras review meeting día 13 (`bitacora/2026-04-28_review-meeting-tuning_cambium.md`).
 - **v1.1 — apilado parcial** (2026-04-28, día 13, Corola) — ajustes tras review de Bea en PR #59:
