@@ -7,6 +7,7 @@ con todos los campos requeridos. **No decide nada**, solo combina.
 
 from __future__ import annotations
 
+import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -54,7 +55,8 @@ def compose_policy(
         )
 
     valid_until = datetime.now(timezone.utc) + timedelta(days=VALID_DAYS_DEFAULT)
-    policy_id = f"pkt_meristem_{int(valid_until.timestamp())}"
+    # uuid para evitar colisiones cuando dos POSTs caen en el mismo segundo.
+    policy_id = f"pkt_meristem_{int(valid_until.timestamp())}_{uuid.uuid4().hex[:6]}"
 
     rules: dict[str, Any] = {}
     rules.update(evaluation.suggested_rules)
