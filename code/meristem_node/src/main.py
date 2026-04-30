@@ -1,10 +1,9 @@
 """FastAPI app de Meristem-nodo.
 
-Día 14: esqueleto stubeado. Endpoints reales con lógica e integración
-LLM se construyen día 15-17. Demo-ready día 18.
+Día 15: lógica determinística (Evaluator + persistencia SQLite). Día
+16 sustituye el rationale stub por LLM Gemma 4 E4B + tool calling.
 
-Levanta en :13000 por defecto (puerto distinto al adapter de tuning
-en :12000 y al llama-server :8080 para que coexistan en demo si toca).
+Levanta en :13000 por defecto.
 
 Uso:
     cd code/meristem_node
@@ -17,13 +16,19 @@ Visitar http://localhost:13000/docs para OpenAPI/Swagger.
 from __future__ import annotations
 
 import os
-from datetime import datetime, timedelta, timezone
+import uuid
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
 
+from . import ingest as ingest_service
+from . import persistence
+from .evaluator import evaluate
+from .policy_composer import compose_policy
 from .schemas import (
+    Action,
     Bundle,
+    DecisionRecord,
     PolicyPacket,
     VisitResponse,
     VisitResponsePayload,
@@ -32,96 +37,160 @@ from .schemas import (
 
 PORT = int(os.environ.get("MERISTEM_NODE_PORT", "13000"))
 
-app = FastAPI(
-    title="Meristem-nodo (Sprout)",
-    version="0.1.0-dev",
-    description=(
-        "Slow brain doméstico de Sprout. Vive en portátil casero del "
-        "agricultor o cooperativa. Ingiere bundles que Pollen trae de "
-        "Rhizome y emite PolicyPacket actualizado. Día 14 esqueleto "
-        "stubeado; lógica real día 15-17."
-    ),
-)
+
+# ---------------------------------------------------------------------------
+# Stub de rationale del LLM (día 15). Día 16 lo sustituye llamada real.
+# ---------------------------------------------------------------------------
 
 
-# In-memory storage stub (día 14). Día 15 sustituido por SQLite.
-_LATEST_POLICY: PolicyPacket | None = None
-_BUNDLES_RECEIVED: list[Bundle] = []
+def _stub_rationale(rationale_seed: str) -> tuple[str, str]:
+    """Genera rationale técnico + prosa al operador desde el seed.
 
+    Día 15: stub determinístico (texto fijo según seed). Día 16: cliente
+    al adapter llamacpp con E4B + tool calling.
 
-@app.get("/health")
-async def health() -> dict[str, Any]:
-    return {
-        "status": "ok",
-        "version": "0.1.0-dev",
-        "port": PORT,
-        "stubbed": True,
-        "bundles_received_total": len(_BUNDLES_RECEIVED),
-        "latest_policy_emitted": _LATEST_POLICY.policy_id if _LATEST_POLICY else None,
-    }
-
-
-@app.post("/visit", response_model=VisitResponse)
-async def visit(bundle: Bundle) -> VisitResponse:
-    """Pollen entrega bundle, recibe PolicyPacket actualizado.
-
-    Día 14 stub: persiste bundle en memoria, devuelve placeholder
-    PolicyPacket con `mode_default=normal` y rationale fijo. Día 15-17
-    sustituido por flujo real:
-
-      1. IngestService valida y persiste bundle (SQLite)
-      2. Evaluator aplica regla determinista (4 reglas)
-      3. LLM Gemma 4 E4B emite rationale (con tool calling si aplica)
-      4. PolicyComposer construye PolicyPacket válido
-      5. Persiste policy + responde
+    Returns:
+        (rationale_tecnico, rationale_for_operator)
     """
-    _BUNDLES_RECEIVED.append(bundle)
+    if not rationale_seed:
+        return ("Policy actualizada.", "Tu Rhizome sigue funcionando bien.")
 
-    # STUB: confirma policy activa con valid_until +7 días
-    valid_until = datetime.now(timezone.utc) + timedelta(days=7)
-    new_policy_id = f"pkt_meristem_{int(valid_until.timestamp())}"
+    seed = rationale_seed.strip()
+    seed_lower = seed.lower()
+    if "limpio" in seed_lower or "estable" in seed_lower:
+        operator = (
+            "Tu Rhizome sigue funcionando bien. He extendido la política "
+            "activa una semana más."
+        )
+    elif "conservativ" in seed_lower or "baja confianza" in seed_lower:
+        operator = (
+            "He notado evidencia ambigua en tu última visita. Pongo el "
+            "Rhizome en modo prudente unos días."
+        )
+    elif "alert" in seed_lower or "emergencia" in seed_lower:
+        operator = (
+            "Hay alerta persistente en el nodo. Modo ALERTA hasta que "
+            "revises a mano. No se ejecutan riegos automáticos."
+        )
+    else:
+        operator = "Política actualizada según los datos de la visita."
 
-    policy = PolicyPacket(
-        policy_id=new_policy_id,
-        target_node_id=bundle.target_rhizome_id,
-        valid_until=valid_until,
-        mode_default="normal",
-        rules={"placeholder": True},
-        rationale=(
-            "[STUB día 14] Policy activa confirmada con valid_until +7 días. "
-            "Lógica real arranca día 15."
+    return (seed[:500], operator)
+
+
+# ---------------------------------------------------------------------------
+# App
+# ---------------------------------------------------------------------------
+
+
+def _build_app() -> FastAPI:
+    persistence.init_db()
+
+    app = FastAPI(
+        title="Meristem-nodo (Sprout)",
+        version="0.1.0",
+        description=(
+            "Slow brain doméstico de Sprout. Vive en portátil casero del "
+            "agricultor o cooperativa. Ingiere bundles que Pollen trae de "
+            "Rhizome y emite PolicyPacket actualizado. Día 15: lógica "
+            "determinística + persistencia SQLite. Día 16: LLM Gemma 4 "
+            "E4B + tool calling integrado."
         ),
     )
 
-    global _LATEST_POLICY
-    _LATEST_POLICY = policy
+    @app.get("/health")
+    async def health() -> dict[str, Any]:
+        return {
+            "status": "ok",
+            "version": "0.1.0",
+            "port": PORT,
+            "stubbed_llm": True,  # día 15: rationale es stub
+            "bundles_received_total": persistence.count_bundles(),
+            "policies_emitted_total": persistence.count_policies(),
+            "decisions_by_rule": persistence.count_decisions_by_rule(),
+        }
 
-    return VisitResponse(
-        status="ok",
-        reason_code=None,
-        payload=VisitResponsePayload(
-            policy_packet=policy,
-            rationale_for_operator=(
-                "Tu Rhizome sigue funcionando bien. He extendido la "
-                "política activa una semana más."
+    @app.post("/visit", response_model=VisitResponse)
+    async def visit(bundle: Bundle) -> VisitResponse:
+        """Pollen entrega bundle. Pipeline:
+
+        1. Ingest (validación + persistencia)
+        2. Evaluator (4 reglas determinísticas)
+        3a. Si REFUSE → respuesta envelope sin policy
+        3b. Si OK → componer PolicyPacket + rationale + persistir
+        4. Devolver VisitResponse
+        """
+        # 1. Ingest
+        ingest_service.ingest(bundle)
+
+        # 2. Evaluator
+        evaluation = evaluate(bundle)
+
+        # 3. Branch por action
+        if evaluation.action == Action.REFUSE:
+            return VisitResponse(
+                status="refuse",
+                reason_code=evaluation.reason_code,
+                payload=None,
+            )
+
+        # 3b: componer policy + rationale
+        rationale_tecnico, rationale_operador = _stub_rationale(
+            evaluation.rationale_seed
+        )
+        policy = compose_policy(bundle, evaluation, rationale_tecnico)
+
+        # 4. Persistir policy y decision
+        persistence.insert_policy(policy, evidence_refs=evaluation.evidence_refs)
+        persistence.insert_decision(
+            DecisionRecord(
+                decision_id=f"dec_{uuid.uuid4().hex[:12]}",
+                bundle_id=bundle.bundle_id,
+                policy_id=policy.policy_id,
+                rule_applied=evaluation.action,
+                reason_code=evaluation.reason_code,
+                llm_metrics={"stubbed": True, "day": 15},
+            )
+        )
+
+        return VisitResponse(
+            status="ok",
+            reason_code=evaluation.reason_code,
+            payload=VisitResponsePayload(
+                policy_packet=policy,
+                rationale_for_operator=rationale_operador,
+                evidence_refs=evaluation.evidence_refs,
             ),
-            evidence_refs=[bundle.bundle_id],
-        ),
-    )
+        )
+
+    @app.get("/policy/latest", response_model=PolicyPacket | None)
+    async def policy_latest() -> PolicyPacket | None:
+        """Última policy emitida (debug/demo)."""
+        return persistence.get_latest_policy_global()
+
+    @app.get("/policy/{policy_id}", response_model=PolicyPacket)
+    async def policy_by_id(policy_id: str) -> PolicyPacket:
+        """Trazabilidad: policy concreta por id."""
+        policy = persistence.get_policy_by_id(policy_id)
+        if not policy:
+            raise HTTPException(
+                status_code=404, detail=f"policy_id {policy_id!r} not found"
+            )
+        return policy
+
+    @app.get("/policy/by-target/{target_node_id}", response_model=PolicyPacket | None)
+    async def policy_by_target(target_node_id: str) -> PolicyPacket | None:
+        """Última policy emitida para un nodo Rhizome concreto.
+
+        Útil para Pollen: cuando va a visitar a Rhizome X, consulta aquí
+        si hay policy nueva pendiente de transportar.
+        """
+        return persistence.get_latest_policy_for(target_node_id)
+
+    return app
 
 
-@app.get("/policy/latest", response_model=PolicyPacket | None)
-async def policy_latest() -> PolicyPacket | None:
-    """Devuelve la última policy emitida (debug/demo)."""
-    return _LATEST_POLICY
-
-
-@app.get("/policy/{policy_id}", response_model=PolicyPacket)
-async def policy_by_id(policy_id: str) -> PolicyPacket:
-    """Trazabilidad: consulta policy por id (día 14 stub: solo la última)."""
-    if _LATEST_POLICY and _LATEST_POLICY.policy_id == policy_id:
-        return _LATEST_POLICY
-    raise HTTPException(status_code=404, detail=f"policy_id {policy_id!r} not found")
+app = _build_app()
 
 
 def main() -> None:

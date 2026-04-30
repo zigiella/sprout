@@ -8,6 +8,7 @@ serialización compatible.
 
 from __future__ import annotations
 
+import uuid
 from datetime import datetime
 from enum import Enum
 from typing import Any, Literal
@@ -33,7 +34,7 @@ class Bundle(BaseModel):
     - source_pollen_id: id del Pollen que transporta (trazabilidad)
     """
 
-    bundle_id: str = Field(default_factory=lambda: f"b_{int(datetime.utcnow().timestamp())}")
+    bundle_id: str = Field(default_factory=lambda: f"b_{uuid.uuid4().hex[:12]}")
     received_at: datetime = Field(default_factory=datetime.utcnow)
     source_pollen_id: str
     target_rhizome_id: str
