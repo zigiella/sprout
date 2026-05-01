@@ -34,10 +34,27 @@ import net.sprout.pollen.schemas.PolicyPacket
 import net.sprout.pollen.ui.VisitarMeristemScreen
 import net.sprout.pollen.ui.VisitarRhizomeScreen
 import net.sprout.pollen.ui.AuditLogScreen
+import net.sprout.pollen.ui.HomeScreen
 import androidx.compose.ui.res.stringResource
 import net.sprout.pollen.R
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
+
+enum class AppScreen {
+    HOME, MERISTEM, RHIZOME_DETAIL, CHAT, AUDIT
+}
 
 class MainActivity : ComponentActivity() {
 
@@ -69,13 +86,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    var selectedTab by remember { mutableStateOf(0) }
-                    val tabs = listOf(
-                        stringResource(R.string.tab_chat), 
-                        stringResource(R.string.tab_rhizome), 
-                        stringResource(R.string.tab_meristem), 
-                        stringResource(R.string.tab_audit)
-                    )
+                    var currentScreen by remember { mutableStateOf(AppScreen.HOME) }
+                    var selectedRhizomeId by remember { mutableStateOf("") }
                     
                     var globalSnapshot by remember { mutableStateOf<RhizomeSnapshot?>(null) }
                     var globalReceipts by remember { mutableStateOf<List<DecisionReceipt>>(emptyList()) }
@@ -95,46 +107,74 @@ class MainActivity : ComponentActivity() {
                     }
 
                     Column(modifier = Modifier.fillMaxSize()) {
-                        TabRow(selectedTabIndex = selectedTab) {
-                            tabs.forEachIndexed { index, title ->
-                                Tab(
-                                    selected = selectedTab == index,
-                                    onClick = { selectedTab = index },
-                                    text = { Text(title) }
-                                )
+                        if (currentScreen != AppScreen.HOME) {
+                            Row(modifier = Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                                IconButton(onClick = { currentScreen = AppScreen.HOME }) {
+                                    Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                                }
+                                Text("Volver a Inicio", style = MaterialTheme.typography.titleMedium)
                             }
                         }
-                        
-                        if (selectedTab == 0) {
-                            val uiState = viewModel.uiState.collectAsState().value
-                            ChatScreen(
-                                uiState = uiState,
-                                onPromptChanged = { viewModel.onPromptChanged(it) },
-                                onThinkingToggled = { viewModel.onThinkingToggled(it) },
-                                onSend = { viewModel.send() },
-                                onStartVoice = { viewModel.startListening() },
-                                onArchetypeSelected = { viewModel.onArchetypeSelected(it) }
-                            )
-                        } else if (selectedTab == 1) {
-                            VisitarRhizomeScreen(
-                                onDataFetched = { snap, rec -> 
-                                    globalSnapshot = snap
-                                    globalReceipts = rec 
-                                }
-                            )
-                        } else if (selectedTab == 2) {
-                            VisitarMeristemScreen(
-                                currentSnapshot = globalSnapshot,
-                                currentReceipts = globalReceipts,
-                                onPolicyDownloaded = { policy ->
-                                    globalPolicy = policy
-                                    if (policy.rules.requireVisionConfirmation) {
-                                        showVisionAlert = true
+
+                        when (currentScreen) {
+                            AppScreen.HOME -> {
+                                HomeScreen(
+                                    onNavigateToRhizome = { rhId ->
+                                        selectedRhizomeId = rhId
+                                        currentScreen = AppScreen.RHIZOME_DETAIL
+                                    },
+                                    onNavigateToMeristem = {
+                                        currentScreen = AppScreen.MERISTEM
                                     }
+                                )
+                            }
+                            AppScreen.CHAT -> {
+                                val uiState = viewModel.uiState.collectAsState().value
+                                Text("Contexto: $selectedRhizomeId", modifier = Modifier.padding(start=16.dp), color=MaterialTheme.colorScheme.primary)
+                                ChatScreen(
+                                    uiState = uiState,
+                                    onPromptChanged = { viewModel.onPromptChanged(it) },
+                                    onThinkingToggled = { viewModel.onThinkingToggled(it) },
+                                    onSend = { viewModel.send() },
+                                    onStartVoice = { viewModel.startListening() },
+                                    onArchetypeSelected = { viewModel.onArchetypeSelected(it) }
+                                )
+                            }
+                            AppScreen.RHIZOME_DETAIL -> {
+                                Column {
+                                    Text("Parcela Seleccionada: $selectedRhizomeId", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleLarge)
+                                    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                                        Button(onClick = { currentScreen = AppScreen.CHAT }, modifier = Modifier.weight(1f)) {
+                                            Text("Chatear con Pollen")
+                                        }
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Button(onClick = { currentScreen = AppScreen.AUDIT }, modifier = Modifier.weight(1f)) {
+                                            Text("Historial")
+                                        }
+                                    }
+                                    VisitarRhizomeScreen(
+                                        onDataFetched = { snap, rec -> 
+                                            globalSnapshot = snap
+                                            globalReceipts = rec 
+                                        }
+                                    )
                                 }
-                            )
-                        } else {
-                            AuditLogScreen(receipts = globalReceipts, policy = globalPolicy)
+                            }
+                            AppScreen.MERISTEM -> {
+                                VisitarMeristemScreen(
+                                    currentSnapshot = globalSnapshot,
+                                    currentReceipts = globalReceipts,
+                                    onPolicyDownloaded = { policy ->
+                                        globalPolicy = policy
+                                        if (policy.rules.requireVisionConfirmation) {
+                                            showVisionAlert = true
+                                        }
+                                    }
+                                )
+                            }
+                            AppScreen.AUDIT -> {
+                                AuditLogScreen(receipts = globalReceipts, policy = globalPolicy)
+                            }
                         }
                     }
                 }

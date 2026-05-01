@@ -6,6 +6,11 @@
     <string name="tab_meristem">Visitar Meristem</string>
     <string name="tab_audit">Historial</string>
 
+    <!-- Home -->
+    <string name="home_title">Menú Principal Pollen</string>
+    <string name="home_my_plots">Mis Parcelas (Rhizomes)</string>
+    <string name="home_home_node">Cerebro Doméstico (Meristem)</string>
+
     <!-- Chat -->
     <string name="chat_placeholder">Escribe un mensaje...</string>
     <string name="chat_voice_start">Escuchar voz</string>

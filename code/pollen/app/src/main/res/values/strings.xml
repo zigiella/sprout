@@ -6,6 +6,11 @@
     <string name="tab_meristem">Meristem (Home)</string>
     <string name="tab_audit">Audit Log</string>
 
+    <!-- Home -->
+    <string name="home_title">Pollen Main Menu</string>
+    <string name="home_my_plots">My Plots (Rhizomes)</string>
+    <string name="home_home_node">Home Node (Meristem)</string>
+
     <!-- Chat -->
     <string name="chat_placeholder">Type a message...</string>
     <string name="chat_voice_start">Start listening</string>
