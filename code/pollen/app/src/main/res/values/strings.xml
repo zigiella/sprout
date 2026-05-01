@@ -1,38 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Pollen</string>
-    <string name="tab_chat">Pollen Chat</string>
-    <string name="tab_rhizome">Rhizome (Field)</string>
-    <string name="tab_meristem">Meristem (Home)</string>
-    <string name="tab_audit">Audit Log</string>
 
-    <!-- Home -->
-    <string name="home_title">Pollen App (Sprout system)</string>
-    <string name="home_welcome">Welcome to the field. Select a node to begin.</string>
-    <string name="home_my_plots">My Plots (Rhizomes)</string>
-    <string name="home_home_node">Home Node (Meristem)</string>
+    <!-- Header / nav -->
+    <string name="every_event_receipt">Every event leaves a receipt.</string>
+    <string name="nearby_rhizomes">Nearby rhizomes</string>
+    <string name="meristem_sub">Slow brain · weekly handoff</string>
+    <string name="physical_prevails">Physical layer prevails. Rhizome arbitrates. Pollen mediates. Meristem refines.</string>
 
-    <!-- Chat -->
-    <string name="chat_placeholder">Type a message...</string>
-    <string name="chat_voice_start">Start listening</string>
-    <string name="chat_send">Send</string>
+    <!-- Status -->
+    <string name="connected">Connected</string>
+    <string name="offline">Offline</string>
+    <string name="stale">Stale</string>
+    <string name="syncing">Syncing</string>
+    <string name="blocked">Blocked</string>
+    <string name="expired">Expired</string>
+    <string name="validated">Validated</string>
+    <string name="ai_evidence_only">evidence-only</string>
 
-    <!-- Rhizome -->
-    <string name="rhizome_connected">Connected to Rhizome</string>
-    <string name="rhizome_status">Status</string>
-    <string name="rhizome_snapshot">Local Snapshot</string>
-    <string name="rhizome_tank">Tank Level</string>
-    <string name="rhizome_soil">Soil Moisture A/B</string>
-    <string name="rhizome_receipts">Latest Decision Receipts</string>
+    <!-- Visit console -->
+    <string name="visit_connect">Connect to rhizome</string>
+    <string name="visit_snapshot">Pull snapshot</string>
+    <string name="visit_receipts">Sync receipts</string>
+    <string name="visit_action">Choose action</string>
 
-    <!-- Meristem -->
-    <string name="meristem_connected">Connected to Meristem (Home)</string>
-    <string name="meristem_download_data">1. Download Field Data</string>
-    <string name="meristem_upload_policy">2. Fetch New Policy</string>
-    <string name="meristem_btn_upload">Transfer to Meristem</string>
-    <string name="meristem_btn_download">Download Updated Policy</string>
-
-    <!-- Notifications -->
-    <string name="notif_vision_title">Vision Confirmation Required</string>
-    <string name="notif_vision_desc">The active policy requires a manual vision confirmation on the field before watering starts.</string>
+    <!-- Mission compiler -->
+    <string name="mission_voice_note">Voice note</string>
+    <string name="mission_compiled_patch">Compiled patch</string>
+    <string name="mission_acknowledged">Mission acknowledged.</string>
+    <string name="mission_review_before_send">Review before sending to rhizome.</string>
+    <string name="send">Send</string>
+    <string name="last_decision">Last decision</string>
+    <string name="safe_envelope">Within safe envelope</string>
+    <string name="active_mission">Active mission</string>
+    <string name="ask_placeholder">What happened since last visit?</string>
+    <string name="budget_cap">budget_cap_ml</string>
+    <string name="watering_window">watering_window</string>
 </resources>
