@@ -7,7 +7,8 @@
     <string name="tab_audit">Audit Log</string>
 
     <!-- Home -->
-    <string name="home_title">Pollen Main Menu</string>
+    <string name="home_title">Pollen App (Sprout system)</string>
+    <string name="home_welcome">Welcome to the field. Select a node to begin.</string>
     <string name="home_my_plots">My Plots (Rhizomes)</string>
     <string name="home_home_node">Home Node (Meristem)</string>
 

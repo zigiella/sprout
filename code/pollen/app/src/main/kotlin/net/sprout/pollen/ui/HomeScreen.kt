@@ -33,6 +33,8 @@ fun HomeScreen(
                 Icon(Icons.Default.Language, contentDescription = "Cambiar Idioma")
             }
         }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(stringResource(R.string.home_welcome), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
         Spacer(modifier = Modifier.height(32.dp))
 

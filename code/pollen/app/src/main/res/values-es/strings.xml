@@ -7,7 +7,8 @@
     <string name="tab_audit">Historial</string>
 
     <!-- Home -->
-    <string name="home_title">Menú Principal Pollen</string>
+    <string name="home_title">Pollen App (Sprout system)</string>
+    <string name="home_welcome">Bienvenido al campo. Selecciona un nodo para empezar.</string>
     <string name="home_my_plots">Mis Parcelas (Rhizomes)</string>
     <string name="home_home_node">Cerebro Doméstico (Meristem)</string>
 
