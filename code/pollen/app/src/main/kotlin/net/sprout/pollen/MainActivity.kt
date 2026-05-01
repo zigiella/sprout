@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
         val viewModel = ChatViewModel(chatService, sessionManager, voiceInfra, "/data/local/tmp/gemma-4-E4B-it.litertlm")
 
         setContent {
-            MaterialTheme {
+            net.sprout.pollen.ui.theme.PollenTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
