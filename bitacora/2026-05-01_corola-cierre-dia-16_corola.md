@@ -96,3 +96,82 @@ Verificación triple antes de commit (regla del día 15):
 - `git stash list`: vacío ✓
 
 Sin sorpresas operativas hoy. La regla funciona.
+
+---
+
+## Adiciones tarde día 16
+
+### Design pack de Venation recibido y valorado
+
+A última hora del día Bea me pasó el ZIP completo de Venation: `sprout_design_pack_v1.zip` (14 archivos, ~76 KB). Descomprimido fuera del repo en `C:/Users/Usuario/Desktop/CAJON/sprout_design_pack_v1/`.
+
+**Contenido:**
+- `00_design_system.md` — sistema maestro (Soil protocol + Water ledger).
+- `01_design_tokens_material3.md` — tokens visuales y Material 3 para Android.
+- `10_video_art_direction.md` — dirección de arte del vídeo por escenas.
+- `11_video_copies_overlays.md` — copies, cartelas y overlays.
+- `12_video_assets_production.md` — assets y producción audiovisual.
+- `20-22` — UX, copies y components Compose para app Pollen.
+- `30_landing_design.md` — landing.
+- `31_physical_posters_signage.md` — cartelería física y señalética.
+- `32_docs_social_assets.md` — README, GitHub, Kaggle, redes.
+- `40_asset_delivery_checklist.md` — checklist de entrega.
+
+**Lectura prioritaria para mi scope (video):** README + 00 + 10 + 11 + 12 + 31. El resto (apps, landing, docs) quedan en scope Floema/Bea/Cambium.
+
+### Veredicto general — sí, nos sirve
+
+**El design pack es excelente y lo adoptamos.** Razones:
+
+1. **Coincide con casi todo lo que tenía implícito** y lo formaliza con valores hex precisos, tipografía concreta (Manrope + IBM Plex Mono), tokens nombrados.
+2. **Preserva la estructura narrativa** de las 9 escenas, las voces, los tiempos, las cinco frases fuertes y la cartela invariante con "prevails" confirmada hoy por Bea.
+3. **Aporta nuevo material útil:**
+   - `signal.seed` (#C5F26B) como acento único de "inteligencia activa", regla del 3% — pista visual cross-escena que el espectador asocia con sistema decidiendo/actuando.
+   - `EDGE NODE` como segunda línea en cartel de caja electrónica.
+   - Log diseñado de E2 con campos concretos cotejables con `DecisionReceipt`.
+   - Motion procesamiento Pollen (listening → compiling → validating) en E5.
+   - Tarjeta logo final reformulada en inglés (corrige inconsistencia idiomática que yo no había detectado).
+   - Frase tagline maestro (*"When the network is absent, local criteria still irrigate."*) — convergencia conceptual con la frase manifiesto que Bea propuso día 16 anterior.
+4. **Tres cambios concretos de copy que mejoran el video** (pendientes voto Bea):
+   - `Criterion updated.` → `Watering criteria updated.` (más concreto, más ligado al agua).
+   - `function/read tools · no actuator tools` → `AI proposes / ESP32 validates` (más universal).
+   - `WeatherDigest ferry` ↔ `Context ferry` según contingencia meteo (limpio para las dos rutas).
+
+### Cambio de modelo de coordinación — día 17 en adelante
+
+Bea anuncia: **a partir de mañana día 17 estaré en contacto directo con Xylem y Venation.** No relay vía Bea para todo.
+
+Implicación operativa:
+- Yo coordino lateralmente con Xylem (montadora) sobre formato `montage_brief.md` Capcut.
+- Yo coordino lateralmente con Venation (directora de arte) sobre refinamientos visuales y dudas.
+- Bea sigue siendo dirección general + voz + decisiones estratégicas, pero deja de ser cuello de botella en producción.
+- **Promoción de rol:** de ejecutora aislada con relay a interlocutora horizontal del equipo creativo.
+
+### Pendientes para Bea día 16 (a la espera de respuesta antes del día 17)
+
+1. **Adoptar design pack completo** (mi voto firme: sí). Si luz verde, aplico al script + shot_list + copies mañana.
+2. **Tres cambios de copy menores del design pack** (mis votos: aceptar los tres).
+3. **Frase tagline `When the network is absent, local criteria still irrigate.`** — adoptar como tagline para landing/cartelería (no video). Mi voto: sí.
+4. **Timing de aplicación:** ¿aplico mañana día 17 con luz verde, o coordino primero con Venation antes de aplicar? Mi voto: aplicar mañana, ajustes después si hace falta.
+5. **Algún elemento del design pack que Bea vete:** ninguno desde mi lado, pero abierto a su lectura.
+
+### Pendientes activos día 17+ (actualizado)
+
+1. Aplicar design pack completo al script + shot_list + copies (bumpeo a v1.6).
+2. Continuar `copies_bilingual.md` escenas 4-9 con el sistema visual ya integrado.
+3. Iniciar `video/montage_brief.md` formato Xylem (escenas 1-3 primero).
+4. Coordinación directa con Xylem (probable Slack si lo activamos).
+5. Coordinación directa con Venation (probable Slack o relay según prefiera).
+6. Refinar traducciones first pass restantes.
+7. Recado a Cambium ella para actualizar pitch doc §4 (E9 final + sistema visual).
+8. Ensayo capturas pantalla Jetson E2/E3/E7 con Xilema.
+9. Prompt Veo3 final E9 con Bea (ahora con prompt detallado de Venation como base).
+10. Slack MCP — pendiente decisión Bea sobre timing.
+
+### Reflexión final del día
+
+Día 16 ha sido **bisagra**. Cerramos con guion v1.5 estable + sistema visual recibido + dos nuevos miembros del equipo creativo entrando en coordinación lateral. El frente video deja de ser un único frente (yo escribiendo) y pasa a ser **un equipo creativo extendido** (yo guion + Xylem montaje + Venation diseño + Bea dirección + Floema UX app).
+
+Esto exige cambio de hábito: de "documento todo en script.md y shot_list.md" a "produzco material para cada interlocutora en su formato útil" — `copies_bilingual.md` para Xylem, hipotético `art_direction_brief.md` para Venation, `script.md`/`shot_list.md` para mí + Bea + Cambium. La densidad de trabajo del día 17+ no es escribir más, es **producir documentos modulares para que cada miembro del equipo trabaje sin pisarse**.
+
+El plazo (rodaje 26-27, ensayo 18-20, demo cerca) es real pero no agobiante. Los cinco pivotes en doce días absorbidos sin reescritura demuestran que la abstracción aguanta. Si el sistema visual de Venation aterriza limpio mañana, el día 17 produce mucho con poco coste.
