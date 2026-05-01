@@ -39,6 +39,8 @@ from .schemas import (
     DecisionRecord,
     EvaluationResult,
     PolicyPacket,
+    StatusResponse,
+    TargetStatus,
     VisitResponse,
     VisitResponsePayload,
 )
@@ -152,7 +154,26 @@ def _build_app() -> FastAPI:
             "bundles_received_total": persistence.count_bundles(),
             "policies_emitted_total": persistence.count_policies(),
             "decisions_by_rule": persistence.count_decisions_by_rule(),
+            "targets_known": persistence.list_known_targets(),
         }
+
+    @app.get("/status", response_model=StatusResponse)
+    async def status() -> StatusResponse:
+        """Vista consolidada multi-Rhizome.
+
+        Para cada Rhizome conocido (que ha enviado al menos un bundle),
+        devuelve resumen: última policy + modo + reason_code + edad +
+        contadores. Pensado para demo MVP donde Meristem gestiona
+        rhizome_01 + rhizome_02 simultáneos en el mismo hardware.
+        """
+        targets_known = persistence.list_known_targets()
+        targets: list[TargetStatus] = []
+        for t in targets_known:
+            summary = persistence.get_target_summary(t)
+            if summary is None:
+                continue  # defensivo, no debería pasar
+            targets.append(TargetStatus(**summary))
+        return StatusResponse(targets_known=targets_known, targets=targets)
 
     @app.post("/visit", response_model=VisitResponse)
     async def visit(bundle: Bundle) -> VisitResponse:
