@@ -35,4 +35,12 @@
     <string name="ask_placeholder">What happened since last visit?</string>
     <string name="budget_cap">budget_cap_ml</string>
     <string name="watering_window">watering_window</string>
+
+    <!-- Restored strings -->
+    <string name="home_title">Pollen App (Sprout system)</string>
+    <string name="home_welcome">Welcome to the field. Select a node to begin.</string>
+    <string name="home_my_plots">My Plots (Rhizomes)</string>
+    <string name="home_home_node">Home Node (Meristem)</string>
+    <string name="notif_vision_title">Vision Confirmation Required</string>
+    <string name="notif_vision_desc">The active policy requires a manual vision confirmation on the field before watering starts.</string>
 </resources>

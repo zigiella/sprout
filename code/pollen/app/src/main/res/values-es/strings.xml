@@ -31,4 +31,12 @@
     <string name="ask_placeholder">¿Qué ha pasado desde mi última visita?</string>
     <string name="budget_cap">budget_cap_ml</string>
     <string name="watering_window">watering_window</string>
+
+    <!-- Restored strings -->
+    <string name="home_title">Pollen App (Sprout system)</string>
+    <string name="home_welcome">Bienvenido al campo. Selecciona un nodo para empezar.</string>
+    <string name="home_my_plots">Mis Parcelas (Rhizomes)</string>
+    <string name="home_home_node">Cerebro Doméstico (Meristem)</string>
+    <string name="notif_vision_title">Confirmación Visual Requerida</string>
+    <string name="notif_vision_desc">La política activa exige que el operario confirme visualmente el estado del campo antes de regar.</string>
 </resources>
