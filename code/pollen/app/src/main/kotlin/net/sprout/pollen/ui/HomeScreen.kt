@@ -27,53 +27,88 @@ fun HomeScreen(
     val context = LocalContext.current
     
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        // Header
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.home_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.home_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
             IconButton(onClick = { toggleLanguage(context) }) {
-                Icon(Icons.Default.Language, contentDescription = "Cambiar Idioma")
+                Icon(Icons.Default.Language, contentDescription = "Cambiar Idioma", tint = MaterialTheme.colorScheme.onBackground)
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(stringResource(R.string.home_welcome), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(stringResource(R.string.home_my_plots), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
-        Spacer(modifier = Modifier.height(8.dp))
+        // JurisdictionBanner
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = stringResource(R.string.every_event_receipt),
+                modifier = Modifier.padding(12.dp),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onTertiaryContainer
+            )
+        }
         
-        Button(
-            onClick = { onNavigateToRhizome("Rhizome_01") },
-            modifier = Modifier.fillMaxWidth().height(56.dp)
-        ) {
-            Icon(Icons.Default.Nature, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Rhizome_01 (Parcela Norte)")
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(
-            onClick = { onNavigateToRhizome("Rhizome_02") },
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
-        ) {
-            Icon(Icons.Default.Nature, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Rhizome_02 (Parcela Sur)")
-        }
+        Spacer(modifier = Modifier.height(24.dp))
 
-        Spacer(modifier = Modifier.height(32.dp))
-        Divider()
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(stringResource(R.string.home_home_node), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+        // SectionLabel
+        Text(
+            text = "${stringResource(R.string.nearby_rhizomes).uppercase()} · 2", 
+            style = MaterialTheme.typography.labelSmall, 
+            color = MaterialTheme.colorScheme.outline
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        
+        // NodeCards
+        NodeCard(title = "RHIZOME_01", subtitle = "Parcela Norte", onClick = { onNavigateToRhizome("Rhizome_01") })
         Spacer(modifier = Modifier.height(8.dp))
-        Button(
+        NodeCard(title = "RHIZOME_02", subtitle = "Parcela Sur", onClick = { onNavigateToRhizome("Rhizome_02") })
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        // MeristemCard
+        Card(
             onClick = onNavigateToMeristem,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Icon(Icons.Default.Home, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Meristem (Ordenador Central)")
+            Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Home, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                Spacer(modifier = Modifier.width(16.dp))
+                Column {
+                    Text(stringResource(R.string.home_home_node), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(R.string.meristem_sub), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Footer mono
+        Text(
+            text = stringResource(R.string.physical_prevails),
+            style = MaterialTheme.typography.bodySmall, // Pretend it's mono
+            color = MaterialTheme.colorScheme.outline,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun NodeCard(title: String, subtitle: String, onClick: () -> Unit) {
+    Card(
+        onClick = onClick,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Default.Nature, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f))
+            }
         }
     }
 }
