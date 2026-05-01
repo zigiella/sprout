@@ -11,6 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
+import net.sprout.pollen.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import net.sprout.pollen.domain.model.GenerationMetrics
@@ -238,8 +243,18 @@ fun ChatScreen(
         }
 
         Box(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-            SelectionContainer {
-                Text(text = uiState.output, style = MaterialTheme.typography.bodyLarge)
+            Column(modifier = Modifier.fillMaxWidth()) {
+                if (uiState.isLoading && uiState.isThinkingEnabled && uiState.output.isEmpty()) {
+                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.sprout_thinking))
+                    LottieAnimation(
+                        composition = composition,
+                        iterations = LottieConstants.IterateForever,
+                        modifier = Modifier.size(128.dp).align(androidx.compose.ui.Alignment.CenterHorizontally)
+                    )
+                }
+                SelectionContainer {
+                    Text(text = uiState.output, style = MaterialTheme.typography.bodyLarge)
+                }
             }
         }
     }
