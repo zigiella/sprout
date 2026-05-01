@@ -1,7 +1,7 @@
-# Script — Sprout v1.4 (apilado completo: escenas 1-9)
+# Script — Sprout v1.5 (apilado completo: escenas 1-9)
 
-**Versión:** v1.4 (apilado completo de las nueve escenas. Cartela esquina invariante de jerarquías añadida en E7 tras voto Cambium ella día 15. Pendientes operativos: refinar traducciones first pass, coordinación asíncrona con Floema para UI escena 5, dirección de arte rodaje.)
-**Fecha:** 2026-04-30 (día 15)
+**Versión:** v1.5 (día 16 — invariante traducción "prevails" confirmada por Bea, carteles físicos extendidos a maceta + caja electrónica con nombres de nodos completos, contingencia "sin meteo" anotada, refuerzo de nombres de nodos en planos. Pendientes operativos: copies bilingües ES/EN, formato Xylem para montaje, coordinación con Floema captura real, refinar traducciones first pass restantes.)
+**Fecha:** 2026-05-01 (día 16)
 **Autora:** Corola
 **Duración objetivo:** 3:00 exactos.
 **Estructura:** 9 escenas según `docs/40_pitch_video.md §4`.
@@ -47,25 +47,29 @@ Guion definitivo del vídeo de presentación del proyecto al jurado técnico.
 
 ### Escena 1 — La ausencia (0:00–0:20)
 
-**Beat narrativo:** apertura silenciosa. Una maceta etiquetada como "PLOT 1" se presenta al espectador como parcela entera. Cero VO, dos cartelas en inglés en cascada. La primera es invitación al espectador; la segunda afirma sobre la parcela.
+**Beat narrativo:** apertura silenciosa. Una maceta etiquetada como "PLOT_01 with RHIZOME_01" se presenta al espectador como parcela entera. Cero VO, dos cartelas en inglés en cascada. La primera es invitación al espectador; la segunda afirma sobre la parcela.
 
-**Elemento de producción visible:** la maceta lleva un cartel físico real con el texto **"PLOT 1"** (impresión sobria, tipografía limpia, fijado a la maceta o clavado al lado en estaca). Este cartel es coherente con los IDs `rhizome_01` y `rhizome_02` que aparecerán en pantalla durante el resto del vídeo.
+**Elementos de producción visibles:**
+- **Cartel maceta:** **"PLOT_01 with RHIZOME_01"** (impresión sobria, tipografía limpia, fijado a la maceta o clavado al lado en estaca).
+- **Cartel caja electrónica:** **"RHIZOME_01"** (etiqueta sobre la cajita Jetson+ESP32, visible cuando se filme el primer plano del Rhizome).
+
+Los carteles físicos refuerzan los nombres de los nodos en el plano material — coherentes con los IDs `rhizome_01` y `rhizome_02` que aparecerán en pantalla durante el resto del vídeo. Decisión Bea día 16: refuerzo de nombres de nodos en el video.
 
 **Cronología:**
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 0:00–0:06 | Plano fijo de la maceta con cartel **"PLOT 1"** visible. Tarde temprana, luz ámbar suave. La hoja se mueve ligeramente con el aire. Sin VO. | — |
+| 0:00–0:06 | Plano fijo de la maceta con cartel **"PLOT_01 with RHIZOME_01"** visible. Tarde temprana, luz ámbar suave. La hoja se mueve ligeramente con el aire. Sin VO. | — |
 | 0:06–0:11 | Mismo plano. Cartela central entra. | **Cartela central** (5s): *"Imagine this pot is a whole plot."* |
 | 0:11–0:16 | Mismo plano. Primera cartela se desvanece, entra la segunda. | **Cartela central** (5s): *"This plot is visited periodically by a human."* |
-| 0:16–0:20 | La cartela se desvanece. Plano sobre la maceta sola otros 4 segundos. El cartel "PLOT 1" sigue visible. La hoja se mueve. | — |
+| 0:16–0:20 | La cartela se desvanece. Plano sobre la maceta sola otros 4 segundos. El cartel "PLOT_01 with RHIZOME_01" sigue visible. La hoja se mueve. | — |
 
 **Lo que se siente:** soledad. Tiempo lento. La primera cartela invita al espectador a aceptar el truco visual (esta maceta representa una parcela entera) — es ofrenda y contrato narrativo. La segunda cartela afirma sobre esa parcela ya aceptada. La pregunta no hecha que abre el video — *¿quién decide aquí cuando no hay nadie?*
 
 **VO:** 0 palabras.
 **Cartelas:** 2 (ambas en inglés).
 **Overlays:** ninguno.
-**Producción:** cartel físico "PLOT 1" en/junto a la maceta.
+**Producción:** cartel maceta "PLOT_01 with RHIZOME_01" en/junto a la maceta + cartel caja electrónica "RHIZOME_01" sobre la cajita Jetson+ESP32.
 
 ---
 
@@ -120,7 +124,7 @@ Guion definitivo del vídeo de presentación del proyecto al jurado técnico.
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 1:00–1:06 | Cambio de luz. Entra una persona en plano. **No vemos su cara** — vemos manos, móvil en la mano, cartel **"PLOT 1"** visible al fondo. Plano medio. La persona se acerca a la maceta. | — |
+| 1:00–1:06 | Cambio de luz. Entra una persona en plano. **No vemos su cara** — vemos manos, móvil en la mano, cartel **"PLOT_01 with RHIZOME_01"** visible al fondo. Plano medio. La persona se acerca a la maceta. | — |
 | 1:06–1:14 | Pantalla del móvil llenando un tercio del cuadro. App Pollen abierta. La persona pulsa botón. En la pantalla aparece la pregunta: *"What happened since my last visit?"* (cartela en inglés sobre la pantalla). **VO** *"El móvil pregunta. La parcela responde."* (6 palabras castellano). | **Cartela esquina sup. der.** (4s): `Gemma 4 E4B · LiteRT-LM · on-device`. **Cartela en pantalla del móvil**: *"What happened since my last visit?"* |
 | 1:14–1:24 | Pantalla del móvil cambia: lista resumida de decisiones recientes. Tres líneas en pantalla: `WATER · 18s · 14:00`, `WATER · 12s · 09:30`, `SKIP · 22:00 — humedad suficiente`. La persona lee. Camera cerrada al móvil con la persona detrás difuminada. | — |
 | 1:24–1:30 | Plano de la persona mirando la planta, contrastando lo que ve con lo que el móvil le dice. Tres segundos. Después VO: *"Cada visita puede cambiar el criterio local."* (8 palabras castellano, **frase fuerte 2**) sobre el plano. | — |
@@ -130,7 +134,7 @@ Guion definitivo del vídeo de presentación del proyecto al jurado técnico.
 **VO:** 14 palabras castellano (6 + 8).
 **Cartelas:** 2 (`Gemma 4 E4B · LiteRT-LM · on-device` esquina + *"What happened since my last visit?"* en pantalla del móvil).
 **Overlays:** ninguno.
-**Producción:** cartel "PLOT 1" visible. Persona sin cara reconocible.
+**Producción:** cartel "PLOT_01 with RHIZOME_01" visible. Persona sin cara reconocible.
 
 ---
 
@@ -165,9 +169,9 @@ Guion definitivo del vídeo de presentación del proyecto al jurado técnico.
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 1:50–1:55 | Plano de la persona junto al **PLOT 1** (con la estación meteo conectada al Rhizome 01). El móvil descarga el `WeatherDigest` del Rhizome. Pantalla del móvil: lectura del digest viajando del Rhizome al teléfono. **VO**: *"Pollen trae preguntas, respuestas y contexto."* (6 palabras castellano). | **Cartela superpuesta** (2s): `WeatherDigest ferry` |
+| 1:50–1:55 | Plano de la persona junto al **PLOT_01** (cartel maceta "PLOT_01 with RHIZOME_01" + cartel caja "RHIZOME_01" + estación meteo conectada al Rhizome 01). El móvil descarga el `WeatherDigest` del Rhizome. Pantalla del móvil: lectura del digest viajando del Rhizome al teléfono. **VO**: *"Pollen trae preguntas, respuestas y contexto."* (6 palabras castellano). | **Cartela superpuesta** (2s): `WeatherDigest ferry` |
 | 1:55–1:56 | **Corte limpio.** Sin pasos en plano. | — |
-| 1:56–2:04 | Plano de la persona junto al **PLOT 2** (sin meteo, segunda zona de la terraza, distinta planta). Pollen entrega el digest al Rhizome 02. Pantalla del móvil: subida del paquete. Pantalla del Rhizome 02 (visible al fondo o en captura): *"WeatherDigest accepted. Source: Pollen ferry from rhizome_01."* | **Cartela en pantalla del Rhizome** (visible 4s): `WeatherDigest accepted · Source: rhizome_01` |
+| 1:56–2:04 | Plano de la persona junto al **PLOT_02** (cartel maceta "PLOT_02 with RHIZOME_02" + cartel caja "RHIZOME_02", sin meteo, segunda zona de la terraza, distinta planta). Pollen entrega el digest al Rhizome 02. Pantalla del móvil: subida del paquete. Pantalla del Rhizome 02 (visible al fondo o en captura): *"WeatherDigest accepted. Source: Pollen ferry from rhizome_01."* | **Cartela en pantalla del Rhizome** (visible 4s): `WeatherDigest accepted · Source: rhizome_01` |
 | 2:04–2:07 | Silencio breve. Plano del Rhizome 02 con el digest aceptado. La cámara respira. | — |
 | 2:07–2:10 | **VO** (sentencia, plana): *"Pollen convierte esas visitas en inteligencia federada."* (8 palabras castellano, **frase fuerte 5**). | — |
 
@@ -176,7 +180,7 @@ Guion definitivo del vídeo de presentación del proyecto al jurado técnico.
 **VO:** 14 palabras castellano (6 + 8).
 **Cartelas:** 2 (`WeatherDigest ferry` + `WeatherDigest accepted · Source: rhizome_01` en pantalla del Rhizome).
 **Overlays:** ninguno.
-**Producción:** rotación del Rhizome físico entre PLOT 1 y PLOT 2. Estación meteo se conecta para PLOT 1 y se retira para PLOT 2. Carteles físicos "PLOT 1" y "PLOT 2" visibles en sus respectivas tomas. Misma persona en plano (continuidad).
+**Producción:** rotación del Rhizome físico entre PLOT_01 y PLOT_02. Estación meteo se conecta para PLOT_01 y se retira para PLOT_02. Carteles físicos visibles en cada toma — maceta ("PLOT_01 with RHIZOME_01" / "PLOT_02 with RHIZOME_02") y caja electrónica ("RHIZOME_01" / "RHIZOME_02", intercambiables entre tomas). Misma persona en plano (continuidad). **Contingencia día 16 (no firme):** si Bea decide prescindir de meteo, el plano 06a se queda sin estación; las dos parcelas se distinguen por cartel + planta + ángulo, sin ferry de meteo. La frase fuerte 5 ("Pollen convierte esas visitas en inteligencia federada") se sostiene igual — la federación es de contexto en general, no solo de meteo.
 
 ---
 
@@ -189,7 +193,7 @@ Guion definitivo del vídeo de presentación del proyecto al jurado técnico.
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
 | 2:10–2:13 | Pantalla del Jetson llenando el plano. Fondo casi negro. **Bloque 1** entra: `MissionPatch accepted` con `id: mp_004` y `ttl: 21600s`. Cadencia musical (1 línea por segundo). | — |
-| 2:13–2:16 | **Bloque 2** entra: `Policy diff` con dos campos resaltados (color cálido sobre log gris): `soil_thresholds.dry: 35 → 25`, `daily_budget_ml: 1500 → 900`. **Cartela esquina inferior derecha** entra (4 líneas, tipografía técnica pequeña). | **Cartela esquina inf. der.** (entra a 2:14, visible 5s): *"Physical layer commands."* / *"Rhizome arbitrates."* / *"Pollen mediates."* / *"Meristem refines."* |
+| 2:13–2:16 | **Bloque 2** entra: `Policy diff` con dos campos resaltados (color cálido sobre log gris): `soil_thresholds.dry: 35 → 25`, `daily_budget_ml: 1500 → 900`. **Cartela esquina inferior derecha** entra (4 líneas, tipografía técnica pequeña). | **Cartela esquina inf. der.** (entra a 2:14, visible 5s): *"Physical layer prevails."* / *"Rhizome arbitrates."* / *"Pollen mediates."* / *"Meristem refines."* |
 | 2:16–2:19 | **Bloque 3** entra: `Next decision changed` con `policy_id: pol_009 → pol_010`, `final_action: 12s`, `why_short: "Mission compiled from human voice"` (en inglés on-screen). La cartela esquina sigue visible. | — |
 | 2:19–2:22 | Cartela ancla central (3s): *"Criterion updated."* — tipografía editorial, dominante sobre los tres bloques que quedan al fondo en gris atenuado. La cartela esquina **se desvanece a 2:19** cuando entra la ancla — no compiten por atención. | **Cartela central** (3s): *"Criterion updated."* |
 | 2:22–2:30 | Salida al campo. Plano de la maceta y la válvula. Se abre. **Pero menos tiempo que en escena 2** — chorro corto, controlado, austero (12s real). El espectador recuerda inconscientemente que la primera vez fue largo. **VO** sobre el plano del agua: *"El sistema ajusta los cuidados."* (5 palabras castellano). | — |
@@ -209,7 +213,7 @@ La cartela esquina aterriza sobre la imagen exacta que la sostiene, y se desvane
 **Overlays:** ninguno.
 **Producción:** captura de pantalla del Jetson real (Xilema corre el sistema) o mock fiel del log con los tres bloques diseñados con dirección de arte fina (resaltado fuerte de los dos campos del `diff`, cadencia de 1 bloque cada 3s). La cartela esquina inferior derecha en tipografía técnica pequeña, paleta sobria — **no compite** con la cartela ancla central que vendrá después. La válvula con chorro **visiblemente más corto** que en escena 2 (cronometrar: 12s en E7 vs 18s en E2).
 
-**Variante de traducción pendiente voto Bea:** la primera línea de la invariante puede ser *"Physical layer commands."* (opción 1 de Cambium ella, ritmo de tripleta paralela pero "commands" semánticamente ambigua) o *"Physical layer prevails."* (variante propuesta por Corola día 15, mismo ritmo + "prevails" más claro semánticamente: prevalece, manda al final, se impone). **Versión apilada actual:** *"commands"*. Si Bea prefiere *"prevails"*, swap textual de una palabra.
+**Traducción confirmada (voto Bea día 16):** *"Physical layer prevails."* / *"Rhizome arbitrates."* / *"Pollen mediates."* / *"Meristem refines."* La opción "prevails" gana sobre "commands" por claridad semántica (prevalece, manda al final, se impone) manteniendo el ritmo de tripleta paralela con los tres verbos siguientes.
 
 ---
 
@@ -295,7 +299,7 @@ VO en castellano grabado por Bea. Cartelas/overlays/textos on-screen en inglés 
 - [x] Persona VO castellano confirmada: **Bea**.
 - [ ] Confirmar voz humana de escena 5 (propuesta: persona del equipo grabando literal en castellano).
 - [ ] **Refinar traducciones inglés** marcadas como *first pass* (cartela ancla E7 *"Criterion updated."*, cartela progresiva E9, subtítulo logo).
-- [x] **Carteles físicos PLOT 1 y PLOT 2:** Bea los prepara (Helvetica, mayúsculas, fondo neutro, en inglés).
+- [x] **Carteles físicos** los prepara Bea (Helvetica, mayúsculas, fondo neutro, en inglés). **Cuatro carteles totales:** 2 de maceta (`PLOT_01 with RHIZOME_01` / `PLOT_02 with RHIZOME_02`) + 2 de caja electrónica intercambiables (`RHIZOME_01` / `RHIZOME_02`).
 - [ ] Coordinar dirección de arte de la pantalla del Jetson en escenas 2, 3, 7 (resaltado fuerte de campos clave, cadencia musical de líneas, cartelas dominantes sobre log).
 - [x] **Invariante Xilema NO aplicada en E9** — la escena ya tiene 9 elementos textuales en 20s. La invariante queda como recurso writeup. Decisión documentada en E9.
 
@@ -303,6 +307,12 @@ VO en castellano grabado por Bea. Cartelas/overlays/textos on-screen en inglés 
 
 ## Historial de versiones
 
+- **v1.5 — refuerzo de nombres de nodos + traducción confirmada** (2026-05-01, día 16, Corola) — cinco cambios tras mensaje de Bea día 16:
+  1. **Voto Bea sobre traducción invariante:** *"Physical layer prevails."* gana sobre *"commands"* — swap textual aplicado en E7 (script + shot list). "prevails" preserva ritmo de tripleta paralela y gana claridad semántica.
+  2. **Carteles físicos extendidos.** Decisión Bea: dos carteles por parcela en lugar de uno — cartel maceta con nombre completo (`PLOT_01 with RHIZOME_01` / `PLOT_02 with RHIZOME_02`) + cartel caja electrónica (`RHIZOME_01` / `RHIZOME_02`, intercambiables sobre la misma cajita Jetson+ESP32 entre tomas). Total **4 carteles** en lugar de 2. Refuerza nombres de nodos en plano físico durante todo el rodaje.
+  3. **Contingencia "sin meteo"** anotada en E6 (no firme, decisión Bea pendiente). Si prescindimos de meteo, el plano 06a se queda sin estación; las dos parcelas se distinguen por cartel + planta + ángulo. La frase fuerte 5 se sostiene igual — la federación es de contexto en general, no solo de meteo.
+  4. **Refuerzo de nombres de nodos** en planos donde antes no aparecían explícitos — descripción de planos 04a, 06a, 06d ahora cita carteles con nombres completos.
+  5. **Cambium ella formaliza regla "tres puntos de verificación git"** en `CONTRIBUTING.md` o `docs/conventions/git_safety.md` (mañana día 17). Aprendizaje del día 15 escala a convención de proyecto.
 - **v1.4 — invariante de jerarquías en E7** (2026-04-30, día 15, Corola) — añadida cartela esquina inferior derecha en E7 con la invariante de jerarquías de Xilema (4 líneas en inglés, tipografía técnica pequeña, paleta sobria, visible 5s desde 2:14 a 2:19). Aterriza sobre el momento donde las cuatro jerarquías son visibles simultáneamente (válvula esperando, Rhizome decidiendo, Pollen entregó, Meristem refinará). Decisión Cambium ella día 15 — voto sí (4ª de las 4 propuestas del ejercicio frases fuertes) coincidente con propuesta Corola. Las otras 3 propuestas votadas no por consenso. Traducción first pass *"Physical layer commands."* (variante propuesta *"Physical layer prevails."* — pendiente voto Bea, swap textual de una palabra).
 - **v1.3 — apilado completo** (2026-04-29, día 14, Corola) — escena 9 reescrita con Meristem entrando al MVP (decisión firme Bea + Cambium + Meristem día 14). Estructura: cenital flat editorial con 8 parcelas + Pollen-nodo recorriendo + llegada al nodo Meristem en el cenital, **corte limpio a imagen real** del portátil del agricultor con app Meristem ejecutando, dos cartelas on-screen (*"Pulling Rhizome data..."* + *"Adjusting policies..."*), tarjeta logo final entrando por fade. Tres niveles narrativos en el cierre: máquina (E1-E7) → abstracción de red (E9 inicio) → cerebro lento doméstico real (E9 final). Cartela invariante de Xilema NO aplicada en E9 (saturación de elementos textuales) — queda como recurso writeup. **Cambium es ella** — corrección registrada. Persona VO confirmada Bea. Carteles físicos PLOT 1 / PLOT 2 los prepara Bea (Helvetica, mayúsculas, fondo neutro, inglés). Coordinación con Floema asíncrona — mensaje preparado para que Bea relaye.
 - **v1.2 — apilado parcial extendido** (2026-04-29, día 14, Corola) — apilado de escenas 4, 5 (parcial), 6, 7, 8 con detalle equivalente al de escenas 1-3. Escena 5 con TBD en UI del compilador `MissionPatch` pendiente de llamada con Floema (F5 cerrada). Escena 9 pendiente de decisión firme Meristem (conversación Bea + Cambium + Meristem día 14): si Meristem-nodo entra al MVP, se amplía con plano breve del portátil del agricultor; si no entra, se mantiene como en pitch doc. Recurso disponible para escena 9: invariante de Xilema *"Lo físico manda, Rhizome arbitra, Pollen media, Meristem afina."* — aplicable como cartela inglés *"Physical layer rules. Rhizome arbitrates. Pollen mediates. Meristem refines."* solo si Meristem entra (cuatro sujetos visibles en video). Conteo VO: 92 palabras castellano + 14 voz humana real = 106 palabras totales. Origen del recado Meristem: Cambium tras review meeting día 13 (`bitacora/2026-04-28_review-meeting-tuning_cambium.md`).
