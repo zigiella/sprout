@@ -25,6 +25,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
 import net.sprout.pollen.schemas.DecisionReceipt
 import net.sprout.pollen.schemas.RhizomeSnapshot
 import net.sprout.pollen.schemas.PolicyPacket
