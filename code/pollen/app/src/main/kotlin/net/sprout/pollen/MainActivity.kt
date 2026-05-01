@@ -25,13 +25,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
 import net.sprout.pollen.schemas.DecisionReceipt
 import net.sprout.pollen.schemas.RhizomeSnapshot
+import net.sprout.pollen.schemas.PolicyPacket
 import net.sprout.pollen.ui.VisitarMeristemScreen
 import net.sprout.pollen.ui.VisitarRhizomeScreen
+import net.sprout.pollen.ui.AuditLogScreen
+import androidx.compose.ui.res.stringResource
+import net.sprout.pollen.R
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 
 class MainActivity : ComponentActivity() {
 
@@ -64,10 +67,29 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     var selectedTab by remember { mutableStateOf(0) }
-                    val tabs = listOf("Chat Pollen", "Visitar Rhizome", "Visitar Meristem")
+                    val tabs = listOf(
+                        stringResource(R.string.tab_chat), 
+                        stringResource(R.string.tab_rhizome), 
+                        stringResource(R.string.tab_meristem), 
+                        stringResource(R.string.tab_audit)
+                    )
                     
                     var globalSnapshot by remember { mutableStateOf<RhizomeSnapshot?>(null) }
                     var globalReceipts by remember { mutableStateOf<List<DecisionReceipt>>(emptyList()) }
+                    var globalPolicy by remember { mutableStateOf<PolicyPacket?>(null) }
+                    
+                    var showVisionAlert by remember { mutableStateOf(false) }
+
+                    if (showVisionAlert) {
+                        AlertDialog(
+                            onDismissRequest = { showVisionAlert = false },
+                            title = { Text(stringResource(R.string.notif_vision_title)) },
+                            text = { Text(stringResource(R.string.notif_vision_desc)) },
+                            confirmButton = {
+                                TextButton(onClick = { showVisionAlert = false }) { Text("OK") }
+                            }
+                        )
+                    }
 
                     Column(modifier = Modifier.fillMaxSize()) {
                         TabRow(selectedTabIndex = selectedTab) {
@@ -97,11 +119,19 @@ class MainActivity : ComponentActivity() {
                                     globalReceipts = rec 
                                 }
                             )
-                        } else {
+                        } else if (selectedTab == 2) {
                             VisitarMeristemScreen(
                                 currentSnapshot = globalSnapshot,
-                                currentReceipts = globalReceipts
+                                currentReceipts = globalReceipts,
+                                onPolicyDownloaded = { policy ->
+                                    globalPolicy = policy
+                                    if (policy.rules.requireVisionConfirmation) {
+                                        showVisionAlert = true
+                                    }
+                                }
                             )
+                        } else {
+                            AuditLogScreen(receipts = globalReceipts, policy = globalPolicy)
                         }
                     }
                 }

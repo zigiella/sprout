@@ -9,6 +9,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import net.sprout.pollen.domain.model.GenerationMetrics
@@ -144,6 +146,7 @@ fun ChatScreen(
     onSend: () -> Unit,
     onArchetypeSelected: (String) -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         val archetypes = listOf("Chat Libre", "Misión", "Auditoría", "Contexto")
         ScrollableTabRow(
@@ -173,7 +176,10 @@ fun ChatScreen(
 
         Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
             Button(
-                onClick = onSend,
+                onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onSend()
+                },
                 enabled = !uiState.isLoading,
             ) {
                 Text(if (uiState.isLoading) "Generando..." else "Enviar")

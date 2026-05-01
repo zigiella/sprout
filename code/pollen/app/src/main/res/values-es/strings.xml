@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pollen</string>
+    <string name="tab_chat">Chat Pollen</string>
+    <string name="tab_rhizome">Visitar Rhizome</string>
+    <string name="tab_meristem">Visitar Meristem</string>
+    <string name="tab_audit">Historial</string>
+
+    <!-- Chat -->
+    <string name="chat_placeholder">Escribe un mensaje...</string>
+    <string name="chat_voice_start">Escuchar voz</string>
+    <string name="chat_send">Enviar</string>
+
+    <!-- Rhizome -->
+    <string name="rhizome_connected">Conectado a Rhizome</string>
+    <string name="rhizome_status">Estado</string>
+    <string name="rhizome_snapshot">Snapshot Local</string>
+    <string name="rhizome_tank">Depósito</string>
+    <string name="rhizome_soil">Humedad Suelo A/B</string>
+    <string name="rhizome_receipts">Últimos Recibos de Decisión</string>
+
+    <!-- Meristem -->
+    <string name="meristem_connected">Conectado a Meristem (Hogar)</string>
+    <string name="meristem_download_data">1. Descargar Datos de Campo</string>
+    <string name="meristem_upload_policy">2. Cargar Nueva Política</string>
+    <string name="meristem_btn_upload">Subir Visita a Meristem</string>
+    <string name="meristem_btn_download">Descargar Política Actualizada</string>
+
+    <!-- Notifications -->
+    <string name="notif_vision_title">Confirmación Visual Requerida</string>
+    <string name="notif_vision_desc">La política activa exige que el operario confirme visualmente el estado del campo antes de regar.</string>
+</resources>

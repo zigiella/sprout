@@ -20,11 +20,13 @@ import net.sprout.pollen.sync.MeristemMockClient
 @Composable
 fun VisitarMeristemScreen(
     currentSnapshot: RhizomeSnapshot? = null,
-    currentReceipts: List<net.sprout.pollen.schemas.DecisionReceipt> = emptyList()
+    currentReceipts: List<DecisionReceipt> = emptyList(),
+    onPolicyDownloaded: (PolicyPacket) -> Unit = {}
 ) {
     // Para conectar con el portátil del agricultor, instanciar MeristemNetworkClient("http://<IP_MERISTEM>:8080")
     val client: MeristemClient = remember { MeristemMockClient() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     
     var isUploading by remember { mutableStateOf(false) }
     var uploadSuccess by remember { mutableStateOf(false) }
@@ -94,8 +96,15 @@ fun VisitarMeristemScreen(
                     onClick = {
                         scope.launch {
                             isDownloading = true
-                            downloadedPolicy = client.getLatestPolicy()
-                            isDownloading = false
+                            try {
+                                val policy = client.getLatestPolicy()
+                                downloadedPolicy = policy
+                                onPolicyDownloaded(policy)
+                            } catch (e: Exception) {
+                                // handle error
+                            } finally {
+                                isDownloading = false
+                            }
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
