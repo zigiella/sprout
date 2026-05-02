@@ -1,6 +1,6 @@
 # Script — Sprout v1.5 (apilado completo: escenas 1-9)
 
-**Versión:** v1.5 (día 16 — invariante traducción "prevails" confirmada por Bea, carteles físicos extendidos a maceta + caja electrónica con nombres de nodos completos, contingencia "sin meteo" anotada, refuerzo de nombres de nodos en planos. Pendientes operativos: copies bilingües ES/EN, formato Xylem para montaje, coordinación con Floema captura real, refinar traducciones first pass restantes.)
+**Versión:** v1.5 (día 16 — invariante traducción "prevails" confirmada por Bea, carteles físicos extendidos a maceta + caja electrónica con nombres de nodos completos, contingencia "sin meteo" anotada, refuerzo de nombres de nodos en planos. Pendientes operativos: copies bilingües ES/EN, formato Bract para montaje, coordinación con Floema captura real, refinar traducciones first pass restantes.)
 **Fecha:** 2026-05-01 (día 16)
 **Autora:** Corola
 **Duración objetivo:** 3:00 exactos.

@@ -1,6 +1,6 @@
 # Shot list — Sprout v1.5 (apilado completo: escenas 1-9)
 
-**Versión:** v1.5 (día 16 — invariante traducción "prevails" confirmada, carteles físicos extendidos a maceta + caja electrónica, contingencia "sin meteo" anotada, refuerzo nombres de nodos en planos. Pendientes operativos: copies bilingües ES/EN, formato Xylem para montaje, captura real Pollen/Floema en E5, refinar traducciones first pass.)
+**Versión:** v1.5 (día 16 — invariante traducción "prevails" confirmada, carteles físicos extendidos a maceta + caja electrónica, contingencia "sin meteo" anotada, refuerzo nombres de nodos en planos. Pendientes operativos: copies bilingües ES/EN, formato Bract para montaje, captura real Pollen/Floema en E5, refinar traducciones first pass.)
 **Fecha:** 2026-05-01 (día 16)
 **Autora:** Corola
 **Rodaje previsto:** días 26-27 abril 2026
