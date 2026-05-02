@@ -1,10 +1,11 @@
-# Script — Sprout v1.5 (apilado completo: escenas 1-9)
+# Script — Sprout v1.6 (apilado completo: escenas 1-9 + sistema visual Venation aplicado)
 
-**Versión:** v1.5 (día 16 — invariante traducción "prevails" confirmada por Bea, carteles físicos extendidos a maceta + caja electrónica con nombres de nodos completos, contingencia "sin meteo" anotada, refuerzo de nombres de nodos en planos. Pendientes operativos: copies bilingües ES/EN, formato Bract para montaje, coordinación con Floema captura real, refinar traducciones first pass restantes.)
-**Fecha:** 2026-05-01 (día 16)
+**Versión:** v1.6 (día 17 — sistema visual de Venation adoptado: Soil protocol + Water ledger con tokens, tipografía Manrope + IBM Plex Mono, `signal.seed` como acento cross-escena de "inteligencia activa". Tres cambios de copy aplicados: cartela ancla E7 a *"Watering criteria updated."*, cartela técnica E3 a *"AI proposes / ESP32 validates"*, contingencia E6 *"Context ferry"*. Tarjeta logo final reformulada en inglés. Log E2 diseñado con campos concretos. Motion E5 procesamiento Pollen tres estados. `EDGE NODE` segunda línea cartel caja electrónica.)
+**Fecha:** 2026-05-02 (día 17)
 **Autora:** Corola
 **Duración objetivo:** 3:00 exactos.
 **Estructura:** 9 escenas según `docs/40_pitch_video.md §4`.
+**Dirección de arte:** sistema *Soil protocol + Water ledger* de Venation (`sprout_design_pack_v1`).
 
 ---
 
@@ -19,6 +20,39 @@ Guion definitivo del vídeo de presentación del proyecto al jurado técnico.
 **Densidad informativa:** las cartelas y overlays son el motor. El VO hace la historia con pocas palabras. Silencio deliberado donde la cartela basta.
 
 **Aproximación:** ~80 palabras VO castellano + ~14 palabras de voz humana real grabada (operator_note de la persona en escena 5, también castellano).
+
+---
+
+## Sistema visual del video (Venation, día 16-17)
+
+**Soil protocol + Water ledger.** Sistema visual unificado para video, app móvil, landing y cartelería física.
+
+**Paleta — tokens:**
+| Token | HEX | Uso en video |
+|---|---|---|
+| `soil.oat` | `#F3EDE4` | fondo cálido, cartelas editoriales, cartel físico |
+| `soil.humus` | `#2A221D` | texto principal, titulares, autoridad |
+| `soil.clay` | `#8A654B` | acentos físicos, bordes, señalética |
+| `soil.moss` | `#667554` | estabilidad vegetal sobria sin cliché |
+| `soil.graphite` | `#1A1A18` | logs Jetson, terminal diseñado, datos técnicos |
+| `soil.kraft` | `#C9A97E` | cartón, materialidad opcional carteles físicos |
+| `water.blue` | `#3B82F6` | agua, riego, caudal, presupuesto hídrico |
+| `status.warning` | `#F59E0B` | prudencia, dato viejo, modo conservador |
+| `status.blocked` | `#B94A3D` | bloqueo, rechazo, fallo físico |
+| `signal.seed` | `#C5F26B` | **acento único de "inteligencia activa"**, regla 3% |
+
+**Tipografía:**
+- **Manrope** (humano/producto): cartelas principales, titulares, voz humana.
+- **IBM Plex Mono** (sistema/datos): logs, `DecisionReceipt`, `MissionPatch`, IDs, métricas, timestamps, snippets JSON.
+
+**`signal.seed` aplicado cross-escena (regla del 3%, decisión Corola día 17):**
+- E2: LED Jetson cuando decide + resaltado `WATER` y `final_action: 18s`.
+- E3: resaltado `final_action: 12s` (donde ESP32 modula).
+- E5: pulso del procesamiento Pollen (listening → compiling → validating).
+- E7: resaltado de los dos campos del `Policy diff`.
+- E9: nodo Pollen recorriendo cenital + luminosidad de mensajes técnicos al aparecer.
+
+Pista visual única que el espectador asocia con sistema decidiendo/actuando con criterio. Conecta video con app móvil + cartelería + landing.
 
 ---
 
@@ -81,17 +115,34 @@ Los carteles físicos refuerzan los nombres de los nodos en el plano material �
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 0:20–0:24 | Corte. Plano cerrado del Jetson en su caja. LED parpadea. Camera baja al sensor de humedad clavado en la tierra. | **Overlay esquina sup. izq.** (persistente todo el bloque): `OFFLINE` |
-| 0:24–0:32 | Pantalla del Jetson llenando el plano. Líneas de log entrando: lectura humedad → cálculo necesidad → decisión. **VO**: *"Esta parcela no está sola. Tiene un cerebro local. Lee el suelo. Decide."* (13 palabras) | **Cartela esquina sup. der.** (3s): `Gemma 4 E2B · local · llama.cpp` / **Sub-cartela** (3s): `LLM called only when ambiguous` |
-| 0:32–0:38 | Captura del `DecisionReceipt` llenando un cuarto de pantalla. Tres líneas resaltadas: `decision_type: WATER`, `final_action: 18s`, `why_short: "Suelo por debajo del mínimo. Presupuesto disponible."` Resto del JSON en gris. **VO**: *"Y firma lo que hace, para que se pueda explicar."* (10 palabras) | **Cartela superpuesta** (2s sobre el receipt): `DecisionReceipt` |
+| 0:20–0:24 | Corte. Plano cerrado del Jetson en su caja. LED en `signal.seed` (#C5F26B) parpadea cuando el sistema decide. Camera baja al sensor de humedad clavado en la tierra. | **Overlay esquina sup. izq.** (persistente todo el bloque): `OFFLINE` |
+| 0:24–0:32 | Pantalla del Jetson llenando el plano. Fondo `soil.graphite` (#1A1A18). Tipografía IBM Plex Mono. Log diseñado entrando con cadencia musical (1 línea/s). Bloque `SOIL READ` primero, bloque `DECISION` después. `WATER` y `final_action: 18s` resaltados en `signal.seed`. Resto del log en gris claro. **VO**: *"Esta parcela no está sola. Tiene un cerebro local. Lee el suelo. Decide."* (13 palabras) | **Cartela esquina sup. der.** (3s): `Gemma 4 E2B · local · llama.cpp` / **Sub-cartela** (3s): `LLM called only when ambiguous` |
+| 0:32–0:38 | Captura del `DecisionReceipt` llenando un cuarto de pantalla. Tres campos resaltados (color `signal.seed`): `decision_type: WATER`, `final_action: 18s`, `why_short: "Soil below minimum. Budget available."` Resto del JSON atenuado en gris. **VO**: *"Y firma lo que hace, para que se pueda explicar."* (10 palabras) | **Cartela superpuesta** (2s sobre el receipt, tipografía Manrope editorial): `DecisionReceipt` |
 | 0:38–0:43 | Salida al campo. Plano de la válvula. Se abre. Sonido de agua sobre tierra. | — |
 | 0:43–0:45 | Plano se mantiene sobre el agua. **VO**: *"Rhizome mantiene viva la parcela cuando nadie está."* (8 palabras, **frase fuerte 1**) | — |
+
+**Log diseñado E2 (Venation, día 17):**
+
+```
+SOIL READ
+plot: PLOT_01
+soil: 31%
+threshold: 34%
+
+DECISION
+candidate: WATER
+final_action: 18s
+why_short: Soil below minimum. Budget available.
+```
+
+Resaltados: `WATER` y `final_action` en `signal.seed`. Contexto en gris atenuado. Cadencia musical 1 línea por segundo, deliberadamente lenta.
 
 **Lo que se siente:** el sistema funciona solo. Sin red, sin nube, sin nadie mirando. La frase fuerte 1 aterriza sobre el agua que sale — promesa cumplida en el mismo plano que se afirma.
 
 **VO:** 31 palabras.
 **Cartelas:** 3 (`Gemma 4 E2B · local · llama.cpp`, `LLM called only when ambiguous`, `DecisionReceipt`).
 **Overlays:** 1 (`OFFLINE` persistente).
+**Tokens dirección de arte:** fondo `soil.graphite`, texto base gris claro, resaltados en `signal.seed`. Tipografía log en IBM Plex Mono. Cartelas en Manrope.
 
 ---
 
@@ -103,16 +154,19 @@ Los carteles físicos refuerzan los nombres de los nodos en el plano material �
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 0:45–0:48 | Corte seco. Plano cerrado de la cajita ESP32. LED ámbar encendido — atención, no alarma. | **Cartela esquina sup. der.** (3s): `function/read tools · no actuator tools` |
-| 0:48–0:53 | Pantalla del Jetson. Comando `WATER A 30s` viajando al ESP32. ESP32 verifica: *"depósito al 30%. Caudal nominal."* No bloquea. **Modula**. Devuelve `ACK` con cap aplicado. **VO**: *"La IA propone. El agua la gobierna una capa física prudente."* (11 palabras, **frase fuerte 3**) | **Overlay esquina sup. der.** (a partir de 0:48): `ESP32 SAFE LIMIT` |
-| 0:53–0:56 | `DecisionReceipt` post-ejecución llenando un cuadrante. Tres campos resaltados: `candidate_action: 30s`, `esp32_outcome: ACK (limited by tank level)`, `final_action: 12s`. La diferencia entre los dos números es donde la prudencia trabaja. | **Cartela central** (3s, dominante sobre el receipt): *"When in doubt, water less."* |
+| 0:45–0:48 | Corte seco. Plano cerrado de la cajita ESP32 con cartel "RHIZOME_01 / EDGE NODE" visible. LED ámbar encendido — atención, no alarma. | **Cartela esquina sup. der.** (3s, Manrope): `AI proposes / ESP32 validates` |
+| 0:48–0:53 | Pantalla del Jetson. Comando `WATER A 30s` viajando al ESP32. ESP32 verifica: *"deposito al 30%. Caudal nominal."* No bloquea. **Modula**. Devuelve `ACK` con cap aplicado. **VO**: *"La IA propone. El agua la gobierna una capa física prudente."* (11 palabras, **frase fuerte 3**) | **Overlay esquina sup. der.** (a partir de 0:48): `ESP32 SAFE LIMIT` |
+| 0:53–0:56 | `DecisionReceipt` post-ejecución llenando un cuadrante. Tres campos resaltados: `candidate_action: 30s`, `esp32_outcome: ACK (limited by tank level)`, `final_action: 12s` en `signal.seed`. La diferencia entre los dos números es donde la prudencia trabaja. | **Cartela central** (3s, Manrope dominante sobre el receipt): *"When in doubt, water less."* |
 | 0:56–1:00 | Plano de la válvula. Se abre. **Pero menos tiempo del propuesto.** Chorro corto, calculado. | — |
 
 **Lo que se siente:** el ESP32 no es polvera; es tutor. No grita NO — dice *"hasta aquí es seguro"*. La narrativa de cuidar se mantiene desde la primera intervención del ESP32. La frase fuerte 3 aterriza sobre el plano del ESP32 modulando (VO castellano), y la cartela *"When in doubt, water less."* la traduce a principio operativo del sistema (en inglés on-screen).
 
+**Cambio v1.6:** la cartela técnica `function/read tools · no actuator tools` queda sustituida por `AI proposes / ESP32 validates` (propuesta Venation, día 17). Más universal, comunica directamente la jerarquía.
+
 **VO:** 11 palabras castellano.
-**Cartelas:** 2 inglés (`function/read tools · no actuator tools`, *"When in doubt, water less."*).
+**Cartelas:** 2 inglés (`AI proposes / ESP32 validates`, *"When in doubt, water less."*).
 **Overlays:** 1 inglés (`ESP32 SAFE LIMIT`).
+**Tokens dirección de arte:** cartelas en Manrope. Overlay en IBM Plex Mono. Resaltado `final_action` en `signal.seed`.
 
 ---
 
@@ -146,18 +200,31 @@ Los carteles físicos refuerzan los nombres de los nodos en el plano material �
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 1:30–1:33 | Plano cercano. La persona pulsa otro botón del móvil (botón de grabación). Acerca el móvil a la cara. **No vemos sus labios** — vemos su mano sosteniendo el móvil. | — |
+| 1:30–1:33 | Plano cercano. La persona pulsa otro botón del móvil (botón de grabación). Acerca el móvil a la cara. **No vemos sus labios** — vemos su mano sosteniendo el móvil. UI del móvil muestra `VOICE NOTE` activo. | — |
 | 1:33–1:40 | **Voz humana real (castellano, grabada literal)**: *"Vuelvo el viernes. Esta planta aguanta más seca de lo que crees, riega un poco menos."* (14 palabras). Tono calmado, sin actuación, casi casual. | — |
-| 1:40–1:43 | Tres segundos de silencio. La pantalla del móvil procesa — micro-animación de procesamiento. | — |
-| 1:43–1:48 | **Pantalla del móvil mostrando el `MissionPatch` compilado.** Diseño: `TBD — pendiente llamada con Floema para definir UI exacta del compilador`. Lo que tiene que verse: cuatro líneas resaltadas en este orden: `horizon_h: 72`, `soil_thresholds.dry: 35 → 25`, `budget_cap_ml: 900`, `operator_note: "Esta planta aguanta más seca..."` (literal castellano, respetado). | **Cartela superpuesta** (2s): `MissionPatch validated` |
+| 1:40–1:43 | Tres segundos de **procesamiento Pollen en tres estados consecutivos**: micro-animación con pulso `signal.seed`. Estados visibles en pantalla del móvil (1 segundo cada uno): `listening` → `compiling` → `validating`. | — |
+| 1:43–1:48 | **Pantalla del móvil mostrando el `MissionPatch` compilado.** Layout recomendado por Venation (pendiente confirmación llamada Floema): `VOICE NOTE` con la frase castellana + `COMPILED PATCH` debajo con cuatro campos: `horizon_h: 72`, `soil_thresholds.dry: 35 → 25`, `budget_cap_ml: 900`, `operator_note: preserved` (etiqueta — la voz literal queda almacenada, no se imprime de nuevo en pantalla aquí). Resaltados con `signal.seed`. | **Cartela superpuesta** (2s, Manrope): `MissionPatch validated` |
 | 1:48–1:50 | Plano cerrado del móvil. **VO** (cerrada, una frase): *"Lo que la persona dice se convierte en política."* (9 palabras castellano). | — |
+
+**Motion procesamiento Pollen (Venation, día 17):**
+
+Tres estados secuenciales con pulso `signal.seed`:
+
+```
+listening
+compiling
+validating
+```
+
+Aparecen uno tras otro (1s cada uno). Pulso suave, no parpadeo agresivo. Marca el momento donde el sistema **escucha → traduce → valida** la voz humana. El pulso `signal.seed` aquí es la pista visual de "Pollen pensando con criterio".
 
 **Lo que se siente:** una voz humana real entrando al sistema y siendo respetada. La frase coloquial *"aguanta más seca de lo que crees"* se conserva literal en `operator_note` — eso es honestidad: el sistema no resume al humano, lo cita. Pollen traduce intuición agrícola a parámetro técnico sin recortar.
 
 **VO:** 9 palabras castellano + 14 palabras voz humana real castellano = 23 palabras totales castellano en escena.
 **Cartelas:** 1 (`MissionPatch validated`).
 **Overlays:** ninguno obligatorio.
-**Producción:** **Pendiente llamada con Floema** para definir UI del compilador y output visual exacto del `MissionPatch` en pantalla del móvil. La voz humana se graba antes del rodaje principal (con tiempo para que Pollen la procese y muestre el patch en pantalla durante la escena).
+**Tokens dirección de arte:** UI del móvil con paleta del sistema (fondo `soil.oat` o claro). Resaltados de campos cambiantes (`soil_thresholds.dry`, `budget_cap_ml`) en `signal.seed`. Pulso `signal.seed` durante procesamiento.
+**Producción:** **Pendiente llamada con Floema** para confirmar/ajustar UI del compilador (diseño exacto VOICE NOTE + COMPILED PATCH + motion procesamiento). Layout propuesto por Venation alineado con sistema visual del proyecto. La voz humana se graba antes del rodaje principal.
 
 ---
 
@@ -169,9 +236,9 @@ Los carteles físicos refuerzan los nombres de los nodos en el plano material �
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 1:50–1:55 | Plano de la persona junto al **PLOT_01** (cartel maceta "PLOT_01 with RHIZOME_01" + cartel caja "RHIZOME_01" + estación meteo conectada al Rhizome 01). El móvil descarga el `WeatherDigest` del Rhizome. Pantalla del móvil: lectura del digest viajando del Rhizome al teléfono. **VO**: *"Pollen trae preguntas, respuestas y contexto."* (6 palabras castellano). | **Cartela superpuesta** (2s): `WeatherDigest ferry` |
+| 1:50–1:55 | Plano de la persona junto al **PLOT_01** (cartel maceta "PLOT_01 with RHIZOME_01" + cartel caja "RHIZOME_01 / EDGE NODE" + **estación meteo conectada al Rhizome 01 si la incluimos**). El móvil descarga el `WeatherDigest` (o `Context bundle` si no hay meteo) del Rhizome. Pantalla del móvil: lectura del bundle viajando del Rhizome al teléfono. **VO**: *"Pollen trae preguntas, respuestas y contexto."* (6 palabras castellano). | **Cartela superpuesta** (2s, Manrope): `WeatherDigest ferry` (con meteo) o `Context ferry` (sin meteo) |
 | 1:55–1:56 | **Corte limpio.** Sin pasos en plano. | — |
-| 1:56–2:04 | Plano de la persona junto al **PLOT_02** (cartel maceta "PLOT_02 with RHIZOME_02" + cartel caja "RHIZOME_02", sin meteo, segunda zona de la terraza, distinta planta). Pollen entrega el digest al Rhizome 02. Pantalla del móvil: subida del paquete. Pantalla del Rhizome 02 (visible al fondo o en captura): *"WeatherDigest accepted. Source: Pollen ferry from rhizome_01."* | **Cartela en pantalla del Rhizome** (visible 4s): `WeatherDigest accepted · Source: rhizome_01` |
+| 1:56–2:04 | Plano de la persona junto al **PLOT_02** (cartel maceta "PLOT_02 with RHIZOME_02" + cartel caja "RHIZOME_02 / EDGE NODE", sin meteo, segunda zona de la terraza, distinta planta). Pollen entrega el bundle al Rhizome 02. Pantalla del móvil: subida del paquete. Pantalla del Rhizome 02 (visible al fondo o en captura): aceptación con cita de origen `rhizome_01`. | **Cartela en pantalla del Rhizome** (visible 4s, IBM Plex Mono): `WeatherDigest accepted · Source: rhizome_01` (con meteo) o `Context accepted · Source: rhizome_01` (sin meteo) |
 | 2:04–2:07 | Silencio breve. Plano del Rhizome 02 con el digest aceptado. La cámara respira. | — |
 | 2:07–2:10 | **VO** (sentencia, plana): *"Pollen convierte esas visitas en inteligencia federada."* (8 palabras castellano, **frase fuerte 5**). | — |
 
@@ -193,10 +260,30 @@ Los carteles físicos refuerzan los nombres de los nodos en el plano material �
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
 | 2:10–2:13 | Pantalla del Jetson llenando el plano. Fondo casi negro. **Bloque 1** entra: `MissionPatch accepted` con `id: mp_004` y `ttl: 21600s`. Cadencia musical (1 línea por segundo). | — |
-| 2:13–2:16 | **Bloque 2** entra: `Policy diff` con dos campos resaltados (color cálido sobre log gris): `soil_thresholds.dry: 35 → 25`, `daily_budget_ml: 1500 → 900`. **Cartela esquina inferior derecha** entra (4 líneas, tipografía técnica pequeña). | **Cartela esquina inf. der.** (entra a 2:14, visible 5s): *"Physical layer prevails."* / *"Rhizome arbitrates."* / *"Pollen mediates."* / *"Meristem refines."* |
-| 2:16–2:19 | **Bloque 3** entra: `Next decision changed` con `policy_id: pol_009 → pol_010`, `final_action: 12s`, `why_short: "Mission compiled from human voice"` (en inglés on-screen). La cartela esquina sigue visible. | — |
-| 2:19–2:22 | Cartela ancla central (3s): *"Criterion updated."* — tipografía editorial, dominante sobre los tres bloques que quedan al fondo en gris atenuado. La cartela esquina **se desvanece a 2:19** cuando entra la ancla — no compiten por atención. | **Cartela central** (3s): *"Criterion updated."* |
+| 2:13–2:16 | **Bloque 2** entra: `POLICY DIFF` con dos campos resaltados (color `signal.seed` sobre log atenuado): `soil_thresholds.dry: 35 → 25`, `daily_budget_ml: 1500 → 900`. **Cartela esquina inferior derecha** entra (4 líneas IBM Plex Mono pequeña, paleta sobria). | **Cartela esquina inf. der.** (entra a 2:14, visible 5s, IBM Plex Mono): *"Physical layer prevails."* / *"Rhizome arbitrates."* / *"Pollen mediates."* / *"Meristem refines."* |
+| 2:16–2:19 | **Bloque 3** entra: `NEXT DECISION CHANGED` con `policy_id: pol_009 → pol_010`, `final_action: 12s`, `why_short: "Mission compiled from human voice"`. La cartela esquina sigue visible. | — |
+| 2:19–2:22 | Cartela ancla central (3s, Manrope editorial dominante): *"Watering criteria updated."* sobre los tres bloques que quedan al fondo en gris atenuado. La cartela esquina **se desvanece a 2:19** cuando entra la ancla — no compiten por atención. | **Cartela central** (3s, Manrope): *"Watering criteria updated."* |
 | 2:22–2:30 | Salida al campo. Plano de la maceta y la válvula. Se abre. **Pero menos tiempo que en escena 2** — chorro corto, controlado, austero (12s real). El espectador recuerda inconscientemente que la primera vez fue largo. **VO** sobre el plano del agua: *"El sistema ajusta los cuidados."* (5 palabras castellano). | — |
+
+**Log diseñado E7 (Venation, día 17):**
+
+```
+MISSION PATCH ACCEPTED
+id: mp_004
+ttl: 21600s
+
+POLICY DIFF
+soil_thresholds.dry    35 → 25
+daily_budget_ml        1500 → 900
+
+NEXT DECISION CHANGED
+final_action           12s
+why_short              Mission compiled from human voice
+```
+
+Cadencia musical: 1 bloque cada 3 segundos. Los dos campos del `Policy diff` resaltados en `signal.seed`. Resto en gris atenuado.
+
+**Cambio v1.6:** la cartela ancla central pasa de *"Criterion updated."* a *"Watering criteria updated."* (propuesta Venation día 17, voto Bea aceptado). Razón: más concreto, más ligado al agua que es el tema central del video.
 
 **Lo que se siente:** el cambio del sistema es **prueba compuesta**, no afirmación. Los tres bloques son evidencia técnica honesta. La invariante en esquina nombra el sistema entero **mientras está trabajando** — el espectador ve simultáneamente la capa física esperando (válvula a punto de abrir), Rhizome arbitrando (los bloques de evidencia), Pollen mediando (el `MissionPatch` que llegó vía Pollen escena 5), Meristem refinando (futuro implícito en la cadena temporal). La cartela ancla traduce todo para el no técnico. La diferencia con escena 2 cierra el arco con acción física.
 
@@ -209,9 +296,10 @@ Los carteles físicos refuerzan los nombres de los nodos en el plano material �
 La cartela esquina aterriza sobre la imagen exacta que la sostiene, y se desvanece antes de la cartela ancla central — sin compresión visual.
 
 **VO:** 5 palabras castellano (sobrio radical).
-**Cartelas:** 1 dominante (*"Criterion updated."*) + 1 esquina (invariante 4 líneas) + 3 bloques de evidencia técnica en pantalla.
+**Cartelas:** 1 dominante (*"Watering criteria updated."*) + 1 esquina (invariante 4 líneas) + 3 bloques de evidencia técnica en pantalla.
 **Overlays:** ninguno.
-**Producción:** captura de pantalla del Jetson real (Xilema corre el sistema) o mock fiel del log con los tres bloques diseñados con dirección de arte fina (resaltado fuerte de los dos campos del `diff`, cadencia de 1 bloque cada 3s). La cartela esquina inferior derecha en tipografía técnica pequeña, paleta sobria — **no compite** con la cartela ancla central que vendrá después. La válvula con chorro **visiblemente más corto** que en escena 2 (cronometrar: 12s en E7 vs 18s en E2).
+**Tokens dirección de arte:** fondo `soil.graphite`, resaltados `signal.seed` (los dos campos del diff), texto base IBM Plex Mono. Cartela ancla central Manrope. Cartela esquina invariante IBM Plex Mono pequeña. La cartela esquina inferior derecha en tipografía técnica pequeña, paleta sobria — **no compite** con la cartela ancla central que vendrá después.
+**Producción:** captura de pantalla del Jetson real (Xilema corre el sistema) o mock fiel del log con los tres bloques diseñados con dirección de arte fina. La válvula con chorro **visiblemente más corto** que en escena 2 (cronometrar: 12s en E7 vs 18s en E2).
 
 **Traducción confirmada (voto Bea día 16):** *"Physical layer prevails."* / *"Rhizome arbitrates."* / *"Pollen mediates."* / *"Meristem refines."* La opción "prevails" gana sobre "commands" por claridad semántica (prevalece, manda al final, se impone) manteniendo el ritmo de tripleta paralela con los tres verbos siguientes.
 
@@ -250,12 +338,12 @@ La cartela esquina aterriza sobre la imagen exacta que la sostiene, y se desvane
 | 2:40–2:42 | Plano real de la maceta del rodaje (continuidad con la última imagen de E8 si la hubiera, o transición desde la pantalla del Jetson). **Morph sutil** durante 2 segundos: la maceta se difumina, los bordes se expanden, aparece la parcela vista en cenital. Fondo neutro abstracto. | — |
 | 2:42–2:46 | Cenital flat editorial. Parcelas apareciendo progresivamente: una, dos, hasta ocho en mosaico irregular. Paleta tierra sobria. Cartela dosificada sincronizada con la aparición. | **Cartela progresiva (4s, dosificada en 3 beats al ritmo de las parcelas):** *"One plot."* (s1) → *"Two."* (s2) → *"Eight."* (s4) |
 | 2:46–2:48 | Pollen-nodo aparece y **arranca recorrido** entre las parcelas. Cartela única en s47. | **Cartela** (2s): *"Autonomous."* |
-| 2:48–2:51 | Pollen-nodo recorre parcelas. Mensajes técnicos breves apareciendo y desapareciendo en cada toque (mismo lenguaje del proyecto): `WeatherDigest accepted`, `MissionPatch delivered`, `DecisionReceipt synced`. Cartela cumbre. | **Cartela** (3s): *"Federated intelligence, carried by Pollen."* |
-| 2:51–2:54 | Pollen-nodo **llega al nodo Meristem** dentro del cenital flat. El nodo Meristem está representado como un punto distinto a las 8 parcelas — más grande, con forma diferente (triángulo o cuadrado donde las parcelas son rectángulos), color complementario. Pausa de conexión visual. | — |
+| 2:48–2:51 | Pollen-nodo recorre parcelas. **Mensajes técnicos breves** (3-5 según ritmo, IBM Plex Mono integrado al diseño flat) apareciendo y desapareciendo en cada toque del nodo: `WeatherDigest accepted`, `MissionPatch delivered`, `DecisionReceipt synced`, `ValidationStamp issued`, `Context cached`. Pulso `signal.seed` en el nodo. Cartela cumbre. | **Cartela** (3s, Manrope): *"Federated intelligence, carried by Pollen."* |
+| 2:51–2:54 | Pollen-nodo **llega al nodo Meristem** dentro del cenital flat. El nodo Meristem está representado como un **disco mayor azul desaturado o grafito claro** (Venation, día 17), distinto a las 8 parcelas (que son celdas rectangulares irregulares). Pausa de conexión visual. | — |
 | **2:54–2:55** | **Corte limpio.** Quiebre estético deliberado. Cambio de Veo3 flat a imagen real. | — |
 | 2:55–2:58 | Plano real del **portátil del agricultor abierto sobre una mesa de cocina** (o equivalente doméstico). Pantalla del portátil mostrando la app Meristem. **Cartela en pantalla del portátil** (3s): *"Pulling Rhizome data..."* (con elipsis indicando proceso). | **Cartela on-screen** (3s): *"Pulling Rhizome data..."* |
 | 2:58–3:00 | Pantalla cambia. **Cartela on-screen** (2s): *"Adjusting policies..."* La tarjeta logo final entra por fade sobre la pantalla del portátil al final. | **Cartela on-screen** (2s): *"Adjusting policies..."* + **Tarjeta logo** entrando por fade |
-| (cierre) | Tarjeta logo final visible 2-3s sobre la pantalla del portátil difuminada al fondo. | **Tarjeta logo:** `Sprout` / *"Local, safe, explainable decisions."* / `zigiella · Apache 2.0` / `github.com/zigiella/sprout` |
+| (cierre) | Tarjeta logo final visible 2-3s sobre la pantalla del portátil difuminada al fondo. | **Tarjeta logo (reformulada Venation, día 17):** `Sprout` / *"Local-first irrigation decisions."* / *"Safe · explainable · open-source"* / `zigiella · Apache 2.0` / `github.com/zigiella/sprout` |
 
 **Lo que se siente:** el video pasa de **abstracción** a **realidad doméstica**. El cerebro lento no vive en la nube — vive en un portátil sobre una mesa. Eso es lo más Sprout que el video puede demostrar al final: la inteligencia consolidada está al alcance de una persona, en su casa, no en un data center remoto. La cartela progresiva cierra la tesis (federación), los dos mensajes de Meristem cierran la operación (consolidación), y la tarjeta logo cierra el producto (firma).
 
@@ -265,10 +353,10 @@ La cartela esquina aterriza sobre la imagen exacta que la sostiene, y se desvane
 
 **Producción:**
 
-- **Cenital flat (Veo3, 2:40–2:54):** prompt con semilla *"Editorial flat illustration, top-down view of 8 small farm plots arranged in irregular mosaic, muted earth tones, clean line work, modern infographic style, animated luminous node moving between plots and reaching a larger central node (Meristem), minimalist text overlays integrated into design, no realistic sky, no realistic shadows, abstract neutral background."* Refinar con Bea antes de generar.
+- **Cenital flat (2:40–2:54):** **Venation prepara cenital animado** según design pack día 17. Si Veo3 sigue siendo necesario en este beat, prompt refinado por Venation: *"Editorial flat illustration, top-down view of 8 small farm plots arranged in an irregular mosaic, muted earth tones, clean line work, modern infographic style, warm oat background, no realistic sky, no realistic shadows. A small luminous seed-lime node moves between plots, carrying context. Minimal technical labels appear briefly near touched plots: WeatherDigest accepted, MissionPatch delivered, DecisionReceipt synced. The node finally connects to a larger distinct Meristem hub, a desaturated blue-gray circle, visually different from the plot cells. Calm precise motion, not playful, not videogame-like."* Negative prompt: *"no cartoon farm, no happy plants, no neon AI, no futuristic city, no glossy 3D, no realistic drone shot, no childish icons, no saturated green, no sci-fi interface."* **Decisión pendiente día 17 con Bea:** ¿Veo3 sigue siendo necesario en E9 si Venation entrega cenital animado, o queda Veo3 limitado a planos 08 y 14 que Bract acotó?
 - **Corte 2:54–2:55:** corte limpio, sin transición, sin fade. El quiebre estético es feature.
 - **Imagen real (2:55–3:00):** plano del portátil del agricultor abierto sobre una mesa (cocina o similar doméstico). Luz natural si es posible. La pantalla del portátil tiene que mostrar **algo real** — la app Meristem corriendo (Meristem la prepara) o mock fiel.
-- **Tarjeta logo:** diseño en post. Mantiene la regla de idiomas (todo en inglés excepto el VO que aquí no hay).
+- **Tarjeta logo (reformulada Venation, día 17):** diseño en post con paleta `soil.oat` o `soil.humus`. Tipografía Manrope para `Sprout` (titular) y subtítulo (`Local-first irrigation decisions.` / `Safe · explainable · open-source`). IBM Plex Mono para los IDs (`zigiella · Apache 2.0` y URL repo). **Cambio v1.6:** subtítulo ahora en inglés (corrige inconsistencia v1.4 que tenía castellano *"Decisiones locales, seguras y explicables."*). Coherente con regla "todo on-screen en inglés".
 
 **Recurso de Cambium NO aplicado:** la cartela invariante de Xilema *"Physical layer rules. Rhizome arbitrates. Pollen mediates. Meristem refines."* queda **fuera de escena 9**. Razonamiento: la escena ya tiene cartela progresiva (3 beats) + 2 mensajes Meristem + tarjeta logo (4 líneas) = 9 elementos textuales en 20 segundos. Añadir una cartela invariante de 4 líneas más satura. La invariante queda como recurso writeup donde tiene más espacio. Si Bea o Cambium reabren la decisión, busco hueco.
 
@@ -307,6 +395,17 @@ VO en castellano grabado por Bea. Cartelas/overlays/textos on-screen en inglés 
 
 ## Historial de versiones
 
+- **v1.6 — sistema visual Venation aplicado** (2026-05-02, día 17, Corola) — adoptado design pack `sprout_design_pack_v1` de Venation. Cambios consolidados:
+  1. **Sistema visual:** Soil protocol + Water ledger con tokens hex precisos (`soil.oat`, `soil.humus`, `soil.clay`, `soil.moss`, `soil.graphite`, `soil.kraft`, `water.blue`, `status.warning`, `status.blocked`, `signal.seed`). Tipografía: Manrope (humano/producto) + IBM Plex Mono (sistema/datos). Documentado en sección "Sistema visual del video" al inicio.
+  2. **`signal.seed` (#C5F26B) aplicado cross-escena como acento único de "inteligencia activa"** (regla 3%). E2: LED Jetson + resaltado WATER y final_action. E3: resaltado final_action. E5: pulso procesamiento Pollen. E7: resaltado Policy diff. E9: nodo Pollen + mensajes técnicos. Decisión Corola día 17 (voto delegado por Cambium ella).
+  3. **E2 log diseñado con campos concretos** (Venation): bloque `SOIL READ` + bloque `DECISION` con campos cotejables con `DecisionReceipt`. Cadencia 1 línea/segundo.
+  4. **E3 cartela técnica:** `function/read tools · no actuator tools` → `AI proposes / ESP32 validates` (Venation, voto Bea aceptado).
+  5. **E5 motion procesamiento Pollen:** tres estados secuenciales `listening → compiling → validating` con pulso `signal.seed` (Venation).
+  6. **E6 contingencia explícita meteo / sin meteo:** cartela `WeatherDigest ferry` (con meteo) o `Context ferry` (sin meteo); recepción `WeatherDigest accepted` o `Context accepted`. Limpio para las dos rutas (Venation, voto Bea aceptado).
+  7. **E7 cartela ancla:** `Criterion updated.` → `Watering criteria updated.` (Venation, voto Bea aceptado). Más concreto, más ligado al agua.
+  8. **E9 mensajes técnicos cenital:** ahora 5 mensajes (`WeatherDigest accepted`, `MissionPatch delivered`, `DecisionReceipt synced`, `ValidationStamp issued`, `Context cached`). Nodo Meristem como **disco mayor azul desaturado o grafito claro** (Venation).
+  9. **E9 tarjeta logo reformulada:** `Sprout / Local-first irrigation decisions. / Safe · explainable · open-source / zigiella · Apache 2.0 / github.com/zigiella/sprout`. **Corrige inconsistencia v1.4** que tenía subtítulo en castellano violando regla "todo on-screen en inglés".
+  10. **Prompt Veo3 E9 actualizado** con versión refinada de Venation. Decisión pendiente con Bea: ¿Veo3 sigue siendo necesario en E9 si Venation entrega cenital animado, o queda Veo3 limitado a planos 08 y 14 que Bract acotó?
 - **v1.5 — refuerzo de nombres de nodos + traducción confirmada** (2026-05-01, día 16, Corola) — cinco cambios tras mensaje de Bea día 16:
   1. **Voto Bea sobre traducción invariante:** *"Physical layer prevails."* gana sobre *"commands"* — swap textual aplicado en E7 (script + shot list). "prevails" preserva ritmo de tripleta paralela y gana claridad semántica.
   2. **Carteles físicos extendidos.** Decisión Bea: dos carteles por parcela en lugar de uno — cartel maceta con nombre completo (`PLOT_01 with RHIZOME_01` / `PLOT_02 with RHIZOME_02`) + cartel caja electrónica (`RHIZOME_01` / `RHIZOME_02`, intercambiables sobre la misma cajita Jetson+ESP32 entre tomas). Total **4 carteles** en lugar de 2. Refuerza nombres de nodos en plano físico durante todo el rodaje.
