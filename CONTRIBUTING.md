@@ -170,6 +170,79 @@ Abre una entrada en `bitacora/` con el tema `pregunta-<topic>` y etiqueta a Camb
 
 Si el fallo del CI es del propio workflow (no del codigo), se abre issue aparte para arreglar el workflow. El PR afectado queda en hold.
 
+### 9.2 Operaciones git seguras en maquina compartida
+
+**Contexto.** Varias miembras del equipo (Bea, Corola, Cambium) comparten maquina, carpeta de trabajo y cuenta de GitHub. Eso introduce riesgos especificos que NO existen cuando cada miembra tiene su propio clone aislado:
+
+- Cuando una hace `git pull`, `git checkout` o `git stash` en la carpeta compartida, las otras se ven afectadas en su working tree.
+- Es muy facil que un commit termine en la rama equivocada porque el `HEAD` cambio entre operaciones.
+- Es muy facil que cambios reales se queden en un **stash silencioso** durante operaciones cross-rama y nunca lleguen al commit que crees haber hecho.
+
+Esto se ha sufrido empiricamente: Cambium 4 veces (dia 13), Meristem 5 veces (dias 12-13), Corola 1 vez (dia 15). Patron sistemico, no error individual.
+
+**Tres puntos de verificacion antes de cada commit.**
+
+Sustituye al checklist tradicional `git status` solo. Verifica los **tres** siempre:
+
+```bash
+git status                  # 1. archivos modificados/staged
+git branch --show-current   # 2. en que rama estoy realmente
+git stash list              # 3. stashes pendientes (especialmente con tu prefijo)
+```
+
+Si los tres confirman lo que esperabas, commitea. Si alguno te sorprende, **para y resuelve antes de commitear**. Tres comandos, dos segundos cada uno.
+
+**Stash con prefijo de autor obligatorio.**
+
+Cuando uses `git stash push`, **siempre con mensaje y prefijo de autor**:
+
+```bash
+git stash push -m "[corola] WIP guion v1.4 escena 7"
+git stash push -m "[cambium] WIP bitacora dia 16"
+```
+
+Eso permite identificar de un vistazo en `git stash list` que stash es de quien:
+
+```
+stash@{0}: On main: [corola] WIP guion v1.4 escena 7
+stash@{1}: On main: [cambium] WIP bitacora dia 16
+```
+
+Si ves un stash sin prefijo, es porque alguien olvido la convencion. **No lo tocas hasta confirmar de quien es**.
+
+**Una operacion atomica por sesion.**
+
+Cuando arranques sesion de trabajo:
+1. `git status` + `git branch --show-current` + `git stash list` (verificacion inicial)
+2. Si hay stash ajeno o working tree sucio, **paras y avisas en chat comun antes de continuar**
+3. Trabajo + commit + push
+4. Antes de pasar el turno: `git checkout main` y working tree limpio
+
+**No dejas working tree modificado para que la siguiente miembra arranque.** Si tu trabajo no esta listo para commit, lo dejas en stash con tu prefijo y la siguiente sabe que hay material tuyo pendiente.
+
+**Antes de cualquier `git checkout`.**
+
+Verifica `git stash list`. Si ves stash con prefijo ajeno, **no haces checkout que pueda alterar ese contexto sin avisar primero**. Si ves stash con tu prefijo de una sesion anterior, decide explicitamente: lo aplicas, lo descartas, o lo dejas y navegas con cuidado.
+
+**Resolucion si el commit termino en rama equivocada.**
+
+Procedimiento conocido por el equipo (lo hemos usado varias veces sin perdida de datos):
+
+```bash
+git reset --soft HEAD~1     # deshace commit, mantiene cambios en staging
+git stash push -m "[nombre] commit a mover"
+git checkout main           # o la rama correcta
+git stash pop
+git commit -m "..."         # commit en rama correcta
+git push origin main
+```
+
+Si el commit ya esta pusheado a la rama equivocada, abrir issue y resolver con `git revert` (no force-push).
+
+**Fuera de scope post-hackathon.**
+
+A futuro, **`git worktree`** es la solucion tecnica correcta a esta friccion: un solo `.git/` central, varios working directories aislados, una miembra por carpeta. No lo implementamos durante el hackathon porque cambiar setup en mitad del proyecto introduce mas riesgo que el que mitiga. Apuntar para revision post-demo.
+
 ---
 
 ## 10. Backlog y tablero visual
@@ -495,6 +568,79 @@ Open a `bitacora/` entry with the topic `pregunta-<topic>` and tag Cambium. Or u
 4. Only when green, request review
 
 If the failure is in the workflow itself (not the code), open a separate issue for the workflow. The affected PR stays on hold.
+
+### 9.2 Safe git operations on a shared machine
+
+**Context.** Several team members (Bea, Corola, Cambium) share machine, working folder and GitHub account. This introduces specific risks that do NOT exist when each member has their own isolated clone:
+
+- When one runs `git pull`, `git checkout` or `git stash` in the shared folder, the others see their working tree affected.
+- It is very easy for a commit to land on the wrong branch because `HEAD` changed between operations.
+- It is very easy for real changes to remain in a **silent stash** during cross-branch operations and never reach the commit you thought you made.
+
+This has been suffered empirically: Cambium 4 times (day 13), Meristem 5 times (days 12-13), Corola 1 time (day 15). Systemic pattern, not individual error.
+
+**Three verification points before each commit.**
+
+Replaces the traditional `git status` only. Always verify the **three**:
+
+```bash
+git status                  # 1. modified/staged files
+git branch --show-current   # 2. which branch I am really on
+git stash list              # 3. pending stashes (especially with your prefix)
+```
+
+If all three confirm what you expected, commit. If any surprises you, **stop and resolve before committing**. Three commands, two seconds each.
+
+**Stash with author prefix mandatory.**
+
+When using `git stash push`, **always with message and author prefix**:
+
+```bash
+git stash push -m "[corola] WIP guion v1.4 escena 7"
+git stash push -m "[cambium] WIP bitacora dia 16"
+```
+
+This allows identifying at a glance in `git stash list` which stash belongs to whom:
+
+```
+stash@{0}: On main: [corola] WIP guion v1.4 escena 7
+stash@{1}: On main: [cambium] WIP bitacora dia 16
+```
+
+If you see a stash without prefix, someone forgot the convention. **Don't touch it until you confirm whose it is**.
+
+**One atomic operation per session.**
+
+When starting a work session:
+1. `git status` + `git branch --show-current` + `git stash list` (initial verification)
+2. If there is a foreign stash or dirty working tree, **stop and notify in common chat before continuing**
+3. Work + commit + push
+4. Before passing the turn: `git checkout main` and clean working tree
+
+**Don't leave a modified working tree for the next member to start.** If your work isn't ready to commit, leave it in stash with your prefix and the next member knows there's pending material from you.
+
+**Before any `git checkout`.**
+
+Verify `git stash list`. If you see a stash with foreign prefix, **don't checkout that may alter that context without notifying first**. If you see a stash with your prefix from a previous session, decide explicitly: apply it, discard it, or leave it and navigate with care.
+
+**Recovery if commit landed on wrong branch.**
+
+Procedure known by the team (we've used it several times without data loss):
+
+```bash
+git reset --soft HEAD~1     # undoes commit, keeps changes in staging
+git stash push -m "[name] commit to move"
+git checkout main           # or correct branch
+git stash pop
+git commit -m "..."         # commit on correct branch
+git push origin main
+```
+
+If the commit was already pushed to the wrong branch, open issue and resolve with `git revert` (not force-push).
+
+**Out of scope, post-hackathon.**
+
+In the future, **`git worktree`** is the correct technical solution to this friction: one central `.git/`, several isolated working directories, one member per folder. We don't implement it during the hackathon because changing setup mid-project introduces more risk than it mitigates. Earmark for post-demo review.
 
 ---
 

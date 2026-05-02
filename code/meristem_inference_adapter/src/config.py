@@ -12,7 +12,7 @@ import os
 from dataclasses import dataclass, field
 from typing import Literal
 
-BackendMode = Literal["cloud", "local", "test"]
+BackendMode = Literal["cloud", "local", "llamacpp", "test"]
 
 
 # -----------------------------------------------------------------------------
@@ -29,6 +29,7 @@ THINKING_BUDGET_TOKENS_PLACEHOLDER = 4096
 DEFAULT_MODEL_ALIASES: dict[str, str] = {
     "gemma4:26b-moe": "gemma-4-26b-a4b",
     "gemma4:e4b": "gemma-4-e4b-it",
+    "gemma4:e2b": "gemma-4-e2b-it",
     "gemma4:31b": "gemma-4-31b-it",
 }
 
@@ -51,6 +52,7 @@ class Settings:
     backend: BackendMode
     adapter_port: int
     ollama_upstream_host: str
+    llamacpp_server_url: str
     gemini_api_key: str | None
     gemini_default_model: str
     thinking_budget: int
@@ -75,9 +77,9 @@ def _get_float(name: str, default: float) -> float:
 
 def _get_backend(default: BackendMode = "test") -> BackendMode:
     raw = (os.environ.get("INFERENCE_BACKEND") or default).strip().lower()
-    if raw not in ("cloud", "local", "test"):
+    if raw not in ("cloud", "local", "llamacpp", "test"):
         raise ValueError(
-            f"INFERENCE_BACKEND invalido: {raw!r}. Valores validos: cloud | local | test"
+            f"INFERENCE_BACKEND invalido: {raw!r}. Valores validos: cloud | local | llamacpp | test"
         )
     return raw  # type: ignore[return-value]
 
@@ -89,6 +91,9 @@ def load_settings() -> Settings:
         adapter_port=_get_int("ADAPTER_PORT", 11434),
         ollama_upstream_host=os.environ.get(
             "OLLAMA_UPSTREAM_HOST", "http://localhost:11435"
+        ),
+        llamacpp_server_url=os.environ.get(
+            "LLAMACPP_SERVER_URL", "http://localhost:8080"
         ),
         gemini_api_key=os.environ.get("GEMINI_API_KEY") or None,
         gemini_default_model=os.environ.get("GEMINI_DEFAULT_MODEL", "gemma-4-26b-a4b"),

@@ -91,3 +91,9 @@ video/cache/
 *.mov
 # Keep final exports
 !video/final/*.mp4
+
+# Local models for tuning (downloaded from HF, large binaries)
+models/
+
+# Local llama.cpp binaries (precompiled, large)
+tools/llama.cpp/

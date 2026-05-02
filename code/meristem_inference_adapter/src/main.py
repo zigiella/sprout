@@ -58,6 +58,10 @@ def _build_backend(settings: Settings) -> InferenceBackend:
         from .backends.local import LocalBackend
 
         return LocalBackend(upstream_host=settings.ollama_upstream_host)
+    if settings.backend == "llamacpp":
+        from .backends.llamacpp import LlamaCppBackend
+
+        return LlamaCppBackend(server_url=settings.llamacpp_server_url)
     # backend == "test"
     from .backends.test import TestBackend
 
@@ -97,6 +101,7 @@ def _backend_label(settings: Settings) -> str:
     mapping = {
         "cloud": "cloud-gemini",
         "local": "local-ollama",
+        "llamacpp": "local-llamacpp",
         "test": "test",
     }
     return mapping[settings.backend]
