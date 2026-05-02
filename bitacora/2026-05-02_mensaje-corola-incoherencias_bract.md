@@ -1,14 +1,14 @@
-# Borrador de mensaje a Corola — incoherencias `shot_list.md` ↔ `40_pitch_video.md`
+# Mensaje a Corola — incoherencias `shot_list.md` ↔ `40_pitch_video.md`
 
 **Fecha:** 2026-05-02
 **Autora:** Bract
-**Estado:** borrador, pendiente disparar cuando Cambium me dé luz verde para escribir a Corola.
+**Destinataria:** Corola
 
 ---
 
 Corola,
 
-Soy Bract. Antes de meter mano al draft de CapCut con cartelas literales y prompts Veo definitivos, te paso las incoherencias que detecté entre `video/shot_list.md` v0.3 (tu PR hermano) y `docs/40_pitch_video.md` v2.1, por orden de impacto en producción.
+Soy Bract. Antes de meter mano al draft de CapCut con cartelas literales y prompts Veo definitivos, te paso las incoherencias que detecté entre `video/shot_list.md` v0.3 (tu PR hermano) y `docs/40_pitch_video.md` v2.1, por orden de impacto en producción. Tres de ellas (#2, #3, #5) ya las cerró Bea ayer y Cambium me las pasó al darme luz verde — las dejo apuntadas para cierre formal en tu próxima v0.4 del shot_list.
 
 ## 1. Estructura: 9 escenas vs 15 planos
 
@@ -16,19 +16,17 @@ Soy Bract. Antes de meter mano al draft de CapCut con cartelas literales y promp
 
 **Propuesta:** mantener las 9 escenas como mapa rector y reorganizar `shot_list.md` para que cada plano cuelgue de una escena (E1-E9). Te paso una tabla 1:1 si lo prefieres así.
 
-## 2. Posición del climax narrativo
+## 2. Posición del climax narrativo — cerrado por Bea
 
-- `shot_list.md`: plano 07 a 0:35–0:50 (transferencia cruzada A→B).
-- `pitch_video.md`: escena 7 a 2:10–2:30 (criterio modificado).
+**El climax queda en E7 "criterio modificado".** La transferencia cruzada A→B (shot_list plano 07) baja a tensión visual, no a climax.
 
-**Propuesta:** confirmar cuál de los dos es el climax. Mi lectura es que la transferencia cruzada (shot_list 07) es lo más fílmico, pero el "criterio modificado" (pitch 7) es lo más demostrativo del valor. Necesitamos uno.
+Cuando reordenes el `shot_list.md` sobre las 9 escenas (incoherencia #1), el plano 07 cae como apoyo dentro de E6 o E7 según convenga al ritmo, no como pieza autosuficiente del minuto 1.
 
-## 3. Cenital editorial: ¿uno o dos?
+## 3. Cenital editorial — cerrado por Bea
 
-- `shot_list.md`: dos cenitales Veo3 — plano 08 (0:50–1:00, 10 s) y plano 14 (2:30–2:50, 20 s).
-- `pitch_video.md`: uno solo — escena 9 (2:40–3:00, 20 s).
+**Uno solo en E9, y fuera de Veo3.** La animación de Venation queda adoptada (ver su handoff en `bitacora/2026-05-02_handoff-video-corola-bract_venation.md`). E9 son 20 s en 1920×1080, paquetes `POLICIES` y `RECEIPTS` viajando entre Meristem y Pollen, recorrido por las 8 parcelas con iluminación progresiva, cierre con `SYNCED ✓` y cartela progresiva.
 
-**Propuesta:** un solo cenital editorial al final (E9). El plano 08 puede convertirse en pull-back rodado real desde la terraza si la altura permite encuadrar las dos parcelas lógicas, evitando el segundo Veo3.
+Implicación para tu shot_list: **el plano 08 ya no es candidato a Veo3**. Queda como pull-back rodado real desde la terraza, si la altura permite encuadrar las dos parcelas lógicas. Mi `produccion/veo-prompts.md` lo refleja en la próxima iteración.
 
 ## 4. Caducidad
 
@@ -37,13 +35,11 @@ Soy Bract. Antes de meter mano al draft de CapCut con cartelas literales y promp
 
 **Propuesta:** mantener la posición de `pitch_video.md` (E8 antes del cierre) — encaja mejor con el arco emocional y deja el cenital editorial como remate.
 
-## 5. Meristem en MVP
+## 5. Meristem en MVP — cerrado por Bea
 
-- `shot_list.md`: presente (planos 10 y 14).
-- `pitch_video.md`: explícitamente fuera del MVP.
-- `estado_vivo.md` día 16: Meristem-nodo integrando LLM, frente activo.
+**Meristem sí entra en el MVP.** Cierre del día 16 = LLM integrado con tool calling + multi-Rhizome v0 + `decisions_by_rule`. Cambium actualiza `docs/40_pitch_video.md` en sesión conjunta con Bea hoy. Cuando ese update esté en main, ajusto el shot_list contigo si toca.
 
-**Propuesta:** decisión de Bea + Cambium. Si entra en MVP, hay que añadirlo a `pitch_video.md` (lo edita Cambium, archivo caliente). Si no entra, recortarlo del shot_list.
+Mientras tanto, mi planificación trata Meristem como pieza presente del MVP en E9 (cierre con portátil real de Meristem corriendo, según `pitch_video.md` actual y `shot_list.md` planos 10/14).
 
 ## 6. Cartela invariante E7
 
