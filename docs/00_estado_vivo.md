@@ -79,9 +79,13 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 ### Pollen (Floema)
 
 - **F0-F5 cerradas día 16-17**. Pollen demo-ready esperando integración real con Rhizome.
-- **Día 18**: bitácora `2026-05-03_cierre-dia-18-floema-a-cambium.md` mencionada por Bea pero no localizada en remoto. Apunte parcial (vía Bract): refactorización `MainActivity.kt`, `HomeScreen.kt`, `VisitarMeristemScreen.kt`, `ChatFeature.kt` durante día 17. Estado real día 18 pendiente confirmar.
-- **Pendiente día 19**: sustituir `RhizomeMockClient` por cliente real apuntando a IP Jetson (juntas con Endo). **Esto desbloquea cierre del MVP**.
-- **Floema dueña live demo**: APK descargable + Appetize.io + transcripts. Plazo draft día 22, pulido día 28. Bea OK al endpoint público Meristem (Cloud Run / Fly.io) — *"el coste lo podemos asumir"*.
+- **Día 18 cierre (`bitacora/2026-05-03_digest-dia18_floema.md` en `feat/pollen-f5-rhizome`)**: dos hitos grandes:
+  - **Verificación F5 cerrada**: `apply now` bloque 1 sigue cerrado, `Log.e()` estructurado en `LiteRtInfra.kt` no se perdió en rebases.
+  - **Arquitectura Appetize con flavors Gradle**: `build.gradle.kts` ahora soporta dos variantes — `device` (con LiteRT-LM real para Jetson/Pixel) y `demo` (excluyendo LLM local con mock equivalente). **APK súper ligero capaz de correr en Appetize.io sin OOM**. Plan A live demo: APK demo en Appetize (Mock estable). Plan B: endpoint público Meristem (semilla plantada vía OpenRouter como fallback API).
+- **Bloqueo apuntado por Floema**: el ZIP de Venation (prototipo HTML) invoca archivos `.jsx` (`android-frame.jsx`, `components.jsx`) que NO están en el ZIP de entrega. Pendiente: Venation pasa carpeta `.jsx` o link Figma. Mientras, Floema pospone integración de márgenes y sombras en Compose.
+- **Pendiente día 19**: sustituir `RhizomeMockClient` por cliente real apuntando a IP Jetson (juntas con Endo). **Esto desbloquea cierre del MVP** de cadena Pollen ↔ Rhizome real.
+- **Floema dueña live demo**: APK descargable + Appetize.io + transcripts. Plazo draft día 22, pulido día 28. **Plan A activo (flavors demo + Mock)**, Plan B (endpoint público Meristem Cloud Run / Fly.io) en cola — Bea OK al coste pero no urge con flavors ya en place.
+- **Apunte para writeup §5 + §6**: cita Floema *"las dependencias nativas hiper-pesadas pueden ser un lastre no solo operativo, sino también para enseñar el producto"*. Aislar con `deviceImplementation` en Gradle como buena práctica arquitectural.
 
 ### Meristem-nodo (Meristem)
 
@@ -207,9 +211,10 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 | 7 | Verificar branding Venation no pisa Gemma | Venation (vía bitácora) | Pre-rodaje |
 | 8 | Stash `[corola]` con update estado_vivo de día 16: descartar o aplicar | Bea + Cambium | Sesión conjunta |
 | 9 | Merge `feat/corola-guion-v1` (script + shot list v1.6) | Cambium | Cuando Corola dé OK |
-| 10 | Localizar bitácora Floema día 18 | Bea pasa link | Día 19 |
-| 11 | Endpoint público Meristem (Cloud Run / Fly.io) — arrancar | Floema + Meristem | Días 25-28 |
-| 12 | Verificar coste Appetize.io versión gratuita | Floema | Día 19 |
+| 10 | ~~Localizar bitácora Floema día 18~~ — cerrado, en `feat/pollen-f5-rhizome:bitacora/2026-05-03_digest-dia18_floema.md` | — | — |
+| 11 | Endpoint público Meristem (Cloud Run / Fly.io) — Plan B con flavors `demo` Mock ya en place | Floema + Meristem | Si tiempo |
+| 12 | Verificar coste Appetize.io versión gratuita al subir APK demo real | Floema | Día 19+ |
+| 15 | Pasar a Floema material `.jsx` o link Figma del prototipo HTML | Venation | Día 19 |
 | 13 | Meteo dentro/fuera del MVP (depende Froggit) | Bea + Xilema | Día 19+ |
 | 14 | Slack MCP — solo Corola | Bea | Día 19+ |
 
