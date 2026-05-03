@@ -5,8 +5,8 @@
 > (incluida una nueva miembra que se incorpore) puede leer esto en 30
 > segundos y reconstruir contexto sin tener que escarbar 50 bitácoras.
 >
-> **Fecha de última actualización:** 2026-05-02 (cierre del día 17)
-> **Día del proyecto:** 17 de 30. Quedan 13 días.
+> **Fecha de última actualización:** 2026-05-03 (cierre del día 18)
+> **Día del proyecto:** 18 de 30. Quedan 12 días.
 
 ---
 
@@ -20,21 +20,27 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 
 > *"Yo somos todas nosotras. Por eso firmo como zigiella."* (Bea, día 17) — frase para writeup §5.
 
+> *"Hoy el sistema dejó de ser piezas sueltas. Jetson piensa, ESP32 veta, Rhizome empieza a tener cuerpo físico real."* (Xilema, día 18) — frase ancla del cierre del día.
+
+> *"En sistemas físicos, el perfil rápido no gana hasta que conserva contrato. El perfil seguro manda."* (Endodermis, día 18) — frase para writeup §5.
+
+**Tagline final confirmada (bookend del video, inicio + cierre):** *"When network is absent — and the human is far — local criteria still irrigate."*
+
 ---
 
 ## Equipo (9 miembras activas)
 
 | Nombre | Rol | Frente | Estado |
 |--------|-----|--------|--------|
-| **Bea** | Product owner | Decisiones de producto, narrativa, escritos al jurado, cara del vídeo | Activa |
-| **Cambium** | Tech lead | Coordinación, bitácoras, writeup, moderación | Activa |
-| **Xilema** | Dueña Rhizome físico + ESP32 | Firmware ESP-IDF, USB-CDC, sensores, host harness | Activa |
-| **Floema** | Dueña Pollen + dueña live demo | Nodo móvil Android Gemma 4 E4B + LiteRT-LM. APK + Appetize.io + transcripts | Activa, F5+Rhizome en `feat/pollen-f5-rhizome` |
-| **Meristem** | Dueña Meristem-nodo + tuning | Cerebro lento (FastAPI + llama.cpp + Gemma 4 E4B) | Activa, LLM integrado día 16 + multi-Rhizome v0 |
+| **Bea** | Product owner | Decisiones, narrativa, escritos al jurado, cara del vídeo. Sprout escala 1 plantado en terraza día 18 | Activa |
+| **Cambium** | Tech lead | Coordinación, bitácoras, writeup, moderación, research, vuelta del video | Activa |
+| **Xilema** | Dueña Rhizome físico + ESP32 | Firmware ESP-IDF, USB-CDC, sensores. **BME280 estabilizado día 18 + primer ping Jetson↔ESP32** | Activa |
+| **Floema** | Dueña Pollen + dueña live demo | Nodo móvil Android Gemma 4 E4B + LiteRT-LM. APK + Appetize.io + transcripts | Activa, F5+Rhizome (bitácora día 18 pendiente de localizar en repo) |
+| **Meristem** | Dueña Meristem-nodo + tuning | Cerebro lento (FastAPI + llama.cpp + Gemma 4 E4B) | Activa, sin actualización día 18, PR LLM listo para mergear |
 | **Corola** | Dueña vídeo | Guion, shot list, dirección creativa | Activa, script + shot list v1.6 en `feat/corola-guion-v1` (pendiente merge) |
-| **Endodermis** | Apoyo a Xilema en frente Jetson | Bring-up Jetson + batería Rhizome v0.5 en hardware real | Activa, **Rhizome v0.5 al 100% en Jetson real** día 17 (CPU-only) |
-| **Bract** | Montadora de vídeo | Montaje en CapCut, doble export ES/EN-dub | Activa día 17, PR #65 (DRAFT) con 9 incoherencias detectadas |
-| **Venation** | Directora de arte | Sistema visual del proyecto, design pack | Activa día 17, PR #66 mergeado a main, signal.seed blindado como regla |
+| **Endodermis** | Apoyo a Xilema en frente Jetson | Bring-up Jetson + batería Rhizome v0.5 + perfiles GPU/CPU | Activa, **GPU runtime PASS día 18 (quality pendiente RD04)** |
+| **Bract** | Montadora de vídeo | Montaje en CapCut, herramienta `video-tools/` para análisis VL | Activa, **PR #65 Ready for review** |
+| **Venation** | Directora de arte | Sistema visual del proyecto, design pack | Activa, signal.seed blindado como regla, sin actualización día 18 |
 
 **Antes en el equipo:** Estoma + Peri (célula investigación, reasignadas a otros proyectos día 9).
 
@@ -54,138 +60,136 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 1. *"Lo físico manda, Rhizome arbitra, Pollen media, Meristem afina."*
 2. Ningún `PolicyPacket` de Meristem puede reducir hard limits del firmware ESP32. Solo recomendar más conservador.
 
-**Patrón Meristem confirmado día 16:** *"lógica determinística decide, LLM solo escribe rationale"* — con LLM real integrado y validado en 5/5 bundles (cierre día 16). Multi-Rhizome simulado v0 funcional sin haberlo planeado.
+**Patrón Meristem confirmado día 16, validado empíricamente día 18:** *"lógica determinística decide, LLM solo escribe rationale"* — la deriva GPU RD04 día 18 (LLM responde `need_clarification` en lugar de `ok`) es prueba de que el patrón funciona: el LLM puede derivar, el sistema no se rompe porque la decisión la firma la lógica determinista.
 
 ---
 
-## Estado por frente — día 17 cierre
+## Estado por frente — día 18 cierre
 
 ### Rhizome físico (Xilema + Endo)
 
-- **Firmware ESP32-S3**: 5 reglas no negociables + SAFETY_DOWNGRADE en placa real con códigos en inglés (`JETSON_HEARTBEAT_LOST`, `TANK_LOW`, `EVENT_DURATION_OUT_OF_RANGE`, `NO_FLOW_DETECTED`, `ALERT_LATCHED`).
-- **Host harness** (`hardware/host_tools/esp32_host_harness.py`): `guardian_demo` y `telemetry_stub_roundtrip` reproducibles.
-- **Jetson día 17 cierre**: cable display port → HDMI hembra resuelto en Diotronic muy temprano. Fase previa Jetson cerrada por Bea + Xilema. **Endodermis cerró batería 18/18 PASS en Jetson real con Rhizome v0.5 vía llama.cpp + adapter llamacpp**:
-  - Mini-test crítico frío: 6/6
-  - Repetición caliente: 6/6
-  - Batería completa combinada: 18/18
-  - Sin OOM, sin truncamiento, sin fences
-  - **Riesgo apuntado**: GPU offload falla por asignación CUDA/NvMap. Runtime estable actual = CPU-only. No bloqueante para demo. Pendiente técnica para post-hackathon.
-  - No tocó firmware ni frontera física. Workspace local limpio en main; contenedores Jetson vivos para verificación.
-- **BME280**: aún bloqueado físicamente. Día 17 Bea compró módulos nuevos en Diotronic. **Mañana día 18 Xilema desbloquea con módulos nuevos + alimentación + adaptadores**.
-- **Sensores críticos sí en mesa**: 2x humedad suelo, nivel depósito, caudalímetro, bomba 12V. **No bloqueados por BME280**.
+- **Firmware ESP32-S3**: 5 reglas no negociables + SAFETY_DOWNGRADE.
+- **BME280 estabilizado día 18 (PR #68)**: lectura física validada con `I2C_SCAN 0x76`, `chip_id=0x60`, `BME280_REPORT ... ESP_OK`, telemetría `bme280_valid=true`. Después de seis días de bloqueo físico. Diagnóstico final Xilema: *"combinación de cobre, pinout, puerto fantasma y ruta ESP-IDF/Bosch demasiado frágil para este módulo"*.
+- **Jetson día 18**: GPU runtime PASS confirmado por Endo con `--fit off --no-op-offload`. 36/36 capas a GPU. Smoke ~1152ms vs 2277ms CPU-only. **Quality PASS NO todavía** — RD04 deriva semántica (need_clarification en lugar de ok) en GPU full. Mitigaciones probadas (temp=0, parcial -ngl 12, cache off) NO resuelven RD04. Apuntado para post-hackathon.
+- **Primer ping Jetson↔ESP32 día 18 (PR #70)**: secuencia completa documentada (`STATUS`, `HOST_HEARTBEAT`, `TELEMETRY`, rechazo `WATER A 12` con `TANK_LOW`, `ALERT_LATCHED`, vuelta a `SAFE_IDLE` con `RESET_ALERT`). Bloqueo era solo permisos `dialout` en Jetson, no hardware.
+- **Perfiles Jetson reproducibles (PR #69)**: `safe-cpu` (default demo contractual, 18/18) + `gpu-experimental` (apuntado, no promocionado hasta RD04 cerrado). Scripts en `code/rhizome/jetson/` (`run_runtime.sh`, `start_adapter.sh`, `smoke_adapter.sh`, `collect_baseline.sh`, `run_battery.sh`).
+- **Sprout escala 1 corriendo en terraza Bea (Castellar de n'Hug) día 18**: jardineras metálicas + sacos textiles plantados (tomate, fresa, pimientos, aromáticas) + garrafa-depósito (no riego humano) + sensores conectados al ESP32. **No es metáfora — es el sistema funcionando a escala doméstica**. Coincidencia visual: el verde de los sacos textiles ≈ `signal.seed` (#C5F26B).
+- **Sensores críticos en mesa**: 2x humedad suelo, nivel depósito, caudalímetro, bomba 12V (no conectada todavía — actuadores solo cuando cableado protegido revisado).
 
 ### Pollen (Floema)
 
-- **F0-F5 cerradas**. Pollen demo-ready esperando integración real con Rhizome.
-- **Compromiso bloque 3 cumplido día 14**: `MeristemNetworkClient` + `VisitarMeristemScreen` + `FieldVisit.kt` + `PolicyPacket.kt` con snake_case verificado.
-- **Apply now bloque 1 cerrado día 15**: `Log.e()` estructurado en `LiteRtInfra.kt:199` en lugar de catch silencioso.
-- **Día 16-17**: trabajo en `feat/pollen-f5-rhizome` (digest día 16 en `2026-05-01_digest-dia16_floema.md`). Standby útil mantenido.
-- **Pendiente día 18+**: sustituir `RhizomeMockClient` por cliente real apuntando a IP del Jetson (Jetson ya estable según cierre Endo). **Floema y Endo lo hacen juntas**.
-- **Floema dueña live demo**: APK descargable + Appetize.io + transcripts navegables. Plazo draft día 22, pulido día 28. Decisión pendiente Bea: ¿endpoint público Meristem (Cloud Run / Fly.io) para que el APK pueda llamar fuera de rodaje?
+- **F0-F5 cerradas día 16-17**. Pollen demo-ready esperando integración real con Rhizome.
+- **Día 18**: bitácora `2026-05-03_cierre-dia-18-floema-a-cambium.md` mencionada por Bea pero no localizada en remoto. Apunte parcial (vía Bract): refactorización `MainActivity.kt`, `HomeScreen.kt`, `VisitarMeristemScreen.kt`, `ChatFeature.kt` durante día 17. Estado real día 18 pendiente confirmar.
+- **Pendiente día 19**: sustituir `RhizomeMockClient` por cliente real apuntando a IP Jetson (juntas con Endo). **Esto desbloquea cierre del MVP**.
+- **Floema dueña live demo**: APK descargable + Appetize.io + transcripts. Plazo draft día 22, pulido día 28. Bea OK al endpoint público Meristem (Cloud Run / Fly.io) — *"el coste lo podemos asumir"*.
 
 ### Meristem-nodo (Meristem)
 
-- **Día 15 cerró pipeline determinístico end-to-end** sin LLM: schemas + Evaluator (4 reglas con precedencia) + 13 tests PASS + persistencia SQLite + PolicyComposer + 5 bundles smoke OK.
-- **Día 16 cerró**: **LLM E4B integrado con tool calling end-to-end**. Mini-batería 5/5 PASS. Calidad rationale mejor de lo esperado. Rama `feat/meristem-node-llm-integration` lista para PR.
-- **Bonus día 16 no planeado**: **multi-Rhizome simulado v0 funcional**. Cuando la abstracción está bien, la extensión sale gratis. Para writeup §6.
-- **`decisions_by_rule` en `/health`** convierte trazabilidad en pieza de demo. Pendiente día 18 si tiempo.
-- **Mensaje pendiente a Xilema**: validación dominio del prompt + 5 bundles. Sin urgencia mientras Xilema esté en BME280 día 18.
-- **Verificación Cactus framework** con Bea + Floema + Xilema (decisión Bea día 18).
+- **Día 16 cerrado**: LLM E4B integrado con tool calling end-to-end + multi-Rhizome simulado v0 funcional.
+- **Día 17-18 sin novedades activas en su frente**.
+- **Patrón validado empíricamente día 18** por la deriva GPU RD04 de Endo: lógica determinista decide, LLM solo escribe rationale. Para writeup §5 + §6.
+- **Pendiente**: PR `feat/meristem-node-llm-integration` listo para mergear cuando confirme rama limpia.
+- **Cactus framework verificación** pendiente (Bea + Floema + Meristem + Xilema).
+- **Cerrar nomenclatura `SAFETY_DOWNGRADE` ↔ `HARD_LIMIT_DOMAIN`** con Xilema en próximos días.
 
-### Tuning Rhizome (Meristem cerró v0.5 x86, Endo validó en Jetson real)
+### Tuning Rhizome
 
-- **Rhizome v0.5 al 100%** (18/18 envelope_valid + 18/18 status_match) en x86 CPU casera (Meristem día 15).
-- **`code/tuning/`** completo en main desde día 15 (PR #62).
-- **Día 17**: Endo re-ejecutó batería completa en Jetson Orin Nano Super real (CPU-only). 18/18. Reproducción 1:1 de la línea base x86 sobre hardware constrained.
+- **Rhizome v0.5 al 100%** validado en Jetson real (Endo día 17, 18/18 status_match en CPU-only).
+- **Día 18**: GPU full pasa 12/12 envelope + 11/12 status_match (RD04 deriva). Apuntado RD04/RH02 como "GPU quality pending".
 
 ### Vídeo (Corola + Bract + Venation)
 
-- **Guion v1.4 cerrado conceptualmente día 14**. 9 escenas, 5 frases fuertes, 2 parcelas lógicas.
-- **Día 17 cerrado**:
-  - **PR #66 (Venation) mergeado a main**: onboarding + handoff video con inventario E2-E9 de assets disponibles + cenital E9 ya animado + signal.seed blindado como regla.
-  - **PR #65 (Bract) en DRAFT**: 9 incoherencias detectadas + asset spec a Venation + onboarding bitácora. Pendiente actualización con decisiones cerradas + renombrar borrador→mensaje + Ready for review + merge Cambium.
-  - **`feat/corola-guion-v1` pendiente de merge a main**: script + shot list **v1.6** con sistema visual Venation aplicado + respuestas a Venation y Bract.
-- **Tres decisiones cerradas Bea día 17**:
-  - **Climax narrativo (incoherencia #2 Bract)**: criterio modificado E7. Transferencia cruzada A→B baja a tensión visual.
-  - **Cenital editorial (incoherencia #3 Bract)**: uno solo en E9. Veo3 fuera. Animación Venation adoptada.
-  - **Meristem en MVP del vídeo (incoherencia #5 Bract)**: sí entra. Yo actualizo `pitch_video.md` en sesión conjunta con Bea (pendiente día 18).
-- **Pivote pequeño del guion día 17**: abrir con **ausencia** (red que no llega, móvil sin señal, decisión que no espera), después solución y los 3 nodos, después zoom Rhizome. **Bea aparece a partir de E5** (`operator_note`) como cara de la decisión humana, no narradora del problema.
-- **Tagline maestra confirmada**: *"When the network is absent, local criteria still irrigate."* — convergencia conceptual Bea + Venation. Va al cierre del video.
-- **Wow moment dirigido**: ESP32 SAFE LIMIT en E3 (`candidate_action.seconds=30 → final_action.seconds=12`).
-- **Convergencia operativa Bract ↔ Venation sin coordinación previa**: ambas hablan el mismo lenguaje técnico de assets/formatos/plazos. Material para writeup §5.
+- **Guion v1.4 cerrado día 14**. Script + shot list **v1.6 en `feat/corola-guion-v1`** (pendiente merge cuando Corola dé OK final).
+- **PR #65 (Bract) Ready for review día 18**: 3 correcciones aplicadas + mensaje a Venation reescrito (4/4 preguntas respondidas con su handoff) + renombrado borradores → mensajes con `git mv`.
+- **PR #66 (Venation) mergeado día 17**: handoff video con inventario E2-E9 + cenital E9 animado + signal.seed blindado.
+- **Decisiones cerradas Bea día 17**: climax E7, cenital uno solo, Veo3 fuera, Meristem en MVP.
+- **Vuelta del video cerrada Bea + Cambium día 18**:
+  - Estructura **9-10 escenas** (no 3 actos), shot list v1.6 reagrupado.
+  - **Cartela Sprout + lema + 3 nodos al inicio (~5 seg)** antes de la ausencia.
+  - **E1 ausencia con 4 datos globales**: UNCCD 48% territorio mundial, UNCCD 1.8B + $300B, gencat -80% riego Cataluña 2024, ITU 58% rural mundial. Cataluña ejemplo del patrón global.
+  - **Climax E7** criterio modificado, **wow moment ESP32 SAFE LIMIT en E3** dirigido.
+  - **E9 cenital animado Venation** + **E9b nueva**: Bea tecleando portátil casero con Meristem en pantalla + cutaway a macetas reales (Sprout escala 1).
+  - **VO en inglés** master + dub ES aparte. Voz cruda Bea castellano en E5 (`operator_note`) respetada.
+  - **Tagline bookend** confirmada: inicio + cierre.
+  - **Frases fuertes pendientes revisión** (Cambium las prepara día 19).
+- **Herramienta Bract `video-tools/`** (fuera del repo): comparativa Qwen 3.6 Plus vs Gemini 2.5 Pro vs **Gemini 3.1 Pro Preview** sobre `videomacetas.mp4`. Default elegido: Gemini 3.1 Pro Preview (43% menos coste, lee audio real, honesto sobre dirección de arte). Disciplina epistémica `OBSERVADO / INFERIDO / DECLARADO` en prompt v2. Apunte cultural para writeup §5.
 
 ### Writeup
 
-- **Secciones 1, 2, 3 escritas** (último ajuste día 13 con sección 3 reescrita + invariantes).
-- **Índice nuevo aprobado por Bea día 16** — pendiente reorganizar `writeup/draft.md` y arrancar §4 Gemma 4:
+- **Secciones 1, 2, 3 escritas**.
+- **Índice nuevo aprobado por Bea día 16**:
   - §0 Título + subtítulo
   - §1 Problema
   - §2 Solución
   - §3 Arquitectura
-  - §4 **Gemma 4** (NUEVA — tool calling, lógica determinista + LLM, on-device)
+  - §4 **Gemma 4** (NUEVA)
   - §5 **Buenas prácticas y principios de trabajo** (NUEVA)
   - §6 **MVP — qué proyectamos vs qué hacemos** (NUEVA)
   - §7 Demo (90s)
   - §8 Impacto y escalado
   - §9 Limitaciones
-  - §10 **Trabajo futuro** (sustituye "Cierre")
-- **Eliminadas del draft anterior**: §5 fine-tuning + §6 validación sombra (obsoletos por pivote v2).
-- **Material confirmado para §5 Buenas prácticas**:
-  - Thinking mode aplicado por nodo (Pollen sin, Meristem con, Rhizome a definir por Endo).
-  - Definición de parámetros prompts + config modelos + benchmark (batería 18 prompts, criterios envelope_valid + status_match, patrón "lógica determinista decide, LLM solo escribe rationale").
-  - Cómo trabajamos (4-5 bullets cortos): bitácoras como contrato, formato síncrono por turnos contra repo, regla *"5 días para escribirla, 1 día para que las nuevas la tengan"*, contratos JSON como interfaz dura, frase **"Yo somos todas nosotras. Por eso firmo como zigiella."**
-  - Convergencia conceptual Bea↔Venation y operativa Bract↔Venation (ejemplos de tesis legible sin explicación).
-  - Aceptación profesional sin pelea Corola → Venation (*"lo arregla con un copy mejor que el mío"*).
-- **Material confirmado para §6 MVP — qué proyectamos vs qué hacemos**:
-  - Multi-Rhizome simulado v0 ya funcional (no estaba planeado para día 16).
-  - signal.seed (#C5F26B) como pista visual única "inteligencia activa" cross-escena.
-  - Live demo con APK + Appetize.io + transcripts (no Rhizome en internet).
-- **Material confirmado para §10 Trabajo futuro**:
-  - Sumar visión (cámara + análisis visual con Gemma 4 multimodal).
+  - §10 **Trabajo futuro**
+- **Material confirmado para §5 Buenas prácticas** (acumulado hasta día 18):
+  - Thinking mode aplicado por nodo.
+  - Definición de parámetros prompts + config modelos + benchmark.
+  - Cómo trabajamos: bitácoras como contrato, formato síncrono por turnos contra repo, regla *"5 días para escribirla, 1 día para que las nuevas la tengan"*, contratos JSON como interfaz dura, frase **"Yo somos todas nosotras. Por eso firmo como zigiella."**, disciplina §9.2 aplicada por todo el equipo.
+  - Convergencias (Bea↔Venation conceptual, Bract↔Venation operativa).
+  - Aceptación profesional sin pelea (Corola → Venation).
+  - **Frase Endo día 18**: *"En sistemas físicos, el perfil rápido no gana hasta que conserva contrato. El perfil seguro manda."*
+  - **Frase Xilema día 18**: *"Hoy el sistema dejó de ser piezas sueltas."*
+  - **Disciplina epistémica `OBSERVADO / INFERIDO / DECLARADO`** de Bract.
+  - Diagnóstico Xilema BME280: distinción síntoma vs causa raíz (cobre, pinout, puerto fantasma, ruta frágil).
+  - Aprendizaje operativo: antes de sospechar de hardware, verificar permisos OS (caso Jetson↔ESP32 dialout).
+- **Material para §6 MVP — qué proyectamos vs qué hacemos**:
+  - Multi-Rhizome simulado v0 ya funcional.
+  - signal.seed (#C5F26B) cross-escena.
+  - Live demo: APK + Appetize.io + transcripts + endpoint público Meristem.
+  - **Sprout escala 1 corriendo en terraza Bea** — proyecto ya funcionando a escala doméstica, no solo proyectado.
+  - **GPU runtime PASS / quality NO** como evidencia empírica del patrón Safety & Trust.
+- **Material para §10 Trabajo futuro**:
+  - Sumar visión (cámara + análisis multimodal Gemma 4).
   - Hablar con la parcela (audio in/out, voz natural full-duplex).
-  - Escalabilidad multi-parcela / multi-Rhizome real (v0 simulado ya hay).
+  - Escalabilidad multi-parcela / multi-Rhizome real.
+  - **GPU quality pass** (cerrar RD04/RH02).
 
-### Estrategia hackathon (revelación día 17)
+### Estrategia hackathon (revisada día 18 con research nuevo)
 
-- **El video pesa 70 puntos de 100** en la evaluación (40 Impact & Vision *as demonstrated in your video* + 30 Video Pitch). Writeup + repo solo verifican que la tecnología es real (30 pts Technical Depth).
-- **Combinaciones de premios**:
-  - Main + Special Tech: explícitamente combinable.
-  - Main + Impact: NO mencionado → asumir excluyente.
-  - Best case realista: Main 1st ($50k) + Special llama.cpp ($10k) = **$60k**.
-- **Patrón ganador 2025 (Gemma Vision) que coincide con Sprout**: singular focus + on-device + offline + privacy + real functional tech + multi-modelo con routing. Le copiamos el playbook sin saberlo.
-- **Lo que falta del playbook**: persona real con cara y nombre en el video. Decisión Bea día 17: ella sale en el video, no obsesión por agricultor real. Plan: pivote guion con "ausencia" para abrir, Bea entra en E5.
+- **El video pesa 70 puntos de 100**: Impact & Vision (40) + Video Pitch (30). Writeup + repo verifican (30).
+- **Combinaciones premios**: Main + Special Tech combinable explícito. Main + Impact NO mencionado → asumir excluyente.
+- **Best case realista**: Main 1st ($50k) + Special llama.cpp ($10k) = **$60k**.
+- **Patrón ganador 2025 (Gemma Vision)** que coincide con Sprout: singular focus + on-device + offline + privacy + real functional + multi-modelo con routing.
+- **Research global cerrado día 18 (PR #67 mergeado)**: 4 stats globales + 2 locales + 1 precedente + 1 bloque casos paralelos. Opener video con datos UNCCD + OECD + FAO + ITU + gencat + COAG/MAPA + WSU.
 
-### Naming Gemma 4 (verificado día 17)
+### Naming Gemma 4
 
-- **Repo cumple**: nombres "Gemma 4 E2B" / "Gemma 4 E4B" consistentes en 161 ocurrencias.
+- **Repo cumple**: nombres consistentes en 161 ocurrencias.
 - **Falta**: añadir statement *"Gemma is a trademark of Google LLC."* en 5 sitios (README, writeup, video, landing live demo, APK Pollen).
-- **Verificar**: branding Venation no pisa elementos Gemma (color signal.seed verde-lima probablemente seguro, pero confirmación pendiente con Venation vía bitácora).
-- PDF naming guidelines descargado en local; pendiente commit a `docs/external/` cuando OK Bea.
+- **Verificar**: branding Venation no pisa elementos Gemma.
+- **PDF guidelines** descargado en local; pendiente commit a `docs/external/`.
 
-### Landing (idea día 16)
+### Landing (frente apuntado, sin arrancar todavía)
 
-- **Concepto**: APK descargable (GitHub Releases) + Appetize.io + transcripts navegables. Floema dueña.
-- **Pendiente**: verificar coste/limitaciones Appetize.io. Decisión Bea sobre endpoint público Meristem para cadena hands-on real.
+- **Concepto**: APK descargable (GitHub Releases) + Appetize.io versión gratuita (suficiente según Floema) + transcripts navegables + animaciones abstractas (Venation, "1 hora cada una") + endpoint público Meristem (Cloud Run / Fly.io, OK Bea).
+- **Equipo doble**: Venation (planteamiento + frontend) + Floema (montaje + APK + Appetize.io). Bea + Cambium estrategia narrativa + textos.
 - **Plazo**: draft día 22, pulido día 28.
 
-### README del repo (rehacer día 18+)
+### README ganador (pendiente, cuando arranquemos sesión conjunta Bea + Cambium)
 
-- Estructura ganadora propuesta: hero + watch demo + try yourself + 30s pitch + architecture + Gemma 4 use + reproduce + team (zigiella) + license + atribución Gemma trademark.
-- Inglés primero, español en archivo aparte (`README.es.md`).
-- Cambium arranca cuando writeup esté avanzado (cita §5 sobre cómo trabajamos).
+- Estructura: hero + watch demo + try yourself + 30s pitch + architecture + Gemma 4 use + reproduce + team (zigiella) + license + atribución Gemma trademark.
+- **Inglés primero**, español en archivo aparte (`README.es.md`).
 
 ---
 
-## Apuesta de premios (revisada con datos del reglamento día 17)
+## Apuesta de premios (revisada día 18)
 
-| Track | Premio | Encaje real Sprout | Probabilidad | Combinable con Main |
-|-------|--------|---------------------|--------------|---------------------|
-| **Main 1st** | $50k | Tesis defendible + tecnología real + offline-first + privacy (mismo playbook que Gemma Vision 2025) | Apuesta principal | — |
-| **Special llama.cpp** | $10k | Doble punto Rhizome (Jetson) + Meristem (portátil casero) en hardware constrained | Alta | ✅ Sí |
+| Track | Premio | Encaje | Probabilidad | Combinable con Main |
+|-------|--------|--------|--------------|---------------------|
+| **Main 1st** | $50k | Tesis defendible + tecnología real + offline-first + privacy | Apuesta principal | — |
+| **Special llama.cpp** | $10k | Doble punto Rhizome (Jetson) + Meristem (portátil casero) | Alta | ✅ Sí |
 | **Special LiteRT** | $10k | Pollen usa LiteRT-LM en E4B on-device | Alta | ✅ Sí (verificar si solo 1 Special) |
-| **Special Cactus** | $10k | Local-first mobile que routes between models — Pollen literal | Verificar si es framework específico | ✅ Sí |
+| **Special Cactus** | $10k | Local-first mobile que routes between models | Verificar si framework específico | ✅ Sí |
 | **Impact Global Resilience** | $10k | Encaje literal: offline, edge-based, climate mitigation | Alta — solo si NO Main | ❌ |
-| **Impact Safety & Trust** | $10k | Lógica determinista + decisions_by_rule + ESP32 veto | Alta — solo si NO Main | ❌ |
+| **Impact Safety & Trust** | $10k | Lógica determinista + decisions_by_rule + ESP32 veto + GPU RD04 deriva sin romper sistema | Alta — solo si NO Main | ❌ |
 | **Impact Digital Equity** | $10k | Operator_note literal castellano + UX bilingüe | Media — solo si NO Main | ❌ |
 
 ---
@@ -194,86 +198,93 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 
 | # | Decisión | Dueña | Plazo |
 |---|----------|-------|-------|
-| 1 | Meteo dentro/fuera del MVP (depende de Froggit DP3000) | Bea + Xilema | Día 18 |
-| 2 | Slack MCP — solo Corola, mañana o pasado | Bea | Día 18-19 |
-| 3 | Reorganizar writeup con índice nuevo + arrancar §4 Gemma 4 | Bea + Cambium | Día 18 sesión conjunta |
-| 4 | Endpoint público Meristem (Cloud Run / Fly.io) sí o no para live demo | Bea | Día 18 |
-| 5 | Cactus framework verificación + decisión usar | Bea + Floema/Meristem/Xilema | Día 18 |
+| 1 | Mergear PRs #68 (BME280), #69 (Jetson profiles), #70 (ping) | Cambium | Día 19 |
+| 2 | Cactus framework verificación + decisión usar | Bea + Floema/Meristem/Xilema | Día 19-20 |
+| 3 | `video-tools/` al repo (sin key) sí o no | Bea | Día 19 |
+| 4 | Frases fuertes revisión | Cambium prepara, Bea modula | Día 19 |
+| 5 | Reorganizar writeup índice nuevo + arrancar §4 Gemma 4 | Bea + Cambium | Sesión conjunta día 19+ |
 | 6 | Atribución *"Gemma is a trademark of Google LLC."* en 5 sitios | Cambium (cuando OK Bea) | Pre-deadline |
 | 7 | Verificar branding Venation no pisa Gemma | Venation (vía bitácora) | Pre-rodaje |
-| 8 | Stash `[corola]` con update estado_vivo de día 16: descartar o aplicar diff vs versión actual | Bea + Cambium | Sesión conjunta día 18 |
-| 9 | Merge `feat/corola-guion-v1` (script + shot list v1.6) a main | Cambium | Cuando Corola dé OK final |
-| 10 | Verificar coste Appetize.io | Floema | Día 18 |
+| 8 | Stash `[corola]` con update estado_vivo de día 16: descartar o aplicar | Bea + Cambium | Sesión conjunta |
+| 9 | Merge `feat/corola-guion-v1` (script + shot list v1.6) | Cambium | Cuando Corola dé OK |
+| 10 | Localizar bitácora Floema día 18 | Bea pasa link | Día 19 |
+| 11 | Endpoint público Meristem (Cloud Run / Fly.io) — arrancar | Floema + Meristem | Días 25-28 |
+| 12 | Verificar coste Appetize.io versión gratuita | Floema | Día 19 |
+| 13 | Meteo dentro/fuera del MVP (depende Froggit) | Bea + Xilema | Día 19+ |
+| 14 | Slack MCP — solo Corola | Bea | Día 19+ |
 
 ---
 
-## Pendientes activos día 18
+## Pendientes activos día 19
 
 ### Bea
-- Macetas pimientos + tomates por la mañana (compradas día 17)
-- BME280 con Xilema (módulos nuevos en mano)
-- Coordinación arte-video-creatividad (continúa con Corola, Bract, Venation)
-- Sesión conjunta writeup con Cambium (índice nuevo + §4 Gemma 4 + decisión sobre stash `[corola]`)
-- Voto sobre meteo (post info Xilema sobre Froggit)
-- Voto sobre Slack MCP
-- Voto sobre endpoint público Meristem
-- Voto sobre Cactus
+- BME280 ya cerrado físicamente. Plantel ya plantado.
+- Sesión conjunta writeup con Cambium (índice + §4 Gemma 4 + decisión sobre stash `[corola]`)
+- Frases fuertes revisión con Cambium
+- Voto sobre PRs #68/#69/#70
+- Voto sobre Cactus, `video-tools/` al repo, branding Venation
+- **NO conectar bomba/12V hasta cableado protegido revisado**
 
 ### Xilema
-- BME280 desbloqueado con módulos nuevos + alimentación 5V/12V + adaptadores
-- Multímetro al BME280 roto (si llega tiempo)
-- Verificar Froggit DP3000 (independiente del BME280) — input para voto Bea sobre meteo
-- Soporte mensaje pendiente Meristem (validación dominio + 5 bundles) cuando hueco
+- Tras merge #68 por Cambium: reflashear ESP32 desde main (eliminar `fw=25a904f-dirty`), repetir BME280 smoke + ping Jetson↔ESP32 con SHA limpio.
+- Convertir secuencia ping en escenario reproducible / runner controlado
+- Soporte a Endo si retoma scripts Jetson
+- Verificar Froggit DP3000 (input para voto Bea sobre meteo)
 
 ### Endodermis
-- Rhizome v0.5 corriendo en Jetson real (mantenimiento + monitoreo)
-- Soporte Floema cuando empiece integración real Pollen ↔ Rhizome (sustituir mock por cliente real)
-- GPU offload pendiente (CUDA/NvMap) — apuntada para post-hackathon, no urge día 18
-- Apuesta multi-agente día 24: si MVP funciona, lidera doble agente días 25-30
+- Esperar merge #69 por Cambium. Tras merge: pull limpio, configurar autoría inline `Endodermis <endodermis@sprout.local>`, repetir scripts Jetson, documentar.
+- Soporte a Floema cuando arranque integración real Pollen ↔ Rhizome
+- GPU offload pendiente RD04/RH02 — no urge, post-hackathon
+- Coordinar primer flujo Jetson↔ESP32 bajo liderazgo Xilema
 
 ### Floema
-- Integración real Pollen ↔ Rhizome (sustituir `RhizomeMockClient` por cliente real apuntando a IP Jetson) — juntas con Endo
-- Live demo dueña: arrancar APK + Appetize.io + transcripts. Verificar coste Appetize.io.
+- **Integración real Pollen ↔ Rhizome** (sustituir `RhizomeMockClient` por cliente real apuntando a IP Jetson) — juntas con Endo. **Hoy desbloquea cierre del MVP.**
+- Capturas Pollen UI E4-E5-E7 para Bract cuando UI estable
+- Verificar coste Appetize.io versión gratuita
 - Cactus verificación con Bea + Meristem + Xilema
-- Cuando Meristem confirme LLM en producción: smoke real Pollen → Meristem
-- Coordinación con Venation sobre tokens visuales del design pack aplicables a Pollen (Floema decide qué entra y cuándo)
+- Live demo dueña: arrancar APK + Appetize.io + transcripts
+- **Pasar bitácora día 18** (no localizada en repo)
 
 ### Meristem
-- PR `feat/meristem-node-llm-integration` listo para mergear (verificar tres puntos antes de empujar)
-- Soporte a Endodermis (ya cerró batería; ahora mantenimiento + integración Pollen)
+- PR `feat/meristem-node-llm-integration` listo para mergear (verificar tres puntos)
+- Soporte a Endo si itera RD04 con LLM
 - `decisions_by_rule` en `/health` si tiempo
-- Iterar con Xilema sobre prompt + 5 bundles cuando ella responda
-- Cactus verificación con Bea + Floema + Xilema
-- Cerrar nomenclatura `SAFETY_DOWNGRADE` ↔ `HARD_LIMIT_DOMAIN` con Xilema
+- Cactus verificación
+- Cerrar nomenclatura con Xilema
 
 ### Corola
-- Merge `feat/corola-guion-v1` a main cuando dé OK final (script + shot list v1.6)
-- Continuar coordinación lateral con Bract y Venation (las respuestas a sus handoffs ya están en su rama)
-- Decisión sobre `signal.seed` cross-escena (Venation propone aplicación sistemática)
-- Refinar traducciones first pass — cartela ancla E7, cartela progresiva E9, subtítulo logo
-- Voz humana real escena 5 — pendiente confirmar (probable Bea, días 24-25)
+- Merge `feat/corola-guion-v1` cuando dé OK final
+- Responder a Bract (PR #65) sobre 6 incoherencias creativas pendientes (#1, #4, #6, #7, #8, #9)
+- Responder a Venation handoff en bitácora aparte (4 preguntas: validación paquete, voz humana E5, traducciones first pass, cartela final E9)
+- Decisión `signal.seed` cross-escena
+- Refinar traducciones first pass
+- Voz humana real escena 5 — confirmar quién la graba
 
 ### Bract
-- Actualizar borradores `borrador-mensaje-corola-incoherencias_bract.md` y `borrador-mensaje-venation-assets_bract.md` con decisiones cerradas Bea (#2 climax E7, #3 cenital uno solo Veo3 fuera, #5 Meristem dentro)
-- Renombrar `borrador-mensaje-*` → `mensaje-*` en commit aparte
-- Convertir PR #65 a Ready for review
-- Cambium mergea
-- Esperar respuesta Floema sobre estabilidad UI Pollen (capturas E4-E5-E7)
-- Esperar respuesta Xilema sobre disponibilidad capturas Jetson (E2-E3-E7)
+- Esperar merge PR #65 por Cambium
+- Tras respuesta Corola: regenerar draft CapCut con cartelas EN literales
+- Tras respuesta Venation: cerrar tipografía Manrope + IBM Plex Mono vs monospace
+- Cuando Bea pase más material rodado: doble análisis (con dossier + sin)
+- Posible plantilla `dossier-escena.md` por escena E1-E9
+- Capturas Jetson E2-E3-E7 — coordinación directa con Endo cuando hueco
 
 ### Venation
-- Esperar respuesta Corola al handoff (en bitácora aparte cuando Corola tenga hueco)
-- Esperar respuesta Bract al asset spec (cuando ella dispare mensaje desde PR #65 mergeado)
-- Verificar branding propio no pisa Gemma (color, tipografía, mark) — bitácora corta confirmando
-- Si configuró `git config --local user.name`, verificar y limpiar con `git config --local --unset` para mantener `.git/config` neutro
+- Esperar respuesta Corola al handoff
+- Esperar respuesta Bract (vía PR #65 mergeado)
+- Verificar branding propio no pisa Gemma — bitácora corta
+- Si configuró `git config --local`, limpiar con `--unset`
 
 ### Cambium
-- Sesión conjunta writeup con Bea (índice + §4 Gemma 4 + stash `[corola]`)
-- Update `pitch_video.md` con Meristem en MVP
-- Mergeo PR #65 Bract cuando convierta a Ready
-- Mergeo `feat/corola-guion-v1` cuando Corola dé OK
+- **Mergear PRs #68 → #69 → #70** (orden recomendado por Endo+Xilema)
+- Sesión conjunta writeup con Bea (índice + §4 Gemma 4 + decisión sobre stash `[corola]`)
+- Frases fuertes revisión
+- Update `pitch_video.md` con Meristem en MVP (decisión Bea día 17)
+- Mergeo PR #65 Bract
+- Mergeo `feat/corola-guion-v1` cuando Corola OK
+- Mergeo `feat/meristem-node-llm-integration` cuando Meristem confirme
 - Trademark statement Gemma en 5 sitios cuando Bea OK
 - Commit PDF naming guidelines a `docs/external/` cuando Bea OK
+- Apuntar plantilla `dossier-escena.md` para Bract cuando arranque
 
 ---
 
@@ -286,7 +297,7 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 - **Stash con prefijo de autor**: `git stash push -m "[nombre] descripción"`.
 - **Una operación atómica por sesión** en máquina compartida.
 - **Identidad git inline** (`git -c user.name=... -c user.email=...`) para no modificar `.git/config` del clone compartido.
-- **Proceso preventivo**: antes de migrar/pivotar librería troncal, verificar contra documentación oficial citando URL + versión + fecha en el commit.
+- **Comunicación Venation ↔ resto**: paquetes formales solo a Corola para commit (no Cambium por defecto). Bea ↔ Venation directa para mensajes rápidos.
 
 ---
 
@@ -294,9 +305,9 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 
 | Día | Hito |
 |-----|------|
-| **18 (mañana)** | BME280 desbloqueado + integración real Pollen↔Rhizome + sesión writeup conjunta + macetas Bea |
-| **19-20** | Ensayo del vídeo + rodaje (con guion pivoteado: ausencia → solución → zoom Rhizome) |
-| **22-25** | Post-producción + writeup pulido + live demo draft (Floema) |
+| **19 (mañana, sábado)** | Merge PRs Jetson + integración Pollen ↔ Rhizome real + sesión writeup conjunta + frases fuertes revisión |
+| **19-20** | Rodaje del vídeo (con guion v1.6 + cartela Sprout inicial + apertura ausencia + 3 cerebros + ESP32 + criterio + cenital + E9b) |
+| **22-25** | Post-producción + writeup pulido + live demo draft (Floema + Venation) |
 | **24** | Checkpoint MVP funcionando — decisión doble agente sí/no |
 | **25-30** | Si MVP estable: doble agente días 25-30 lidera Endodermis. Writeup final. README ganador |
 | **28** | Live demo pulida (APK + Appetize.io + transcripts) |
