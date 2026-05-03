@@ -1,0 +1,2 @@
+.gitattributes text eol=lf
+code/rhizome/jetson/*.sh text eol=lf

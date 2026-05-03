@@ -401,3 +401,60 @@ delante y no depende del LLM para decidir RD04.
    experimental hasta cerrar RD04/RH02.
 
 No he tocado firmware, ESP32 ni contratos.
+
+---
+
+## 14. Operacionalizacion sin depender de Xilema
+
+Bea pregunta si puedo avanzar mientras ella y Xilema miran ESP32. Avanzo en
+zona Jetson pura, sin tocar frontera fisica.
+
+Creo:
+
+```text
+code/rhizome/jetson/README.md
+code/rhizome/jetson/run_runtime.sh
+code/rhizome/jetson/start_adapter.sh
+code/rhizome/jetson/smoke_adapter.sh
+```
+
+Objetivo:
+
+- convertir la bitacora GPU/CPU en comandos reproducibles;
+- evitar que Cambium/Xilema tengan que copiar comandos largos;
+- dejar claro que `safe-cpu` es el default contractual;
+- dejar `gpu-experimental` disponible sin promoverlo a demo.
+
+Perfiles:
+
+| Script | Funcion |
+|---|---|
+| `run_runtime.sh safe-cpu` | arranca `llama-server` CPU-only estable |
+| `run_runtime.sh gpu-experimental` | arranca `llama-server` con `--fit off --no-op-offload` |
+| `start_adapter.sh` | arranca adapter `llamacpp` en `:12000` via contenedor Python |
+| `smoke_adapter.sh` | POST minimo `/api/chat` y valida JSON en `message.content` |
+
+Verificacion:
+
+- `bash -n` local: OK;
+- `bash -n` remoto en Jetson: OK;
+- `run_runtime.sh safe-cpu` remoto: health OK;
+- `start_adapter.sh` remoto: health OK;
+- `smoke_adapter.sh` remoto: JSON OK;
+- `run_runtime.sh gpu-experimental` remoto: health OK;
+- `smoke_adapter.sh` con GPU experimental: JSON OK;
+- restaurado `run_runtime.sh safe-cpu` al final;
+- smoke final CPU-only: OK.
+
+Estado final dejado en Jetson:
+
+```text
+sprout-llama-e2b      Up, perfil safe-cpu
+sprout-adapter-12000  Up, backend llamacpp
+```
+
+Decision:
+
+- estos scripts son operativos, no cambian contratos;
+- quedan listos para PR pequeno;
+- no sustituyen una decision de Cambium/Xilema sobre perfil GPU demo.
