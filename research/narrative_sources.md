@@ -162,11 +162,13 @@ La primera mitad se sustenta en IPCC, Banco de España, FAO e ITU. La segunda mi
 
 ## 11. Reducir visitas tambien es impacto
 
+> ⚠ **RETIRADO tras revision Cambium dia 18 (2026-05-03).** La cita textual atribuida al caso Agriculture Victoria + Farmo (30 km, 2/sem → 1/15dias, 4.760 USD beneficio neto) NO se confirma en la URL apuntada como fuente [9] (Regional Tech Hub Australia, que cubre el caso del Northern Territory de 2,1M acres). La cita parece venir de un caso distinto cuya fuente original no se ha localizado en revision. **No usar publicamente hasta verificar fuente.** El punto 10 (Northern Territory 90% sin cobertura) sigue bien soportado y se mantiene como caso paradigmatico de ausencia humana cuantificada.
+
 **Claim.** La monitorizacion util no elimina a la persona, pero reduce visitas rutinarias y permite intervenir mejor.
 
 **Dato.** En un caso apoyado por Agriculture Victoria, una explotacion con un bloque a 30 km redujo revisiones rutinarias de cercas de al menos dos veces por semana a una media de una vez cada quince dias, con un beneficio neto estimado de 4.760 dolares en un año.
 
-**Fuente.** Caso de adopcion tecnologica rural citado por Agriculture Victoria y Farmo. [[RegionalTech][9]]
+**Fuente.** Caso de adopcion tecnologica rural citado por Agriculture Victoria y Farmo. [[RegionalTech][9]] — **fuente no verificada en revision dia 18, ver nota arriba**
 
 **Voz en off.** "No se trata de sacar a la persona del sistema. Se trata de que no tenga que estar fisicamente donde no hace falta."
 
