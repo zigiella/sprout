@@ -22,6 +22,18 @@ android {
         }
     }
 
+    flavorDimensions += "environment"
+    productFlavors {
+        create("device") {
+            dimension = "environment"
+        }
+        create("demo") {
+            dimension = "environment"
+            applicationIdSuffix = ".demo"
+            versionNameSuffix = "-demo"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -63,7 +75,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
     // LiteRT-LM (Gemma 4)
-    implementation("com.google.ai.edge.litertlm:litertlm-android:+")
+    deviceImplementation("com.google.ai.edge.litertlm:litertlm-android:+")
 
     // Retrofit para conexión con Rhizome (Jetson/ESP32)
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
