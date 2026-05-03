@@ -14,7 +14,7 @@
 
 #define SPROUT_BME280_ADDR_NONE 0x00
 #define SPROUT_I2C_XFER_TIMEOUT_MS 1000
-#define SPROUT_I2C_PROBE_TIMEOUT_MS 50
+#define SPROUT_I2C_PROBE_TIMEOUT_MS 250
 
 typedef struct {
     i2c_master_dev_handle_t dev_handle;
@@ -119,6 +119,126 @@ static void sprout_bme280_reset_measurement_fields(void)
     s_last_report.pressure_pa = -1;
 }
 
+static void sprout_bme280_parse_temp_press_calibration(const uint8_t *reg_data, struct bme280_dev *dev)
+{
+    struct bme280_calib_data *calib_data = &dev->calib_data;
+
+    calib_data->dig_t1 = BME280_CONCAT_BYTES(reg_data[1], reg_data[0]);
+    calib_data->dig_t2 = (int16_t)BME280_CONCAT_BYTES(reg_data[3], reg_data[2]);
+    calib_data->dig_t3 = (int16_t)BME280_CONCAT_BYTES(reg_data[5], reg_data[4]);
+    calib_data->dig_p1 = BME280_CONCAT_BYTES(reg_data[7], reg_data[6]);
+    calib_data->dig_p2 = (int16_t)BME280_CONCAT_BYTES(reg_data[9], reg_data[8]);
+    calib_data->dig_p3 = (int16_t)BME280_CONCAT_BYTES(reg_data[11], reg_data[10]);
+    calib_data->dig_p4 = (int16_t)BME280_CONCAT_BYTES(reg_data[13], reg_data[12]);
+    calib_data->dig_p5 = (int16_t)BME280_CONCAT_BYTES(reg_data[15], reg_data[14]);
+    calib_data->dig_p6 = (int16_t)BME280_CONCAT_BYTES(reg_data[17], reg_data[16]);
+    calib_data->dig_p7 = (int16_t)BME280_CONCAT_BYTES(reg_data[19], reg_data[18]);
+    calib_data->dig_p8 = (int16_t)BME280_CONCAT_BYTES(reg_data[21], reg_data[20]);
+    calib_data->dig_p9 = (int16_t)BME280_CONCAT_BYTES(reg_data[23], reg_data[22]);
+    calib_data->dig_h1 = reg_data[25];
+}
+
+static void sprout_bme280_parse_humidity_calibration(const uint8_t *reg_data, struct bme280_dev *dev)
+{
+    struct bme280_calib_data *calib_data = &dev->calib_data;
+    const int16_t dig_h4_msb = (int16_t)(int8_t)reg_data[3] * 16;
+    const int16_t dig_h4_lsb = (int16_t)(reg_data[4] & 0x0F);
+    const int16_t dig_h5_msb = (int16_t)(int8_t)reg_data[5] * 16;
+    const int16_t dig_h5_lsb = (int16_t)(reg_data[4] >> 4);
+
+    calib_data->dig_h2 = (int16_t)BME280_CONCAT_BYTES(reg_data[1], reg_data[0]);
+    calib_data->dig_h3 = reg_data[2];
+    calib_data->dig_h4 = dig_h4_msb | dig_h4_lsb;
+    calib_data->dig_h5 = dig_h5_msb | dig_h5_lsb;
+    calib_data->dig_h6 = (int8_t)reg_data[6];
+}
+
+static int8_t sprout_bme280_load_calibration_without_reset(struct bme280_dev *dev)
+{
+    uint8_t chip_id = 0;
+    int8_t rslt = dev->read(BME280_REG_CHIP_ID, &chip_id, 1, dev->intf_ptr);
+    if (rslt != BME280_OK) {
+        return rslt;
+    }
+
+    if (chip_id != BME280_CHIP_ID) {
+        return BME280_E_DEV_NOT_FOUND;
+    }
+
+    dev->chip_id = chip_id;
+
+    uint8_t status = 0;
+    for (uint8_t attempt = 0; attempt < 10; ++attempt) {
+        rslt = dev->read(BME280_REG_STATUS, &status, 1, dev->intf_ptr);
+        if (rslt != BME280_OK) {
+            return rslt;
+        }
+
+        if ((status & BME280_STATUS_IM_UPDATE) == 0) {
+            break;
+        }
+
+        sprout_bme280_delay_us(BME280_STARTUP_DELAY, dev->intf_ptr);
+    }
+
+    if ((status & BME280_STATUS_IM_UPDATE) != 0) {
+        return BME280_E_NVM_COPY_FAILED;
+    }
+
+    uint8_t calib_data[BME280_LEN_TEMP_PRESS_CALIB_DATA] = {0};
+    rslt = dev->read(BME280_REG_TEMP_PRESS_CALIB_DATA, calib_data, BME280_LEN_TEMP_PRESS_CALIB_DATA, dev->intf_ptr);
+    if (rslt != BME280_OK) {
+        return rslt;
+    }
+    sprout_bme280_parse_temp_press_calibration(calib_data, dev);
+
+    uint8_t humidity_calib_data[BME280_LEN_HUMIDITY_CALIB_DATA] = {0};
+    rslt = dev->read(BME280_REG_HUMIDITY_CALIB_DATA, humidity_calib_data, BME280_LEN_HUMIDITY_CALIB_DATA, dev->intf_ptr);
+    if (rslt != BME280_OK) {
+        return rslt;
+    }
+    sprout_bme280_parse_humidity_calibration(humidity_calib_data, dev);
+
+    return BME280_OK;
+}
+
+static int8_t sprout_bme280_write_reg(uint8_t reg_addr, uint8_t value, struct bme280_dev *dev)
+{
+    return dev->write(reg_addr, &value, 1, dev->intf_ptr);
+}
+
+static int8_t sprout_bme280_configure_sleep_mode(struct bme280_dev *dev)
+{
+    const uint8_t ctrl_hum = s_bme280_settings.osr_h & BME280_CTRL_HUM_MSK;
+    int8_t rslt = sprout_bme280_write_reg(BME280_REG_CTRL_HUM, ctrl_hum, dev);
+    if (rslt != BME280_OK) {
+        return rslt;
+    }
+
+    const uint8_t ctrl_meas =
+        (uint8_t)((s_bme280_settings.osr_t << BME280_CTRL_TEMP_POS) |
+                  (s_bme280_settings.osr_p << BME280_CTRL_PRESS_POS) |
+                  BME280_POWERMODE_SLEEP);
+    rslt = sprout_bme280_write_reg(BME280_REG_CTRL_MEAS, ctrl_meas, dev);
+    if (rslt != BME280_OK) {
+        return rslt;
+    }
+
+    const uint8_t config =
+        (uint8_t)((s_bme280_settings.standby_time << BME280_STANDBY_POS) |
+                  (s_bme280_settings.filter << BME280_FILTER_POS));
+    return sprout_bme280_write_reg(BME280_REG_CONFIG, config, dev);
+}
+
+static int8_t sprout_bme280_trigger_forced_measurement(struct bme280_dev *dev)
+{
+    const uint8_t ctrl_meas =
+        (uint8_t)((s_bme280_settings.osr_t << BME280_CTRL_TEMP_POS) |
+                  (s_bme280_settings.osr_p << BME280_CTRL_PRESS_POS) |
+                  BME280_POWERMODE_FORCED);
+    return sprout_bme280_write_reg(BME280_REG_CTRL_MEAS, ctrl_meas, dev);
+}
+
 static esp_err_t sprout_bme280_remove_device(void)
 {
     if (s_intf_context.dev_handle == NULL) {
@@ -161,17 +281,14 @@ static esp_err_t sprout_bme280_prepare_sensor(uint8_t address)
     s_bme280_dev.write = sprout_bme280_i2c_write;
     s_bme280_dev.delay_us = sprout_bme280_delay_us;
 
-    const int8_t rslt = bme280_init(&s_bme280_dev);
+    const int8_t rslt = sprout_bme280_load_calibration_without_reset(&s_bme280_dev);
     s_last_report.last_sensor_result = rslt;
     if (rslt != BME280_OK) {
         s_last_report.last_error = ESP_ERR_NOT_FOUND;
         return ESP_ERR_NOT_FOUND;
     }
 
-    const int8_t settings_rslt = bme280_set_sensor_settings(
-        BME280_SEL_OSR_PRESS | BME280_SEL_OSR_TEMP | BME280_SEL_OSR_HUM | BME280_SEL_FILTER,
-        &s_bme280_settings,
-        &s_bme280_dev);
+    const int8_t settings_rslt = sprout_bme280_configure_sleep_mode(&s_bme280_dev);
     s_last_report.last_sensor_result = settings_rslt;
     if (settings_rslt != BME280_OK) {
         s_last_report.last_error = ESP_FAIL;
@@ -192,14 +309,12 @@ static esp_err_t sprout_bme280_find_and_prepare(void)
     const uint8_t addresses[] = { BME280_I2C_ADDR_PRIM, BME280_I2C_ADDR_SEC };
     for (size_t index = 0; index < sizeof(addresses) / sizeof(addresses[0]); ++index) {
         const uint8_t address = addresses[index];
-        esp_err_t err = i2c_master_probe(s_i2c_bus_handle, address, SPROUT_I2C_PROBE_TIMEOUT_MS);
-        if (err != ESP_OK) {
-            continue;
-        }
-
-        err = sprout_bme280_prepare_sensor(address);
-        if (err == ESP_OK) {
-            return ESP_OK;
+        for (uint8_t attempt = 0; attempt < 3; ++attempt) {
+            const esp_err_t err = sprout_bme280_prepare_sensor(address);
+            if (err == ESP_OK) {
+                return ESP_OK;
+            }
+            esp_rom_delay_us(5000);
         }
     }
 
@@ -238,7 +353,7 @@ esp_err_t sprout_bme280_init(const sprout_board_profile_t *profile)
         .clk_source = I2C_CLK_SRC_DEFAULT,
         .glitch_ignore_cnt = 7,
         .intr_priority = 0,
-        .trans_queue_depth = 4,
+        .trans_queue_depth = 0,
         .flags = {
             .enable_internal_pullup = 1,
             .allow_pd = 0,
@@ -309,20 +424,12 @@ esp_err_t sprout_bme280_read(sprout_bme280_report_t *report)
         return ESP_ERR_INVALID_STATE;
     }
 
-    if (!s_last_report.sensor_present || s_intf_context.dev_handle == NULL) {
+    if (!s_last_report.sensor_present || s_last_report.address == SPROUT_BME280_ADDR_NONE) {
         const esp_err_t probe_err = sprout_bme280_find_and_prepare();
         if (probe_err != ESP_OK) {
             sprout_bme280_copy_report(report);
             return probe_err;
         }
-    }
-
-    const int8_t mode_rslt = bme280_set_sensor_mode(BME280_POWERMODE_FORCED, &s_bme280_dev);
-    s_last_report.last_sensor_result = mode_rslt;
-    if (mode_rslt != BME280_OK) {
-        s_last_report.last_error = ESP_FAIL;
-        sprout_bme280_copy_report(report);
-        return ESP_FAIL;
     }
 
     uint32_t max_delay_us = 0;
@@ -334,13 +441,26 @@ esp_err_t sprout_bme280_read(sprout_bme280_report_t *report)
         return ESP_FAIL;
     }
 
-    sprout_bme280_delay_us(max_delay_us + 1000, s_bme280_dev.intf_ptr);
+    const int8_t mode_rslt = sprout_bme280_trigger_forced_measurement(&s_bme280_dev);
+    s_last_report.last_sensor_result = mode_rslt;
+    if (mode_rslt != BME280_OK) {
+        if (s_last_report.last_error == ESP_OK) {
+            s_last_report.last_error = ESP_FAIL;
+        }
+        sprout_bme280_reset_measurement_fields();
+        sprout_bme280_copy_report(report);
+        return ESP_FAIL;
+    }
+
+    sprout_bme280_delay_us(max_delay_us + 5000, s_bme280_dev.intf_ptr);
 
     struct bme280_data sensor_data = { 0 };
     const int8_t read_rslt = bme280_get_sensor_data(BME280_ALL, &sensor_data, &s_bme280_dev);
     s_last_report.last_sensor_result = read_rslt;
     if (read_rslt != BME280_OK) {
-        s_last_report.last_error = ESP_FAIL;
+        if (s_last_report.last_error == ESP_OK) {
+            s_last_report.last_error = ESP_FAIL;
+        }
         sprout_bme280_reset_measurement_fields();
         sprout_bme280_copy_report(report);
         return ESP_FAIL;
