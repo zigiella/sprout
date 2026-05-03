@@ -416,6 +416,8 @@ code/rhizome/jetson/README.md
 code/rhizome/jetson/run_runtime.sh
 code/rhizome/jetson/start_adapter.sh
 code/rhizome/jetson/smoke_adapter.sh
+code/rhizome/jetson/collect_baseline.sh
+code/rhizome/jetson/run_battery.sh
 ```
 
 Objetivo:
@@ -433,6 +435,8 @@ Perfiles:
 | `run_runtime.sh gpu-experimental` | arranca `llama-server` con `--fit off --no-op-offload` |
 | `start_adapter.sh` | arranca adapter `llamacpp` en `:12000` via contenedor Python |
 | `smoke_adapter.sh` | POST minimo `/api/chat` y valida JSON en `message.content` |
+| `collect_baseline.sh` | captura baseline Jetson sin `sudo` |
+| `run_battery.sh` | ejecuta `critical`, `remaining` o `full` sin pisar JSONL canonicos |
 
 Verificacion:
 
@@ -445,6 +449,7 @@ Verificacion:
 - `smoke_adapter.sh` con GPU experimental: JSON OK;
 - restaurado `run_runtime.sh safe-cpu` al final;
 - smoke final CPU-only: OK.
+- `run_battery.sh critical --dry-run` en Jetson: OK.
 
 Estado final dejado en Jetson:
 

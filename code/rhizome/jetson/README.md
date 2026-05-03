@@ -72,6 +72,7 @@ cd ~/sprout/code/rhizome/jetson
 ./run_runtime.sh safe-cpu
 ./start_adapter.sh
 ./smoke_adapter.sh
+./run_battery.sh critical
 ```
 
 Para probar GPU:
@@ -80,6 +81,7 @@ Para probar GPU:
 ./run_runtime.sh gpu-experimental
 ./start_adapter.sh
 ./smoke_adapter.sh
+./run_battery.sh critical
 ```
 
 ## Variables utiles
@@ -118,6 +120,25 @@ Smoke:
 ```bash
 ./smoke_adapter.sh
 ```
+
+Baseline operativo:
+
+```bash
+./collect_baseline.sh | tee jetson_baseline_$(date -u +%Y%m%dT%H%M%SZ).log
+```
+
+Bateria Rhizome v0.5:
+
+```bash
+./run_battery.sh critical          # 6 prompts criticos
+./run_battery.sh remaining         # 12 prompts restantes
+./run_battery.sh full              # critical + remaining
+./run_battery.sh critical --dry-run
+```
+
+Los resultados se escriben en `code/tuning/results/` dentro del repo montado
+en el contenedor del adapter, con un sufijo UTC para no pisar los JSONL
+canonicos.
 
 ## Interpretacion
 
