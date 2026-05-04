@@ -63,6 +63,21 @@ Ran 4 tests
 OK
 ```
 
+Anado scripts Jetson:
+
+- `code/rhizome/jetson/start_sync_facade.sh`
+- `code/rhizome/jetson/smoke_sync_facade.sh`
+
+Validacion local:
+
+```bash
+bash -n code/rhizome/jetson/start_sync_facade.sh
+bash -n code/rhizome/jetson/smoke_sync_facade.sh
+```
+
+Estos scripts arrancan la fachada en `:13010` y prueban los cuatro endpoints
+que Pollen consume.
+
 ## Lectura
 
 Esto no cierra la integracion final Rhizome-Pollen. Cierra una pieza concreta:
