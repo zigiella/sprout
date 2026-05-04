@@ -54,6 +54,36 @@ versión es compatible.
 - Todo en español para coherencia con el resto de `docs/` y `bitacora/`,
   aunque las cartelas EN del vídeo se citen literales en inglés.
 
+## Convención narrativa: parcelas vs macetas
+
+**El vídeo habla de parcelas, pero filmamos macetas.** Es una simulación
+honesta asumida por el equipo (apuntada por Bea día 19):
+
+- **"Parcela"** = escala de la solución diseñada. Lo dicen VO, cartelas EN
+  y writeup. La solución se piensa para parcelas reales (almendros remotos,
+  cultivos de secano, etc.).
+- **"Maceta" o "jardinera"** = material físico filmable. **Sprout escala 1
+  está plantado en la terraza de Bea en Castellar de n'Hug** (tomate, fresa,
+  pimientos, aromáticas) con garrafa-depósito y sensores ESP32. El sistema
+  funciona a escala doméstica — no es metáfora.
+
+`pitch_video.md` v2.1 lo formaliza: *"dos parcelas lógicas (`rhizome_01`
+con estación meteo + `rhizome_02` sin meteo) se filman con un solo Rhizome
+físico — distinto ángulo, distinta maceta, distinta zona de terraza. Los
+IDs en pantalla hacen el trabajo lógico."*
+
+### Implicación para análisis con dossier
+
+Cuando analicemos un clip con su dossier de escena vía `ver_video.py`, el
+modelo VL puede flagear como contradicción que el VO hable de parcela y la
+imagen muestre maceta. **Ese flag es falso positivo salvo que el guion
+explícitamente prohíba la simulación**. El equipo asumió la simulación con
+conciencia.
+
+Cuando un dossier mencione "parcela" en VO o cartelas, en la sección de
+"Visual / planos previstos" indicar siempre que el sujeto visual será maceta
+o jardinera y que los IDs `rhizome_01`/`rhizome_02` hacen el trabajo lógico.
+
 ## Mantenimiento
 
 - Los dossiers son responsabilidad de **Bract**.
