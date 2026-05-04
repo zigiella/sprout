@@ -30,7 +30,6 @@ fun VisitarRhizomeScreen(
         if (net.sprout.pollen.BuildConfig.FLAVOR == "demo") {
             RhizomeMockClient()
         } else {
-            // TODO: Ajustar esta IP a la que confirme Endo
             RhizomeNetworkClient("http://192.168.1.60:13010/")
         }
     }
@@ -39,82 +38,112 @@ fun VisitarRhizomeScreen(
     var status by remember { mutableStateOf<Map<String, String>?>(null) }
     var snapshot by remember { mutableStateOf<RhizomeSnapshot?>(null) }
     var receipts by remember { mutableStateOf<List<DecisionReceipt>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(true) }
     
+    var step by remember { mutableIntStateOf(0) }
     var showExplanationDialog by remember { mutableStateOf(false) }
     var explanationText by remember { mutableStateOf("") }
     
     LaunchedEffect(Unit) {
-        // "Descubrir Rhizome"
+        kotlinx.coroutines.delay(400)
+        step = 1 // Conectando a Rhizome (activo)
         status = client.getStatus()
+        
+        step = 2 // Conectado, descargando snapshot (activo)
+        kotlinx.coroutines.delay(300)
         snapshot = client.getLatestSnapshot()
+        
+        step = 3 // Descargado, leyendo recibos (activo)
+        kotlinx.coroutines.delay(300)
         receipts = client.getReceipts()
-        isLoading = false
+        
+        step = 4 // Listo
         if (snapshot != null) {
             onDataFetched(snapshot!!, receipts)
         }
     }
 
-    if (isLoading) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-        return
-    }
-
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Conectado a Rhizome", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-        status?.let {
-            Text("Estado: ${it["status"]} | Versión: ${it["version"]}", color = MaterialTheme.colorScheme.primary)
-        }
+    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 18.dp, vertical = 16.dp)) {
         
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        snapshot?.let { snap ->
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Snapshot Local", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("Modo: ${snap.mode}")
-                    Text("Depósito: ${snap.sensors.tankLevelPct}%")
-                    Text("Humedad Suelo A/B: ${snap.sensors.soilMoistureAPct}% / ${snap.sensors.soilMoistureBPct}%")
-                    Text("Política Activa: ${snap.activePolicyId.take(15)}...")
-                }
+        // Checklist Card
+        Card(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    "visit checklist",
+                    style = MaterialTheme.typography.labelMedium.copy(
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    ),
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+                
+                SyncStepUI(label = "Conectar a Rhizome", sub = "BLE / WiFi · 0.4s", status = if (step >= 2) "done" else if (step == 1) "active" else "pending")
+                Spacer(modifier = Modifier.height(12.dp))
+                SyncStepUI(label = "Descargar Snapshot", sub = "6.2 KB", status = if (step >= 3) "done" else if (step == 2) "active" else "pending")
+                Spacer(modifier = Modifier.height(12.dp))
+                SyncStepUI(label = "Sincronizar Recibos", sub = "Ventana 24h", status = if (step >= 4) "done" else if (step == 3) "active" else "pending")
             }
         }
         
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Últimos Recibos de Decisión", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        LazyColumn {
-            items(receipts) { receipt ->
+        if (step >= 4) {
+            Text(
+                "telemetry · current",
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                snapshot?.let { snap ->
+                    TelemetryTileUI(label = "WATER", value = "${snap.sensors.tankLevelPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
+                    TelemetryTileUI(label = "SOIL A", value = "${snap.sensors.soilMoistureAPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
+                    TelemetryTileUI(label = "SOIL B", value = "${snap.sensors.soilMoistureBPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            Text(
+                "last decision",
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            
+            receipts.firstOrNull()?.let { receipt ->
                 Card(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(receipt.action.name, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
-                            Spacer(modifier = Modifier.weight(1f))
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text(receipt.action.name, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                             Text(receipt.createdAt, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(receipt.rationaleShort, style = MaterialTheme.typography.bodyMedium)
-                        Spacer(modifier = Modifier.height(8.dp))
                         
-                        OutlinedButton(onClick = {
-                            scope.launch {
-                                explanationText = client.explainDecision(receipt.decisionId)
-                                showExplanationDialog = true
-                            }
-                        }) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedButton(
+                            onClick = {
+                                scope.launch {
+                                    explanationText = client.explainDecision(receipt.decisionId)
+                                    showExplanationDialog = true
+                                }
+                            },
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
                             Icon(Icons.Default.Info, contentDescription = "Explicar", modifier = Modifier.size(16.dp))
                             Spacer(Modifier.width(4.dp))
-                            Text("Explicar Decisión (Gemma)")
+                            Text("Explicar Decisión (LLM)")
                         }
                     }
                 }
@@ -135,3 +164,61 @@ fun VisitarRhizomeScreen(
         )
     }
 }
+
+@Composable
+fun SyncStepUI(label: String, sub: String, status: String) {
+    val dotColor = when(status) {
+        "done" -> Color(0xFF4CAF50)
+        "active" -> Color(0xFF8BC34A)
+        else -> Color.Transparent
+    }
+    val textColor = if (status == "pending") Color.Gray else MaterialTheme.colorScheme.onSurface
+    
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(18.dp)
+                .background(dotColor, RoundedCornerShape(4.dp))
+                .androidx.compose.foundation.border(
+                    1.dp, 
+                    if (status == "pending") MaterialTheme.colorScheme.outline else dotColor, 
+                    RoundedCornerShape(4.dp)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            if (status == "done") {
+                Icon(
+                    androidx.compose.material.icons.filled.Check,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(12.dp)
+                )
+            } else if (status == "active") {
+                // Pulso simulado
+                Box(modifier = Modifier.size(8.dp).background(Color.White, androidx.compose.foundation.shape.CircleShape))
+            }
+        }
+        Spacer(modifier = Modifier.width(12.dp))
+        Column {
+            Text(label, style = MaterialTheme.typography.bodyMedium, color = textColor, fontWeight = FontWeight.Medium)
+            Text(sub, style = MaterialTheme.typography.bodySmall.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace), color = Color.Gray)
+        }
+    }
+}
+
+@Composable
+fun TelemetryTileUI(label: String, value: String, unit: String, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(label, style = MaterialTheme.typography.labelSmall.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace), color = Color.Gray)
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text(value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text(unit, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(bottom = 2.dp, start = 2.dp))
+            }
+        }
+    }
