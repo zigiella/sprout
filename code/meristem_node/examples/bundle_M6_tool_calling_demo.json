@@ -1,0 +1,21 @@
+{
+  "source_pollen_id": "pollen_demo_01",
+  "target_rhizome_id": "rhizome_01",
+  "active_policy_id": "pkt_rhizome_01_baseline",
+  "rhizome_snapshot": {
+    "snapshot_id": "snap_20260504T100000_demo",
+    "mode": "alert",
+    "alert_latched": true,
+    "pending_contradictions": [],
+    "soil_a_pct": 19,
+    "soil_b_pct": 23,
+    "tank_pct": 15
+  },
+  "decision_receipts": [
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "DEPOSITO_BAJO"},
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "DEPOSITO_BAJO"},
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "ALERTA_LATCHED"}
+  ],
+  "weather_digest": null,
+  "validation_stamps": []
+}
