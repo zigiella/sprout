@@ -109,6 +109,19 @@ Resultado:
 
 Estado fisico: ESP32+BME desconectados. No hacen falta para esta fachada.
 
+## Confirmacion de Floema
+
+Bea comunica que Floema ya ha probado el endpoint y dice que es OK.
+
+Lectura:
+
+- primera prueba Pollen -> Jetson real superada;
+- el endpoint `:13010` cumple su funcion de puente temporal;
+- no se ha necesitado ESP32+BME para esta validacion;
+- siguiente paso natural: que Floema consolide, si lo considera, el cambio de
+  `RhizomeMockClient` a `RhizomeNetworkClient("http://192.168.1.60:13010/")`
+  en su rama o en modo demo controlado.
+
 ## Lectura
 
 Esto no cierra la integracion final Rhizome-Pollen. Cierra una pieza concreta:

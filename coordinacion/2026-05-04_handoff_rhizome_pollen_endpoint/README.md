@@ -67,6 +67,19 @@ RhizomeNetworkClient("http://192.168.1.60:13010/")
 
 La slash final importa para Retrofit.
 
+## Validacion de Floema
+
+Floema prueba el endpoint desde Pollen y confirma resultado OK.
+
+Lectura de Endodermis:
+
+- el cliente Android puede hablar con una IP real de Jetson;
+- la frontera `RhizomeMockClient` -> `RhizomeNetworkClient` queda desbloqueada;
+- la API servida por Jetson encaja con los contratos Kotlin esperados por
+  Pollen para visita;
+- la prueba sigue siendo de interoperabilidad host-side, no de sensores reales
+  ni de riego fisico.
+
 ## Limites
 
 - No es el backend definitivo de Rhizome.
