@@ -5,6 +5,9 @@ en el bloque 1 del review día 13. Cada uno dispara una de las 4 reglas
 del Evaluator (5 cubre tanto JURISDICTION_POLLEN como HARD_LIMIT_DOMAIN
 en la regla REFUSE).
 
+Bundle adicional `R2` (día 16, cierre 2-Rhizome MVP) y `M6` (día 19,
+demo tool calling) ampliando la batería sin sustituirla.
+
 ## Casos
 
 | File | Caso | Action esperada | reason_code |
@@ -14,6 +17,29 @@ en la regla REFUSE).
 | `bundle_M3_emergency.json` | mode=alert + alert_latched=True + 2 BLOCK consecutivos | ALERT_POLICY | PERSISTENT_EMERGENCY |
 | `bundle_M4_hard_limit_relax.json` | VisitAmendment intenta tank_minimum_pct=10 | REFUSE | HARD_LIMIT_DOMAIN |
 | `bundle_M5_pollen_jurisdiction.json` | snapshot.operator_request con cambio puntual | REFUSE | JURISDICTION_POLLEN |
+| `bundle_R2_emergency.json` | Igual que M3 pero `target_rhizome_id="rhizome_02"` | ALERT_POLICY | PERSISTENT_EMERGENCY |
+| `bundle_M6_tool_calling_demo.json` | ALERT con `weather_digest=null` → fuerza al modelo a llamar `get_weather_history` y opcionalmente `get_recent_history` para tener material que escribir | ALERT_POLICY | PERSISTENT_EMERGENCY |
+
+## M6 — propósito específico
+
+`bundle_M6_tool_calling_demo.json` está diseñado para **forzar tool
+calling en directo en demo**. Estado del bundle:
+
+- `mode=alert`, `alert_latched=true`, `tank_pct=15` → Evaluator dispara
+  ALERT_POLICY (PERSISTENT_EMERGENCY) sin ambigüedad.
+- 3 `decision_receipts` BLOCK seguidos (2 por DEPOSITO_BAJO + 1 por
+  ALERTA_LATCHED) → emergencia persistente clara.
+- **`weather_digest: null`** → el modelo no tiene contexto meteorológico
+  y para escribir un rationale completo *necesita* llamar
+  `get_weather_history(plot_id)`.
+- Idealmente también llama `get_recent_history(target_node_id, last_n=5)`
+  para situar la ALERT en secuencia temporal y construir narrativa
+  ("la situación viene degradándose desde T-5d").
+
+Esto es **valor estratégico de demo**: muestra al jurado que el LLM
+no solo redacta — sabe pedir datos cuando le faltan, y los stubs
+deterministas devuelven info plausible al instante. Tool calling
+ejercitado en runtime, no como capacidad latente.
 
 ## Verificación rápida
 

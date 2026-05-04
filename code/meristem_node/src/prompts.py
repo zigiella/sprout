@@ -61,6 +61,11 @@ TIENES HERRAMIENTAS DISPONIBLES (function calling):
 - `compare_with_previous_policy(policy_id)`: devuelve diff con la
   última policy emitida. Úsala SOLO si el operador podría querer
   saber qué cambió respecto a la anterior.
+- `get_recent_history(target_node_id, last_n)`: devuelve resumen
+  compacto de las últimas N visitas a un Rhizome (modo, reason_code,
+  soil%, tank%). Úsala SOLO si la decisión es CONSERVATIVE o ALERT y
+  necesitas situar la visita actual en una secuencia temporal para
+  que el rationale al operador tenga sentido. `last_n` por defecto 5.
 
 NO inventes herramientas adicionales. Si necesitas un dato que no
 puedes obtener, simplemente no lo cites en el rationale.
@@ -132,6 +137,36 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_recent_history",
+            "description": (
+                "Devuelve resumen compacto de las últimas N visitas a un "
+                "Rhizome (modo, reason_code, soil_a/b%, tank%, timestamp). "
+                "Usar solo cuando la decisión actual sea CONSERVATIVE o "
+                "ALERT y necesitas situar la visita en una secuencia "
+                "temporal para que el rationale al operador tenga sentido. "
+                "No usar en CONFIRM_POLICY (caso estable, contexto extra "
+                "no aporta)."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "target_node_id": {
+                        "type": "string",
+                        "description": "Id del Rhizome. Ej: 'rhizome_01'.",
+                    },
+                    "last_n": {
+                        "type": "integer",
+                        "description": "Cuántas visitas anteriores devolver. Por defecto 5.",
+                        "default": 5,
+                    },
+                },
+                "required": ["target_node_id"],
+            },
+        },
+    },
 ]
 
 
@@ -188,6 +223,45 @@ def call_tool(tool_name: str, args: dict[str, Any]) -> str:
                 "mode_default": {"from": "normal", "to": "conservative"},
                 "soil_dry_threshold_pct_bump": {"from": 0, "to": 5},
             },
+            "note": "stub-deterministic-v0",
+        })
+    if tool_name == "get_recent_history":
+        target_node_id = args.get("target_node_id", "?")
+        last_n = int(args.get("last_n", 5) or 5)
+        # Stub determinista: 5 visitas plausibles del mismo Rhizome
+        # con tendencia a empeorar (depósito decrece, suelo seco).
+        # Útil para que el LLM construya narrativa "viene de lejos".
+        history = [
+            {
+                "visit": "T-1d", "policy_id": "pkt_meristem_stub_e",
+                "mode": "alert", "reason_code": "PERSISTENT_EMERGENCY",
+                "soil_a_pct": 18, "soil_b_pct": 22, "tank_pct": 12,
+            },
+            {
+                "visit": "T-3d", "policy_id": "pkt_meristem_stub_d",
+                "mode": "conservative", "reason_code": "EVIDENCE_LOW_CONFIDENCE",
+                "soil_a_pct": 24, "soil_b_pct": 28, "tank_pct": 35,
+            },
+            {
+                "visit": "T-5d", "policy_id": "pkt_meristem_stub_c",
+                "mode": "normal", "reason_code": "STABLE_BUNDLE",
+                "soil_a_pct": 31, "soil_b_pct": 36, "tank_pct": 58,
+            },
+            {
+                "visit": "T-7d", "policy_id": "pkt_meristem_stub_b",
+                "mode": "normal", "reason_code": "STABLE_BUNDLE",
+                "soil_a_pct": 38, "soil_b_pct": 41, "tank_pct": 72,
+            },
+            {
+                "visit": "T-10d", "policy_id": "pkt_meristem_stub_a",
+                "mode": "normal", "reason_code": "STABLE_BUNDLE",
+                "soil_a_pct": 42, "soil_b_pct": 45, "tank_pct": 88,
+            },
+        ][:last_n]
+        return json.dumps({
+            "target_node_id": target_node_id,
+            "last_n": last_n,
+            "history": history,
             "note": "stub-deterministic-v0",
         })
     return json.dumps({"error": f"tool {tool_name!r} not implemented"})
