@@ -23,6 +23,16 @@ if [ ! -f "$MODEL_PATH" ]; then
   exit 1
 fi
 
+print_gpu_preflight() {
+  echo "GPU experimental preflight (informational, not a gate):"
+  if [ -r /proc/meminfo ]; then
+    grep -E 'MemAvailable|SwapFree|CmaTotal|CmaFree' /proc/meminfo || true
+  fi
+  if command -v tegrastats >/dev/null 2>&1; then
+    timeout 2s tegrastats --interval 1000 || true
+  fi
+}
+
 case "$PROFILE" in
   safe-cpu)
     LLAMA_ARGS=(
@@ -51,6 +61,8 @@ case "$PROFILE" in
       --host 0.0.0.0
       --port "$LLAMA_PORT"
     )
+    print_gpu_preflight
+    echo "Warning: gpu-experimental is not demo-safe; restore safe-cpu if startup fails."
     ;;
   *)
     echo "unknown profile: $PROFILE" >&2

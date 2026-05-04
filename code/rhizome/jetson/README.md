@@ -11,7 +11,7 @@ gestionan el runtime local de inferencia y el adapter Ollama-compatible.
 | Perfil | Uso | Estado dia 18 |
 |---|---|---|
 | `safe-cpu` | Demo contractual y bateria Rhizome v0.5 | Quality pass 18/18, lento |
-| `gpu-experimental` | Diagnostico/rendimiento | Runtime pass, no quality pass aun |
+| `gpu-experimental` | Diagnostico/rendimiento | Experimental: puede fallar por memoria contigua y no es quality pass |
 
 ### `safe-cpu`
 
@@ -49,6 +49,18 @@ Estado dia 18:
 - acelera mucho las respuestas;
 - aun no es quality pass para Rhizome v0.5 porque RD04 muestra deriva
   semantica segura (`need_clarification` en lugar de `ok`).
+
+Estado dia 19:
+
+- desde `main`, `gpu-experimental` volvio a fallar una vez con
+  `NvMapMemAllocInternalTagged ... error 12` / `cudaMalloc failed`;
+- por tanto este perfil no es ni runtime-pass garantizado ni demo-safe;
+- si falla, restaurar inmediatamente:
+
+```bash
+./run_runtime.sh safe-cpu
+./smoke_adapter.sh
+```
 
 ## Requisitos
 
@@ -140,6 +152,10 @@ Los resultados se escriben en `code/tuning/results/` dentro del repo montado
 en el contenedor del adapter, con un sufijo UTC para no pisar los JSONL
 canonicos.
 
+En modo real, `run_battery.sh` devuelve codigo distinto de cero si cualquier
+run tiene error HTTP, `envelope_valid=false` o `status_match` incorrecto. En
+modo `full`, si `critical` falla, `remaining` no se ejecuta.
+
 ## Interpretacion
 
 Para demo y pruebas contractuales, usar `safe-cpu` hasta que Cambium/Xilema
@@ -156,3 +172,6 @@ python harness.py --matrix matrix_rhizome_v05.yaml \
 
 No promover GPU a perfil demo hasta que la bateria critica sea estable y RD04
 quede alineado con el contrato.
+
+Si `gpu-experimental` falla durante el arranque, no depurar en caliente durante
+un rehearsal. Restaurar `safe-cpu` y documentar el log.
