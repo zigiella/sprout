@@ -1,25 +1,39 @@
-# Script — Sprout v1.6 (apilado completo: escenas 1-9 + sistema visual Venation aplicado)
+# Script — Sprout v1.7 (giro estratégico día 18-19: 12 escenas + VO inglés master + apertura datos globales + Meristem en MVP)
 
-**Versión:** v1.6 (día 17 — sistema visual de Venation adoptado: Soil protocol + Water ledger con tokens, tipografía Manrope + IBM Plex Mono, `signal.seed` como acento cross-escena de "inteligencia activa". Tres cambios de copy aplicados: cartela ancla E7 a *"Watering criteria updated."*, cartela técnica E3 a *"AI proposes / ESP32 validates"*, contingencia E6 *"Context ferry"*. Tarjeta logo final reformulada en inglés. Log E2 diseñado con campos concretos. Motion E5 procesamiento Pollen tres estados. `EDGE NODE` segunda línea cartel caja electrónica.)
-**Fecha:** 2026-05-02 (día 17)
-**Autora:** Corola
-**Duración objetivo:** 3:00 exactos.
-**Estructura:** 9 escenas según `docs/40_pitch_video.md §4`.
+**Versión:** v1.7 (día 19 — giro estratégico cerrado por Bea + Cambium ella día 18 e iterado día 19. Cambios masivos sobre v1.6:
+1. **Estructura: 12 escenas** (era 9). Añadidas E0 (cartela apertura Sprout, 5s), E3b (Meristem prepara, 10s), E9b (Meristem recibe, 10s).
+2. **VO master pasa a INGLÉS + subtítulos en inglés.** Versión ES dub aparte. Excepción: voz humana cruda en E5 (`operator_note`) se mantiene en castellano sin traducir como decisión narrativa deliberada.
+3. **E1 reformulada:** apertura silenciosa con maceta sustituida por opener tipográfico con **4 datos globales** (UNCCD, OECD, FAO, ITU). Cataluña baja a ejemplo del patrón global. Cierre con pregunta abierta + tagline bookend.
+4. **Meristem entra al MVP del video** (era post-hackathon en v2.1). Aparece en E3b (compone política), E9 (cenital con paquetes `POLICIES`/`RECEIPTS`) y E9b (recibe info recogida).
+5. **Tagline bookend** confirmada (inicio + cierre): *"When network is absent — and the human is far — local criteria still irrigate."*
+6. **Frases fuertes reformuladas:** F1 + F2 + F3 + F6 nueva + Extra E3b. F4 cerrada por Bea día 19. F5 sin cambios.
+7. **Microcorte 0.5s tierra agrietada** entre dato 2 y dato 3 de E1 (propuesta Corola día 19, aceptada Bea).
+8. **Cartela progresiva final E9 → modulación Cambium ella** (*"One plot. Two. Eight. Federated. Autonomous."*) por compresión de E9 a 10s.
+9. **"AI Local-first"** sustituye a "Local-first" sistemáticamente.
+10. **Atribución Gemma trademark** explícita: *"Built on Gemma 4 by Google. Gemma is a trademark of Google LLC."* — ubicación pendiente decisión legal Bea/Cambium ella.)
+**Fecha:** 2026-05-04 (día 19)
+**Autora:** Corola (basado en documento estratégico Bea + Cambium ella día 18-19)
+**Duración objetivo:** ≤ 3:00 (límite hackathon). Tiempos teóricos del documento estratégico suman 3:10 — **ajuste fino en montaje**, decisión Bea día 19 ("no nos preocupemos en ajustar a 3 minutos, cuadraremos montando").
+**Estructura:** 12 escenas (E0, E1, E2, E3, E3b, E4, E5, E6, E7, E8, E9, E9b).
 **Dirección de arte:** sistema *Soil protocol + Water ledger* de Venation (`sprout_design_pack_v1`).
+**Estado:** v1.7 cerrada por Corola día 19 con seis votos firmes de Bea. Pendiente sesión conjunta Bea + Cambium ella + Corola para validar/refinar.
 
 ---
 
 ## Objetivo del documento
 
-Guion definitivo del vídeo de presentación del proyecto al jurado técnico.
+Guion definitivo del vídeo de presentación del proyecto al jurado técnico (concurso Gemma 4 por el bien común).
 
-**Regla de idiomas (proyecto):**
-- **VO**: castellano. Grabado por Bea.
-- **Cartelas, overlays, cualquier texto on-screen**: inglés. Sin subtitulado castellano del VO en pantalla; el doblaje/subtitulado EN del VO se gestiona en post si procede.
+**Regla de idiomas (proyecto v1.7 — cambio sobre v1.6):**
+- **VO master**: **INGLÉS**. Grabado por Bea (confirmado día 19).
+- **Subtítulos master**: **INGLÉS** (mismo idioma que VO).
+- **Versión ES dub**: aparte, post-master.
+- **Cartelas, overlays, cualquier texto on-screen**: **INGLÉS**.
+- **Excepción narrativa deliberada — voz humana E5 (`operator_note`)**: castellano literal sin traducir. Bea graba la frase coloquial en castellano: *"Vuelvo el viernes. Esta planta aguanta más seca de lo que crees, riega un poco menos."* Subtítulo inglés en master traduce entre comillas: *"I'll be back Friday. This plant takes drier than you think — water it a bit less."* En la pantalla del móvil, el campo `operator_note: "Esta planta aguanta más seca..."` aparece literal castellano (sistema preserva la voz humana).
 
 **Densidad informativa:** las cartelas y overlays son el motor. El VO hace la historia con pocas palabras. Silencio deliberado donde la cartela basta.
 
-**Aproximación:** ~80 palabras VO castellano + ~14 palabras de voz humana real grabada (operator_note de la persona en escena 5, también castellano).
+**Aproximación VO total v1.7:** ~97 palabras VO inglés + ~14 palabras voz humana castellano (E5) = **~111 palabras totales**. Margen holgado para ritmo.
 
 ---
 
@@ -56,19 +70,24 @@ Pista visual única que el espectador asocia con sistema decidiendo/actuando con
 
 ---
 
-## Resumen — 9 escenas
+## Resumen — 12 escenas (v1.7)
 
-| # | Escena | Tiempo | Beat clave |
-|---|--------|--------|------------|
-| 1 | La ausencia | 0:00–0:20 (20s) | apertura silenciosa, una parcela visitada periódicamente |
-| 2 | Rhizome decide offline | 0:20–0:45 (25s) | sensor → estado → decisión → orden → `DecisionReceipt` + frase fuerte 1 |
-| 3 | ESP32 SAFE LIMIT | 0:45–1:00 (15s) | modulación + frase fuerte 3 + cartela "Cuando duda, riega menos" |
-| 4 | Llega Pollen | 1:00–1:30 (30s) | móvil pregunta "¿qué pasó?" + frase fuerte 2 |
-| 5 | La persona da una misión | 1:30–1:50 (20s) | voz humana coloquial → `MissionPatch` (prueba la frase 2) |
-| 6 | Ferry A→B | 1:50–2:10 (20s) | Pollen lleva digest entre Rhizomes + frase fuerte 5 |
-| 7 | Criterio modificado | 2:10–2:30 (20s) | tres bloques de evidencia + cartela ancla + acción física distinta |
-| 8 | Caducidad | 2:30–2:40 (10s) | `expired → rejected` + frase fuerte 4 (sin "En Sprout") |
-| 9 | Cenital federado | 2:40–3:00 (20s) | Veo3 flat editorial · cartela progresiva · subtítulo logo |
+Tiempos teóricos según documento estratégico Cambium ella día 19 (Opción C). Suma: 3:10 — **ajuste en montaje**.
+
+| # | Escena | Tiempo teórico | Beat clave |
+|---|--------|----------------|------------|
+| **0** | Cartela apertura Sprout (NUEVA) | 0:00–0:05 (5s) | marco visual: Sprout + lema + open-source. Antes de la ausencia. |
+| **1** | La ausencia con datos globales (REFORMULADA) | 0:05–0:25 (20s) | opener tipográfico: 4 datos UNCCD/OECD/FAO/ITU + microcorte tierra agrietada + pregunta abierta + tagline bookend |
+| **2** | Rhizome decide offline | 0:25–0:50 (25s) | sensor → estado → decisión → orden → `DecisionReceipt` + **frase fuerte 1 reformulada** |
+| **3** | ESP32 SAFE LIMIT | 0:50–1:05 (15s) | modulación + **frase fuerte 3 reformulada** + cartela *"When in doubt, water less."* |
+| **3b** | Meristem prepara (NUEVA) | 1:05–1:15 (10s) | cocina, portátil, Meristem compone política + cartela *"Meristem composes the policy."* |
+| **4** | Llega Pollen | 1:15–1:40 (25s, recortada de 30s) | móvil pregunta "What happened since my last visit?" + **frase fuerte 2 reformulada** |
+| **5** | La persona da una misión | 1:40–2:00 (20s) | voz humana coloquial castellano literal → `MissionPatch` (prueba la frase 2) |
+| **6** | Ferry A→B | 2:00–2:20 (20s) | Pollen lleva digest entre Rhizomes + **frase fuerte 5** |
+| **7** | Watering criteria updated (CLIMAX) | 2:20–2:40 (20s) | tres bloques de evidencia + cartela ancla + cartela invariante esquina + acción física distinta |
+| **8** | Caducidad | 2:40–2:50 (10s) | `expired → rejected` + **frase fuerte 4** (mantiene "intelligence", cerrada Bea día 19) |
+| **9** | Cenital federado (compresión 10s) | 2:50–3:00 (10s) | animación Venation versión 10s · cartela progresiva modulación Cambium ella |
+| **9b** | Meristem recibe (NUEVA) | 3:00–3:10 (10s) | cocina, Bea recibe info de parcelas + cutaway opcional macetas reales + **frase fuerte 6 nueva** + tagline bookend cierre |
 
 ---
 
@@ -79,47 +98,81 @@ Pista visual única que el espectador asocia con sistema decidiendo/actuando con
 `Overlay` = superposición persistente sobre la imagen (esquina o banda).
 `—` = silencio intencional.
 
-### Escena 1 — La ausencia (0:00–0:20)
+### Escena 0 — Cartela apertura Sprout (0:00–0:05) — NUEVA v1.7
 
-**Beat narrativo:** apertura silenciosa. Una maceta etiquetada como "PLOT_01 with RHIZOME_01" se presenta al espectador como parcela entera. Cero VO, dos cartelas en inglés en cascada. La primera es invitación al espectador; la segunda afirma sobre la parcela.
-
-**Elementos de producción visibles:**
-- **Cartel maceta:** **"PLOT_01 with RHIZOME_01"** (impresión sobria, tipografía limpia, fijado a la maceta o clavado al lado en estaca).
-- **Cartel caja electrónica:** **"RHIZOME_01"** (etiqueta sobre la cajita Jetson+ESP32, visible cuando se filme el primer plano del Rhizome).
-
-Los carteles físicos refuerzan los nombres de los nodos en el plano material — coherentes con los IDs `rhizome_01` y `rhizome_02` que aparecerán en pantalla durante el resto del vídeo. Decisión Bea día 16: refuerzo de nombres de nodos en el video.
+**Beat narrativo:** marco visual antes de la ausencia. El espectador entra sabiendo qué está mirando. Cuando aparezca Rhizome (E2), ya sabe de qué forma parte. **Cero VO**, una cartela centrada compuesta sobre fondo casi-negro.
 
 **Cronología:**
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 0:00–0:06 | Plano fijo de la maceta con cartel **"PLOT_01 with RHIZOME_01"** visible. Tarde temprana, luz ámbar suave. La hoja se mueve ligeramente con el aire. Sin VO. | — |
-| 0:06–0:11 | Mismo plano. Cartela central entra. | **Cartela central** (5s): *"Imagine this pot is a whole plot."* |
-| 0:11–0:16 | Mismo plano. Primera cartela se desvanece, entra la segunda. | **Cartela central** (5s): *"This plot is visited periodically by a human."* |
-| 0:16–0:20 | La cartela se desvanece. Plano sobre la maceta sola otros 4 segundos. El cartel "PLOT_01 with RHIZOME_01" sigue visible. La hoja se mueve. | — |
+| 0:00–0:05 | Fondo casi-negro (`soil.graphite` o más oscuro). Cartela centrada en Manrope: titular grande **`Sprout`** en `soil.oat`. Subtítulo Manrope mediano: *"AI Local-first irrigation decisions."* Línea inferior Manrope pequeña: *"Safe · explainable · open-source."* Entrada con stagger 120ms (kicker → wordmark → tag). Sostén ~3.5s. Salida fade 0.4s al negro. | **Cartela central + microcartela atribución (decisión legal pendiente):** wordmark `Sprout` + subtítulo + sello "AI Local-first" |
 
-**Lo que se siente:** soledad. Tiempo lento. La primera cartela invita al espectador a aceptar el truco visual (esta maceta representa una parcela entera) — es ofrenda y contrato narrativo. La segunda cartela afirma sobre esa parcela ya aceptada. La pregunta no hecha que abre el video — *¿quién decide aquí cuando no hay nadie?*
+**Microcartela atribución Gemma — decisión pendiente:**
+
+Voto Corola (día 19): la microcartela *"Built on Gemma 4 by Google."* preferiría en cierre, no en E0, para no anclar el inicio con marca corporate antes de que el espectador entienda qué es Sprout. **Pero es decisión legal/corporate Bea/Cambium ella** — me alineo con cualquiera. Si va aquí, sub-cartela esquina inferior pequeña, IBM Plex Mono, paleta sobria.
+
+**Lo que se siente:** marco. El espectador acepta el contrato visual de "esto es Sprout, esto es lo que defendemos". La sobriedad de la cartela predispone a tomar en serio lo que viene.
 
 **VO:** 0 palabras.
-**Cartelas:** 2 (ambas en inglés).
-**Overlays:** ninguno.
-**Producción:** cartel maceta "PLOT_01 with RHIZOME_01" en/junto a la maceta + cartel caja electrónica "RHIZOME_01" sobre la cajita Jetson+ESP32.
+**Cartelas:** 1 cartela compuesta (Sprout + lema + open-source).
+**Overlays:** posible microcartela atribución Gemma (pendiente decisión).
+**Tokens dirección de arte:** fondo `soil.graphite` o casi-negro / texto principal `soil.oat` o blanco roto / Manrope (titular 800, subtítulo 700, tag 500).
 
 ---
 
-### Escena 2 — Rhizome decide offline (0:20–0:45)
+### Escena 1 — La ausencia con datos globales (0:05–0:25) — REFORMULADA v1.7
 
-**Beat narrativo:** el cerebro local entra. Sensor → estado → decisión → orden al ESP32 → `DecisionReceipt`. La frase fuerte 1 cierra el bloque sobre la acción física.
+**Beat narrativo:** opener tipográfico que establece el problema a escala mundial antes de bajar al caso concreto. Cataluña aparece como **ejemplo del patrón global**, no como protagonista. La pregunta abierta de cierre convierte el problema en demanda narrativa que el resto del video responde. Tagline bookend asoma al final como anclaje.
 
 **Cronología:**
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 0:20–0:24 | Corte. Plano cerrado del Jetson en su caja. LED en `signal.seed` (#C5F26B) parpadea cuando el sistema decide. Camera baja al sensor de humedad clavado en la tierra. | **Overlay esquina sup. izq.** (persistente todo el bloque): `OFFLINE` |
-| 0:24–0:32 | Pantalla del Jetson llenando el plano. Fondo `soil.graphite` (#1A1A18). Tipografía IBM Plex Mono. Log diseñado entrando con cadencia musical (1 línea/s). Bloque `SOIL READ` primero, bloque `DECISION` después. `WATER` y `final_action: 18s` resaltados en `signal.seed`. Resto del log en gris claro. **VO**: *"Esta parcela no está sola. Tiene un cerebro local. Lee el suelo. Decide."* (13 palabras) | **Cartela esquina sup. der.** (3s): `Gemma 4 E2B · local · llama.cpp` / **Sub-cartela** (3s): `LLM called only when ambiguous` |
-| 0:32–0:38 | Captura del `DecisionReceipt` llenando un cuarto de pantalla. Tres campos resaltados (color `signal.seed`): `decision_type: WATER`, `final_action: 18s`, `why_short: "Soil below minimum. Budget available."` Resto del JSON atenuado en gris. **VO**: *"Y firma lo que hace, para que se pueda explicar."* (10 palabras) | **Cartela superpuesta** (2s sobre el receipt, tipografía Manrope editorial): `DecisionReceipt` |
-| 0:38–0:43 | Salida al campo. Plano de la válvula. Se abre. Sonido de agua sobre tierra. | — |
-| 0:43–0:45 | Plano se mantiene sobre el agua. **VO**: *"Rhizome mantiene viva la parcela cuando nadie está."* (8 palabras, **frase fuerte 1**) | — |
+| 0:05–0:09 (4s) | Fondo casi-negro. **Dato 1 entra**: gran tipografía Manrope. Texto secundario en IBM Plex Mono pequeño (microcita). | **Cartela tipográfica:** *"In 2023, 48% of the world's land area suffered at least one month of extreme drought."* / `[UNCCD World Drought Atlas]` |
+| 0:09–0:13 (4s) | Dato 1 se desvanece. **Dato 2 entra**. | **Cartela tipográfica:** *"1.8 billion people affected. $300 billion per year in losses."* / `[UNCCD]` |
+| **0:13–0:13.5 (0.5s)** | **Microcorte plano de tierra agrietada.** Sin texto, sin cartela. Imagen real (B-roll) o stock cuidado de tierra seca. **Bisagra emocional**: del macro (dinero) al concreto (tierra que se ve). | — |
+| 0:13.5–0:17.5 (4s) | Vuelta a fondo casi-negro. **Dato 3 entra**: Cataluña como ejemplo. | **Cartela tipográfica:** *"In Catalonia 2024, agriculture cut water for irrigation by 80%."* / `[Generalitat de Catalunya]` |
+| 0:17.5–0:21.5 (4s) | Dato 3 se desvanece. **Dato 4 entra**: el dato bisagra que conecta lo agrícola con lo digital. | **Cartela tipográfica:** *"58% of the rural population uses internet. In low-income countries: only 14%."* / `[ITU 2025]` |
+| 0:21.5–0:25 (3.5s) | Fondo casi-negro. Pregunta abierta entra grande, centrada. | **Cartela central pregunta:** *"When network is absent — and the human is far — what makes the right call?"* |
+
+**Microcorte tierra agrietada — propuesta Corola día 19, aceptada Bea:**
+
+0.5s entre dato 2 y dato 3 con plano de tierra real, agrietada. Tres funciones:
+1. Bisagra emocional (macro → concreto).
+2. Corte respiratorio (no cansar al espectador con 4 datos seguidos).
+3. Anticipación de Cataluña (la tierra agrietada conecta con "agriculture cut water for irrigation by 80%").
+
+Si Venation no tiene B-roll producible, microcorte se descarta sin drama. Pero si lo tiene, vale la pena.
+
+**Lo que se siente:** problema mundial → impacto humano (vidas + dinero) → caso local (Cataluña como ejemplo) → ausencia de red. La pregunta de cierre convierte al espectador en quien necesita una respuesta. **El video entero responde a esa pregunta.**
+
+**VO:** 0 palabras (todo cartela tipográfica).
+**Cartelas:** 5 (4 datos globales + pregunta abierta de cierre). ~30 palabras inglés on-screen.
+**Overlays:** ninguno.
+**Tokens dirección de arte:** fondo `soil.graphite` o casi-negro / texto principal `soil.oat` o blanco roto / microcitas IBM Plex Mono pequeñas en `soil.ash` o gris / Manrope para datos.
+
+---
+
+### Escena 2 — Rhizome decide offline (0:25–0:50)
+
+**Beat narrativo:** el cerebro local entra. Sensor → estado → decisión → orden al ESP32 → `DecisionReceipt`. La **frase fuerte 1 reformulada** cierra el bloque sobre la acción física, ahora con la doble ausencia explícita ("without a person, without a signal").
+
+**Cronología:**
+
+| t | Acción / VO | Cartela / Overlay |
+|---|-------------|-------------------|
+| 0:25–0:29 (4s) | Corte. Plano cerrado del Jetson en su caja con cartel **"PLOT_01 with RHIZOME_01"** + cartel caja **"RHIZOME_01 / EDGE NODE"**. LED en `signal.seed` (#C5F26B) parpadea cuando el sistema decide. Camera baja al sensor de humedad clavado en la tierra. | **Overlay esquina sup. izq.** (persistente todo el bloque): `OFFLINE` |
+| 0:29–0:37 (8s) | Pantalla del Jetson llenando el plano. Fondo `soil.graphite`. Tipografía IBM Plex Mono. Log diseñado entrando con cadencia musical (1 línea/s). Bloque `SOIL READ` primero, bloque `DECISION` después. `WATER` y `final_action: 18s` resaltados en `signal.seed`. Resto del log en gris claro. **VO inglés:** *"This plot is not alone. It has a local brain. It reads the soil. It decides."* (~14 palabras) | **Cartela esquina sup. der.** (3s, IBM Plex Mono): `Gemma 4 E2B · local · llama.cpp` / **Sub-cartela** (3s): `LLM called only when ambiguous` |
+| 0:37–0:43 (6s) | Captura del `DecisionReceipt` llenando un cuarto de pantalla. Tres campos resaltados (`signal.seed`): `decision_type: WATER`, `final_action: 18s`, `why_short: "Soil below minimum. Budget available."` Resto del JSON atenuado. **VO inglés:** *"And signs what it does, so it can be explained."* (~10 palabras) | **Cartela superpuesta** (2s sobre el receipt, Manrope editorial): `DecisionReceipt` |
+| 0:43–0:48 (5s) | Salida al campo. Plano de la válvula. Se abre. Sonido de agua sobre tierra. | — |
+| 0:48–0:50 (2s) | Plano se mantiene sobre el agua. **VO inglés (frase fuerte 1 reformulada):** *"Rhizome keeps the plot alive — without a person, without a signal."* (~12 palabras) | — |
+
+**Frase fuerte 1 reformulada (Bea día 18-19):**
+- **EN master:** *"Rhizome keeps the plot alive — without a person, without a signal."*
+- **ES dub:** *"Rhizome mantiene viva la parcela — sin nadie, sin red."*
+
+La doble ausencia explícita ("without a person, without a signal") cierra el problema mejor que la versión v1.6 (*"Rhizome mantiene viva la parcela cuando nadie está."*). Conecta directamente con la pregunta abierta de E1 (*"When network is absent — and the human is far..."*).
 
 **Log diseñado E2 (Venation, día 17):**
 
@@ -154,57 +207,97 @@ Resaltados: `WATER` y `final_action` en `signal.seed`. Contexto en gris atenuado
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 0:45–0:48 | Corte seco. Plano cerrado de la cajita ESP32 con cartel "RHIZOME_01 / EDGE NODE" visible. LED ámbar encendido — atención, no alarma. | **Cartela esquina sup. der.** (3s, Manrope): `AI proposes / ESP32 validates` |
-| 0:48–0:53 | Pantalla del Jetson. Comando `WATER A 30s` viajando al ESP32. ESP32 verifica: *"deposito al 30%. Caudal nominal."* No bloquea. **Modula**. Devuelve `ACK` con cap aplicado. **VO**: *"La IA propone. El agua la gobierna una capa física prudente."* (11 palabras, **frase fuerte 3**) | **Overlay esquina sup. der.** (a partir de 0:48): `ESP32 SAFE LIMIT` |
-| 0:53–0:56 | `DecisionReceipt` post-ejecución llenando un cuadrante. Tres campos resaltados: `candidate_action: 30s`, `esp32_outcome: ACK (limited by tank level)`, `final_action: 12s` en `signal.seed`. La diferencia entre los dos números es donde la prudencia trabaja. | **Cartela central** (3s, Manrope dominante sobre el receipt): *"When in doubt, water less."* |
-| 0:56–1:00 | Plano de la válvula. Se abre. **Pero menos tiempo del propuesto.** Chorro corto, calculado. | — |
+| 0:50–0:53 (3s) | Corte seco. Plano cerrado de la cajita ESP32 con cartel "RHIZOME_01 / EDGE NODE" visible. LED ámbar encendido — atención, no alarma. | **Cartela esquina sup. der.** (3s, Manrope): `AI proposes / ESP32 validates` |
+| 0:53–0:58 (5s) | Pantalla del Jetson. Comando `WATER A 30s` viajando al ESP32. ESP32 verifica: *"deposito al 30%. Caudal nominal."* No bloquea. **Modula**. Devuelve `ACK` con cap aplicado. **VO inglés (frase fuerte 3 reformulada):** *"AI proposes. Physical safety disposes."* (~6 palabras) | **Overlay esquina sup. der.** (a partir de 0:50): `ESP32 SAFE LIMIT` |
+| 0:58–1:01 (3s) | `DecisionReceipt` post-ejecución llenando un cuadrante. Tres campos resaltados: `candidate_action: 30s`, `esp32_outcome: ACK (limited by tank level)`, `final_action: 12s` en `signal.seed`. La diferencia entre los dos números es donde la prudencia trabaja. | **Cartela central** (3s, Manrope dominante sobre el receipt): *"When in doubt, water less."* |
+| 1:01–1:05 (4s) | Plano de la válvula. Se abre. **Pero menos tiempo del propuesto.** Chorro corto, calculado. | — |
 
-**Lo que se siente:** el ESP32 no es polvera; es tutor. No grita NO — dice *"hasta aquí es seguro"*. La narrativa de cuidar se mantiene desde la primera intervención del ESP32. La frase fuerte 3 aterriza sobre el plano del ESP32 modulando (VO castellano), y la cartela *"When in doubt, water less."* la traduce a principio operativo del sistema (en inglés on-screen).
+**Frase fuerte 3 reformulada (Bea día 18-19):**
+- **EN master:** *"AI proposes. Physical safety disposes."*
+- **ES dub:** *"La IA propone, la capa física dispone."*
 
-**Cambio v1.6:** la cartela técnica `function/read tools · no actuator tools` queda sustituida por `AI proposes / ESP32 validates` (propuesta Venation, día 17). Más universal, comunica directamente la jerarquía.
+El juego "proposes/disposes" mejora la versión v1.6 (*"La IA propone. El agua la gobierna una capa física prudente."*) con cadencia más limpia y retórica más fuerte. Mantiene el principio: la IA no toca el agua sin pasar por la capa física.
 
-**VO:** 11 palabras castellano.
+**Lo que se siente:** el ESP32 no es polvera; es tutor. No grita NO — dice *"hasta aquí es seguro"*. La narrativa de cuidar se mantiene desde la primera intervención del ESP32. La frase fuerte 3 aterriza sobre el plano del ESP32 modulando, y la cartela *"When in doubt, water less."* la traduce a principio operativo del sistema.
+
+**VO:** ~6 palabras inglés.
 **Cartelas:** 2 inglés (`AI proposes / ESP32 validates`, *"When in doubt, water less."*).
 **Overlays:** 1 inglés (`ESP32 SAFE LIMIT`).
 **Tokens dirección de arte:** cartelas en Manrope. Overlay en IBM Plex Mono. Resaltado `final_action` en `signal.seed`.
 
 ---
 
-### Escena 4 — Llega Pollen (1:00–1:30)
+### Escena 3b — Meristem prepara (1:05–1:15) — NUEVA v1.7
 
-**Beat narrativo:** entra el humano. Después de un minuto del sistema funcionando solo, aparece la persona que va a visitar. Pero no llega a configurar — llega a **escuchar**. El móvil pregunta a Rhizome qué pasó. Rhizome responde a través del móvil. El espectador ve resumen de decisiones recientes. Frase fuerte 2 nueva (afirmación testable que escena 5 va a probar inmediatamente después).
+**Beat narrativo:** mini-escena doméstica que cierra el ciclo causal del sistema. Antes de que Pollen salga al campo (E4), el espectador ve **de dónde sale la política** que carga: el cerebro lento la compone en una cocina. Esto enseña que Meristem existe — no en una nube, en una mesa. Reubicación día 19 (después de E3, no entre E1 y E2): primero "sistema en parcela funcionando solo", después "humano en casa preparando intención", después "Pollen sale con esa intención".
 
 **Cronología:**
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 1:00–1:06 | Cambio de luz. Entra una persona en plano. **No vemos su cara** — vemos manos, móvil en la mano, cartel **"PLOT_01 with RHIZOME_01"** visible al fondo. Plano medio. La persona se acerca a la maceta. | — |
-| 1:06–1:14 | Pantalla del móvil llenando un tercio del cuadro. App Pollen abierta. La persona pulsa botón. En la pantalla aparece la pregunta: *"What happened since my last visit?"* (cartela en inglés sobre la pantalla). **VO** *"El móvil pregunta. La parcela responde."* (6 palabras castellano). | **Cartela esquina sup. der.** (4s): `Gemma 4 E4B · LiteRT-LM · on-device`. **Cartela en pantalla del móvil**: *"What happened since my last visit?"* |
-| 1:14–1:24 | Pantalla del móvil cambia: lista resumida de decisiones recientes. Tres líneas en pantalla: `WATER · 18s · 14:00`, `WATER · 12s · 09:30`, `SKIP · 22:00 — humedad suficiente`. La persona lee. Camera cerrada al móvil con la persona detrás difuminada. | — |
-| 1:24–1:30 | Plano de la persona mirando la planta, contrastando lo que ve con lo que el móvil le dice. Tres segundos. Después VO: *"Cada visita puede cambiar el criterio local."* (8 palabras castellano, **frase fuerte 2**) sobre el plano. | — |
+| 1:05–1:08 (3s) | Plano cocina (o equivalente doméstico). Portátil casero abierto sobre mesa. Bea de espaldas o en perfil borroso (no vemos cara — continuidad con escena 4-5-6 agnóstico al portador). En la pantalla del portátil: terminal/UI Meristem. Luz natural si es posible. | — |
+| 1:08–1:12 (4s) | **Detalle de la pantalla del portátil:** UI Meristem componiendo política. `signal.seed` activo en el momento donde el sistema "decide" (pulso suave en algún campo o indicador). Si la app Meristem tiene visualización de `PolicyComposer`, mostrarla; si no, mock fiel basado en `docs/12_meristem_spec.md`. | — |
+| 1:12–1:15 (3s) | Plano sobre la mesa: Pollen (móvil) recibe la política de Meristem. Posible animación de transferencia o conexión visual entre los dos dispositivos. **VO inglés:** *"Meristem composes the policy."* (~5 palabras) | **Cartela superpuesta** (2-3s, Manrope): *"Meristem composes."* o *"Policy composed."* — pendiente decidir cuál |
 
-**Lo que se siente:** el humano entra como interlocutor, no como configurador. La conversación móvil-Rhizome es horizontal, no jerárquica. La frase fuerte 2 es **promesa testable** — escena 5 viene a continuación y la prueba.
+**Frase Extra E3b (Bea día 19, cerrada):**
+- **EN master:** *"Meristem composes the policy."*
+- **ES dub:** *"Meristem compone la política."*
 
-**VO:** 14 palabras castellano (6 + 8).
-**Cartelas:** 2 (`Gemma 4 E4B · LiteRT-LM · on-device` esquina + *"What happened since my last visit?"* en pantalla del móvil).
+El verbo "compose" conecta con `PolicyComposer` de la arquitectura (Meristem día 18-19). Evita choque con frase 3 *"physical safety disposes"* (proposes/disposes vs composes — distintos verbos).
+
+**Lo que se siente:** el cerebro lento existe en una cocina, no en una nube. Domesticidad operativa. Este plano íntimo prepara el bookend con E9b (Meristem recibe info al cierre).
+
+**VO:** ~5 palabras inglés.
+**Cartelas:** 1 (cartela cierre escena, *"Meristem composes."* o *"Policy composed."*).
 **Overlays:** ninguno.
-**Producción:** cartel "PLOT_01 with RHIZOME_01" visible. Persona sin cara reconocible.
+**Tokens dirección de arte:** plano real con luz natural / paleta domestica neutra / pantalla del portátil con UI en sistema visual del proyecto (Manrope + IBM Plex Mono, `signal.seed` para estados activos).
+**Producción crítica:** material para esta mini-escena depende de Meristem (UI real) y de Bea (rodaje doméstico). Coordinación pendiente.
 
 ---
 
-### Escena 5 — La persona da una misión (1:30–1:50)
+### Escena 4 — Llega Pollen (1:15–1:40, recortada de 30s a 25s en v1.7)
 
-**Beat narrativo:** el momento más humano del video. Una voz de carne y hueso pidiendo algo concreto. El sistema escuchándola: la frase coloquial se traduce a parámetro técnico sin perder lo que la persona quiso decir. Pollen no recorta — Pollen **traduce**. Esto **prueba** la frase fuerte 2 de escena 4.
+**Beat narrativo:** entra el humano al campo. Después de E3b (Meristem composing), Pollen sale al campo con la política. La persona que visita no llega a configurar — llega a **escuchar y a traer la nueva política**. El móvil pregunta a Rhizome qué pasó. Frase fuerte 2 reformulada con "Pollen" explícito.
 
 **Cronología:**
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 1:30–1:33 | Plano cercano. La persona pulsa otro botón del móvil (botón de grabación). Acerca el móvil a la cara. **No vemos sus labios** — vemos su mano sosteniendo el móvil. UI del móvil muestra `VOICE NOTE` activo. | — |
-| 1:33–1:40 | **Voz humana real (castellano, grabada literal)**: *"Vuelvo el viernes. Esta planta aguanta más seca de lo que crees, riega un poco menos."* (14 palabras). Tono calmado, sin actuación, casi casual. | — |
-| 1:40–1:43 | Tres segundos de **procesamiento Pollen en tres estados consecutivos**: micro-animación con pulso `signal.seed`. Estados visibles en pantalla del móvil (1 segundo cada uno): `listening` → `compiling` → `validating`. | — |
-| 1:43–1:48 | **Pantalla del móvil mostrando el `MissionPatch` compilado.** Layout recomendado por Venation (pendiente confirmación llamada Floema): `VOICE NOTE` con la frase castellana + `COMPILED PATCH` debajo con cuatro campos: `horizon_h: 72`, `soil_thresholds.dry: 35 → 25`, `budget_cap_ml: 900`, `operator_note: preserved` (etiqueta — la voz literal queda almacenada, no se imprime de nuevo en pantalla aquí). Resaltados con `signal.seed`. | **Cartela superpuesta** (2s, Manrope): `MissionPatch validated` |
-| 1:48–1:50 | Plano cerrado del móvil. **VO** (cerrada, una frase): *"Lo que la persona dice se convierte en política."* (9 palabras castellano). | — |
+| 1:15–1:20 (5s) | Cambio de luz. Entra una persona en plano. **No vemos su cara** — vemos manos, móvil en la mano, cartel **"PLOT_01 with RHIZOME_01"** visible al fondo. Cartel caja **"RHIZOME_01 / EDGE NODE"**. Plano medio. La persona se acerca a la maceta. | — |
+| 1:20–1:25 (5s) | Pantalla del móvil llenando un tercio del cuadro. App Pollen abierta. La persona pulsa botón. En la pantalla aparece la pregunta. | **Cartela esquina sup. der.** (3s, IBM Plex Mono): `Gemma 4 E4B · LiteRT-LM · on-device`. **Cartela en pantalla del móvil**: *"What happened since my last visit?"* |
+| 1:25–1:32 (7s) | Pantalla del móvil cambia: `SINCE LAST VISIT` con resumen + receipts. UI sobre paleta del sistema. Tres líneas: `2 watering events / 1 skipped decision / 0 blocked actions` + receipts `WATER · 18s · 14:00`, `WATER · 12s · 09:30`, `SKIP · 22:00 · soil above threshold`. | — |
+| 1:32–1:40 (8s) | Plano de la persona mirando la planta, contrastando lo que ve con lo que el móvil le dice. **VO inglés (frase fuerte 2 reformulada):** *"Every Pollen visit can change the local criterion."* (~8 palabras) | — |
+
+**Frase fuerte 2 reformulada (Bea día 18-19):**
+- **EN master:** *"Every Pollen visit can change the local criterion."*
+- **ES dub:** *"Cada visita de Pollen puede cambiar el criterio local."*
+
+Añadir "Pollen" gana especificidad respecto a v1.6 (*"Cada visita puede cambiar el criterio local."*). Cierra al beat con la subjeto del que va.
+
+**Lo que se siente:** el humano entra como interlocutor, no como configurador. La conversación móvil-Rhizome es horizontal, no jerárquica. La frase fuerte 2 es **promesa testable** — escena 5 viene a continuación y la prueba.
+
+**VO:** ~8 palabras inglés.
+**Cartelas:** 2 (`Gemma 4 E4B · LiteRT-LM · on-device` esquina + *"What happened since my last visit?"* + bloque `SINCE LAST VISIT` en pantalla del móvil).
+**Overlays:** ninguno.
+**Producción:** cartel "PLOT_01 with RHIZOME_01" visible + cartel caja "RHIZOME_01 / EDGE NODE". Persona sin cara reconocible. Coordinación con Floema sobre UI del móvil (capturas reales preferidas, mock fiel si no llega).
+
+---
+
+### Escena 5 — La persona da una misión (1:40–2:00)
+
+**Beat narrativo:** el momento más humano del video. Una voz de carne y hueso pidiendo algo concreto. El sistema escuchándola: la frase coloquial se traduce a parámetro técnico sin perder lo que la persona quiso decir. Pollen no recorta — Pollen **traduce**. Esto **prueba** la frase fuerte 2 de escena 4.
+
+**Excepción narrativa deliberada (v1.7):** la **voz humana de Bea grabada en castellano literal** se mantiene en castellano, sin traducir. Subtítulo inglés en master entre comillas. El campo `operator_note` en pantalla del móvil aparece literal castellano (sistema preserva la voz humana).
+
+**Cronología:**
+
+| t | Acción / VO | Cartela / Overlay |
+|---|-------------|-------------------|
+| 1:40–1:43 (3s) | Plano cercano. La persona pulsa botón de grabación. Acerca el móvil a la cara. **No vemos sus labios** — vemos su mano sosteniendo el móvil. UI del móvil muestra `VOICE NOTE` activo. | — |
+| 1:43–1:50 (7s) | **Voz humana real Bea (castellano, grabada literal)**: *"Vuelvo el viernes. Esta planta aguanta más seca de lo que crees, riega un poco menos."* (14 palabras castellano). Tono calmado, casi casual. **Subtítulo inglés en master**: *"I'll be back Friday. This plant takes drier than you think — water it a bit less."* (entre comillas para marcar que es voz humana). | — |
+| 1:50–1:53 (3s) | **Procesamiento Pollen en tres estados consecutivos** (Venation día 17): pulso `signal.seed`. Estados visibles en pantalla del móvil (1s cada uno): `listening` → `compiling` → `validating`. | — |
+| 1:53–1:58 (5s) | **Pantalla del móvil mostrando el `MissionPatch` compilado.** Layout Venation: `VOICE NOTE` con la frase castellana literal + `COMPILED PATCH` debajo con cuatro campos: `horizon_h: 72`, `soil_thresholds.dry: 35 → 25`, `budget_cap_ml: 900`, `operator_note: preserved` (etiqueta — la voz literal queda almacenada). Resaltados con `signal.seed`. | **Cartela superpuesta** (2s, Manrope): `MissionPatch validated` |
+| 1:58–2:00 (2s) | Plano cerrado del móvil. **VO inglés** (cerrada, una frase): *"What the person says becomes policy."* (~6 palabras) | — |
 
 **Motion procesamiento Pollen (Venation, día 17):**
 
@@ -220,50 +313,54 @@ Aparecen uno tras otro (1s cada uno). Pulso suave, no parpadeo agresivo. Marca e
 
 **Lo que se siente:** una voz humana real entrando al sistema y siendo respetada. La frase coloquial *"aguanta más seca de lo que crees"* se conserva literal en `operator_note` — eso es honestidad: el sistema no resume al humano, lo cita. Pollen traduce intuición agrícola a parámetro técnico sin recortar.
 
-**VO:** 9 palabras castellano + 14 palabras voz humana real castellano = 23 palabras totales castellano en escena.
+**VO:** ~6 palabras inglés + 14 palabras voz humana castellano (Bea graba) = ~20 palabras totales en escena.
 **Cartelas:** 1 (`MissionPatch validated`).
 **Overlays:** ninguno obligatorio.
-**Tokens dirección de arte:** UI del móvil con paleta del sistema (fondo `soil.oat` o claro). Resaltados de campos cambiantes (`soil_thresholds.dry`, `budget_cap_ml`) en `signal.seed`. Pulso `signal.seed` durante procesamiento.
-**Producción:** **Pendiente llamada con Floema** para confirmar/ajustar UI del compilador (diseño exacto VOICE NOTE + COMPILED PATCH + motion procesamiento). Layout propuesto por Venation alineado con sistema visual del proyecto. La voz humana se graba antes del rodaje principal.
+**Tokens dirección de arte:** UI del móvil con paleta del sistema. Resaltados de campos cambiantes en `signal.seed`. Pulso `signal.seed` durante procesamiento. `operator_note` literal castellano preservado en pantalla.
+**Producción:** **Pendiente coordinación con Floema** para confirmar/ajustar UI del compilador. **Voz humana grabada por Bea** (días 24-25 según calendario). El campo `operator_note` se conserva en castellano literal — excepción narrativa deliberada a regla "todo on-screen inglés".
 
 ---
 
-### Escena 6 — Ferry A→B (1:50–2:10)
+### Escena 6 — Ferry A→B (2:00–2:20)
 
-**Beat narrativo:** una parcela tiene ojos al cielo, la otra no. Pero ambas reciben el mismo conocimiento, porque alguien lo lleva. Es la federación demostrada en una acción física: corte limpio entre dos planos del mismo Rhizome haciendo dos roles. La frase fuerte 5 cierra el bloque sobre el plano del Rhizome B aceptando el digest.
+**Beat narrativo:** una parcela tiene ojos al cielo, la otra no. Pero ambas reciben el mismo conocimiento, porque alguien lo lleva. Federación demostrada en acción física: corte limpio entre dos planos del mismo Rhizome físico haciendo dos roles lógicos. La frase fuerte 5 cierra el bloque sobre el Rhizome B aceptando el digest. **El "those" de F5 hace eco directo a "every Pollen visit" de F2** — coherencia interna fuerte.
 
 **Cronología:**
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 1:50–1:55 | Plano de la persona junto al **PLOT_01** (cartel maceta "PLOT_01 with RHIZOME_01" + cartel caja "RHIZOME_01 / EDGE NODE" + **estación meteo conectada al Rhizome 01 si la incluimos**). El móvil descarga el `WeatherDigest` (o `Context bundle` si no hay meteo) del Rhizome. Pantalla del móvil: lectura del bundle viajando del Rhizome al teléfono. **VO**: *"Pollen trae preguntas, respuestas y contexto."* (6 palabras castellano). | **Cartela superpuesta** (2s, Manrope): `WeatherDigest ferry` (con meteo) o `Context ferry` (sin meteo) |
-| 1:55–1:56 | **Corte limpio.** Sin pasos en plano. | — |
-| 1:56–2:04 | Plano de la persona junto al **PLOT_02** (cartel maceta "PLOT_02 with RHIZOME_02" + cartel caja "RHIZOME_02 / EDGE NODE", sin meteo, segunda zona de la terraza, distinta planta). Pollen entrega el bundle al Rhizome 02. Pantalla del móvil: subida del paquete. Pantalla del Rhizome 02 (visible al fondo o en captura): aceptación con cita de origen `rhizome_01`. | **Cartela en pantalla del Rhizome** (visible 4s, IBM Plex Mono): `WeatherDigest accepted · Source: rhizome_01` (con meteo) o `Context accepted · Source: rhizome_01` (sin meteo) |
-| 2:04–2:07 | Silencio breve. Plano del Rhizome 02 con el digest aceptado. La cámara respira. | — |
-| 2:07–2:10 | **VO** (sentencia, plana): *"Pollen convierte esas visitas en inteligencia federada."* (8 palabras castellano, **frase fuerte 5**). | — |
+| 2:00–2:05 (5s) | Plano de la persona junto al **PLOT_01** (cartel maceta "PLOT_01 with RHIZOME_01" + cartel caja "RHIZOME_01 / EDGE NODE" + **estación meteo conectada si la incluimos**). El móvil descarga el `WeatherDigest` (con meteo) o `Context bundle` (sin). Pantalla del móvil: lectura viajando del Rhizome al teléfono. **VO inglés:** *"Pollen brings questions, answers, and context."* (~6 palabras) | **Cartela superpuesta** (2s, Manrope): `WeatherDigest ferry` (con meteo) o `Context ferry` (sin meteo) |
+| 2:05–2:06 (1s) | **Corte limpio.** Sin pasos en plano. | — |
+| 2:06–2:14 (8s) | Plano de la persona junto al **PLOT_02** (cartel maceta "PLOT_02 with RHIZOME_02" + cartel caja "RHIZOME_02 / EDGE NODE", sin meteo, segunda zona de la terraza, distinta planta). Pollen entrega el bundle al Rhizome 02. Pantalla del móvil: subida. Pantalla del Rhizome 02: aceptación con cita de origen. | **Cartela en pantalla del Rhizome** (visible 4s, IBM Plex Mono): `WeatherDigest accepted · Source: rhizome_01` (con meteo) o `Context accepted · Source: rhizome_01` (sin meteo) |
+| 2:14–2:17 (3s) | Silencio breve. Plano del Rhizome 02 con bundle aceptado. La cámara respira. | — |
+| 2:17–2:20 (3s) | **VO inglés (sentencia plana, frase fuerte 5):** *"Pollen turns those visits into federated intelligence."* (~8 palabras) | — |
 
-**Lo que se siente:** Pollen es **portador de más que voz humana**. Lleva también meteorología. Las dos parcelas viven en el mismo terreno pero no se hablan — Pollen las hace hablar. El "esas" de la frase fuerte 5 hace eco directo a "cada visita" de escena 4: coherencia interna.
+**Frase fuerte 5 (sin cambios v1.6 → v1.7):**
+- **EN master:** *"Pollen turns those visits into federated intelligence."*
+- **ES dub:** *"Pollen convierte esas visitas en inteligencia federada."*
 
-**VO:** 14 palabras castellano (6 + 8).
-**Cartelas:** 2 (`WeatherDigest ferry` + `WeatherDigest accepted · Source: rhizome_01` en pantalla del Rhizome).
+**Lo que se siente:** Pollen es **portador de más que voz humana**. Lleva también meteorología/contexto. Las dos parcelas viven en el mismo terreno pero no se hablan — Pollen las hace hablar. El "those" de F5 hace eco directo a "every Pollen visit" de F2 — coherencia narrativa fuerte cross-escena.
+
+**VO:** ~14 palabras inglés (6 + 8).
+**Cartelas:** 2 (`WeatherDigest ferry` o `Context ferry` + cartela aceptación en pantalla del Rhizome).
 **Overlays:** ninguno.
-**Producción:** rotación del Rhizome físico entre PLOT_01 y PLOT_02. Estación meteo se conecta para PLOT_01 y se retira para PLOT_02. Carteles físicos visibles en cada toma — maceta ("PLOT_01 with RHIZOME_01" / "PLOT_02 with RHIZOME_02") y caja electrónica ("RHIZOME_01" / "RHIZOME_02", intercambiables entre tomas). Misma persona en plano (continuidad). **Contingencia día 16 (no firme):** si Bea decide prescindir de meteo, el plano 06a se queda sin estación; las dos parcelas se distinguen por cartel + planta + ángulo, sin ferry de meteo. La frase fuerte 5 ("Pollen convierte esas visitas en inteligencia federada") se sostiene igual — la federación es de contexto en general, no solo de meteo.
+**Producción:** rotación del Rhizome físico entre PLOT_01 y PLOT_02. Estación meteo se conecta para PLOT_01 y se retira para PLOT_02. Carteles físicos visibles. Misma persona en plano (continuidad). **Contingencia "sin meteo"** documentada como ruta válida — la frase fuerte 5 se sostiene igual (la federación es de contexto en general).
 
 ---
 
-### Escena 7 — Criterion updated (2:10–2:30)
+### Escena 7 — Watering criteria updated (2:20–2:40) — CLIMAX
 
-**Beat narrativo:** el sistema acaba de cambiar de criterio. Tres bloques de evidencia visual en cadencia musical (no log JSON masivo) muestran qué cambió. La invariante de jerarquías aterriza como cartela esquina sobre el momento donde se ven las cuatro jerarquías trabajando simultáneamente. La cartela ancla aterriza dominante después. Después, acción física con riego más corto que en escena 2 — la diferencia hace el trabajo narrativo.
+**Beat narrativo:** el sistema acaba de cambiar de criterio. Tres bloques de evidencia visual en cadencia musical muestran qué cambió. La invariante de jerarquías aterriza como cartela esquina sobre el momento donde se ven las cuatro jerarquías trabajando simultáneamente. La cartela ancla aterriza dominante después. Acción física con riego más corto que en escena 2 — la diferencia hace el trabajo narrativo. **Climax narrativo confirmado por Bea día 18-19** (transferencia A→B baja a tensión visual).
 
 **Cronología:**
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 2:10–2:13 | Pantalla del Jetson llenando el plano. Fondo casi negro. **Bloque 1** entra: `MissionPatch accepted` con `id: mp_004` y `ttl: 21600s`. Cadencia musical (1 línea por segundo). | — |
-| 2:13–2:16 | **Bloque 2** entra: `POLICY DIFF` con dos campos resaltados (color `signal.seed` sobre log atenuado): `soil_thresholds.dry: 35 → 25`, `daily_budget_ml: 1500 → 900`. **Cartela esquina inferior derecha** entra (4 líneas IBM Plex Mono pequeña, paleta sobria). | **Cartela esquina inf. der.** (entra a 2:14, visible 5s, IBM Plex Mono): *"Physical layer prevails."* / *"Rhizome arbitrates."* / *"Pollen mediates."* / *"Meristem refines."* |
-| 2:16–2:19 | **Bloque 3** entra: `NEXT DECISION CHANGED` con `policy_id: pol_009 → pol_010`, `final_action: 12s`, `why_short: "Mission compiled from human voice"`. La cartela esquina sigue visible. | — |
-| 2:19–2:22 | Cartela ancla central (3s, Manrope editorial dominante): *"Watering criteria updated."* sobre los tres bloques que quedan al fondo en gris atenuado. La cartela esquina **se desvanece a 2:19** cuando entra la ancla — no compiten por atención. | **Cartela central** (3s, Manrope): *"Watering criteria updated."* |
-| 2:22–2:30 | Salida al campo. Plano de la maceta y la válvula. Se abre. **Pero menos tiempo que en escena 2** — chorro corto, controlado, austero (12s real). El espectador recuerda inconscientemente que la primera vez fue largo. **VO** sobre el plano del agua: *"El sistema ajusta los cuidados."* (5 palabras castellano). | — |
+| 2:20–2:23 (3s) | Pantalla del Jetson llenando el plano. Fondo `soil.graphite`. **Bloque 1** entra: `MISSION PATCH ACCEPTED` con `id: mp_004` y `ttl: 21600s`. Cadencia musical (1 línea/s). | — |
+| 2:23–2:26 (3s) | **Bloque 2** entra: `POLICY DIFF` con dos campos resaltados `signal.seed`: `soil_thresholds.dry: 35 → 25`, `daily_budget_ml: 1500 → 900`. **Cartela esquina inferior derecha** entra (4 líneas IBM Plex Mono, paleta sobria). | **Cartela esquina inf. der.** (entra a 2:24, visible 5s): *"Physical layer prevails."* / *"Rhizome arbitrates."* / *"Pollen mediates."* / *"Meristem refines."* |
+| 2:26–2:29 (3s) | **Bloque 3** entra: `NEXT DECISION CHANGED` con `policy_id: pol_009 → pol_010`, `final_action: 12s`, `why_short: "Mission compiled from human voice"`. La cartela esquina sigue visible. | — |
+| 2:29–2:32 (3s) | Cartela ancla central (3s, Manrope editorial dominante): *"Watering criteria updated."* sobre los tres bloques en gris atenuado. La cartela esquina **se desvanece a 2:29** cuando entra la ancla — no compiten. | **Cartela central** (3s, Manrope): *"Watering criteria updated."* |
+| 2:32–2:40 (8s) | Salida al campo. Plano de la maceta y la válvula. Se abre. **Pero menos tiempo que en escena 2** — chorro corto, controlado, austero (12s real). El espectador recuerda inconscientemente que la primera vez fue largo. **VO inglés** sobre el plano del agua: *"The system updates its care."* (~5 palabras) | — |
 
 **Log diseñado E7 (Venation, día 17):**
 
@@ -295,7 +392,7 @@ Cadencia musical: 1 bloque cada 3 segundos. Los dos campos del `Policy diff` res
 
 La cartela esquina aterriza sobre la imagen exacta que la sostiene, y se desvanece antes de la cartela ancla central — sin compresión visual.
 
-**VO:** 5 palabras castellano (sobrio radical).
+**VO:** ~5 palabras inglés (sobrio radical).
 **Cartelas:** 1 dominante (*"Watering criteria updated."*) + 1 esquina (invariante 4 líneas) + 3 bloques de evidencia técnica en pantalla.
 **Overlays:** ninguno.
 **Tokens dirección de arte:** fondo `soil.graphite`, resaltados `signal.seed` (los dos campos del diff), texto base IBM Plex Mono. Cartela ancla central Manrope. Cartela esquina invariante IBM Plex Mono pequeña. La cartela esquina inferior derecha en tipografía técnica pequeña, paleta sobria — **no compite** con la cartela ancla central que vendrá después.
@@ -305,17 +402,23 @@ La cartela esquina aterriza sobre la imagen exacta que la sostiene, y se desvane
 
 ---
 
-### Escena 8 — Caducidad (2:30–2:40)
+### Escena 8 — Caducidad (2:40–2:50)
 
-**Beat narrativo:** el sistema rechaza algo viejo. La caducidad como virtud. Frase fuerte 4 lapidaria sobre el rechazo del `WeatherDigest` expirado.
+**Beat narrativo:** el sistema rechaza algo viejo. La caducidad como virtud. Frase fuerte 4 lapidaria sobre el rechazo del `WeatherDigest` expirado. **Cerrada por Bea día 19**: mantiene "intelligence" como categoría amplia (cubre decisiones, políticas, digests, patches).
 
 **Cronología:**
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 2:30–2:32 | Cartela limpia (2s): *"Three days later"*. | **Cartela central** (2s): *"Three days later"* |
-| 2:32–2:36 | Pantalla del Jetson. El `WeatherDigest` que Pollen entregó en escena 6 está llegando a su `valid_until`. El sistema lo evalúa y rechaza. Tres líneas en pantalla: `WeatherDigest #2026-04-26-001`, `status: EXPIRED → REJECTED`, `reason: ttl exceeded`. | **Cartela superpuesta** (2s): `expired → rejected` |
-| 2:36–2:40 | **VO** sobre la pantalla del rechazo: *"Toda inteligencia tiene jurisdicción y fecha de caducidad."* (8 palabras castellano, **frase fuerte 4** sin "En Sprout"). | — |
+| 2:40–2:42 (2s) | Cartela limpia: *"Three days later"*. | **Cartela central** (2s): *"Three days later"* |
+| 2:42–2:46 (4s) | Pantalla del Jetson. El `WeatherDigest` que Pollen entregó en E6 está llegando a su `valid_until`. El sistema lo evalúa y rechaza. Tres líneas: `WeatherDigest #2026-05-04-001`, `status: EXPIRED → REJECTED`, `reason: ttl exceeded`. | **Cartela superpuesta** (2s, IBM Plex Mono con borde doble `status.blocked`): `expired → rejected` |
+| 2:46–2:50 (4s) | **VO inglés (frase fuerte 4):** *"Every intelligence has jurisdiction. And expiry."* (~7 palabras) | — |
+
+**Frase fuerte 4 (cerrada Bea día 19):**
+- **EN master:** *"Every intelligence has jurisdiction. And expiry."*
+- **ES dub:** *"Toda inteligencia tiene jurisdicción y fecha de caducidad."*
+
+La versión EN parte la frase en dos beats. *"And expiry."* como frase aparte es más seca y memorable que el original castellano. Mantiene "intelligence" en lugar de "data" — categoría amplia que cubre todo lo que el sistema procesa.
 
 **Lo que se siente:** la negación es virtud. El sistema no acumula contexto viejo — lo rechaza con aviso. La frase fuerte 4 aterriza sobre el rechazo literal en pantalla; coherencia total entre frase y plano.
 
@@ -327,73 +430,167 @@ La cartela esquina aterriza sobre la imagen exacta que la sostiene, y se desvane
 
 ### Escena 9 — Cenital federado + Meristem (2:40–3:00)
 
-**Decisión Meristem firme (día 14):** Meristem-nodo entra al MVP. Bea cierra la visión de la escena: el cenital flat editorial mantiene su comienzo (8 parcelas + Pollen recorriendo), pero después Pollen llega al nodo Meristem **en el cenital flat**, hay **corte limpio a imagen real** del portátil del agricultor donde Meristem ejecuta, dos mensajes en pantalla con la operación, y cierre con tarjeta logo. Tres niveles narrativos: máquina (E1-E7) → abstracción de red (E9 inicio) → cerebro lento doméstico real (E9 final).
+**Decisión v1.7 (Bea día 18-19):** **Cenital uno solo, comprimido a 10s. Veo3 fuera, animación de Venation adoptada como definitiva.** El corte limpio Veo3 → imagen real (que era estructural en v1.6) **se mueve a E9b nueva** — ya no vive dentro de E9. E9 queda **puramente flat editorial 10s con cartela progresiva**. **Cartela progresiva pasa a modulación Cambium ella** (más corta, encaja en 10s).
 
-**Beat narrativo:** el video pasa de **filmado** a **diagramado** (corte 2:40 al cenital flat) y de **diagramado** a **filmado otra vez** (corte 2:54 al portátil real). El segundo corte es estructural: lo abstracto demuestra el sistema funcionando a escala; lo real demuestra que el cerebro lento existe en una cocina, no en una nube.
+**Beat narrativo:** el video pasa de **filmado** a **diagramado**. La animación Venation (versión 10s) demuestra el sistema funcionando a escala. El plano de portátil real (lo que era 2:55-3:00 en v1.6) se mueve a E9b nueva con su propio cierre íntimo.
 
 **Cronología:**
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 2:40–2:42 | Plano real de la maceta del rodaje (continuidad con la última imagen de E8 si la hubiera, o transición desde la pantalla del Jetson). **Morph sutil** durante 2 segundos: la maceta se difumina, los bordes se expanden, aparece la parcela vista en cenital. Fondo neutro abstracto. | — |
-| 2:42–2:46 | Cenital flat editorial. Parcelas apareciendo progresivamente: una, dos, hasta ocho en mosaico irregular. Paleta tierra sobria. Cartela dosificada sincronizada con la aparición. | **Cartela progresiva (4s, dosificada en 3 beats al ritmo de las parcelas):** *"One plot."* (s1) → *"Two."* (s2) → *"Eight."* (s4) |
-| 2:46–2:48 | Pollen-nodo aparece y **arranca recorrido** entre las parcelas. Cartela única en s47. | **Cartela** (2s): *"Autonomous."* |
-| 2:48–2:51 | Pollen-nodo recorre parcelas. **Mensajes técnicos breves** (3-5 según ritmo, IBM Plex Mono integrado al diseño flat) apareciendo y desapareciendo en cada toque del nodo: `WeatherDigest accepted`, `MissionPatch delivered`, `DecisionReceipt synced`, `ValidationStamp issued`, `Context cached`. Pulso `signal.seed` en el nodo. Cartela cumbre. | **Cartela** (3s, Manrope): *"Federated intelligence, carried by Pollen."* |
-| 2:51–2:54 | Pollen-nodo **llega al nodo Meristem** dentro del cenital flat. El nodo Meristem está representado como un **disco mayor azul desaturado o grafito claro** (Venation, día 17), distinto a las 8 parcelas (que son celdas rectangulares irregulares). Pausa de conexión visual. | — |
-| **2:54–2:55** | **Corte limpio.** Quiebre estético deliberado. Cambio de Veo3 flat a imagen real. | — |
-| 2:55–2:58 | Plano real del **portátil del agricultor abierto sobre una mesa de cocina** (o equivalente doméstico). Pantalla del portátil mostrando la app Meristem. **Cartela en pantalla del portátil** (3s): *"Pulling Rhizome data..."* (con elipsis indicando proceso). | **Cartela on-screen** (3s): *"Pulling Rhizome data..."* |
-| 2:58–3:00 | Pantalla cambia. **Cartela on-screen** (2s): *"Adjusting policies..."* La tarjeta logo final entra por fade sobre la pantalla del portátil al final. | **Cartela on-screen** (2s): *"Adjusting policies..."* + **Tarjeta logo** entrando por fade |
-| (cierre) | Tarjeta logo final visible 2-3s sobre la pantalla del portátil difuminada al fondo. | **Tarjeta logo (reformulada Venation, día 17):** `Sprout` / *"Local-first irrigation decisions."* / *"Safe · explainable · open-source"* / `zigiella · Apache 2.0` / `github.com/zigiella/sprout` |
+| 2:50–2:52 (2s) | **Morph maceta real → parcela flat.** La maceta de la última toma del video (E8 o cierre de E7) se difumina, los bordes se expanden, aparece la primera parcela en cenital. Fondo `soil.oat` sobrio. | — |
+| 2:52–2:55 (3s) | Cenital flat editorial. **Parcelas apareciendo progresivamente** sobre mosaico irregular. Pollen-nodo aparece como punto luminoso `signal.seed`. Cartela progresiva primer beat. | **Cartela progresiva beat 1** (3s, Manrope): *"One plot. Two. Eight."* |
+| 2:55–2:58 (3s) | Pollen-nodo recorre parcelas. **Mensajes técnicos breves** apareciendo y desapareciendo en cada toque del nodo: `WeatherDigest accepted`, `MissionPatch delivered`, `DecisionReceipt synced`, `ValidationStamp issued`, `Context cached`. Cartela progresiva segundo beat. | **Cartela progresiva beat 2** (3s, Manrope): *"Federated."* |
+| 2:58–3:00 (2s) | Pollen-nodo **llega al nodo Meristem** dentro del cenital flat. **Disco mayor azul desaturado o grafito claro** (Venation), distinto a las 8 parcelas. Cartela progresiva tercer beat. | **Cartela progresiva beat 3** (2s, Manrope): *"Autonomous."* |
 
-**Lo que se siente:** el video pasa de **abstracción** a **realidad doméstica**. El cerebro lento no vive en la nube — vive en un portátil sobre una mesa. Eso es lo más Sprout que el video puede demostrar al final: la inteligencia consolidada está al alcance de una persona, en su casa, no en un data center remoto. La cartela progresiva cierra la tesis (federación), los dos mensajes de Meristem cierran la operación (consolidación), y la tarjeta logo cierra el producto (firma).
+**Cartela progresiva final E9 — modulación Cambium ella (decisión v1.7):**
 
-**VO:** 0 palabras (la escena 9 es puramente visual + cartelas).
-**Cartelas:** 6 en total (cartela progresiva en 3 beats + 2 mensajes Meristem + tarjeta logo).
+```
+One plot. Two. Eight.    (beat 1, 3s)
+Federated.               (beat 2, 3s)
+Autonomous.              (beat 3, 2s)
+```
+
+**Por qué esta versión y no la cadencia v1.6:** en v1.6 la cartela final era *"One plot. Two. Eight. / Autonomous. / Federated intelligence, carried by Pollen."* Con E9 a 20s cabía con respiro. Con E9 a 10s (compresión v1.7), la cadencia v1.6 no encaja. La modulación Cambium ella (5 beats cortos) cabe limpio. Pierde el cierre *"carried by Pollen"* pero F5 en E6 ya dice *"Pollen turns those visits into federated intelligence"* — el eco ya está, no necesita repetirse en cartela.
+
+**Lo que se siente:** transición a abstracción. El sistema funcionando a escala. La cartela progresiva en tres beats sobrios cierra la tesis (federación + autonomía).
+
+**VO:** 0 palabras (escena puramente visual + cartelas).
+**Cartelas:** 1 cartela progresiva en 3 beats.
 **Overlays:** ninguno.
-
-**Producción:**
-
-- **Cenital flat (2:40–2:54):** **Venation prepara cenital animado** según design pack día 17. Si Veo3 sigue siendo necesario en este beat, prompt refinado por Venation: *"Editorial flat illustration, top-down view of 8 small farm plots arranged in an irregular mosaic, muted earth tones, clean line work, modern infographic style, warm oat background, no realistic sky, no realistic shadows. A small luminous seed-lime node moves between plots, carrying context. Minimal technical labels appear briefly near touched plots: WeatherDigest accepted, MissionPatch delivered, DecisionReceipt synced. The node finally connects to a larger distinct Meristem hub, a desaturated blue-gray circle, visually different from the plot cells. Calm precise motion, not playful, not videogame-like."* Negative prompt: *"no cartoon farm, no happy plants, no neon AI, no futuristic city, no glossy 3D, no realistic drone shot, no childish icons, no saturated green, no sci-fi interface."* **Decisión pendiente día 17 con Bea:** ¿Veo3 sigue siendo necesario en E9 si Venation entrega cenital animado, o queda Veo3 limitado a planos 08 y 14 que Bract acotó?
-- **Corte 2:54–2:55:** corte limpio, sin transición, sin fade. El quiebre estético es feature.
-- **Imagen real (2:55–3:00):** plano del portátil del agricultor abierto sobre una mesa (cocina o similar doméstico). Luz natural si es posible. La pantalla del portátil tiene que mostrar **algo real** — la app Meristem corriendo (Meristem la prepara) o mock fiel.
-- **Tarjeta logo (reformulada Venation, día 17):** diseño en post con paleta `soil.oat` o `soil.humus`. Tipografía Manrope para `Sprout` (titular) y subtítulo (`Local-first irrigation decisions.` / `Safe · explainable · open-source`). IBM Plex Mono para los IDs (`zigiella · Apache 2.0` y URL repo). **Cambio v1.6:** subtítulo ahora en inglés (corrige inconsistencia v1.4 que tenía castellano *"Decisiones locales, seguras y explicables."*). Coherente con regla "todo on-screen en inglés".
-
-**Recurso de Cambium NO aplicado:** la cartela invariante de Xilema *"Physical layer rules. Rhizome arbitrates. Pollen mediates. Meristem refines."* queda **fuera de escena 9**. Razonamiento: la escena ya tiene cartela progresiva (3 beats) + 2 mensajes Meristem + tarjeta logo (4 líneas) = 9 elementos textuales en 20 segundos. Añadir una cartela invariante de 4 líneas más satura. La invariante queda como recurso writeup donde tiene más espacio. Si Bea o Cambium reabren la decisión, busco hueco.
+**Producción:** **animación de Venation versión 10s adoptada como definitiva** (Bea día 18-19). Venation regenera el cenital animado a 10s — coordinación pendiente. Veo3 queda fuera del cenital.
 
 ---
 
-## Conteo VO completo (escenas 1-9 apiladas)
+### Escena 9b — Meristem recibe / cierre íntimo (3:00–3:10) — NUEVA v1.7
 
-VO en castellano grabado por Bea. Cartelas/overlays/textos on-screen en inglés (regla de proyecto v1.1).
+**Beat narrativo:** **bookend con E3b**. La política sale de casa al campo (E3b) → el campo decide y ejecuta (E2-E8) → los datos vuelven a casa (E9b). Cierre del ciclo doméstico. Frase fuerte 6 nueva sobre plano íntimo. Tagline bookend cierre + tarjeta logo.
 
-- E1: 0 palabras (silencio + dos cartelas inglés).
-- E2: 31 palabras castellano (13 + 10 + 8).
-- E3: 11 palabras castellano.
-- E4: 14 palabras castellano (6 + 8 frase fuerte 2).
-- E5: 9 palabras castellano VO + **14 palabras voz humana real** castellano.
-- E6: 14 palabras castellano (6 + 8 frase fuerte 5).
-- E7: 5 palabras castellano (sobrio).
-- E8: 8 palabras castellano (frase fuerte 4 sin "En Sprout").
-- E9: 0 palabras VO (escena puramente visual + cartelas inglés).
-- **Total apilado v1.3:** 92 palabras castellano + 14 voz humana real = **106 palabras totales castellano**. Margen sigue holgado para doblaje EN.
+**Cronología:**
+
+| t | Acción / VO | Cartela / Overlay |
+|---|-------------|-------------------|
+| 3:00–3:03 (3s) | **Plano cocina** (continuidad visual con E3b). Bea de vuelta en cocina, portátil casero abierto. Pantalla con UI Meristem. Pollen (móvil) sobre la mesa. Datos viajan del móvil al portátil. | **Cartela en pantalla del portátil** (3s, IBM Plex Mono): *"Pulling Rhizome data..."* |
+| 3:03–3:06 (3s) | Pantalla del portátil cambia. UI Meristem procesando. `signal.seed` activo. | **Cartela on-screen** (2s): *"Adjusting policies..."* |
+| 3:06–3:08 (2s) | **Cutaway opcional micro a las macetas reales en la terraza** (Sprout escala 1 corriendo en su terraza de Castellar). **Si no se rueda el cutaway** (decisión Bea día 19: posible, no asegurado), plano cocina sigue. | — |
+| 3:08–3:10 (2s) | Vuelta a la cocina. **VO inglés (frase fuerte 6 nueva):** *"Meristem stores and processes. Tomorrow, it will learn."* (~10 palabras) | — |
+| (cierre fade) | **Tagline bookend cierre** entra por fade sobre la imagen difuminada del portátil. Tarjeta logo final entra después. | **Cartela bookend cierre** (3s, Manrope): *"When network is absent — and the human is far — local criteria still irrigate."* + **Tarjeta logo** entrando por fade |
+
+**Frase fuerte 6 nueva (Bea día 19):**
+- **EN master:** *"Meristem stores and processes. Tomorrow, it will learn."*
+- **ES dub:** *"Meristem guarda y procesa. Mañana, aprenderá."*
+
+El **"Tomorrow, it will learn"** es promesa de futuro sin sobrevender. **Honesta**: el sistema aún no aprende — Meristem prepara para que aprenda. Eso es Safety & Trust pulido.
+
+**Tagline bookend cierre (confirmada Bea día 18-19):**
+- **EN master (cartela y posible VO):** *"When network is absent — and the human is far — local criteria still irrigate."*
+- **ES dub:** *"Cuando la red no llega y nadie está cerca, el criterio sigue regando."*
+
+Cierra el bookend con E1 (pregunta abierta al inicio). El video ha respondido a la pregunta: cuando la red no llega y la persona está lejos, el criterio local sigue regando.
+
+**Tarjeta logo final (reformulada Venation v1.6, mantenida v1.7 con "AI Local-first"):**
+
+```
+Sprout
+AI Local-first irrigation decisions.
+Safe · explainable · open-source
+
+zigiella · Apache 2.0
+github.com/zigiella/sprout
+
+Built on Gemma 4 by Google.
+Gemma is a trademark of Google LLC.
+```
+
+**Microcartela atribución Gemma (decisión legal pendiente):** mi voto es ponerla aquí en la tarjeta cierre (no en E0). Coherente con cierre limpio + atribución concentrada. Decisión final Bea/Cambium ella.
+
+**Lo que se siente:** **el cerebro lento existe en una cocina**. Lo más Sprout que el video puede demostrar al final: la inteligencia consolidada al alcance de una persona, en su casa, no en un data center remoto. Bookend doméstico cierra el círculo abierto en E3b. La frase fuerte 6 (*"Tomorrow, it will learn"*) deja al espectador con la promesa que el proyecto cumple post-hackathon. La tagline bookend cierra la pregunta abierta de E1 con respuesta concreta.
+
+**VO:** ~10 palabras inglés (frase fuerte 6).
+**Cartelas:** 4 (`Pulling Rhizome data...` + `Adjusting policies...` + tagline bookend + tarjeta logo).
+**Overlays:** ninguno.
+**Producción:** plano íntimo cocina (Bea graba en su propia terraza/cocina de Castellar). Portátil casero — material real Meristem (si la app está) o mock fiel. **Cutaway macetas reales: posible, no asegurado** (decisión Bea día 19). Si entra, refuerza honestidad operativa ("Sprout escala 1 corriendo en su terraza"); si no, cierre íntimo en cocina sigue funcionando.
 
 ---
 
-## Pendientes antes de grabar
+## Conteo VO completo (12 escenas v1.7)
 
-- [x] Apilar escenas 1-3 (día 13). Apilar escenas 4, 5 (parcial), 6, 7, 8 (día 14). Apilar escena 9 con Meristem (día 14, decisión firme).
-- [ ] **Coordinación asíncrona con Floema** para UI del compilador `MissionPatch` en escena 5 (Bea relaya mensaje).
-- [ ] **Ejercicio de calidad narrativa de las cinco frases fuertes** — Bea me pide que tome la iniciativa. Pasar cada frase por el filtro *"¿el vídeo demuestra esto, o solo lo afirma?"*. Iniciado en `bitacora/2026-04-29_corola-frases-fuertes-ejercicio_corola.md`. Bea + Cambium revisan después.
-- [x] Persona VO castellano confirmada: **Bea**.
-- [ ] Confirmar voz humana de escena 5 (propuesta: persona del equipo grabando literal en castellano).
-- [ ] **Refinar traducciones inglés** marcadas como *first pass* (cartela ancla E7 *"Criterion updated."*, cartela progresiva E9, subtítulo logo).
-- [x] **Carteles físicos** los prepara Bea (Helvetica, mayúsculas, fondo neutro, en inglés). **Cuatro carteles totales:** 2 de maceta (`PLOT_01 with RHIZOME_01` / `PLOT_02 with RHIZOME_02`) + 2 de caja electrónica intercambiables (`RHIZOME_01` / `RHIZOME_02`).
-- [ ] Coordinar dirección de arte de la pantalla del Jetson en escenas 2, 3, 7 (resaltado fuerte de campos clave, cadencia musical de líneas, cartelas dominantes sobre log).
-- [x] **Invariante Xilema NO aplicada en E9** — la escena ya tiene 9 elementos textuales en 20s. La invariante queda como recurso writeup. Decisión documentada en E9.
+**VO master en inglés** grabado por Bea. **Excepción**: voz humana cruda E5 castellano literal (subtítulo inglés en master entre comillas).
+
+- E0: 0 palabras (cartela visual).
+- E1: 0 palabras VO (5 cartelas tipográficas inglés con ~30 palabras on-screen).
+- E2: ~36 palabras inglés (14 + 10 + 12 frase fuerte 1 reformulada).
+- E3: ~6 palabras inglés (frase fuerte 3 reformulada *"AI proposes. Physical safety disposes."*).
+- E3b: ~5 palabras inglés (Extra E3b *"Meristem composes the policy."*).
+- E4: ~8 palabras inglés (frase fuerte 2 reformulada *"Every Pollen visit can change the local criterion."*).
+- E5: ~6 palabras inglés VO + **14 palabras voz humana castellano** (Bea graba literal, subtítulo inglés en master).
+- E6: ~14 palabras inglés (6 + 8 frase fuerte 5).
+- E7: ~5 palabras inglés (sobrio, *"The system updates its care."*).
+- E8: ~7 palabras inglés (frase fuerte 4 *"Every intelligence has jurisdiction. And expiry."*).
+- E9: 0 palabras VO (cenital flat con cartela progresiva).
+- E9b: ~10 palabras inglés (frase fuerte 6 nueva) + tagline bookend cierre como cartela.
+
+**Total VO inglés v1.7:** ~97 palabras inglés + 14 palabras voz humana castellano = **~111 palabras totales**. Margen holgado para 3:00 (límite hackathon) — ajuste fino en montaje según decisión Bea día 19.
+
+---
+
+## Pendientes antes de grabar (v1.7)
+
+- [x] Apilar 9 escenas v1.3-v1.6 (días 13-17). **Apilar v1.7 con 12 escenas** + giro estratégico (día 19).
+- [x] Persona VO castellano confirmada: **Bea**. Persona VO inglés master: **Bea** (día 19).
+- [x] Voz humana real E5 confirmada: **Bea graba** literal castellano (días 24-25 antes de rodaje).
+- [x] **Carteles físicos** los prepara Bea: 4 carteles (2 maceta + 2 caja electrónica `EDGE NODE`).
+- [x] **Invariante Xilema E7** aplicada como cartela esquina inferior derecha.
+- [x] **Sistema visual Venation** aplicado.
+- [x] **Cartela ancla E7** confirmada: `Watering criteria updated.` (Venation, voto Bea día 17).
+- [x] **Frase fuerte 4** confirmada: mantiene "intelligence" (Bea día 19).
+- [x] **Frase fuerte 1, 2, 3 reformuladas** (Bea día 18-19).
+- [x] **Frase fuerte 6 nueva** (Bea día 19): *"Meristem stores and processes. Tomorrow, it will learn."*
+- [x] **Frase Extra E3b** confirmada: *"Meristem composes the policy."* (Bea día 19).
+- [x] **Tagline bookend** confirmada (inicio + cierre).
+- [x] **Cenital E9** modulación Cambium ella adoptada (E9 a 10s).
+- [x] **Microcorte tierra agrietada** en E1 aceptado (propuesta Corola día 19, aceptada Bea).
+- [x] **Cutaway macetas reales en E9b**: posible, no asegurado (decisión Bea día 19).
+
+**Pendientes activos día 19+:**
+
+- [ ] **Sesión conjunta Bea + Cambium ella + Corola** para validar/refinar v1.7. Cambium ella prepara revisión completa de frases fuertes mañana día 20.
+- [ ] **Microcartela atribución Gemma** *"Built on Gemma 4 by Google. Gemma is a trademark of Google LLC."* — ubicación pendiente decisión legal Bea/Cambium ella (E0 o cierre). Mi voto: cierre.
+- [ ] **Animación cenital E9 versión 10s** — Venation regenera (notificar via Bea).
+- [ ] **B-roll tierra agrietada para microcorte E1** — pendiente confirmar si Venation tiene producible o si descartamos.
+- [ ] **Coordinación con Floema** para UI del compilador `MissionPatch` (escena 5).
+- [ ] **Coordinación con Meristem** para UI Meristem composing/recibiendo (escenas 3b y 9b). Captura real preferida o mock fiel.
+- [ ] **Coordinación con Bract** para confirmar formatos exportar y plazo de draft inicial CapCut sobre v1.7.
+- [ ] **Microcorte plano tierra agrietada en E1** confirmar producción.
+- [ ] **Ajuste fino tiempos en montaje** — los teóricos suman 3:10, el límite hackathon es 3:00. Decisión Bea día 19: cuadrar montando.
+- [ ] **Generar `copies_bilingual.md` v0.2** con copies actualizados v1.7 (textos reformulados + nuevas escenas).
+- [ ] **Producir `montage_brief.md`** para Bract con detalle plano-por-plano + copies en formato CapCut.
 
 ---
 
 ## Historial de versiones
+
+- **v1.7 — giro estratégico día 18-19** (2026-05-04, día 19, Corola) — cambios estratégicos cerrados por Bea + Cambium ella día 18, iterados día 19, cerrados por Corola día 19 con seis votos firmes de Bea ("Plano tierra ok. No nos preocupemos en ajustar a 3 minutos. Opción C a tope. Cutaway posible no asegurado. Voz humana Bea confirmada. Te animas a cerrar guion?"). Cambios consolidados:
+  1. **Estructura: 12 escenas** (era 9). Añadidas E0 (cartela apertura Sprout, 5s), E3b (Meristem prepara, 10s, después de E3), E9b (Meristem recibe + cierre íntimo, 10s).
+  2. **VO master pasa a INGLÉS + subtítulos en inglés.** Versión ES dub aparte. Excepción narrativa deliberada: voz humana cruda E5 (`operator_note`) se mantiene en castellano sin traducir, subtítulo inglés entre comillas.
+  3. **E1 reformulada:** apertura silenciosa con maceta sustituida por opener tipográfico con **4 datos globales** (UNCCD World Drought Atlas + UNCCD impacto + Generalitat de Catalunya + ITU 2025). Cataluña baja a ejemplo del patrón global, no protagonista. Cierre con pregunta abierta: *"When network is absent — and the human is far — what makes the right call?"* + **microcorte 0.5s tierra agrietada** entre dato 2 y dato 3 (propuesta Corola día 19, aceptada Bea — bisagra emocional macro→concreto).
+  4. **Meristem entra al MVP del video** (era post-hackathon en v2.1). Aparece en E3b (compone política), E9 cenital (paquetes `POLICIES`/`RECEIPTS` viajando), E9b (recibe info recogida).
+  5. **Tagline bookend** confirmada (inicio + cierre): EN *"When network is absent — and the human is far — local criteria still irrigate."* / ES *"Cuando la red no llega y nadie está cerca, el criterio sigue regando."*
+  6. **Frases fuertes reformuladas:**
+     - F1: *"Rhizome keeps the plot alive — without a person, without a signal."* (doble ausencia explícita)
+     - F2: *"Every Pollen visit can change the local criterion."* (Pollen explícito)
+     - F3: *"AI proposes. Physical safety disposes."* (juego proposes/disposes)
+     - F4: *"Every intelligence has jurisdiction. And expiry."* (mantiene "intelligence", cerrada Bea día 19)
+     - F5: sin cambios
+     - F6 nueva: *"Meristem stores and processes. Tomorrow, it will learn."* (promesa de futuro honesta)
+     - Extra E3b: *"Meristem composes the policy."* (verbo "compose" conecta con `PolicyComposer`, cerrada Bea día 19)
+  7. **Cartela progresiva final E9 → modulación Cambium ella** (*"One plot. Two. Eight. / Federated. / Autonomous."*) por compresión de E9 a 10s. La cadencia v1.6 con *"Federated intelligence, carried by Pollen"* no encaja en 10s; F5 en E6 ya hace el eco "Pollen + federated intelligence", no necesita repetirse.
+  8. **Cenital E9 comprimido a 10s** — animación de Venation versión 10s adoptada como definitiva (Veo3 fuera del cenital). Venation regenera la animación a la nueva duración. **Plan B documentado:** si la integración del MP4/WebM revela fricción, Veo3 vuelve a la mesa.
+  9. **"AI Local-first"** sustituye a "Local-first" sistemáticamente en cartelas, pitch y subtítulo logo.
+  10. **Atribución Gemma trademark explícita:** *"Built on Gemma 4 by Google. Gemma is a trademark of Google LLC."* — ubicación pendiente decisión legal Bea/Cambium ella (E0 o cierre). Voto Corola: cierre concentrado.
+  11. **Tiempos teóricos suman 3:10**, límite hackathon 3:00 — decisión Bea día 19: ajuste fino en montaje, no forzar 3:00 ahora.
+
+  **Estado al cierre v1.7:** guion firmado por Corola día 19 con seis votos Bea + plan estratégico Bea + Cambium ella día 18. Pendiente sesión conjunta los tres para validar/refinar (probable día 20). Cambium ella prepara revisión completa frases fuertes día 20.
 
 - **v1.6 — sistema visual Venation aplicado** (2026-05-02, día 17, Corola) — adoptado design pack `sprout_design_pack_v1` de Venation. Cambios consolidados:
   1. **Sistema visual:** Soil protocol + Water ledger con tokens hex precisos (`soil.oat`, `soil.humus`, `soil.clay`, `soil.moss`, `soil.graphite`, `soil.kraft`, `water.blue`, `status.warning`, `status.blocked`, `signal.seed`). Tipografía: Manrope (humano/producto) + IBM Plex Mono (sistema/datos). Documentado en sección "Sistema visual del video" al inicio.
