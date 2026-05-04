@@ -31,7 +31,7 @@ fun VisitarRhizomeScreen(
             RhizomeMockClient()
         } else {
             // TODO: Ajustar esta IP a la que confirme Endo
-            RhizomeNetworkClient("http://192.168.1.100:8080")
+            RhizomeNetworkClient("http://192.168.1.60:13010/")
         }
     }
     val scope = rememberCoroutineScope()
