@@ -26,6 +26,13 @@
     <string name="telemetry_current">telemetry · current</string>
     <string name="chat_pollen">Chat with Pollen</string>
     <string name="audit_pollen">Audit History</string>
+    <string name="selected_plot">Selected plot</string>
+    <string name="explain_decision">Explain Decision (LLM)</string>
+    <string name="explanation_title">Explanation from Gemma 4</string>
+    <string name="close">Close</string>
+    <string name="water_level">WATER</string>
+    <string name="soil_a">SOIL A</string>
+    <string name="soil_b">SOIL B</string>
     <!-- Mission compiler -->
     <string name="mission_voice_note">Voice note</string>
     <string name="mission_compiled_patch">Compiled patch</string>

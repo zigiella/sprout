@@ -23,6 +23,13 @@
     <string name="telemetry_current">telemetría · actual</string>
     <string name="chat_pollen">Chatear con Pollen</string>
     <string name="audit_pollen">Historial</string>
+    <string name="selected_plot">Parcela seleccionada</string>
+    <string name="explain_decision">Explicar Decisión (LLM)</string>
+    <string name="explanation_title">Explicación de Gemma 4</string>
+    <string name="close">Cerrar</string>
+    <string name="water_level">AGUA</string>
+    <string name="soil_a">SUELO A</string>
+    <string name="soil_b">SUELO B</string>
     <string name="mission_voice_note">Nota de voz</string>
     <string name="mission_compiled_patch">Patch compilado</string>
     <string name="mission_acknowledged">Misión confirmada.</string>

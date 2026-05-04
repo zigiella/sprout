@@ -119,9 +119,9 @@ fun VisitarRhizomeScreen(
             
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 snapshot?.let { snap ->
-                    TelemetryTileUI(label = "WATER", value = "${snap.sensors.tankLevelPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
-                    TelemetryTileUI(label = "SOIL A", value = "${snap.sensors.soilMoistureAPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
-                    TelemetryTileUI(label = "SOIL B", value = "${snap.sensors.soilMoistureBPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
+                    TelemetryTileUI(label = stringResource(R.string.water_level), value = "${snap.sensors.tankLevelPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
+                    TelemetryTileUI(label = stringResource(R.string.soil_a), value = "${snap.sensors.soilMoistureAPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
+                    TelemetryTileUI(label = stringResource(R.string.soil_b), value = "${snap.sensors.soilMoistureBPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
                 }
             }
             
@@ -162,7 +162,7 @@ fun VisitarRhizomeScreen(
                         ) {
                             Icon(Icons.Default.Info, contentDescription = "Explicar", modifier = Modifier.size(16.dp))
                             Spacer(Modifier.width(4.dp))
-                            Text("Explicar Decisión (LLM)")
+                            Text(stringResource(R.string.explain_decision))
                         }
                     }
                 }
@@ -192,11 +192,11 @@ fun VisitarRhizomeScreen(
     if (showExplanationDialog) {
         AlertDialog(
             onDismissRequest = { showExplanationDialog = false },
-            title = { Text("Explicación de Gemma 4 E2B") },
+            title = { Text(stringResource(R.string.explanation_title)) },
             text = { Text(explanationText) },
             confirmButton = {
                 TextButton(onClick = { showExplanationDialog = false }) {
-                    Text("Cerrar")
+                    Text(stringResource(R.string.close))
                 }
             }
         )

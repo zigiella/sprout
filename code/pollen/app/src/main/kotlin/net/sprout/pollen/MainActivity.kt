@@ -142,7 +142,9 @@ class MainActivity : ComponentActivity() {
                             }
                             AppScreen.RHIZOME_DETAIL -> {
                                 Column {
-                                    Text("Parcela Seleccionada: $selectedRhizomeId", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleLarge)
+                                    androidx.compose.material3.Surface(color = MaterialTheme.colorScheme.surfaceVariant, modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)) {
+                                        Text("${stringResource(R.string.selected_plot)}: $selectedRhizomeId", modifier = Modifier.padding(12.dp), style = MaterialTheme.typography.labelMedium.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    }
                                     VisitarRhizomeScreen(
                                         onDataFetched = { snap, rec -> 
                                             globalSnapshot = snap
