@@ -111,4 +111,40 @@ class LiteRtChatService(
         
         emit("" to finalMetrics)
     }
+
+    fun sendAudioFile(audioPath: String, instruction: String, isThinkingEnabled: Boolean = false): Flow<Pair<String, GenerationMetrics?>> = flow {
+        val start = metricsCollector.now()
+        
+        delay(800) // Simulated TTFT
+        val firstTokenAt = metricsCollector.now()
+        
+        val mockResponse = if (isThinkingEnabled) {
+            "Simulated audio response for: \$audioPath\n\nI have carefully analyzed the context. The metrics align perfectly with the established policy. No anomalies detected in Rhizome's rationale."
+        } else {
+            "He escuchado el audio. Todo está correcto."
+        }
+
+        val tokens = mockResponse.split(" ")
+        var output = ""
+
+        for ((index, token) in tokens.withIndex()) {
+            val chunk = token + if (index < tokens.size - 1) " " else ""
+            output += chunk
+            emit(chunk to null)
+            delay(50) // Simulated streaming
+        }
+        
+        val completedAt = metricsCollector.now()
+        
+        val finalMetrics = metricsCollector.build(
+            backendMode = BackendMode.CPU,
+            initializeStart = 0,
+            initializeEnd = start, 
+            firstTokenAt = firstTokenAt,
+            completedAt = completedAt,
+            output = output
+        )
+        
+        emit("" to finalMetrics)
+    }
 }

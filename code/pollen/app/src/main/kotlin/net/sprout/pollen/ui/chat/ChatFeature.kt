@@ -95,19 +95,20 @@ class ChatViewModel(
     }
 
     fun startListening() {
-        _uiState.update { it.copy(isListening = true) }
-        voiceInfra.startListening(
-            onResult = { text ->
-                _uiState.update { it.copy(prompt = text, isListening = false) }
-                send() // Autodisparar
-            },
-            onError = { err ->
-                _uiState.update { it.copy(isListening = false, error = err) }
-            },
-            onPartial = { partial ->
-                _uiState.update { it.copy(prompt = partial) }
+        if (_uiState.value.isListening) {
+            val audioFile = voiceInfra.stopRecording()
+            _uiState.update { it.copy(isListening = false) }
+            if (audioFile != null) {
+                sendAudio(audioFile)
             }
-        )
+        } else {
+            _uiState.update { it.copy(isListening = true, error = null) }
+            try {
+                voiceInfra.startRecording()
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isListening = false, error = e.message) }
+            }
+        }
     }
 
     fun send() {
@@ -138,6 +139,30 @@ class ChatViewModel(
                 }
             }
             _uiState.update { it.copy(isLoading = false) }
+        }
+    }
+
+    private fun sendAudio(audioFile: java.io.File) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, output = "", error = null, metrics = null, prompt = "Mensaje de voz...") }
+            
+            withContext(Dispatchers.IO) {
+                runCatching {
+                    val instruction = "Escucha este clip de voz y responde por escrito en español. Responde de forma breve, natural y util. Si no entiendes el audio, dilo sin inventar."
+                    chatService.sendAudioFile(audioFile.absolutePath, instruction, _uiState.value.isThinkingEnabled).collect { (chunk, metricsUpdate) ->
+                        _uiState.update { state ->
+                            state.copy(
+                                output = state.output + chunk,
+                                metrics = metricsUpdate ?: state.metrics
+                            )
+                        }
+                    }
+                }.onFailure { t ->
+                    _uiState.update { it.copy(error = t.message) }
+                }
+            }
+            _uiState.update { it.copy(isLoading = false) }
+            audioFile.delete()
         }
     }
 }
@@ -192,10 +217,10 @@ fun ChatScreen(
             Spacer(Modifier.width(8.dp))
             Button(
                 onClick = onStartVoice,
-                enabled = !uiState.isLoading && !uiState.isListening,
+                enabled = !uiState.isLoading,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
             ) {
-                Text(if (uiState.isListening) "Escuchando..." else "🎤 Hablar")
+                Text(if (uiState.isListening) "⏹️ Detener" else "🎤 Hablar")
             }
             Spacer(Modifier.width(16.dp))
             Text("Thinking")

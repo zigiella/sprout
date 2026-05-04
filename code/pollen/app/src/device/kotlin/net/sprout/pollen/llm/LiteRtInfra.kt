@@ -178,4 +178,58 @@ class LiteRtChatService(
                 android.util.Log.e("LiteRtChatService", "generation failed", t)
         }
     }
+
+    fun sendAudioFile(audioPath: String, instruction: String, isThinkingEnabled: Boolean = false): Flow<Pair<String, GenerationMetrics?>> = flow {
+        val engine = requireNotNull(sessionManager.currentEngine()) { "Engine no inicializado" }
+        
+        if (activeConversation == null) {
+            val config = com.google.ai.edge.litertlm.ConversationConfig(
+                extraContext = if (isThinkingEnabled) mapOf(
+                    "enable_thinking" to true,
+                    "filter_channel_content_from_kv_cache" to true
+                ) else emptyMap()
+            )
+            activeConversation = engine.createConversation(config)
+        }
+        val conversation = activeConversation!!
+        val start = metricsCollector.now()
+        
+        try {
+            var firstTokenAt: Long? = null
+            var output = ""
+            
+            try {
+                val contents = com.google.ai.edge.litertlm.Contents.of(
+                    Content.AudioFile(audioPath),
+                    Content.Text(instruction)
+                )
+                conversation.sendMessageAsync(contents).collect { chunk ->
+                    if (firstTokenAt == null) {
+                        firstTokenAt = metricsCollector.now()
+                    }
+                    val textChunk = chunk.contents.contents.filterIsInstance<Content.Text>().joinToString("") { it.text }
+                    output += textChunk
+                    emit(textChunk to null)
+                }
+            } catch(e: Exception) {
+                android.util.Log.e("LiteRtChatService", "audio generation chunk failed", e)
+            }
+
+            val completedAt = metricsCollector.now()
+            
+            val initialMetrics = sessionManager.lastMetrics
+            val finalMetrics = metricsCollector.build(
+                backendMode = initialMetrics?.backendMode ?: BackendMode.CPU,
+                initializeStart = 0,
+                initializeEnd = start, 
+                firstTokenAt = firstTokenAt ?: completedAt,
+                completedAt = completedAt,
+                output = output
+            ).copy(initializeMillis = initialMetrics?.initializeMillis ?: 0L)
+            
+            emit("" to finalMetrics)
+        } catch(t: Throwable) {
+                android.util.Log.e("LiteRtChatService", "audio generation failed", t)
+        }
+    }
 }
