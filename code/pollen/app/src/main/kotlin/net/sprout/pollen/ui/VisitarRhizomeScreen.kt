@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.border
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -179,7 +181,7 @@ fun SyncStepUI(label: String, sub: String, status: String) {
             modifier = Modifier
                 .size(18.dp)
                 .background(dotColor, RoundedCornerShape(4.dp))
-                .androidx.compose.foundation.border(
+                .border(
                     1.dp, 
                     if (status == "pending") MaterialTheme.colorScheme.outline else dotColor, 
                     RoundedCornerShape(4.dp)
@@ -188,7 +190,7 @@ fun SyncStepUI(label: String, sub: String, status: String) {
         ) {
             if (status == "done") {
                 Icon(
-                    androidx.compose.material.icons.filled.Check,
+                    Icons.Default.Check,
                     contentDescription = null,
                     tint = Color.White,
                     modifier = Modifier.size(12.dp)
@@ -222,3 +224,4 @@ fun TelemetryTileUI(label: String, value: String, unit: String, modifier: Modifi
             }
         }
     }
+}
