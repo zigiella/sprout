@@ -106,11 +106,9 @@ Tiempos teóricos según documento estratégico Cambium ella día 19 (Opción C)
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 0:00–0:05 | Fondo casi-negro (`soil.graphite` o más oscuro). Cartela centrada en Manrope: titular grande **`Sprout`** en `soil.oat`. Subtítulo Manrope mediano: *"AI Local-first irrigation decisions."* Línea inferior Manrope pequeña: *"Safe · explainable · open-source."* Entrada con stagger 120ms (kicker → wordmark → tag). Sostén ~3.5s. Salida fade 0.4s al negro. | **Cartela central + microcartela atribución (decisión legal pendiente):** wordmark `Sprout` + subtítulo + sello "AI Local-first" |
+| 0:00–0:05 | Fondo casi-negro (`soil.graphite` o más oscuro). Cartela centrada en Manrope: titular grande **`Sprout`** en `soil.oat`. Subtítulo Manrope mediano: *"AI Local-first irrigation decisions."* Línea inferior Manrope pequeña: *"Safe · explainable · open-source."* Entrada con stagger 120ms (kicker → wordmark → tag). Sostén ~3.5s. Salida fade 0.4s al negro. | **Cartela central:** wordmark `Sprout` + subtítulo + sello "AI Local-first" (sin microcartela trademark — esa va en cierre, decisión Bea día 19) |
 
-**Microcartela atribución Gemma — decisión pendiente:**
-
-Voto Corola (día 19): la microcartela *"Built on Gemma 4 by Google."* preferiría en cierre, no en E0, para no anclar el inicio con marca corporate antes de que el espectador entienda qué es Sprout. **Pero es decisión legal/corporate Bea/Cambium ella** — me alineo con cualquiera. Si va aquí, sub-cartela esquina inferior pequeña, IBM Plex Mono, paleta sobria.
+**Atribución Gemma trademark va en cierre (CONFIRMADA Bea día 19):** la microcartela *"Built on Gemma 4 by Google. Gemma is a trademark of Google LLC."* aparece en la tarjeta logo final de E9b, **no en E0**. Por reglas del hackathon (atribución legal exigida, ubicación a criterio del proyecto). El cierre concentrado evita anclar el inicio del video con marca corporate antes de que el espectador entienda qué es Sprout.
 
 **Lo que se siente:** marco. El espectador acepta el contrato visual de "esto es Sprout, esto es lo que defendemos". La sobriedad de la cartela predispone a tomar en serio lo que viene.
 
@@ -502,7 +500,7 @@ Built on Gemma 4 by Google.
 Gemma is a trademark of Google LLC.
 ```
 
-**Microcartela atribución Gemma (decisión legal pendiente):** mi voto es ponerla aquí en la tarjeta cierre (no en E0). Coherente con cierre limpio + atribución concentrada. Decisión final Bea/Cambium ella.
+**Microcartela atribución Gemma (CONFIRMADA Bea día 19):** *"Built on Gemma 4 by Google. Gemma is a trademark of Google LLC."* va en la tarjeta cierre. **Por reglas del hackathon.** Cierre limpio + atribución concentrada — coherente con regla "todo on-screen en inglés" + no anclar el inicio (E0) con marca corporate antes de que el espectador entienda qué es Sprout.
 
 **Lo que se siente:** **el cerebro lento existe en una cocina**. Lo más Sprout que el video puede demostrar al final: la inteligencia consolidada al alcance de una persona, en su casa, no en un data center remoto. Bookend doméstico cierra el círculo abierto en E3b. La frase fuerte 6 (*"Tomorrow, it will learn"*) deja al espectador con la promesa que el proyecto cumple post-hackathon. La tagline bookend cierra la pregunta abierta de E1 con respuesta concreta.
 
@@ -555,7 +553,7 @@ Gemma is a trademark of Google LLC.
 **Pendientes activos día 19+:**
 
 - [ ] **Sesión conjunta Bea + Cambium ella + Corola** para validar/refinar v1.7. Cambium ella prepara revisión completa de frases fuertes mañana día 20.
-- [ ] **Microcartela atribución Gemma** *"Built on Gemma 4 by Google. Gemma is a trademark of Google LLC."* — ubicación pendiente decisión legal Bea/Cambium ella (E0 o cierre). Mi voto: cierre.
+- [x] **Microcartela atribución Gemma** *"Built on Gemma 4 by Google. Gemma is a trademark of Google LLC."* — **CONFIRMADA en cierre (Bea día 19, por reglas del hackathon)**. Aparece en la tarjeta logo final de E9b.
 - [ ] **Animación cenital E9 versión 10s** — Venation regenera (notificar via Bea).
 - [ ] **B-roll tierra agrietada para microcorte E1** — pendiente confirmar si Venation tiene producible o si descartamos.
 - [ ] **Coordinación con Floema** para UI del compilador `MissionPatch` (escena 5).
