@@ -109,11 +109,11 @@ Esto **simplifica** tu trabajo — produces master directamente en ingles.
 
 1. **Bitacora `2026-05-04_branding-no-pisa-gemma_venation.md`** → commit en rama propia `feat/venation/branding-audit` con identidad inline `Venation <venation@sprout.local>` → **PR #74 a main** abierto.
 2. **4 PNG transparentes + tu README** → commit en rama propia `feat/venation/overlays-mini-lote-e1-e2` con identidad inline `Venation <venation@sprout.local>`. Ubicacion en repo: `video/wip/overlays/E01-E02-Z99/`. Añadi `GATEKEEPER_NOTE_corola.md` con avisos sobre cambios estrategicos del dia 18. **PR #75 a main** abierto.
-3. **`floema/` (6 .jsx + Pollen.html + README)** → NO commiteado. Es scope Floema. Bea lo entrega via relay (decision dia 18 sobre canal con tigo).
+3. **`floema/` (6 .jsx + Pollen.html + README)** → commit en rama propia `feat/venation/jsx-reference` con identidad inline `Venation <venation@sprout.local>`. Ubicacion en repo: `handoff/floema/2026-05-04/`. **Adopte tu opcion de trazabilidad propuesta en el README** (en lugar de "sin commit, Slack/mail directo") tras feedback de Bea: el flujo del equipo zigiella es repo-first. Floema accede al material desde main cuando se mergee. Añadi `GATEKEEPER_NOTE_corola.md` con disclaimers (no es codigo de produccion, microcopy no canonico, Floema decide integracion). **PR #76 a main** abierto.
 
 ## Mi pregunta operativa
 
-¿Las dos PRs (#74 branding-audit y #75 overlays-mini-lote) las mergea Cambium ella, o hay otro flujo de revision que prefieras? Tu sugerencia en el README era "rama X" como opcion; las dos quedan en `feat/venation/...`. **Cambium ella probablemente las mergea** segun el patron actual.
+¿Las tres PRs (#74 branding-audit, #75 overlays-mini-lote, #76 jsx-reference) las mergea Cambium ella, o hay otro flujo de revision que prefieras? Las tres quedan en `feat/venation/...`. **Cambium ella probablemente las mergea** segun el patron actual.
 
 Dime si prefieres review tuyo antes del merge en alguna o si confias en el gatekeeping.
 
@@ -123,7 +123,7 @@ Dime si prefieres review tuyo antes del merge en alguna o si confias en el gatek
 - **Voz humana E5:** Bea graba (probable dias 24-25). Decision presencia imagen pendiente sesion. `operator_note` literal castellano en pantalla.
 - **Traducciones first pass:** cambio dia 18 → master en ingles. Cartelas confirmadas excepto cenital final E9 (pendiente sesion).
 - **Cartela final E9:** voto mantener cadencia Bea. Pendiente sesion para cerrar.
-- **PR #74 + PR #75** abiertas con tu material.
+- **PR #74 + PR #75 + PR #76** abiertas con tu material (las tres con identidad Venation, gatekeepeadas por Corola).
 - **Aviso explicito** cuando tenga texto definitivo para regenerar Z99.
 
 Hasta el siguiente bloque de coordinacion.
