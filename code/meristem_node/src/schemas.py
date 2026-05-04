@@ -189,3 +189,44 @@ class DecisionRecord(BaseModel):
             "demo si pregunta por trazabilidad."
         ),
     )
+
+
+# ---------------------------------------------------------------------------
+# Status por target (vista consolidada multi-Rhizome — para /status en demo)
+# ---------------------------------------------------------------------------
+
+
+class TargetStatus(BaseModel):
+    """Resumen del estado de Meristem para un Rhizome concreto.
+
+    Usado en el endpoint `GET /status`. Pensado para que la demo MVP
+    muestre en una pantalla cómo Meristem está gestionando 2 Rhizomes
+    simultáneos en el mismo hardware (rhizome_01 + rhizome_02).
+    """
+
+    target_node_id: str
+    bundles_received: int = 0
+    last_bundle_at: datetime | None = None
+    policies_emitted: int = 0
+    latest_policy_id: str | None = None
+    latest_policy_emitted_at: datetime | None = None
+    latest_policy_mode: ModeDefault | None = None
+    latest_policy_valid_until: datetime | None = None
+    latest_reason_code: str | None = None
+    latest_rule_applied: str | None = None
+
+
+class StatusResponse(BaseModel):
+    """Envelope de `GET /status` — vista consolidada multi-Rhizome."""
+
+    targets_known: list[str] = Field(
+        default_factory=list,
+        description=(
+            "IDs de todos los Rhizomes que han enviado bundles (incluye "
+            "los que solo recibieron REFUSE). Ordenado alfabéticamente."
+        ),
+    )
+    targets: list[TargetStatus] = Field(
+        default_factory=list,
+        description="Resumen por target. Mismo orden que `targets_known`.",
+    )

@@ -1,20 +1,27 @@
 """FastAPI app de Meristem-nodo.
 
-Día 15: lógica determinística (Evaluator + persistencia SQLite). Día
-16 sustituye el rationale stub por LLM Gemma 4 E4B + tool calling.
+Día 16: pipeline determinístico + LLM Gemma 4 E4B Q4_K_M para rationale
+con tool calling. La decisión la toma el Evaluator; el LLM solo
+escribe rationale técnico + rationale para operador.
 
 Levanta en :13000 por defecto.
 
 Uso:
     cd code/meristem_node
     pip install -r requirements.txt
+    # Asegúrate de tener llama-server :8080 con E4B + adapter :12000
     python -m src.main
+
+Env vars opcionales:
+    MERISTEM_USE_LLM=false  → salta LLM, usa stub (para tests/dev)
+    MERISTEM_ADAPTER_URL=http://localhost:12000  → adapter llamacpp
 
 Visitar http://localhost:13000/docs para OpenAPI/Swagger.
 """
 
 from __future__ import annotations
 
+import logging
 import os
 import uuid
 from typing import Any
@@ -24,23 +31,61 @@ from fastapi import FastAPI, HTTPException
 from . import ingest as ingest_service
 from . import persistence
 from .evaluator import evaluate
+from .inference import LLMUnavailableError, compose_rationale_via_llm
 from .policy_composer import compose_policy
 from .schemas import (
     Action,
     Bundle,
     DecisionRecord,
+    EvaluationResult,
     PolicyPacket,
+    StatusResponse,
+    TargetStatus,
     VisitResponse,
     VisitResponsePayload,
 )
 
 
+logger = logging.getLogger(__name__)
+
+
 PORT = int(os.environ.get("MERISTEM_NODE_PORT", "13000"))
+USE_LLM = os.environ.get("MERISTEM_USE_LLM", "true").lower() not in (
+    "false", "0", "no",
+)
+ADAPTER_URL = os.environ.get("MERISTEM_ADAPTER_URL", "http://localhost:12000")
 
 
 # ---------------------------------------------------------------------------
-# Stub de rationale del LLM (día 15). Día 16 lo sustituye llamada real.
+# Rationale composer: LLM real si disponible, fallback determinista.
 # ---------------------------------------------------------------------------
+
+
+def _compose_rationale(
+    bundle: Bundle, evaluation: EvaluationResult,
+) -> tuple[str, str, dict[str, Any]]:
+    """Devuelve (rationale_tecnico, rationale_para_operador, llm_metrics).
+
+    Si USE_LLM=true (default) y el adapter llamacpp está vivo en
+    ADAPTER_URL, llama a Gemma 4 E4B con tool calling y obtiene rationale.
+    Si falla, fallback al stub determinista (no rompe pipeline).
+    """
+    if USE_LLM:
+        try:
+            rt, ro, metrics = compose_rationale_via_llm(
+                bundle, evaluation, adapter_url=ADAPTER_URL
+            )
+            metrics["mode"] = "llm"
+            return rt, ro, metrics
+        except LLMUnavailableError as e:
+            logger.warning(
+                "LLM no disponible (%s). Fallback a rationale stub.", e
+            )
+            rt, ro = _stub_rationale(evaluation.rationale_seed)
+            return rt, ro, {"mode": "stub_fallback", "reason": str(e)}
+
+    rt, ro = _stub_rationale(evaluation.rationale_seed)
+    return rt, ro, {"mode": "stub_disabled"}
 
 
 def _stub_rationale(rationale_seed: str) -> tuple[str, str]:
@@ -104,11 +149,31 @@ def _build_app() -> FastAPI:
             "status": "ok",
             "version": "0.1.0",
             "port": PORT,
-            "stubbed_llm": True,  # día 15: rationale es stub
+            "llm_mode": "real" if USE_LLM else "stub_disabled",
+            "adapter_url": ADAPTER_URL if USE_LLM else None,
             "bundles_received_total": persistence.count_bundles(),
             "policies_emitted_total": persistence.count_policies(),
             "decisions_by_rule": persistence.count_decisions_by_rule(),
+            "targets_known": persistence.list_known_targets(),
         }
+
+    @app.get("/status", response_model=StatusResponse)
+    async def status() -> StatusResponse:
+        """Vista consolidada multi-Rhizome.
+
+        Para cada Rhizome conocido (que ha enviado al menos un bundle),
+        devuelve resumen: última policy + modo + reason_code + edad +
+        contadores. Pensado para demo MVP donde Meristem gestiona
+        rhizome_01 + rhizome_02 simultáneos en el mismo hardware.
+        """
+        targets_known = persistence.list_known_targets()
+        targets: list[TargetStatus] = []
+        for t in targets_known:
+            summary = persistence.get_target_summary(t)
+            if summary is None:
+                continue  # defensivo, no debería pasar
+            targets.append(TargetStatus(**summary))
+        return StatusResponse(targets_known=targets_known, targets=targets)
 
     @app.post("/visit", response_model=VisitResponse)
     async def visit(bundle: Bundle) -> VisitResponse:
@@ -134,9 +199,9 @@ def _build_app() -> FastAPI:
                 payload=None,
             )
 
-        # 3b: componer policy + rationale
-        rationale_tecnico, rationale_operador = _stub_rationale(
-            evaluation.rationale_seed
+        # 3b: componer rationale (LLM o fallback) + policy
+        rationale_tecnico, rationale_operador, llm_metrics = _compose_rationale(
+            bundle, evaluation
         )
         policy = compose_policy(bundle, evaluation, rationale_tecnico)
 
@@ -149,7 +214,7 @@ def _build_app() -> FastAPI:
                 policy_id=policy.policy_id,
                 rule_applied=evaluation.action,
                 reason_code=evaluation.reason_code,
-                llm_metrics={"stubbed": True, "day": 15},
+                llm_metrics=llm_metrics,
             )
         )
 

@@ -280,3 +280,119 @@ def count_decisions_by_rule(
             "SELECT rule_applied, COUNT(*) AS c FROM decisions GROUP BY rule_applied"
         ).fetchall()
     return {r["rule_applied"]: int(r["c"]) for r in rows}
+
+
+# ---------------------------------------------------------------------------
+# Vista por target (para /status — demo MVP multi-Rhizome)
+# ---------------------------------------------------------------------------
+
+
+def list_known_targets(
+    db_path: Path | str = DEFAULT_DB_PATH,
+) -> list[str]:
+    """Todos los Rhizome IDs que han enviado bundles persistidos.
+
+    Devuelto ordenado alfabéticamente para output estable en demo.
+    Incluye Rhizomes cuyos bundles fueron REFUSE (sin policy emitida) —
+    para trazabilidad completa.
+    """
+    with _connect(db_path) as con:
+        rows = con.execute(
+            "SELECT DISTINCT target_rhizome_id FROM bundles "
+            "ORDER BY target_rhizome_id ASC"
+        ).fetchall()
+    return [r["target_rhizome_id"] for r in rows]
+
+
+def get_target_summary(
+    target_node_id: str, db_path: Path | str = DEFAULT_DB_PATH,
+) -> dict[str, Any] | None:
+    """Resumen del estado de Meristem para un Rhizome concreto.
+
+    Devuelve dict con:
+    - target_node_id
+    - bundles_received
+    - last_bundle_at (último received_at, ISO string o None)
+    - policies_emitted
+    - latest_policy_id (None si nunca emitió por REFUSEs)
+    - latest_policy_emitted_at (ISO o None)
+    - latest_policy_mode (normal/conservative/alert o None)
+    - latest_policy_valid_until (ISO o None)
+    - latest_reason_code (de decisions.reason_code más reciente, o None)
+    - latest_rule_applied (de decisions.rule_applied más reciente, o None)
+
+    Devuelve None si el target no existe en bundles (no hay registro).
+    """
+    with _connect(db_path) as con:
+        # 1. Counts y last_bundle_at
+        bundle_row = con.execute(
+            """
+            SELECT COUNT(*) AS c, MAX(received_at) AS last_at
+            FROM bundles WHERE target_rhizome_id = ?
+            """,
+            (target_node_id,),
+        ).fetchone()
+        if not bundle_row or int(bundle_row["c"] or 0) == 0:
+            return None
+
+        bundles_received = int(bundle_row["c"])
+        last_bundle_at = bundle_row["last_at"]
+
+        # 2. Policies count + última policy
+        pol_count = con.execute(
+            "SELECT COUNT(*) AS c FROM policies WHERE target_node_id = ?",
+            (target_node_id,),
+        ).fetchone()
+        policies_emitted = int(pol_count["c"]) if pol_count else 0
+
+        latest_pol_row = con.execute(
+            """
+            SELECT policy_id, emitted_at, raw_json FROM policies
+            WHERE target_node_id = ?
+            ORDER BY emitted_at DESC LIMIT 1
+            """,
+            (target_node_id,),
+        ).fetchone()
+
+        latest_policy_id = None
+        latest_policy_emitted_at = None
+        latest_policy_mode = None
+        latest_policy_valid_until = None
+        if latest_pol_row:
+            latest_policy_id = latest_pol_row["policy_id"]
+            latest_policy_emitted_at = latest_pol_row["emitted_at"]
+            try:
+                pkt = PolicyPacket.model_validate_json(latest_pol_row["raw_json"])
+                latest_policy_mode = pkt.mode_default
+                latest_policy_valid_until = pkt.valid_until.isoformat()
+            except Exception:
+                # Defensivo: si la policy persistida no parsea (no debería),
+                # devolvemos lo que sí podemos.
+                pass
+
+        # 3. Última decisión para ese target (joineando policies)
+        latest_dec_row = con.execute(
+            """
+            SELECT d.reason_code, d.rule_applied
+            FROM decisions d
+            JOIN policies p ON d.policy_id = p.policy_id
+            WHERE p.target_node_id = ?
+            ORDER BY d.created_at DESC LIMIT 1
+            """,
+            (target_node_id,),
+        ).fetchone()
+        latest_reason_code = latest_dec_row["reason_code"] if latest_dec_row else None
+        latest_rule_applied = latest_dec_row["rule_applied"] if latest_dec_row else None
+
+    return {
+        "target_node_id": target_node_id,
+        "bundles_received": bundles_received,
+        "last_bundle_at": last_bundle_at,
+        "policies_emitted": policies_emitted,
+        "latest_policy_id": latest_policy_id,
+        "latest_policy_emitted_at": latest_policy_emitted_at,
+        "latest_policy_mode": latest_policy_mode,
+        "latest_policy_valid_until": latest_policy_valid_until,
+        "latest_reason_code": latest_reason_code,
+        "latest_rule_applied": latest_rule_applied,
+    }
