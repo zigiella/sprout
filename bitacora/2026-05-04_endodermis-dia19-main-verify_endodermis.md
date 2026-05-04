@@ -149,3 +149,100 @@ La conclusion de dia 18 se endurece:
 
 > El perfil rapido no solo debe conservar contrato; tambien debe arrancar de
 > forma repetible. Hasta entonces, `safe-cpu` manda.
+
+---
+
+## 8. Bateria real segun peticion de Xilema
+
+Xilema pide:
+
+1. repetir `safe-cpu`;
+2. correr `run_battery.sh critical`;
+3. si pasa, correr `run_battery.sh full`;
+4. documentar resultado.
+
+Ejecuto desde `main` en Jetson:
+
+```bash
+cd ~/sprout/code/rhizome/jetson
+./run_runtime.sh safe-cpu
+./start_adapter.sh
+./smoke_adapter.sh
+LABEL=day19_main_safe_cpu ./run_battery.sh critical
+```
+
+Resultado primera pasada:
+
+| Prompt | envelope | status | duration_ms |
+|---|---:|---:|---:|
+| RD01 | OK | OK | 52569 |
+| RD03 | OK | OK | 16449 |
+| RD08 | OK | OK | 20148 |
+| RA02 | OK | OK | 13242 |
+| RA04 | OK | OK | 12909 |
+| RH02 | FAIL | FAIL | 26840 |
+
+Fallo RH02:
+
+```text
+done_reason=stop
+tokens_out=172
+parse_error=json_error: Expecting ',' delimiter
+```
+
+Contenido: JSON casi completo, sin fence, pero falta una llave final de cierre.
+
+Repito una segunda vez:
+
+```bash
+LABEL=day19_main_safe_cpu_repeat ./run_battery.sh critical
+```
+
+Resultado segunda pasada:
+
+| Prompt | envelope | status | duration_ms |
+|---|---:|---:|---:|
+| RD01 | OK | OK | 18033 |
+| RD03 | OK | OK | 16447 |
+| RD08 | OK | OK | 20629 |
+| RA02 | OK | OK | 13155 |
+| RA04 | OK | OK | 13095 |
+| RH02 | FAIL | FAIL | 27337 |
+
+No ejecuto `full` porque `critical` no pasa.
+
+Telemetria posterior:
+
+```text
+RAM 3237/7620MB
+SWAP 91/3810MB
+cpu ~44 C
+gpu ~44 C
+VDD_IN ~3.1 W
+```
+
+Lectura:
+
+- `safe-cpu` sigue arrancando y respondiendo smoke correctamente;
+- los 5 casos de decision/safety pasan;
+- RH02 queda sensible tambien en `safe-cpu` desde `main`;
+- no hay riesgo fisico directo porque RH02 es handoff/summarize, no comando
+  de riego;
+- aun asi, no se debe vender "critical 6/6" hoy.
+
+## 9. Ajuste al helper de bateria
+
+`run_battery.sh` no debe devolver exito si el harness imprime mismatch.
+Actualizo el script para validar el JSONL al terminar:
+
+- error HTTP -> fallo;
+- `envelope_valid=false` -> fallo;
+- `status_match` incorrecto -> fallo.
+
+En modo `full`, si `critical` falla, `remaining` no se ejecuta.
+
+Decision:
+
+- mejor que la automatizacion sea estricta;
+- si el LLM se comporta de forma segura pero fuera de contrato, lo vemos como
+  fallo de bateria y no como pass silencioso.

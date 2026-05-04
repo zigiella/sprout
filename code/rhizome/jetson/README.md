@@ -152,6 +152,10 @@ Los resultados se escriben en `code/tuning/results/` dentro del repo montado
 en el contenedor del adapter, con un sufijo UTC para no pisar los JSONL
 canonicos.
 
+En modo real, `run_battery.sh` devuelve codigo distinto de cero si cualquier
+run tiene error HTTP, `envelope_valid=false` o `status_match` incorrecto. En
+modo `full`, si `critical` falla, `remaining` no se ejecuta.
+
 ## Interpretacion
 
 Para demo y pruebas contractuales, usar `safe-cpu` hasta que Cambium/Xilema

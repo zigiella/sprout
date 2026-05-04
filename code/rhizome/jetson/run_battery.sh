@@ -43,6 +43,40 @@ run_matrix() {
   echo "Running matrix=$matrix out=results/$out dry_run=$DRY_RUN"
   docker exec "$ADAPTER_CONTAINER" sh -lc \
     "cd /app/code/tuning && python harness.py --matrix $matrix --adapter-url $ADAPTER_URL --out results/$out $dry_flag"
+
+  if [ "$DRY_RUN" = "true" ]; then
+    return 0
+  fi
+
+  docker exec "$ADAPTER_CONTAINER" sh -lc "cd /app/code/tuning && python - <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path('results/$out')
+rows = [json.loads(line) for line in path.read_text(encoding='utf-8').splitlines() if line.strip()]
+failures = []
+for rec in rows:
+    envelope = rec.get('envelope') or {}
+    expected = rec.get('expected_status')
+    actual = envelope.get('status') if envelope.get('valid') else None
+    if rec.get('error') or rec.get('http_status') != 200 or not envelope.get('valid') or (expected is not None and actual != expected):
+        failures.append({
+            'run_id': rec.get('run_id'),
+            'prompt_id': rec.get('prompt_id'),
+            'expected_status': expected,
+            'actual_status': actual,
+            'envelope': envelope,
+            'error': rec.get('error'),
+            'http_status': rec.get('http_status'),
+        })
+
+print(f'battery_summary path={path} runs={len(rows)} failures={len(failures)}')
+for failure in failures:
+    print('battery_failure ' + json.dumps(failure, ensure_ascii=False, sort_keys=True))
+
+sys.exit(1 if failures else 0)
+PY"
 }
 
 case "$MODE" in
