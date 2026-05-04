@@ -35,6 +35,7 @@ class LiteRtEngineFactory(private val context: Context) {
         val config = EngineConfig(
             modelPath = modelPath,
             backend = backend,
+            audioBackend = Backend.CPU(),
             cacheDir = context.cacheDir.path,
             maxNumTokens = 4096 // Aumentado para evitar cortes
         )
