@@ -22,7 +22,10 @@
     <string name="visit_snapshot">Pull snapshot</string>
     <string name="visit_receipts">Sync receipts</string>
     <string name="visit_action">Choose action</string>
-
+    <string name="visit_checklist">visit checklist</string>
+    <string name="telemetry_current">telemetry · current</string>
+    <string name="chat_pollen">Chat with Pollen</string>
+    <string name="audit_pollen">Audit History</string>
     <!-- Mission compiler -->
     <string name="mission_voice_note">Voice note</string>
     <string name="mission_compiled_patch">Compiled patch</string>

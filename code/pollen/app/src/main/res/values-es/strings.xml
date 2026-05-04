@@ -19,7 +19,10 @@
     <string name="visit_snapshot">Extraer snapshot</string>
     <string name="visit_receipts">Sincronizar recibos</string>
     <string name="visit_action">Elegir acción</string>
-
+    <string name="visit_checklist">visit checklist</string>
+    <string name="telemetry_current">telemetría · actual</string>
+    <string name="chat_pollen">Chatear con Pollen</string>
+    <string name="audit_pollen">Historial</string>
     <string name="mission_voice_note">Nota de voz</string>
     <string name="mission_compiled_patch">Patch compilado</string>
     <string name="mission_acknowledged">Misión confirmada.</string>

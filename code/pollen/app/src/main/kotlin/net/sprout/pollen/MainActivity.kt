@@ -143,20 +143,13 @@ class MainActivity : ComponentActivity() {
                             AppScreen.RHIZOME_DETAIL -> {
                                 Column {
                                     Text("Parcela Seleccionada: $selectedRhizomeId", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleLarge)
-                                    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-                                        Button(onClick = { currentScreen = AppScreen.CHAT }, modifier = Modifier.weight(1f)) {
-                                            Text("Chatear con Pollen")
-                                        }
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Button(onClick = { currentScreen = AppScreen.AUDIT }, modifier = Modifier.weight(1f)) {
-                                            Text("Historial")
-                                        }
-                                    }
                                     VisitarRhizomeScreen(
                                         onDataFetched = { snap, rec -> 
                                             globalSnapshot = snap
                                             globalReceipts = rec 
-                                        }
+                                        },
+                                        onChatClicked = { currentScreen = AppScreen.CHAT },
+                                        onAuditClicked = { currentScreen = AppScreen.AUDIT }
                                     )
                                 }
                             }

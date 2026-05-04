@@ -12,6 +12,13 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.fadeOut
+import androidx.compose.ui.res.stringResource
+import net.sprout.pollen.R
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,7 +33,9 @@ import net.sprout.pollen.sync.RhizomeNetworkClient
 
 @Composable
 fun VisitarRhizomeScreen(
-    onDataFetched: (RhizomeSnapshot, List<DecisionReceipt>) -> Unit = { _, _ -> }
+    onDataFetched: (RhizomeSnapshot, List<DecisionReceipt>) -> Unit = { _, _ -> },
+    onChatClicked: () -> Unit = {},
+    onAuditClicked: () -> Unit = {}
 ) {
     val client: RhizomeClient = remember { 
         if (net.sprout.pollen.BuildConfig.FLAVOR == "demo") {
@@ -64,35 +73,43 @@ fun VisitarRhizomeScreen(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 18.dp, vertical = 16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())
+        .padding(horizontal = 18.dp, vertical = 16.dp)) {
         
         // Checklist Card
-        Card(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-            shape = RoundedCornerShape(12.dp)
+        AnimatedVisibility(
+            visible = step < 4,
+            exit = shrinkVertically() + fadeOut()
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    "visit checklist",
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    ),
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-                
-                SyncStepUI(label = "Conectar a Rhizome", sub = "BLE / WiFi · 0.4s", status = if (step >= 2) "done" else if (step == 1) "active" else "pending")
-                Spacer(modifier = Modifier.height(12.dp))
-                SyncStepUI(label = "Descargar Snapshot", sub = "6.2 KB", status = if (step >= 3) "done" else if (step == 2) "active" else "pending")
-                Spacer(modifier = Modifier.height(12.dp))
-                SyncStepUI(label = "Sincronizar Recibos", sub = "Ventana 24h", status = if (step >= 4) "done" else if (step == 3) "active" else "pending")
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        stringResource(R.string.visit_checklist),
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        ),
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+                    
+                    SyncStepUI(label = stringResource(R.string.visit_connect), sub = "BLE / WiFi · 0.4s", status = if (step >= 2) "done" else if (step == 1) "active" else "pending")
+                    Spacer(modifier = Modifier.height(12.dp))
+                    SyncStepUI(label = stringResource(R.string.visit_snapshot), sub = "6.2 KB", status = if (step >= 3) "done" else if (step == 2) "active" else "pending")
+                    Spacer(modifier = Modifier.height(12.dp))
+                    SyncStepUI(label = stringResource(R.string.visit_receipts), sub = "Ventana 24h", status = if (step >= 4) "done" else if (step == 3) "active" else "pending")
+                }
             }
         }
         
         if (step >= 4) {
             Text(
-                "telemetry · current",
+                stringResource(R.string.telemetry_current),
                 style = MaterialTheme.typography.labelMedium.copy(
                     fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -111,7 +128,7 @@ fun VisitarRhizomeScreen(
             Spacer(modifier = Modifier.height(24.dp))
             
             Text(
-                "last decision",
+                stringResource(R.string.last_decision),
                 style = MaterialTheme.typography.labelMedium.copy(
                     fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -119,9 +136,9 @@ fun VisitarRhizomeScreen(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             
-            receipts.firstOrNull()?.let { receipt ->
+            receipts.forEach { receipt ->
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
@@ -149,6 +166,25 @@ fun VisitarRhizomeScreen(
                         }
                     }
                 }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Button(
+                onClick = onChatClicked,
+                modifier = Modifier.fillMaxWidth().height(48.dp),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) {
+                Text(stringResource(R.string.chat_pollen), fontWeight = FontWeight.Bold)
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = onAuditClicked,
+                modifier = Modifier.fillMaxWidth().height(48.dp),
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                Text(stringResource(R.string.audit_pollen), fontWeight = FontWeight.Bold)
             }
         }
     }
