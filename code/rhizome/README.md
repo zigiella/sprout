@@ -59,3 +59,41 @@ python -m bench.run_ollama_benchmark --model gemma4:e4b --hardware-label hp-prob
 ```
 
 El mismo harness se reutiliza luego en Jetson cambiando solo el target del modelo/runtime.
+
+## API local para Pollen
+
+La especificacion de Rhizome define una API de lectura para que Pollen pueda
+visitar la parcela sin depender de mocks Android:
+
+- `GET /status`
+- `GET /snapshot/latest`
+- `GET /receipts?since=...`
+- `GET /explain/decision/{id}`
+
+Como paso MVP, `src/rhizome_sync_facade.py` sirve esos cuatro endpoints desde
+JSON locales con forma de contrato compartido (`code/shared/schemas/examples`).
+Es una fachada de interoperabilidad: no toca ESP32, no abre actuadores, no llama
+al LLM y no sustituye la persistencia real de Rhizome. Su valor es permitir que
+Floema apunte `RhizomeNetworkClient` a una IP real de Jetson mientras el backend
+definitivo de sensores/SQLite termina de cerrarse.
+
+Arranque local/Jetson:
+
+```bash
+cd code/rhizome
+python -m src.rhizome_sync_facade --host 0.0.0.0 --port 13010
+```
+
+Prueba minima:
+
+```bash
+curl http://127.0.0.1:13010/status
+curl http://127.0.0.1:13010/snapshot/latest
+curl http://127.0.0.1:13010/receipts
+```
+
+Base URL para Pollen en la red local del dia 19:
+
+```text
+http://192.168.1.60:13010/
+```

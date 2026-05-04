@@ -6,6 +6,10 @@ Scripts operativos para arrancar Gemma 4 E2B en Jetson Orin Nano Super con
 Estos scripts no tocan firmware, sensores, actuadores ni reglas fisicas. Solo
 gestionan el runtime local de inferencia y el adapter Ollama-compatible.
 
+Tambien incluyen una fachada HTTP de lectura para Pollen. Esa fachada no toca
+ESP32 ni actuadores; solo sirve contratos JSON de Rhizome para que Android pueda
+probar contra una IP real de Jetson.
+
 ## Perfiles
 
 | Perfil | Uso | Estado dia 18 |
@@ -131,6 +135,31 @@ Smoke:
 
 ```bash
 ./smoke_adapter.sh
+```
+
+## API Rhizome para Pollen
+
+La API que consume `RhizomeNetworkClient` no es `llama-server` (`:8080`) ni el
+adapter Ollama-compatible (`:12000`). Es una fachada separada en `:13010`:
+
+```bash
+./start_sync_facade.sh
+./smoke_sync_facade.sh
+```
+
+Endpoints servidos:
+
+```text
+GET /status
+GET /snapshot/latest
+GET /receipts?since=...
+GET /explain/decision/{id}
+```
+
+Base URL para Pollen en la red local del dia 19:
+
+```text
+http://192.168.1.60:13010/
 ```
 
 Baseline operativo:
