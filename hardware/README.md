@@ -6,7 +6,7 @@ Integracion fisica del proyecto: firmware ESP32, diagramas de cableado, fotos de
 
 - `firmware_esp32/` — proyecto **ESP-IDF** de la capa dura de seguridad
 - `host_tools/` — harness y utilidades host-side para hablar con el ESP32 por serie
-- `wiring_diagrams/` — esquematicos (Fritzing, KiCad o imagenes)
+- `wiring_diagrams/` — esquematicos de montaje (Markdown/Mermaid ahora; Fritzing, KiCad o imagenes despues)
 - `photos/` — fotos del montaje real en Castellar de n'Hug (evidencia + B-roll de video)
 
 ### Baseline del firmware
@@ -35,6 +35,16 @@ Reglas minimas del firmware:
 - Cada comando lleva ID, duracion maxima, parcela objetivo
 
 Para el primer milestone no hay control de agua todavia. Solo arranque seguro, consola serie y estado observable.
+
+## Montaje fisico
+
+La guia operativa vigente para empezar el cableado esta en:
+
+- `wiring_diagrams/day19_mounting_schematics.md`
+
+Regla: actuadores 12V solo despues de revisar fusible, driver, flyback, masa
+comun y prueba sin carga. La escena de seguridad es rodable en `DRY_RUN`; el
+agua real no se activa por prisa.
 
 ## Fotos obligatorias para el video
 
