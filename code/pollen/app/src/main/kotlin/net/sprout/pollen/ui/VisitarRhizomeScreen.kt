@@ -26,8 +26,14 @@ import net.sprout.pollen.sync.RhizomeNetworkClient
 fun VisitarRhizomeScreen(
     onDataFetched: (RhizomeSnapshot, List<DecisionReceipt>) -> Unit = { _, _ -> }
 ) {
-    // Para conectar con la placa real, cambiar a RhizomeNetworkClient("http://<IP>:8080")
-    val client: RhizomeClient = remember { RhizomeMockClient() }
+    val client: RhizomeClient = remember { 
+        if (net.sprout.pollen.BuildConfig.FLAVOR == "demo") {
+            RhizomeMockClient()
+        } else {
+            // TODO: Ajustar esta IP a la que confirme Endo
+            RhizomeNetworkClient("http://192.168.1.100:8080")
+        }
+    }
     val scope = rememberCoroutineScope()
     
     var status by remember { mutableStateOf<Map<String, String>?>(null) }
