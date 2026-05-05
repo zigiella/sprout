@@ -1,0 +1,450 @@
+/* Meristem-nodo UI v0 — sistema visual inspirado en Soil protocol +
+   Water ledger de Venation (sprout_design_pack_v1). Manrope + IBM Plex
+   Mono. Tokens minimalistas hasta que llegue el bundle definitivo. */
+
+:root {
+  /* Tipografía */
+  --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+
+  /* Soil protocol */
+  --soil-bg: #f7f5f1;
+  --soil-paper: #ffffff;
+  --soil-text: #2a2a2a;
+  --soil-text-muted: #7a7a78;
+  --soil-border: #e2dfd8;
+
+  /* Modes (semánticos) */
+  --mode-normal: #4a8c4f;       /* verde tierra */
+  --mode-normal-bg: #eef5ee;
+  --mode-conservative: #c79a3b; /* amarillo agua */
+  --mode-conservative-bg: #f8f1de;
+  --mode-alert: #b04545;        /* rojo */
+  --mode-alert-bg: #f8e7e7;
+  --mode-unknown: #9a9a98;
+  --mode-unknown-bg: #efefed;
+
+  /* Signal seed (acento de inteligencia activa) */
+  --signal-seed: #2f6dba;
+
+  /* Espaciado */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--soil-bg);
+  color: var(--soil-text);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+code, .mono {
+  font-family: var(--font-mono);
+}
+
+/* ===================================================================
+   Topbar
+   =================================================================== */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  background: var(--soil-paper);
+  border-bottom: 1px solid var(--soil-border);
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.logo-mark {
+  color: var(--signal-seed);
+  font-size: 32px;
+  line-height: 1;
+}
+
+.logo-text {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.topbar-chips {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  background: var(--mode-unknown-bg);
+  color: var(--soil-text-muted);
+  border: 1px solid var(--soil-border);
+}
+
+.chip-llm.active {
+  background: rgba(47, 109, 186, 0.1);
+  color: var(--signal-seed);
+  border-color: var(--signal-seed);
+}
+
+.chip-pollen.connected {
+  background: var(--mode-normal-bg);
+  color: var(--mode-normal);
+  border-color: var(--mode-normal);
+}
+
+/* ===================================================================
+   Main grid
+   =================================================================== */
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (min-width: 900px) {
+  .main-grid {
+    grid-template-columns: 2fr 1fr;
+    grid-template-areas:
+      "dashboard control"
+      "log       log";
+  }
+  .zone-dashboard { grid-area: dashboard; }
+  .zone-control   { grid-area: control; }
+  .zone-log       { grid-area: log; }
+}
+
+.zone {
+  background: var(--soil-paper);
+  border: 1px solid var(--soil-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.zone-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-4);
+}
+
+.zone-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.zone-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--soil-text-muted);
+}
+
+/* ===================================================================
+   Cards de Rhizome (zona 1)
+   =================================================================== */
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+@media (min-width: 600px) {
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+.empty-state {
+  color: var(--soil-text-muted);
+  font-style: italic;
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.card {
+  border: 1px solid var(--soil-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4);
+  background: var(--soil-paper);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.card[data-mode="normal"]       { border-left: 4px solid var(--mode-normal); }
+.card[data-mode="conservative"] { border-left: 4px solid var(--mode-conservative); }
+.card[data-mode="alert"]        { border-left: 4px solid var(--mode-alert); }
+.card[data-mode="unknown"]      { border-left: 4px solid var(--mode-unknown); }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--soil-text);
+}
+
+.card-mode-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.card-mode-tag[data-mode="normal"]       { background: var(--mode-normal-bg); color: var(--mode-normal); }
+.card-mode-tag[data-mode="conservative"] { background: var(--mode-conservative-bg); color: var(--mode-conservative); }
+.card-mode-tag[data-mode="alert"]        { background: var(--mode-alert-bg); color: var(--mode-alert); }
+.card-mode-tag[data-mode="unknown"]      { background: var(--mode-unknown-bg); color: var(--mode-unknown); }
+
+.card-reason {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.card-rationale {
+  font-size: 13px;
+  color: var(--soil-text-muted);
+  font-style: italic;
+}
+
+.card-meta {
+  display: flex;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--soil-text-muted);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--soil-border);
+}
+
+.card-meta-badge {
+  background: var(--mode-alert-bg);
+  color: var(--mode-alert);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+/* ===================================================================
+   Trazabilidad (footer de zona 1)
+   =================================================================== */
+
+.trazabilidad {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--soil-border);
+  align-items: center;
+}
+
+.trazabilidad-label {
+  font-size: 12px;
+  color: var(--soil-text-muted);
+  margin-right: var(--space-2);
+}
+
+.pill {
+  display: inline-flex;
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid var(--soil-border);
+}
+
+.pill-confirm        { color: var(--mode-normal); border-color: var(--mode-normal); }
+.pill-conservative   { color: var(--mode-conservative); border-color: var(--mode-conservative); }
+.pill-alert          { color: var(--mode-alert); border-color: var(--mode-alert); }
+.pill-refuse         { color: var(--mode-unknown); border-color: var(--mode-unknown); }
+
+/* ===================================================================
+   Zona 2 — Panel de control con Pollen
+   =================================================================== */
+
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.status-line {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: var(--space-3);
+  background: var(--soil-bg);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  color: var(--soil-text-muted);
+}
+
+.status-line.connected {
+  background: var(--mode-normal-bg);
+  color: var(--mode-normal);
+  font-weight: 500;
+}
+
+.control-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.btn {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--signal-seed);
+  color: white;
+}
+
+.btn-primary:not(:disabled):hover {
+  background: #285ea1;
+}
+
+.btn-secondary {
+  background: var(--soil-paper);
+  color: var(--signal-seed);
+  border-color: var(--signal-seed);
+}
+
+.btn-secondary:not(:disabled):hover {
+  background: rgba(47, 109, 186, 0.05);
+}
+
+.progress-line {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--soil-text-muted);
+  min-height: 18px;
+  text-align: center;
+  font-style: italic;
+}
+
+.progress-line.active {
+  color: var(--signal-seed);
+  font-style: normal;
+}
+
+/* ===================================================================
+   Zona 3 — Event log
+   =================================================================== */
+
+.event-log {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.event-empty {
+  color: var(--soil-text-muted);
+  font-style: italic;
+  padding: var(--space-3);
+  text-align: center;
+}
+
+.event-row {
+  display: grid;
+  grid-template-columns: 80px 16px 1fr auto;
+  gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  border-bottom: 1px solid var(--soil-border);
+}
+
+.event-time {
+  color: var(--soil-text-muted);
+}
+
+.event-arrow {
+  font-weight: 700;
+  text-align: center;
+}
+
+.event-arrow.in  { color: var(--mode-normal); }
+.event-arrow.out { color: var(--signal-seed); }
+
+.event-name {
+  color: var(--soil-text);
+}
+
+.event-trace {
+  color: var(--soil-text-muted);
+  font-size: 10px;
+}
+
+/* ===================================================================
+   Footer
+   =================================================================== */
+
+.footer {
+  text-align: center;
+  padding: var(--space-4);
+  color: var(--soil-text-muted);
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
