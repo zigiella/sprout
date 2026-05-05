@@ -24,9 +24,11 @@ from __future__ import annotations
 import logging
 import os
 import uuid
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from . import ingest as ingest_service
@@ -432,6 +434,17 @@ def _build_app() -> FastAPI:
             "command": req.command,
             "expected_count": req.expected_count,
         }
+
+    # -----------------------------------------------------------------------
+    # UI estática para el agricultor (HTML/CSS/JS vanilla servido por FastAPI)
+    # -----------------------------------------------------------------------
+    static_dir = Path(__file__).resolve().parent.parent / "static"
+    if static_dir.is_dir():
+        app.mount(
+            "/ui",
+            StaticFiles(directory=str(static_dir), html=True),
+            name="ui",
+        )
 
     @app.get("/sync-state")
     async def sync_state() -> dict[str, Any]:

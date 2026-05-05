@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meristem-nodo · Sprout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/ui/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="logo-mark">·</span>
+      <span class="logo-text">Sprout · Meristem-nodo</span>
+    </div>
+    <div class="topbar-chips">
+      <span class="chip chip-llm" id="chip-llm">LLM: …</span>
+      <span class="chip chip-pollen" id="chip-pollen">Pollen: desconectado</span>
+    </div>
+  </header>
+
+  <main class="main-grid">
+    <!-- Zona 1 — Dashboard agricultor -->
+    <section class="zone zone-dashboard">
+      <div class="zone-header">
+        <h2 class="zone-title">Tu parcela hoy</h2>
+        <span class="zone-meta" id="last-sync">—</span>
+      </div>
+      <div class="cards-grid" id="cards-grid">
+        <p class="empty-state" id="empty-state">
+          Aún no has recibido ninguna visita de Pollen. Cuando llegue
+          la primera, esta pantalla se actualizará.
+        </p>
+      </div>
+      <div class="trazabilidad" id="trazabilidad">
+        <span class="trazabilidad-label">Reglas aplicadas:</span>
+        <span class="pill pill-confirm" data-rule="confirm_policy">confirm: 0</span>
+        <span class="pill pill-conservative" data-rule="conservative_policy">conservative: 0</span>
+        <span class="pill pill-alert" data-rule="alert_policy">alert: 0</span>
+        <span class="pill pill-refuse" data-rule="refuse">refuse: 0</span>
+      </div>
+    </section>
+
+    <!-- Zona 2 — Panel de control bidireccional con Pollen -->
+    <section class="zone zone-control">
+      <div class="zone-header">
+        <h2 class="zone-title">Sincronización con Pollen</h2>
+        <span class="zone-meta" id="pollen-meta">—</span>
+      </div>
+      <div class="control-panel" id="control-panel">
+        <div class="status-line" id="pollen-status">
+          Pollen no detectado
+        </div>
+        <div class="control-buttons">
+          <button class="btn btn-primary" id="btn-recoger" disabled>
+            Recoger visitas
+          </button>
+          <button class="btn btn-secondary" id="btn-cargar" disabled>
+            Cargar policies
+          </button>
+        </div>
+        <div class="progress-line" id="progress-line"></div>
+      </div>
+    </section>
+
+    <!-- Zona 3 — Log de eventos recientes -->
+    <section class="zone zone-log">
+      <div class="zone-header">
+        <h2 class="zone-title">Operaciones recientes</h2>
+      </div>
+      <ul class="event-log" id="event-log">
+        <li class="event-empty">Sin eventos todavía.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="footer-meta" id="footer-meta">Meristem v0.1 · slow brain doméstico</span>
+  </footer>
+
+  <script src="/ui/app.js"></script>
+</body>
+</html>
