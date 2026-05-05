@@ -3,7 +3,7 @@
 
     <!-- Header / nav -->
     <string name="every_event_receipt">Every event leaves a receipt.</string>
-    <string name="nearby_rhizomes">Nearby rhizomes</string>
+    <string name="nearby_rhizomes">Associated rhizomes</string>
     <string name="meristem_sub">Slow brain · weekly handoff</string>
     <string name="physical_prevails">Physical layer prevails. Rhizome arbitrates. Pollen mediates. Meristem refines.</string>
 
@@ -28,7 +28,7 @@
     <string name="audit_pollen">Audit History</string>
     <string name="selected_plot">Selected plot</string>
     <string name="explain_decision">Explain Decision (LLM)</string>
-    <string name="explanation_title">Explanation from Gemma 4</string>
+    <string name="explanation_title">Explanation from Rhizome</string>
     <string name="close">Close</string>
     <string name="water_level">WATER</string>
     <string name="soil_moisture">SOIL MOISTURE</string>
@@ -53,4 +53,10 @@
     <string name="home_home_node">Home Node (Meristem)</string>
     <string name="notif_vision_title">Vision Confirmation Required</string>
     <string name="notif_vision_desc">The active policy requires a manual vision confirmation on the field before watering starts.</string>
+    <string name="back_to_home">Back to Home</string>
+    <string name="plot_north">North Plot</string>
+    <string name="plot_south">South Plot</string>
+    <string name="visit_connect_sub">BLE / WiFi · 0.4s</string>
+    <string name="visit_snapshot_sub">6.2 KB</string>
+    <string name="visit_receipts_sub">24h Window</string>
 </resources>

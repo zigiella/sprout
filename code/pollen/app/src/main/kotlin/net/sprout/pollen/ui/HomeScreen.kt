@@ -60,9 +60,9 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(12.dp))
         
         // NodeCards
-        NodeCard(title = "RHIZOME_01", subtitle = "Parcela Norte", onClick = { onNavigateToRhizome("Rhizome_01") })
+        NodeCard(title = "RHIZOME_01", subtitle = stringResource(R.string.plot_north), onClick = { onNavigateToRhizome("Rhizome_01") })
         Spacer(modifier = Modifier.height(8.dp))
-        NodeCard(title = "RHIZOME_02", subtitle = "Parcela Sur", onClick = { onNavigateToRhizome("Rhizome_02") })
+        NodeCard(title = "RHIZOME_02", subtitle = stringResource(R.string.plot_south), onClick = { onNavigateToRhizome("Rhizome_02") })
 
         Spacer(modifier = Modifier.weight(1f))
 

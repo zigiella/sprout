@@ -2,7 +2,7 @@
     <string name="app_name">Pollen</string>
 
     <string name="every_event_receipt">Cada evento deja un recibo.</string>
-    <string name="nearby_rhizomes">Rhizomes cercanos</string>
+    <string name="nearby_rhizomes">Rhizomes asociados</string>
     <string name="meristem_sub">Cerebro lento · handoff semanal</string>
     <string name="physical_prevails">La capa física prevalece. Rhizome arbitra. Pollen media. Meristem refina.</string>
 
@@ -25,7 +25,7 @@
     <string name="audit_pollen">Historial</string>
     <string name="selected_plot">Parcela seleccionada</string>
     <string name="explain_decision">Explicar Decisión (LLM)</string>
-    <string name="explanation_title">Explicación de Gemma 4</string>
+    <string name="explanation_title">Explicación de Rhizome</string>
     <string name="close">Cerrar</string>
     <string name="water_level">AGUA</string>
     <string name="soil_moisture">Humedad suelo</string>
@@ -49,4 +49,10 @@
     <string name="home_home_node">Cerebro Doméstico (Meristem)</string>
     <string name="notif_vision_title">Confirmación Visual Requerida</string>
     <string name="notif_vision_desc">La política activa exige que el operario confirme visualmente el estado del campo antes de regar.</string>
+    <string name="back_to_home">Volver a inicio</string>
+    <string name="plot_north">Parcela Norte</string>
+    <string name="plot_south">Parcela Sur</string>
+    <string name="visit_connect_sub">BLE / WiFi · 0.4s</string>
+    <string name="visit_snapshot_sub">6.2 KB</string>
+    <string name="visit_receipts_sub">Ventana 24h</string>
 </resources>

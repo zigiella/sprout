@@ -110,9 +110,9 @@ class MainActivity : ComponentActivity() {
                         if (currentScreen != AppScreen.HOME) {
                             Row(modifier = Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
                                 IconButton(onClick = { currentScreen = AppScreen.HOME }) {
-                                    Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                                    Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back_to_home))
                                 }
-                                Text("Volver a Inicio", style = MaterialTheme.typography.titleMedium)
+                                Text(stringResource(R.string.back_to_home), style = MaterialTheme.typography.titleMedium)
                             }
                         }
 

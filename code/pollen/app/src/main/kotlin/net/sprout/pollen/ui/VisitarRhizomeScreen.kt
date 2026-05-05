@@ -106,11 +106,11 @@ fun VisitarRhizomeScreen(
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
                     
-                    SyncStepUI(label = stringResource(R.string.visit_connect), sub = "BLE / WiFi · 0.4s", status = if (step >= 2) "done" else if (step == 1) "active" else "pending")
+                    SyncStepUI(label = stringResource(R.string.visit_connect), sub = stringResource(R.string.visit_connect_sub), status = if (step >= 2) "done" else if (step == 1) "active" else "pending")
                     Spacer(modifier = Modifier.height(12.dp))
-                    SyncStepUI(label = stringResource(R.string.visit_snapshot), sub = "6.2 KB", status = if (step >= 3) "done" else if (step == 2) "active" else "pending")
+                    SyncStepUI(label = stringResource(R.string.visit_snapshot), sub = stringResource(R.string.visit_snapshot_sub), status = if (step >= 3) "done" else if (step == 2) "active" else "pending")
                     Spacer(modifier = Modifier.height(12.dp))
-                    SyncStepUI(label = stringResource(R.string.visit_receipts), sub = "Ventana 24h", status = if (step >= 4) "done" else if (step == 3) "active" else "pending")
+                    SyncStepUI(label = stringResource(R.string.visit_receipts), sub = stringResource(R.string.visit_receipts_sub), status = if (step >= 4) "done" else if (step == 3) "active" else "pending")
                 }
             }
         }
@@ -242,19 +242,17 @@ fun VisitarRhizomeScreen(
                     Text("Cargando...")
                 } else if (summaryData != null) {
                     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                        Text(summaryData!!.headline, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(bottom = 8.dp))
-                        Text(summaryData!!.summary, modifier = Modifier.padding(bottom = 12.dp))
+                        Text(summaryData!!.headline, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(bottom = 8.dp))
+                        Text(summaryData!!.summary, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(bottom = 12.dp))
                         
                         if (summaryData!!.highlights.isNotEmpty()) {
-                            Text("Highlights:", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 4.dp))
                             summaryData!!.highlights.forEach { h ->
-                                Text("• $h", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(start = 8.dp, bottom = 2.dp))
+                                Text("• $h", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 8.dp, bottom = 4.dp))
                             }
                             Spacer(modifier = Modifier.height(12.dp))
                         }
                         
-                        Text("Recomendación:", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 4.dp))
-                        Text(summaryData!!.recommendation, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+                        Text(summaryData!!.recommendation, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
                     }
                 } else {
                     Text("Error al cargar el resumen.")
