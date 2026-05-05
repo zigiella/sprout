@@ -91,6 +91,14 @@ def _severity(snapshot: dict[str, Any], counts: dict[str, int]) -> str:
     return "ok"
 
 
+def _plural_es(count: int, singular: str, plural: str) -> str:
+    return f"{count} {singular if count == 1 else plural}"
+
+
+def _plural_en(count: int, singular: str, plural: str) -> str:
+    return f"{count} {singular if count == 1 else plural}"
+
+
 def _explain_receipt(receipt: dict[str, Any], locale: str) -> str:
     action = str(receipt.get("action", "")).upper()
     params = receipt.get("action_params", {})
@@ -154,8 +162,9 @@ def _summary_text(
             headline = f"{node_id}: attention needed after your absence"
         highlights = [
             (
-                f"{counts['water']} watering events, {counts['block']} safety blocks, "
-                f"{counts['alert']} alerts."
+                f"{_plural_en(counts['water'], 'watering event', 'watering events')}, "
+                f"{_plural_en(counts['block'], 'safety block', 'safety blocks')}, "
+                f"{_plural_en(counts['alert'], 'alert', 'alerts')}."
             ),
             f"Current tank level is {tank:.0f}%." if tank is not None else "Current tank level is unavailable.",
             (
@@ -168,7 +177,8 @@ def _summary_text(
             highlights.append(f"Latest recorded decision: {latest_action}.")
         summary = (
             f"While you were away, {node_id} recorded {counts['total']} decisions. "
-            f"It watered {counts['water']} times and blocked {counts['block']} actions. "
+            f"It recorded {_plural_en(counts['water'], 'watering event', 'watering events')} "
+            f"and {_plural_en(counts['block'], 'blocked action', 'blocked actions')}. "
             f"Tank is now {tank:.0f}% and soil probes A/B are {soil_a:.0f}% / {soil_b:.0f}%."
             if (
                 tank is not None
@@ -188,7 +198,11 @@ def _summary_text(
     if counts["block"] or counts["alert"]:
         headline = f"{node_id}: conviene revisar lo ocurrido en tu ausencia"
     highlights = [
-        f"{counts['water']} riegos, {counts['block']} bloqueos de seguridad, {counts['alert']} alertas.",
+        (
+            f"{_plural_es(counts['water'], 'riego', 'riegos')}, "
+            f"{_plural_es(counts['block'], 'bloqueo de seguridad', 'bloqueos de seguridad')}, "
+            f"{_plural_es(counts['alert'], 'alerta', 'alertas')}."
+        ),
         f"El deposito esta al {tank:.0f}%." if tank is not None else "No hay lectura de deposito.",
         (
             f"Las sondas de suelo A/B marcan {soil_a:.0f}% / {soil_b:.0f}%."
@@ -200,7 +214,8 @@ def _summary_text(
         highlights.append(f"Ultima decision registrada: {latest_action}.")
     summary = (
         f"Durante tu ausencia, {node_id} registro {counts['total']} decisiones. "
-        f"Regó {counts['water']} veces y bloqueó {counts['block']} acciones. "
+        f"Registro {_plural_es(counts['water'], 'riego', 'riegos')} "
+        f"y {_plural_es(counts['block'], 'accion bloqueada', 'acciones bloqueadas')}. "
         f"El deposito esta al {tank:.0f}% y las sondas A/B marcan {soil_a:.0f}% / {soil_b:.0f}%."
         if (
             tank is not None
