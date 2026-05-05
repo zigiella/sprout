@@ -8,6 +8,7 @@ FACADE_PID_FILE="${FACADE_PID_FILE:-/tmp/sprout_${FACADE_NODE_ID}_sync_facade_${
 FACADE_LOG_FILE="${FACADE_LOG_FILE:-/tmp/sprout_${FACADE_NODE_ID}_sync_facade_${FACADE_PORT}.log}"
 FACADE_DATA_DIR="${FACADE_DATA_DIR:-}"
 REPO_DIR="${REPO_DIR:-$HOME/sprout}"
+LEGACY_PID_FILE="/tmp/sprout_rhizome_sync_facade.pid"
 
 if [ ! -f "$REPO_DIR/code/rhizome/src/rhizome_sync_facade.py" ]; then
   echo "rhizome sync facade source not found under $REPO_DIR" >&2
@@ -19,6 +20,15 @@ if [ -f "$FACADE_PID_FILE" ]; then
   if [ -n "$old_pid" ] && kill -0 "$old_pid" >/dev/null 2>&1; then
     echo "Stopping previous rhizome sync facade pid=$old_pid"
     kill "$old_pid" >/dev/null 2>&1 || true
+    sleep 1
+  fi
+fi
+
+if [ "$FACADE_NODE_ID" = "rhizome_01" ] && [ "$FACADE_PORT" = "13010" ] && [ -f "$LEGACY_PID_FILE" ]; then
+  legacy_pid="$(cat "$LEGACY_PID_FILE" 2>/dev/null || true)"
+  if [ -n "$legacy_pid" ] && kill -0 "$legacy_pid" >/dev/null 2>&1; then
+    echo "Stopping legacy rhizome sync facade pid=$legacy_pid"
+    kill "$legacy_pid" >/dev/null 2>&1 || true
     sleep 1
   fi
 fi
