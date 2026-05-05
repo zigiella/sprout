@@ -111,3 +111,17 @@ suspend fun getVisitSummary(
 ```
 
 Y usarlo como payload principal del boton.
+
+## Estado Floema
+
+Bea confirma al cierre del dia 20 que Floema ya implemento los cambios por su
+parte.
+
+Estado de integracion:
+
+- Pollen puede consumir `GET /summary/since`;
+- el boton principal ya tiene payload Rhizome;
+- UI ajustada para el MVP de un sensor de humedad por Rhizome;
+- demo de dos Rhizomes disponible via `:13010` y `:13020`;
+- `rhizome_02` permanece documentado como simulacion host-side, no segundo
+  nodo fisico.

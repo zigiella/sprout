@@ -90,3 +90,55 @@ bash -n code/rhizome/jetson/start_demo_two_rhizomes.sh
 ```
 
 Resultado: OK.
+
+## Validacion en Jetson
+
+Ejecuto en Jetson:
+
+```bash
+cd ~/sprout/code/rhizome/jetson
+./start_demo_two_rhizomes.sh
+```
+
+Resultado:
+
+- `rhizome_01` vivo en `:13010`;
+- `rhizome_02` simulado vivo en `:13020`;
+- smoke OK para ambos;
+- `llama-server` sigue vivo en `:8080`;
+- adapter sigue vivo en `:12000`.
+
+Validacion externa desde portatil:
+
+```bash
+curl "http://192.168.1.60:13010/summary/since?locale=es"
+curl "http://192.168.1.60:13020/summary/since?locale=en"
+```
+
+Ambos devuelven payload de summary.
+
+## Validacion de Floema
+
+Bea comunica que Floema ya implemento por su parte:
+
+- consumo del endpoint principal `GET /summary/since`;
+- render del boton "¿Que ha pasado desde mi ausencia?";
+- adaptacion de UI para no presentar `SOIL A` / `SOIL B` como dos sensores
+  fisicos independientes por Rhizome;
+- consumo de los dos endpoints de demo si hace falta para video.
+
+Lectura de Endodermis:
+
+- Pollen ya tiene camino UI para el resumen de ausencia;
+- Jetson ya tiene dos endpoints para demo multi-Rhizome;
+- el segundo nodo sigue siendo simulacion host-side documentada;
+- no se ha tocado ESP32+BME.
+
+## Cierre dia 20
+
+El frente queda listo para revision de Cambium:
+
+- branch: `feat/endodermis/rhizome-visit-summary-demo`;
+- servicios Jetson vivos;
+- trabajo host-side solamente;
+- siguiente tarea tecnica de Endodermis: volver a diagnostico RH02 sin tunear en caliente.
