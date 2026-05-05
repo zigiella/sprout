@@ -94,6 +94,11 @@ Ultima actualizacion en [bitacora/](bitacora/).
 
 Apache 2.0. Igual que Gemma 4.
 
+## Atribucion
+
+Sprout usa modelos Gemma 4 de Google. Gemma is a trademark of Google LLC.
+Este proyecto no esta afiliado ni respaldado por Google.
+
 ## Autoria
 
 Mantenido por **equipo zigiella**.
@@ -194,6 +199,11 @@ Latest updates in [bitacora/](bitacora/) (Spanish).
 ## License
 
 Apache 2.0. Same as Gemma 4.
+
+## Attribution
+
+Sprout uses Gemma 4 models by Google. Gemma is a trademark of Google LLC.
+This project is not affiliated with or endorsed by Google.
 
 ## Maintained by
 

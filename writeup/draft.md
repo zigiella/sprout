@@ -238,3 +238,12 @@ Decision: dia 25, tras video y demos.
 | 12-13 | Seccion 3 (arquitectura) | 350 palabras + diagrama escogido |
 | 18-20 | Secciones 5-7 (fine-tuning, validacion, impacto) | Con datos reales de PR finetune |
 | 27-28 | Review completo + recorte | Version entregable |
+
+---
+
+## Atribucion / Attribution
+
+Sprout uses Gemma 4 models by Google. Gemma is a trademark of Google LLC.
+This project is not affiliated with or endorsed by Google.
+
+License: Apache 2.0 (see `LICENSE`). Same as Gemma 4.
