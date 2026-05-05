@@ -26,7 +26,8 @@ import os
 import uuid
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from pydantic import BaseModel
 
 from . import ingest as ingest_service
 from . import persistence
@@ -44,6 +45,12 @@ from .schemas import (
     VisitResponse,
     VisitResponsePayload,
 )
+from .ws_manager import manager as pollen_manager
+from .ws_schemas import (
+    CommandPayload,
+    MeristemReadyPayload,
+    WSEvent,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -54,6 +61,14 @@ USE_LLM = os.environ.get("MERISTEM_USE_LLM", "true").lower() not in (
     "false", "0", "no",
 )
 ADAPTER_URL = os.environ.get("MERISTEM_ADAPTER_URL", "http://localhost:12000")
+MERISTEM_ID = os.environ.get("MERISTEM_ID", "meristem_demo_01")
+
+
+class CommandRequest(BaseModel):
+    """Request body para `POST /pollen/command` (UI → Meristem → Pollen)."""
+
+    command: str  # "push_bundles" | "pull_policies"
+    expected_count: int = 0
 
 
 # ---------------------------------------------------------------------------
@@ -149,12 +164,15 @@ def _build_app() -> FastAPI:
             "status": "ok",
             "version": "0.1.0",
             "port": PORT,
+            "meristem_id": MERISTEM_ID,
             "llm_mode": "real" if USE_LLM else "stub_disabled",
             "adapter_url": ADAPTER_URL if USE_LLM else None,
             "bundles_received_total": persistence.count_bundles(),
             "policies_emitted_total": persistence.count_policies(),
             "decisions_by_rule": persistence.count_decisions_by_rule(),
             "targets_known": persistence.list_known_targets(),
+            "pollen_connection": pollen_manager.state_snapshot(),
+            "ws_events_by_type": persistence.count_ws_events_by_event(),
         }
 
     @app.get("/status", response_model=StatusResponse)
@@ -251,6 +269,186 @@ def _build_app() -> FastAPI:
         si hay policy nueva pendiente de transportar.
         """
         return persistence.get_latest_policy_for(target_node_id)
+
+    # -----------------------------------------------------------------------
+    # WebSocket endpoint Pollen ↔ Meristem (Variante D, protocolo v1.0)
+    # -----------------------------------------------------------------------
+
+    @app.websocket("/ws/pollen-sync")
+    async def ws_pollen_sync(websocket: WebSocket) -> None:
+        """Endpoint WebSocket para sincronización bidireccional con Pollen.
+
+        Protocolo v1.0 acordado con Floema (PR #81). Pollen es cliente
+        WebSocket; Meristem es server. Mensajes JSON con shape uniforme:
+        `{event, payload, timestamp, trace_id?}`.
+
+        Flujo:
+        1. Pollen abre conexión → `pollen_hello`
+        2. Meristem responde con `meristem_ready` (lista policies disponibles)
+        3. Loop bidireccional con heartbeat cada 10s
+        4. Comandos `push_bundles` / `pull_policies` se disparan desde
+           UI Meristem via POST /pollen/command y se entregan por este WS
+
+        El control plane viaja por WebSocket; el data plane (POST /visit,
+        GET /policy/by-target/{id}) sigue siendo HTTP REST estándar.
+        """
+        accepted = await pollen_manager.accept_or_reject(websocket)
+        if not accepted:
+            return
+
+        logger.info("WS Pollen aceptado, esperando hello...")
+
+        try:
+            while True:
+                msg = await websocket.receive_json()
+                event = msg.get("event", "")
+                payload = msg.get("payload", {}) or {}
+                trace_id = msg.get("trace_id")
+
+                # Persistir el mensaje recibido (audit trail)
+                persistence.log_ws_event(
+                    direction="in", event=event, payload=payload, trace_id=trace_id,
+                )
+                pollen_manager.heartbeat()
+
+                if event == WSEvent.POLLEN_HELLO.value:
+                    pollen_id = payload.get("pollen_id", "unknown")
+                    app_version = payload.get("app_version", "0.0.0")
+                    pollen_manager.register_hello(pollen_id, app_version)
+                    logger.info(
+                        "Pollen %s v%s conectado. bundles_pending=%d, policies_pickup=%s",
+                        pollen_id, app_version,
+                        payload.get("bundles_pending_count", 0),
+                        payload.get("policies_to_pickup_target_ids", []),
+                    )
+                    # Construir lista de policies disponibles para retirar
+                    pickup = []
+                    for tid in payload.get("policies_to_pickup_target_ids", []):
+                        pol = persistence.get_latest_policy_for(tid)
+                        if pol:
+                            pickup.append({
+                                "target_node_id": tid,
+                                "policy_id": pol.policy_id,
+                            })
+                    ready_payload = MeristemReadyPayload(
+                        meristem_id=MERISTEM_ID,
+                        version="0.1.0",
+                        policies_ready_for_pickup=pickup,
+                    ).model_dump(mode="json")
+                    persistence.log_ws_event(
+                        direction="out",
+                        event=WSEvent.MERISTEM_READY.value,
+                        payload=ready_payload,
+                    )
+                    await pollen_manager.send(WSEvent.MERISTEM_READY, ready_payload)
+
+                elif event == WSEvent.POLLEN_HEARTBEAT.value:
+                    ack_payload = {"online": True}
+                    persistence.log_ws_event(
+                        direction="out",
+                        event=WSEvent.MERISTEM_HEARTBEAT_ACK.value,
+                        payload=ack_payload,
+                    )
+                    await pollen_manager.send(
+                        WSEvent.MERISTEM_HEARTBEAT_ACK, ack_payload,
+                    )
+
+                elif event == WSEvent.BUNDLES_PUSHED.value:
+                    logger.info(
+                        "Pollen termino de empujar bundles: count=%d ids=%s",
+                        payload.get("count", 0),
+                        payload.get("bundle_ids", []),
+                    )
+                    # No hace falta responder; UI Meristem leerá /sync-state.
+
+                elif event == WSEvent.POLICIES_PULLED.value:
+                    logger.info(
+                        "Pollen termino de retirar policies: count=%d ids=%s",
+                        payload.get("count", 0),
+                        payload.get("policy_ids", []),
+                    )
+
+                else:
+                    logger.warning("Evento WS desconocido: %s", event)
+                    err_payload = {
+                        "code": "UNKNOWN_EVENT",
+                        "message_es": f"Evento desconocido: {event!r}",
+                    }
+                    persistence.log_ws_event(
+                        direction="out",
+                        event=WSEvent.ERROR.value,
+                        payload=err_payload,
+                        trace_id=trace_id,
+                    )
+                    await pollen_manager.send(
+                        WSEvent.ERROR, err_payload, trace_id=trace_id,
+                    )
+
+        except WebSocketDisconnect:
+            logger.info("Pollen %s desconectado limpiamente", pollen_manager.pollen_id)
+        except Exception as e:
+            logger.exception("Error en loop WS Pollen: %s", e)
+        finally:
+            await pollen_manager.disconnect()
+
+    # -----------------------------------------------------------------------
+    # REST endpoints para la UI Meristem (control plane)
+    # -----------------------------------------------------------------------
+
+    @app.post("/pollen/command")
+    async def trigger_pollen_command(req: CommandRequest) -> dict[str, Any]:
+        """Disparado por click del agricultor en UI Meristem.
+
+        Envía un mensaje `command` por el WS al Pollen conectado. Si no
+        hay Pollen conectado, devuelve 409.
+        """
+        if not pollen_manager.is_connected:
+            raise HTTPException(
+                status_code=409,
+                detail="No hay Pollen conectado en este momento.",
+            )
+        trace_id = f"cmd_{uuid.uuid4().hex[:8]}"
+        cmd_payload = CommandPayload(
+            command=req.command,
+            expected_count=req.expected_count,
+        ).model_dump(mode="json")
+        persistence.log_ws_event(
+            direction="out",
+            event=WSEvent.COMMAND.value,
+            payload=cmd_payload,
+            trace_id=trace_id,
+        )
+        ok = await pollen_manager.send(
+            WSEvent.COMMAND, cmd_payload, trace_id=trace_id,
+        )
+        if not ok:
+            raise HTTPException(
+                status_code=502,
+                detail="No se pudo enviar el comando por WebSocket.",
+            )
+        return {
+            "ok": True,
+            "trace_id": trace_id,
+            "command": req.command,
+            "expected_count": req.expected_count,
+        }
+
+    @app.get("/sync-state")
+    async def sync_state() -> dict[str, Any]:
+        """Estado actual del sync Pollen-Meristem para la UI.
+
+        Combina:
+        - estado de la conexión WS (connected, alive, pollen_id)
+        - últimos N eventos WS persistidos (audit/demo visible)
+
+        La UI hace polling cada 1-2s a este endpoint para reflejar
+        eventos en pantalla sin abrir su propio WebSocket.
+        """
+        return {
+            "pollen_connection": pollen_manager.state_snapshot(),
+            "recent_events": persistence.get_recent_ws_events(limit=20),
+            "ws_events_by_type": persistence.count_ws_events_by_event(),
+        }
 
     return app
 

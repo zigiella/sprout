@@ -86,6 +86,21 @@ CREATE TABLE IF NOT EXISTS decisions (
 
 CREATE INDEX IF NOT EXISTS idx_decisions_bundle
     ON decisions(bundle_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS pollen_sync_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    direction TEXT NOT NULL,  -- 'in' (Pollen->Meristem) | 'out' (Meristem->Pollen)
+    event TEXT NOT NULL,      -- WSEvent value
+    payload_json TEXT NOT NULL,
+    trace_id TEXT,            -- nullable
+    created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_pollen_sync_log_created
+    ON pollen_sync_log(created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_pollen_sync_log_trace
+    ON pollen_sync_log(trace_id);
 """
 
 
@@ -396,3 +411,95 @@ def get_target_summary(
         "latest_reason_code": latest_reason_code,
         "latest_rule_applied": latest_rule_applied,
     }
+
+
+# ---------------------------------------------------------------------------
+# Pollen sync log (WebSocket protocol audit trail)
+# ---------------------------------------------------------------------------
+
+
+def log_ws_event(
+    direction: str,
+    event: str,
+    payload: dict[str, Any],
+    trace_id: str | None = None,
+    db_path: Path | str = DEFAULT_DB_PATH,
+) -> int:
+    """Persiste un mensaje WS para audit/demo.
+
+    Args:
+        direction: 'in' (Pollen→Meristem) | 'out' (Meristem→Pollen)
+        event: nombre del evento (WSEvent value)
+        payload: dict con el payload del mensaje
+        trace_id: opcional, para correlacionar request/response
+
+    Returns:
+        id auto-incrementado de la fila insertada
+    """
+    if direction not in ("in", "out"):
+        raise ValueError(f"direction debe ser 'in' o 'out', no {direction!r}")
+    with _connect(db_path) as con:
+        cur = con.execute(
+            """
+            INSERT INTO pollen_sync_log
+            (direction, event, payload_json, trace_id, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                direction,
+                event,
+                json.dumps(payload, ensure_ascii=False),
+                trace_id,
+                datetime.now().isoformat(),
+            ),
+        )
+        return int(cur.lastrowid or 0)
+
+
+def count_ws_events_by_event(
+    db_path: Path | str = DEFAULT_DB_PATH,
+) -> dict[str, int]:
+    """Para `/health`: distribución de eventos WS recibidos/emitidos.
+
+    Útil al jurado: muestra el flujo bidireccional persistente con Pollen.
+    """
+    with _connect(db_path) as con:
+        rows = con.execute(
+            "SELECT event, COUNT(*) AS c FROM pollen_sync_log GROUP BY event"
+        ).fetchall()
+    return {r["event"]: int(r["c"]) for r in rows}
+
+
+def get_recent_ws_events(
+    limit: int = 20,
+    db_path: Path | str = DEFAULT_DB_PATH,
+) -> list[dict[str, Any]]:
+    """Devuelve los últimos N eventos WS en orden descendente.
+
+    Útil para `/sync-state` endpoint que la UI Meristem va a leer.
+    """
+    with _connect(db_path) as con:
+        rows = con.execute(
+            """
+            SELECT id, direction, event, payload_json, trace_id, created_at
+            FROM pollen_sync_log
+            ORDER BY id DESC
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+    result = []
+    for r in rows:
+        try:
+            payload = json.loads(r["payload_json"])
+        except json.JSONDecodeError:
+            payload = {}
+        result.append({
+            "id": int(r["id"]),
+            "direction": r["direction"],
+            "event": r["event"],
+            "payload": payload,
+            "trace_id": r["trace_id"],
+            "created_at": r["created_at"],
+        })
+    return result
