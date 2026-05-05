@@ -1,6 +1,6 @@
 # Copies bilingües del vídeo Sprout — ES / EN
 
-**Versión:** v0.2 (apilado parcial post-v1.7 — escenas estables E2-E7 actualizadas. Escenas inestables E0/E1/E3b/E8/E9/E9b TBD-sesión día 20)
+**Versión:** v0.3 (apilado completo post-v1.8 — Bea cerró los 4 abiertos día 20, todas las 12 escenas con copies bilingües completos)
 **Fecha:** 2026-05-05 (día 20)
 **Autora:** Corola
 **Origen:** decisión Bea día 16 — *"Necesitaré tener siempre los copies del video (textos VO, voz en off, cartelas, etc en ES y EN)."* Actualizado al giro estratégico día 18-19 (12 escenas, VO inglés master, frases fuertes reformuladas, Meristem en MVP).
@@ -22,18 +22,18 @@
 
 | Escena | Estado | Notas |
 |--------|--------|-------|
-| **E0** Cartela apertura Sprout | **TBD-sesión día 20** | Microcartela atribución Gemma confirmada en cierre, no en E0. Texto cartela apertura sin cambios pero pendiente sesión. |
-| **E1** La ausencia con datos globales | **TBD-sesión día 20** | Reformulada drásticamente con 4 datos globales + microcorte tierra agrietada + pregunta abierta. Texto definitivo pendiente revisión Cambium ella + Bea. |
+| **E0** Cartela apertura Sprout | ✅ **Estable v1.8** | Wordmark Sprout + subtítulo "AI Local-first irrigation decisions." + "Safe · explainable · open-source." Microcartela atribución Gemma trademark NO va aquí (va en cierre). |
+| **E1** La ausencia con datos globales | ✅ **Estable v1.8** | 4 datos globales (UNCCD, OECD, FAO, ITU) + microcorte 0.5s tierra agrietada + pregunta abierta. |
 | **E2** Rhizome decide offline | ✅ **Estable v1.7** | Frase fuerte 1 reformulada. VO en inglés. |
 | **E3** ESP32 SAFE LIMIT | ✅ **Estable v1.7** | Frase fuerte 3 reformulada (proposes/disposes). Cartela técnica nueva (AI proposes / ESP32 validates). |
-| **E3b** Meristem prepara | **TBD-sesión día 20** | Nueva en v1.7. Frase Extra E3b cerrada Bea pero ubicación cartela en pantalla pendiente. |
+| **E3b** Meristem prepara | ✅ **Estable v1.8** | Plano cocina + portátil + Pollen recibiendo política. VO Extra E3b: *"Meristem composes the policy."* |
 | **E4** Llega Pollen | ✅ **Estable v1.7** | Frase fuerte 2 reformulada (con Pollen explícito). |
 | **E5** La persona da una misión | ✅ **Estable v1.7** | Voz humana castellano literal. Subtítulo inglés en master. |
 | **E6** Ferry A→B | ✅ **Estable v1.7** | Frase fuerte 5 sin cambios. Contingencia con/sin meteo. |
 | **E7** Watering criteria updated | ✅ **Estable v1.7** | Climax. Cartela ancla `Watering criteria updated.` + invariante esquina. |
-| **E8** Caducidad | **TBD-sesión día 20** | Pendiente decisión: ¿matamos E8 sí/no? Si sobrevive, frase fuerte 4 cerrada. |
-| **E9** Cenital federado | **TBD-sesión día 20** | Cadencia cartela final pendiente (3 beats v1.7 vs 5 cartelas v1.6). PR #88 abierto. |
-| **E9b** Meristem recibe + cierre | **TBD-sesión día 20** | Nueva en v1.7. Frase fuerte 6 + tagline bookend cierre. |
+| **E8** Caducidad | ✅ **Estable v1.8 — NO se mata** | Decisión Bea día 20. F4 + plano `expired → rejected` se quedan. Vale para Safety & Trust. |
+| **E9** Cenital federado | ✅ **Estable v1.8 — Opción B firme** | 20s con cadencia Venation completa (5 cartelas asimétricas + pausa tensa + cierre largo + sello SYNCED ✓). Cartela final v1.6: *"Federated intelligence, carried by Pollen."* Decisión Bea día 20. |
+| **E9b** Meristem recibe + cierre | ✅ **Estable v1.8** | Plano íntimo cocina + frase 6 ubicada aquí (decisión Bea día 20) + tagline bookend cierre + tarjeta logo final con atribución Gemma. |
 
 ---
 
@@ -230,22 +230,155 @@ why_short              Mission compiled from human voice
 
 ---
 
-## TBD-sesión día 20 — escenas inestables
+## Escena 0 — Cartela apertura Sprout (0:00–0:05) ✅ ESTABLE v1.8
 
-Las siguientes escenas tienen elementos pendientes de cierre en sesión conjunta los tres (Bea + Cambium ella + Corola):
+**Sin VO.** Marco visual antes de la ausencia.
 
-- **E0 Cartela apertura Sprout** — texto cartela apertura sin cambios v1.7. Pendiente sesión por coherencia con resto.
-- **E1 La ausencia con datos globales** — reformulada drásticamente. 4 datos globales + microcorte tierra agrietada + pregunta abierta. Texto definitivo pendiente revisión Cambium ella.
-- **E3b Meristem prepara** — nueva. Frase Extra E3b cerrada Bea (*"Meristem composes the policy."*). Cartela en pantalla pendiente decisión final.
-- **E8 Caducidad** — pendiente: ¿matamos E8 sí/no? Si sobrevive, frase fuerte 4 cerrada (*"Every intelligence has jurisdiction. And expiry."*).
-- **E9 Cenital federado** — cadencia cartela final pendiente (3 beats v1.7 modulación Cambium ella vs 5 cartelas v1.6 con cadencia Venation 20s). Decisión post-sesión, PR #88 abierto a Venation.
-- **E9b Meristem recibe + cierre íntimo** — nueva. Frase fuerte 6 cerrada (*"Meristem stores and processes. Tomorrow, it will learn."*). Tagline bookend cierre cerrada (*"When network is absent — and the human is far — local criteria still irrigate."*). Tarjeta logo final con microcartela atribución Gemma confirmada.
+| Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
+|----------|------------------|-----------------|-------------------|
+| Wordmark | **`Sprout`** | "Sprout" | Centro · Manrope titular grande, `soil.oat` sobre `soil.graphite` |
+| Subtítulo | **"AI Local-first irrigation decisions."** | *"Decisiones de riego local-first con IA."* | Centro · Manrope mediano |
+| Línea inferior | **"Safe · explainable · open-source."** | *"Seguras · explicables · open-source."* | Centro · Manrope pequeña |
 
-**Tras sesión, completar v0.3** con todas las escenas cerradas + revisión final ES↔EN del documento entero.
+**Atribución Gemma trademark NO va en E0** (decisión Bea día 19 — va en cierre concentrado por reglas hackathon).
+
+---
+
+## Escena 1 — La ausencia con datos globales (0:05–0:25) ✅ ESTABLE v1.8
+
+**Sin VO.** Opener tipográfico con 4 datos globales + microcorte tierra agrietada (0.5s) + pregunta abierta. Cataluña como ejemplo del patrón global.
+
+| Tiempo | Elemento | EN (en pantalla) | ES (referencia) |
+|--------|----------|------------------|-----------------|
+| 0:05–0:09 (4s) | Dato 1 | **"In 2023, 48% of the world's land area suffered at least one month of extreme drought."** + microcita `[UNCCD World Drought Atlas]` | "En 2023, el 48% de la superficie terrestre mundial sufrió al menos un mes de sequía extrema." |
+| 0:09–0:13 (4s) | Dato 2 | **"1.8 billion people affected. $300 billion per year in losses."** + microcita `[UNCCD]` | "1.800 millones de personas afectadas. 300.000 millones al año en pérdidas." |
+| 0:13–0:13.5 (0.5s) | Microcorte tierra agrietada | (sin texto) | (bisagra emocional macro→concreto) |
+| 0:13.5–0:17.5 (4s) | Dato 3 | **"In Catalonia 2024, agriculture cut water for irrigation by 80%."** + microcita `[Generalitat de Catalunya]` | "En Cataluña 2024, la agricultura redujo el agua para riego un 80%." |
+| 0:17.5–0:21.5 (4s) | Dato 4 | **"58% of the rural population uses internet. In low-income countries: only 14%."** + microcita `[ITU 2025]` | "El 58% de la población rural usa internet. En países de bajos ingresos: solo el 14%." |
+| 0:21.5–0:25 (3.5s) | Pregunta abierta | **"When network is absent — and the human is far — what makes the right call?"** | "Cuando no hay red, y nadie está cerca — ¿quién decide bien?" |
+
+**Microcorte tierra agrietada (0.5s)** — bisagra emocional + corte respiratorio + anticipación de Cataluña. Pendiente confirmar producible con Venation o se descarta.
+
+---
+
+## Escena 3b — Meristem prepara la política (1:05–1:15) ✅ ESTABLE v1.8
+
+**Plano cocina + portátil + Pollen recibiendo política.** Bookend con E9b.
+
+### VO master
+
+| Elemento | EN (master VO) | ES (dub) | Posición / Tiempo |
+|----------|----------------|----------|-------------------|
+| VO E3b (Extra E3b — cerrada Bea día 19) | **"Meristem composes the policy."** | *"Meristem compone la política."* | Sobre el plano del Pollen recibiendo · 1:12–1:15 (~5 palabras EN) |
+
+### Cartelas y overlays on-screen (inglés)
+
+| Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
+|----------|------------------|-----------------|-------------------|
+| Cartela cierre escena | **`Meristem composes.`** | "Meristem compone." | Centro/superpuesta · 1:13–1:15 (2-3s, Manrope) |
+
+**Notas:**
+- UI Meristem en pantalla del portátil — coordinación con Meristem (real preferida o mock fiel).
+- `signal.seed` activo en el momento donde el sistema decide.
+- Pollen (móvil) sobre la mesa recibiendo la política — **eco visual con E9b** (Pollen entrega de vuelta los datos recogidos).
+
+---
+
+## Escena 8 — Caducidad (2:40–2:50) ✅ ESTABLE v1.8 — DECISIÓN BEA DÍA 20: NO SE MATA
+
+**E8 sobrevive.** Frase fuerte 4 + plano `expired → rejected` valen para Safety & Trust del concurso.
+
+### VO master
+
+| Elemento | EN (master VO) | ES (dub) | Posición / Tiempo |
+|----------|----------------|----------|-------------------|
+| VO E8 (frase fuerte 4) | **"Every intelligence has jurisdiction. And expiry."** | *"Toda inteligencia tiene jurisdicción. Y caducidad."* | Sobre la pantalla del rechazo · 2:46–2:50 (~7 palabras EN) |
+
+### Cartelas y overlays on-screen (inglés)
+
+| Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
+|----------|------------------|-----------------|-------------------|
+| Cartela salto temporal | **"Three days later"** | "Tres días después" | Centro · 2:40–2:42 (2s, Manrope) |
+| Cartela superpuesta rechazo | **`expired → rejected`** + borde doble `status.blocked` | "Caducado → Rechazado" | Centro/superpuesta sobre log · 2:44–2:46 (2s, IBM Plex Mono) |
+
+### Log diseñado en pantalla del Jetson (sistema, sin traducción)
+
+```
+WeatherDigest #2026-05-04-001
+status: EXPIRED → REJECTED
+reason: ttl exceeded
+```
+
+---
+
+## Escena 9 — Cenital federado (2:50–3:10) ✅ ESTABLE v1.8 — OPCIÓN B FIRME
+
+**Sin VO.** Cadencia Venation completa 5 cartelas asimétricas + pausa tensa + cierre largo. Decisión Bea día 20 (revierte modulación Cambium ella v1.7 → cadencia v1.6 con cierre largo).
+
+### Cartelas progresivas (Manrope, sobre cenital flat editorial 20s)
+
+| Beat | EN (en pantalla) | ES (referencia) | Tiempo |
+|------|------------------|-----------------|--------|
+| 1 | **"One plot."** | *"Una parcela."* | 2:52–2:53.5 (1.5s) |
+| 2 | **"Two."** | *"Dos."* | 2:53.5–2:55 (1.5s) |
+| 3 | **"Eight."** | *"Ocho."* | 2:55–2:57.5 (2.5s) |
+| (PAUSA TENSA) | (sin texto, Pollen recorre con halos) | — | 2:57.5–2:59 (1.5s) |
+| 4 | **"Autonomous."** | *"Autónomas."* | 2:59–3:02 (3s) |
+| (transición) | (sin texto) | — | 3:02–3:04 (2s) |
+| 5 (cumbre) | **"Federated intelligence, carried by Pollen."** + sello **`SYNCED ✓`** | *"Inteligencia federada, llevada por Pollen."* | 3:04–3:10 (6s sostén) |
+
+### Mensajes técnicos en cenital (durante pausa tensa, IBM Plex Mono — sistema, sin traducción)
+
+5 mensajes apareciendo y desapareciendo en cada toque del Pollen-nodo:
+
+```
+WeatherDigest accepted
+MissionPatch delivered
+DecisionReceipt synced
+ValidationStamp issued
+Context cached
+```
+
+---
+
+## Escena 9b — Meristem recibe + cierre íntimo (3:10–3:20) ✅ ESTABLE v1.8
+
+**Plano íntimo cocina** + portátil casero con UI Meristem + Pollen entregando datos + cutaway opcional macetas reales.
+
+### VO master
+
+| Elemento | EN (master VO) | ES (dub) | Posición / Tiempo |
+|----------|----------------|----------|-------------------|
+| VO E9b (frase fuerte 6 — ubicada aquí, decisión Bea día 20) | **"Meristem stores and processes. Tomorrow, it will learn."** | *"Meristem guarda y procesa. Mañana, aprenderá."* | Sobre plano de la cocina · 3:18–3:20 (~10 palabras EN) |
+
+### Cartelas y overlays on-screen (inglés)
+
+| Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
+|----------|------------------|-----------------|-------------------|
+| Cartela on-screen UI Meristem 1 | **`Pulling Rhizome data...`** | "Descargando datos del Rhizome..." | Pantalla del portátil · 3:10–3:13 (3s, IBM Plex Mono) |
+| Cartela on-screen UI Meristem 2 | **`Adjusting policies...`** | "Ajustando políticas..." | Pantalla del portátil · 3:13–3:15 (2s, IBM Plex Mono) |
+| Tagline bookend cierre | **"When network is absent — and the human is far — local criteria still irrigate."** | *"Cuando no hay red, y nadie está cerca, el criterio sigue regando."* | Centro · 3:18–3:20 (2s, Manrope sobre fondo difuminado del portátil) |
+
+### Tarjeta logo final (cierre concentrado, 2-3s sostén)
+
+```
+Sprout
+AI Local-first irrigation decisions.
+Safe · explainable · open-source
+
+zigiella · Apache 2.0
+github.com/zigiella/sprout
+
+Built on Gemma 4 by Google.
+Gemma is a trademark of Google LLC.
+```
+
+**Microcartela atribución Gemma trademark confirmada en cierre por Bea día 19** (por reglas hackathon).
 
 ---
 
 ## Historial
 
+- **v0.3** (2026-05-05, día 20, Corola) — apilado completo post-v1.8 tras Bea cerrar los 4 abiertos día 20. Añadidas escenas inestables E0, E1, E3b, E8, E9, E9b con copies bilingües completos. Decisiones consolidadas: E8 sobrevive, E9 Opción B firme (20s con cadencia Venation completa + cierre largo *"Federated intelligence, carried by Pollen."* + sello SYNCED ✓), F6 ubicada en E9b. Cartela final E9 revierte de modulación Cambium ella v1.7 (3 beats) a cadencia v1.6 con cierre largo. Tarjeta logo final con microcartela atribución Gemma confirmada en cierre por reglas hackathon.
 - **v0.2** (2026-05-05, día 20, Corola) — actualización post-giro estratégico día 18-19 (v1.7 del guion). Cambios: VO master pasa a inglés (era castellano), añadidas escenas E2-E7 con copies bilingües completos, frases fuertes reformuladas (F1, F2, F3, F5 sin cambios), voz humana E5 castellano literal preservada con subtítulo EN entre comillas, contingencia meteo E6 documentada (con/sin), cartela invariante E7 con texto firme. Escenas inestables (E0, E1, E3b, E8, E9, E9b) marcadas TBD-sesión día 20.
 - **v0.1** (2026-05-01, día 16, Corola) — primer apilado de copies bilingües tras petición Bea día 16. Escenas 1-3 completas en formato v1.6 (VO castellano). Convenciones documentadas. Excepción única (voz humana E5) anotada.
