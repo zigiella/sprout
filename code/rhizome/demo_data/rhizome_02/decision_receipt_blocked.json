@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-04-16T18:25:40Z",
+  "origin_node_id": "rhizome_02",
+  "signature": null,
+  "decision_id": "rec_rhizome_02_20260416T182540_f4d0",
+  "snapshot_id": "snap_rhizome_02_20260416T182500_c4a1",
+  "active_policy_id": "pkt_rhizome_02_20260416T083015_a8c4",
+  "action": "BLOCK",
+  "action_params": {
+    "blocked_action": "WATER_A",
+    "reason": "watering_window_closed"
+  },
+  "rationale_short": "Rhizome blocked a late watering request because it was outside the active watering window.",
+  "rationale_full": "Soil probe A remained dry, but the active policy only allows watering in the morning window. Rhizome kept the decision traceable and did not send a water command.",
+  "policy_refs": [
+    "rules.watering_window",
+    "rules.soil_moisture_thresholds.parcel_a.min_pct"
+  ],
+  "contradictions": [],
+  "confidence": 0.91,
+  "executed": false,
+  "execution_details": null,
+  "blocked_reason": "watering_window_closed"
+}

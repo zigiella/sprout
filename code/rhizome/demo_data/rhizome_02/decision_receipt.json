@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-04-16T15:10:10Z",
+  "origin_node_id": "rhizome_02",
+  "signature": null,
+  "decision_id": "rec_rhizome_02_20260416T151010_e2b1",
+  "snapshot_id": "snap_rhizome_02_20260416T151005_b7c9",
+  "active_policy_id": "pkt_rhizome_02_20260416T083015_a8c4",
+  "action": "WATER_A",
+  "action_params": {
+    "duration_s": 18,
+    "expected_liters": 0.9
+  },
+  "rationale_short": "Soil probe A was below threshold; Rhizome watered briefly within the safe envelope.",
+  "rationale_full": "Soil probe A reported 31.4%, below the active policy threshold. Tank level was 43%, heartbeat was healthy, and the requested 18s duration stayed inside the safe envelope.",
+  "policy_refs": [
+    "rules.soil_moisture_thresholds.parcel_a.min_pct",
+    "rules.max_watering_duration_s",
+    "rules.tank_minimum_pct"
+  ],
+  "contradictions": [],
+  "confidence": 0.84,
+  "executed": true,
+  "execution_details": {
+    "sent_to_esp32_at": "2026-04-16T15:10:10Z",
+    "esp32_ack_at": "2026-04-16T15:10:11Z",
+    "esp32_ack_status": "OK",
+    "actual_duration_s": 18.1,
+    "flow_observed_lpm": 2.9,
+    "estimated_liters_actual": 0.88
+  },
+  "blocked_reason": null
+}
