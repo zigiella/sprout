@@ -6,6 +6,8 @@ Estado actual:
 
 - `day19_mounting_schematics.md` es la guia operativa para empezar el montaje
   en mesa sin activar actuadores.
+- `day20_mvp_single_pump_relay_wiring.md` detalla el MVP reducido con una sola
+  bomba 12V, fusible, rele y diodo flyback, sin electrovalvulas.
 - Los diagramas son Markdown + Mermaid/ASCII para poder revisarlos en PR.
 - Fritzing/KiCad/fotos reales pueden anadirse despues, cuando el cableado este
   validado con multimetro y pruebas host-side.
