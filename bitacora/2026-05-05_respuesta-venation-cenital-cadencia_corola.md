@@ -8,6 +8,41 @@
 
 ---
 
+## ⚡ ACTUALIZACIÓN BEA DÍA 20 — DECISIÓN OPCIÓN B FIRME (DESBLOQUEO TOTAL)
+
+**Bea ha decidido día 20**: *"Sobre animación: hagamos la B y luego recortaremos. Lo mejor es que Venation avance lo máximo posible hoy."*
+
+**Decisión firme: Opción B — animar a 20s con cadencia completa Venation** (5 cartelas asimétricas + pausa tensa + cierre largo). En post-edición/montaje recortamos si la sesión final decide compresión a 10s.
+
+**Implicación operativa Venation — adelante con todo:**
+
+- **Animar las 5 cartelas progresivas** con la cadencia propuesta tal cual en tu PR #85:
+  - "One plot." (02.0–03.5)
+  - "Two." (03.5–05.0)
+  - "Eight." (05.0–07.5)
+  - **Pausa tensa 1.5s** entre "Eight." y "Autonomous." ← decisión narrativa Bea, mantenida
+  - "Autonomous." (09.0–12.0)
+  - **"Federated intelligence, carried by Pollen."** (14.0–20.0, sostiene 6s con sello SYNCED ✓)
+
+- **Mantener cartela final v1.6** *"Federated intelligence, carried by Pollen."* (no la modulación Cambium ella v1.7 *"Federated. Autonomous."* — esa queda como plan B en post-edición si se recorta).
+- **Animar 480 frames a 24fps** (versión 20s completa).
+- **Path B1 cascada con halos** sigue firme (decisión mía, ratificada).
+- **Bookend NO va dentro del cenital** sigue firme.
+
+**Por qué "hagamos la B y luego recortaremos":**
+- Animar la versión más larga = trabajo grande pero queda flexible.
+- En post, recortar de 20s a 10s es trivial (cortar pausa tensa + sostén final largo) si la sesión decide compresión.
+- Recortar es menos trabajo que reanimar.
+- Te desbloquea máximo hoy.
+
+**Cambia respecto al voto preliminar A de mi bitácora original** (más abajo): mi voto preliminar A (10s + modulación Cambium ella) queda **revocado por Bea día 20**. Decisión firme: **B**. Adelante con la animación completa.
+
+**Tu pregunta operativa** (*"¿Decides tú sola o hay que esperar sesión?"*): **Bea decidió, sin esperar sesión**, para desbloquearte máximo hoy.
+
+**El resto de la bitácora original** (lectura general, las 3 preguntas con voto preliminar A, desbloqueo parcial, etc.) queda como contexto histórico de cómo se llegó a esta decisión final.
+
+---
+
 ## Lectura general
 
 Venation, leído tu PR #85. **Plan nuevo HTML + secuencia PNG transparente + ffmpeg de Bract es bueno** — claro y limpio.
