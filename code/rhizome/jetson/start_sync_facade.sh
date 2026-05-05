@@ -3,8 +3,10 @@ set -euo pipefail
 
 FACADE_PORT="${FACADE_PORT:-13010}"
 FACADE_HOST="${FACADE_HOST:-0.0.0.0}"
-FACADE_PID_FILE="${FACADE_PID_FILE:-/tmp/sprout_rhizome_sync_facade.pid}"
-FACADE_LOG_FILE="${FACADE_LOG_FILE:-/tmp/sprout_rhizome_sync_facade.log}"
+FACADE_NODE_ID="${FACADE_NODE_ID:-rhizome_01}"
+FACADE_PID_FILE="${FACADE_PID_FILE:-/tmp/sprout_${FACADE_NODE_ID}_sync_facade_${FACADE_PORT}.pid}"
+FACADE_LOG_FILE="${FACADE_LOG_FILE:-/tmp/sprout_${FACADE_NODE_ID}_sync_facade_${FACADE_PORT}.log}"
+FACADE_DATA_DIR="${FACADE_DATA_DIR:-}"
 REPO_DIR="${REPO_DIR:-$HOME/sprout}"
 
 if [ ! -f "$REPO_DIR/code/rhizome/src/rhizome_sync_facade.py" ]; then
@@ -22,15 +24,23 @@ if [ -f "$FACADE_PID_FILE" ]; then
 fi
 
 echo "Starting Rhizome sync facade on ${FACADE_HOST}:${FACADE_PORT}"
+echo "Node: $FACADE_NODE_ID"
 echo "Repo: $REPO_DIR"
 echo "Log: $FACADE_LOG_FILE"
 
+FACADE_ARGS=(
+  --host "$FACADE_HOST"
+  --port "$FACADE_PORT"
+  --node-id "$FACADE_NODE_ID"
+)
+
+if [ -n "$FACADE_DATA_DIR" ]; then
+  FACADE_ARGS+=(--data-dir "$FACADE_DATA_DIR")
+fi
+
 (
   cd "$REPO_DIR/code/rhizome"
-  nohup python -m src.rhizome_sync_facade \
-    --host "$FACADE_HOST" \
-    --port "$FACADE_PORT" \
-    >"$FACADE_LOG_FILE" 2>&1 &
+  nohup python -m src.rhizome_sync_facade "${FACADE_ARGS[@]}" >"$FACADE_LOG_FILE" 2>&1 &
   echo $! >"$FACADE_PID_FILE"
 )
 

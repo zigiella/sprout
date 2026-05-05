@@ -23,8 +23,8 @@ def _get_json(base_url: str, path: str):
         return json.loads(response.read().decode("utf-8"))
 
 
-def _run_server(data_dir: Path):
-    server = make_server("127.0.0.1", 0, data_dir)
+def _run_server(data_dir: Path, node_id: str = "rhizome_01"):
+    server = make_server("127.0.0.1", 0, data_dir, node_id=node_id)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     host, port = server.server_address
@@ -44,11 +44,61 @@ class SyncFacadeTest(unittest.TestCase):
 
         self.assertEqual(status["status"], "ready")
         self.assertEqual(status["mode"], "read_only_facade")
+        self.assertEqual(status["node_id"], "rhizome_01")
         self.assertTrue(snapshot["snapshot_id"])
         self.assertGreaterEqual(snapshot["sensors"]["tank_level_pct"], 0)
         self.assertIsInstance(receipts, list)
         self.assertTrue(receipts[0]["decision_id"])
-        self.assertEqual(explanation["explanation"], receipts[0]["rationale_short"])
+        self.assertEqual(explanation["source"], "deterministic_receipt_explainer")
+        self.assertIn(receipts[0]["action"], explanation["explanation"])
+
+    def test_explanation_can_be_localized_to_english(self):
+        server, base_url = _run_server(default_data_dir())
+        try:
+            receipts = _get_json(base_url, "/receipts")
+            explanation = _get_json(
+                base_url,
+                f"/explain/decision/{receipts[0]['decision_id']}?locale=en",
+            )
+        finally:
+            _stop_server(server)
+
+        self.assertEqual(explanation["locale"], "en")
+        self.assertIn("Rhizome executed", explanation["explanation"])
+
+    def test_visit_summary_is_smart_button_payload(self):
+        server, base_url = _run_server(default_data_dir())
+        try:
+            summary = _get_json(base_url, "/summary/since?locale=es")
+            future_summary = _get_json(
+                base_url,
+                "/summary/since?since=2099-01-01T00:00:00Z&locale=en",
+            )
+        finally:
+            _stop_server(server)
+
+        self.assertEqual(summary["node_id"], "rhizome_01")
+        self.assertEqual(summary["source"], "deterministic_demo_summary")
+        self.assertEqual(summary["severity"], "attention")
+        self.assertEqual(summary["counts"]["total"], 2)
+        self.assertIn("Durante tu ausencia", summary["summary"])
+        self.assertEqual(future_summary["counts"]["total"], 0)
+        self.assertEqual(future_summary["locale"], "en")
+
+    def test_second_rhizome_demo_data_can_run_on_another_port(self):
+        data_dir = default_data_dir().parents[2] / "rhizome" / "demo_data" / "rhizome_02"
+        server, base_url = _run_server(data_dir, node_id="rhizome_02")
+        try:
+            status = _get_json(base_url, "/status")
+            snapshot = _get_json(base_url, "/snapshot/latest")
+            summary = _get_json(base_url, "/summary/since?locale=en")
+        finally:
+            _stop_server(server)
+
+        self.assertEqual(status["node_id"], "rhizome_02")
+        self.assertEqual(snapshot["origin_node_id"], "rhizome_02")
+        self.assertEqual(summary["node_id"], "rhizome_02")
+        self.assertTrue(summary["simulation"])
 
     def test_receipts_since_filter_uses_created_at(self):
         server, base_url = _run_server(default_data_dir())
