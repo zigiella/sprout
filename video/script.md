@@ -1,6 +1,14 @@
-# Script — Sprout v1.7 (giro estratégico día 18-19: 12 escenas + VO inglés master + apertura datos globales + Meristem en MVP)
+# Script — Sprout v1.8 (día 20: 4 abiertos cerrados por Bea — caducidad sobrevive, cadencia E9 Opción B, frase 6 en E9b, timing en montaje)
 
-**Versión:** v1.7 (día 19 — giro estratégico cerrado por Bea + Cambium ella día 18 e iterado día 19. Cambios masivos sobre v1.6:
+**Versión:** v1.8 (día 20 — Bea cierra los 4 abiertos pendientes de sesión sin esperar a sesión conjunta. Cambios sobre v1.7:
+1. **E8 Caducidad NO se mata** — frase fuerte 4 (*"Every intelligence has jurisdiction. And expiry."*) + plano `expired → rejected` se quedan. Decisión Bea día 20.
+2. **Cadencia cenital E9 Opción B firme** — animar a 20s con cadencia completa Venation (5 cartelas asimétricas + pausa tensa + cierre largo). Recortar en post-edición si procede. Mantiene cartela final v1.6 *"Federated intelligence, carried by Pollen."* (revierte modulación Cambium ella v1.7). Decisión Bea día 20.
+3. **Frase 6 ubicada en E9b** (no en E9 cenital). Plano íntimo doméstico sostiene mejor la frase + conecta con tagline bookend cierre + bookend Meristem (E3b ↔ E9b). Decisión Bea día 20 (votos consensuados Cambium ella + Corola previos).
+4. **Timing total ajustado en montaje** — no forzar 3:00 ahora. Tiempos teóricos suman 3:20 con E9 a 20s. Decisión Bea día 20.
+
+**Estado v1.8:** los 4 abiertos cerrados. Sesión conjunta los tres ya no es bloqueante para producción. Venation y Bract tienen guion firme para trabajar.
+
+Cambios anteriores v1.7 sobre v1.6:
 1. **Estructura: 12 escenas** (era 9). Añadidas E0 (cartela apertura Sprout, 5s), E3b (Meristem prepara, 10s), E9b (Meristem recibe, 10s).
 2. **VO master pasa a INGLÉS + subtítulos en inglés.** Versión ES dub aparte. Excepción: voz humana cruda en E5 (`operator_note`) se mantiene en castellano sin traducir como decisión narrativa deliberada.
 3. **E1 reformulada:** apertura silenciosa con maceta sustituida por opener tipográfico con **4 datos globales** (UNCCD, OECD, FAO, ITU). Cataluña baja a ejemplo del patrón global. Cierre con pregunta abierta + tagline bookend.
@@ -8,12 +16,12 @@
 5. **Tagline bookend** confirmada (inicio + cierre): *"When network is absent — and the human is far — local criteria still irrigate."*
 6. **Frases fuertes reformuladas:** F1 + F2 + F3 + F6 nueva + Extra E3b. F4 cerrada por Bea día 19. F5 sin cambios.
 7. **Microcorte 0.5s tierra agrietada** entre dato 2 y dato 3 de E1 (propuesta Corola día 19, aceptada Bea).
-8. **Cartela progresiva final E9 → modulación Cambium ella** (*"One plot. Two. Eight. Federated. Autonomous."*) por compresión de E9 a 10s.
+8. **Cartela progresiva final E9 → modulación Cambium ella** (*"One plot. Two. Eight. Federated. Autonomous."*) por compresión de E9 a 10s. **REVERTIDA EN v1.8:** vuelve a cadencia v1.6 con cartela final *"Federated intelligence, carried by Pollen."* a 20s con cadencia Venation completa.
 9. **"AI Local-first"** sustituye a "Local-first" sistemáticamente.
-10. **Atribución Gemma trademark** explícita: *"Built on Gemma 4 by Google. Gemma is a trademark of Google LLC."* — ubicación pendiente decisión legal Bea/Cambium ella.)
-**Fecha:** 2026-05-04 (día 19)
-**Autora:** Corola (basado en documento estratégico Bea + Cambium ella día 18-19)
-**Duración objetivo:** ≤ 3:00 (límite hackathon). Tiempos teóricos del documento estratégico suman 3:10 — **ajuste fino en montaje**, decisión Bea día 19 ("no nos preocupemos en ajustar a 3 minutos, cuadraremos montando").
+10. **Atribución Gemma trademark** confirmada en cierre: *"Built on Gemma 4 by Google. Gemma is a trademark of Google LLC."* (decisión Bea día 19, por reglas hackathon).)
+**Fecha:** 2026-05-05 (día 20)
+**Autora:** Corola (decisiones consolidadas Bea día 18-20)
+**Duración objetivo:** ≤ 3:00 (límite hackathon). Tiempos teóricos v1.8 suman 3:20 con E9 a 20s — **ajuste fino en montaje**, decisión Bea día 20 ("hagamos B y luego recortaremos. No nos preocupemos en ajustar a 3 minutos, cuadraremos montando").
 **Estructura:** 12 escenas (E0, E1, E2, E3, E3b, E4, E5, E6, E7, E8, E9, E9b).
 **Dirección de arte:** sistema *Soil protocol + Water ledger* de Venation (`sprout_design_pack_v1`).
 **Estado:** v1.7 cerrada por Corola día 19 con seis votos firmes de Bea. Pendiente sesión conjunta Bea + Cambium ella + Corola para validar/refinar.
@@ -70,9 +78,9 @@ Pista visual única que el espectador asocia con sistema decidiendo/actuando con
 
 ---
 
-## Resumen — 12 escenas (v1.7)
+## Resumen — 12 escenas (v1.8)
 
-Tiempos teóricos según documento estratégico Cambium ella día 19 (Opción C). Suma: 3:10 — **ajuste en montaje**.
+Tiempos teóricos v1.8 con E9 vuelta a 20s (decisión Bea día 20: animar 20s completo, recortar en post si procede). Suma: **3:20 — ajuste en montaje**, no forzar 3:00 ahora.
 
 | # | Escena | Tiempo teórico | Beat clave |
 |---|--------|----------------|------------|
@@ -86,8 +94,8 @@ Tiempos teóricos según documento estratégico Cambium ella día 19 (Opción C)
 | **6** | Ferry A→B | 2:00–2:20 (20s) | Pollen lleva digest entre Rhizomes + **frase fuerte 5** |
 | **7** | Watering criteria updated (CLIMAX) | 2:20–2:40 (20s) | tres bloques de evidencia + cartela ancla + cartela invariante esquina + acción física distinta |
 | **8** | Caducidad | 2:40–2:50 (10s) | `expired → rejected` + **frase fuerte 4** (mantiene "intelligence", cerrada Bea día 19) |
-| **9** | Cenital federado (compresión 10s) | 2:50–3:00 (10s) | animación Venation versión 10s · cartela progresiva modulación Cambium ella |
-| **9b** | Meristem recibe (NUEVA) | 3:00–3:10 (10s) | cocina, Bea recibe info de parcelas + cutaway opcional macetas reales + **frase fuerte 6 nueva** + tagline bookend cierre |
+| **9** | Cenital federado (Opción B 20s) | 2:50–3:10 (20s) | animación Venation 20s completa · cartela progresiva 5 beats con pausa tensa · cartela final v1.6 *"Federated intelligence, carried by Pollen."* |
+| **9b** | Meristem recibe + frase 6 (NUEVA) | 3:10–3:20 (10s) | cocina, Bea recibe info de parcelas + cutaway opcional macetas reales + **frase fuerte 6 ubicada aquí** + tagline bookend cierre |
 
 ---
 
@@ -426,41 +434,53 @@ La versión EN parte la frase en dos beats. *"And expiry."* como frase aparte es
 
 ---
 
-### Escena 9 — Cenital federado + Meristem (2:40–3:00)
+### Escena 9 — Cenital federado (2:50–3:10) — DECISIÓN v1.8 (BEA DÍA 20)
 
-**Decisión v1.7 (Bea día 18-19):** **Cenital uno solo, comprimido a 10s. Veo3 fuera, animación de Venation adoptada como definitiva.** El corte limpio Veo3 → imagen real (que era estructural en v1.6) **se mueve a E9b nueva** — ya no vive dentro de E9. E9 queda **puramente flat editorial 10s con cartela progresiva**. **Cartela progresiva pasa a modulación Cambium ella** (más corta, encaja en 10s).
+**Decisión v1.8 (Bea día 20):** **Opción B firme — animar a 20s con cadencia completa Venation. Recortar en post-edición si procede. La modulación Cambium ella v1.7 queda como plan B en montaje.** Razón: animar la versión más larga = flexible. Recortar de 20s a 10s es trivial en post (cortar pausa tensa + sostén final largo). Menos trabajo que reanimar. Desbloquea máximo a Venation.
 
-**Beat narrativo:** el video pasa de **filmado** a **diagramado**. La animación Venation (versión 10s) demuestra el sistema funcionando a escala. El plano de portátil real (lo que era 2:55-3:00 en v1.6) se mueve a E9b nueva con su propio cierre íntimo.
+**Beat narrativo:** el video pasa de **filmado** a **diagramado**. Animación Venation completa demuestra el sistema funcionando a escala. La cartela progresiva con cadencia asimétrica + pausa tensa entre "Eight." y "Autonomous." + cierre largo de 6s sosteniendo la frase final + sello SYNCED ✓ deja respirar la cartela cumbre. El plano de portátil real (corte limpio a imagen real con Meristem) se mueve a E9b con su propio cierre íntimo.
 
-**Cronología:**
+**Cronología (cadencia Venation, v1.8):**
 
-| t | Acción / VO | Cartela / Overlay |
-|---|-------------|-------------------|
-| 2:50–2:52 (2s) | **Morph maceta real → parcela flat.** La maceta de la última toma del video (E8 o cierre de E7) se difumina, los bordes se expanden, aparece la primera parcela en cenital. Fondo `soil.oat` sobrio. | — |
-| 2:52–2:55 (3s) | Cenital flat editorial. **Parcelas apareciendo progresivamente** sobre mosaico irregular. Pollen-nodo aparece como punto luminoso `signal.seed`. Cartela progresiva primer beat. | **Cartela progresiva beat 1** (3s, Manrope): *"One plot. Two. Eight."* |
-| 2:55–2:58 (3s) | Pollen-nodo recorre parcelas. **Mensajes técnicos breves** apareciendo y desapareciendo en cada toque del nodo: `WeatherDigest accepted`, `MissionPatch delivered`, `DecisionReceipt synced`, `ValidationStamp issued`, `Context cached`. Cartela progresiva segundo beat. | **Cartela progresiva beat 2** (3s, Manrope): *"Federated."* |
-| 2:58–3:00 (2s) | Pollen-nodo **llega al nodo Meristem** dentro del cenital flat. **Disco mayor azul desaturado o grafito claro** (Venation), distinto a las 8 parcelas. Cartela progresiva tercer beat. | **Cartela progresiva beat 3** (2s, Manrope): *"Autonomous."* |
+| t | Acción | Cartela / Overlay |
+|---|--------|-------------------|
+| 2:50–2:52 (2s) | **Morph maceta real → parcela flat.** Aparece la primera parcela en cenital. Fondo `soil.oat` sobrio. | — |
+| 2:52–2:53.5 (1.5s) | Pollen-nodo aparece como punto luminoso `signal.seed`. **Cartela progresiva 1**. | **Cartela 1** (Manrope): *"One plot."* |
+| 2:53.5–2:55 (1.5s) | **Cartela progresiva 2** (segunda parcela aparece sincronizada). | **Cartela 2** (Manrope): *"Two."* |
+| 2:55–2:57.5 (2.5s) | Resto de parcelas aparecen progresivamente hasta completar las 8. **Cartela progresiva 3**. | **Cartela 3** (Manrope): *"Eight."* |
+| 2:57.5–2:59 (1.5s) | **PAUSA TENSA** narrativa. Pollen-nodo recorre las parcelas con halos progresivos encendiéndose en cada toque. Mensajes técnicos breves: `WeatherDigest accepted`, `MissionPatch delivered`, `DecisionReceipt synced`, `ValidationStamp issued`, `Context cached`. | — |
+| 2:59–3:02 (3s) | **Cartela progresiva 4**. Pollen-nodo llega al nodo Meristem (disco mayor azul desaturado o grafito claro, distinto a las 8 parcelas). | **Cartela 4** (Manrope): *"Autonomous."* |
+| 3:02–3:04 (2s) | Transición a cartela cumbre. | — |
+| 3:04–3:10 (6s) | **Cartela progresiva 5 — cumbre, sostén largo.** Sello **SYNCED ✓** aparece junto a la cartela. | **Cartela cumbre 5** (6s sostén, Manrope): *"Federated intelligence, carried by Pollen."* + sello **`SYNCED ✓`** |
 
-**Cartela progresiva final E9 — modulación Cambium ella (decisión v1.7):**
+**Cartela progresiva final E9 — cadencia Venation completa (v1.8):**
 
 ```
-One plot. Two. Eight.    (beat 1, 3s)
-Federated.               (beat 2, 3s)
-Autonomous.              (beat 3, 2s)
+One plot.                                           (beat 1, 1.5s — t=02.0–03.5)
+Two.                                                (beat 2, 1.5s — t=03.5–05.0)
+Eight.                                              (beat 3, 2.5s — t=05.0–07.5)
+[PAUSA TENSA NARRATIVA, Pollen recorre]             (1.5s — t=07.5–09.0)
+Autonomous.                                         (beat 4, 3.0s — t=09.0–12.0)
+[transición]                                        (2.0s — t=12.0–14.0)
+Federated intelligence, carried by Pollen. SYNCED ✓ (beat 5, 6.0s sostén — t=14.0–20.0)
 ```
 
-**Por qué esta versión y no la cadencia v1.6:** en v1.6 la cartela final era *"One plot. Two. Eight. / Autonomous. / Federated intelligence, carried by Pollen."* Con E9 a 20s cabía con respiro. Con E9 a 10s (compresión v1.7), la cadencia v1.6 no encaja. La modulación Cambium ella (5 beats cortos) cabe limpio. Pierde el cierre *"carried by Pollen"* pero F5 en E6 ya dice *"Pollen turns those visits into federated intelligence"* — el eco ya está, no necesita repetirse en cartela.
+**Por qué cadencia v1.6 con cierre largo (revierte modulación Cambium ella v1.7):**
+- La pausa tensa de 1.5s entre "Eight." y "Autonomous." es **decisión narrativa de Venation** que Bea valida — respiro estructural antes del cierre.
+- El sostén de 6s sobre *"Federated intelligence, carried by Pollen."* + sello `SYNCED ✓` deja respirar la cartela cumbre y conecta con F5 en E6 (eco interno *"those visits"* → *"every Pollen visit"*).
+- La modulación Cambium ella v1.7 (3 beats cortos) era para 10s comprimido. Con E9 a 20s, vuelve a tener sentido la cadencia v1.6.
+- Si la sesión final decide compresión post a 10s, se recorta cortando pausa tensa + sostén final.
 
-**Lo que se siente:** transición a abstracción. El sistema funcionando a escala. La cartela progresiva en tres beats sobrios cierra la tesis (federación + autonomía).
+**Lo que se siente:** transición a abstracción + sistema funcionando a escala + respiro narrativo (pausa tensa) + cierre amplio que aterriza la tesis (federación + portador). El sello `SYNCED ✓` cierra el cenital con confirmación operativa.
 
 **VO:** 0 palabras (escena puramente visual + cartelas).
-**Cartelas:** 1 cartela progresiva en 3 beats.
+**Cartelas:** 5 cartelas progresivas + sello `SYNCED ✓` final.
 **Overlays:** ninguno.
-**Producción:** **animación de Venation versión 10s adoptada como definitiva** (Bea día 18-19). Venation regenera el cenital animado a 10s — coordinación pendiente. Veo3 queda fuera del cenital.
+**Producción:** **animación Venation 20s completa** (480 frames a 24fps). Path B1 cascada con halos progresivos. Bookend NO va dentro del cenital (va en apertura E1 + cierre E9b). Decisión Bea día 20: animar versión completa, recortar en post si procede. **Plan B documentado:** si en montaje decidimos compresión a 10s, modulación Cambium ella v1.7 (*"One plot. Two. Eight. / Federated. / Autonomous."*) queda como cadencia alternativa.
 
 ---
 
-### Escena 9b — Meristem recibe / cierre íntimo (3:00–3:10) — NUEVA v1.7
+### Escena 9b — Meristem recibe + cierre íntimo (3:10–3:20) — NUEVA v1.7, frase 6 ubicada aquí confirmada v1.8
 
 **Beat narrativo:** **bookend con E3b**. La política sale de casa al campo (E3b) → el campo decide y ejecuta (E2-E8) → los datos vuelven a casa (E9b). Cierre del ciclo doméstico. Frase fuerte 6 nueva sobre plano íntimo. Tagline bookend cierre + tarjeta logo.
 
@@ -468,10 +488,10 @@ Autonomous.              (beat 3, 2s)
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 3:00–3:03 (3s) | **Plano cocina** (continuidad visual con E3b). Bea de vuelta en cocina, portátil casero abierto. Pantalla con UI Meristem. Pollen (móvil) sobre la mesa. Datos viajan del móvil al portátil. | **Cartela en pantalla del portátil** (3s, IBM Plex Mono): *"Pulling Rhizome data..."* |
-| 3:03–3:06 (3s) | Pantalla del portátil cambia. UI Meristem procesando. `signal.seed` activo. | **Cartela on-screen** (2s): *"Adjusting policies..."* |
-| 3:06–3:08 (2s) | **Cutaway opcional micro a las macetas reales en la terraza** (Sprout escala 1 corriendo en su terraza de Castellar). **Si no se rueda el cutaway** (decisión Bea día 19: posible, no asegurado), plano cocina sigue. | — |
-| 3:08–3:10 (2s) | Vuelta a la cocina. **VO inglés (frase fuerte 6 nueva):** *"Meristem stores and processes. Tomorrow, it will learn."* (~10 palabras) | — |
+| 3:10–3:13 (3s) | **Plano cocina** (continuidad visual con E3b). Bea de vuelta en cocina, portátil casero abierto. Pantalla con UI Meristem. Pollen (móvil) sobre la mesa. Datos viajan del móvil al portátil. | **Cartela en pantalla del portátil** (3s, IBM Plex Mono): *"Pulling Rhizome data..."* |
+| 3:13–3:16 (3s) | Pantalla del portátil cambia. UI Meristem procesando. `signal.seed` activo. | **Cartela on-screen** (2s): *"Adjusting policies..."* |
+| 3:16–3:18 (2s) | **Cutaway opcional micro a las macetas reales en la terraza** (Sprout escala 1 corriendo en su terraza de Castellar). **Si no se rueda el cutaway** (decisión Bea día 19: posible, no asegurado), plano cocina sigue. | — |
+| 3:18–3:20 (2s) | Vuelta a la cocina. **VO inglés (frase fuerte 6, ubicada en E9b — decisión Bea día 20):** *"Meristem stores and processes. Tomorrow, it will learn."* (~10 palabras) | — |
 | (cierre fade) | **Tagline bookend cierre** entra por fade sobre la imagen difuminada del portátil. Tarjeta logo final entra después. | **Cartela bookend cierre** (3s, Manrope): *"When network is absent — and the human is far — local criteria still irrigate."* + **Tarjeta logo** entrando por fade |
 
 **Frase fuerte 6 nueva (Bea día 19):**
@@ -567,6 +587,14 @@ Gemma is a trademark of Google LLC.
 ---
 
 ## Historial de versiones
+
+- **v1.8 — los 4 abiertos cerrados por Bea día 20** (2026-05-05, día 20, Corola) — Bea cierra los 4 abiertos pendientes de sesión sin esperar a sesión conjunta los tres. Decisiones consolidadas:
+  1. **E8 Caducidad NO se mata.** Frase fuerte 4 (*"Every intelligence has jurisdiction. And expiry."*) + plano `expired → rejected` se quedan. F4 vale para Safety & Trust del concurso (sistema rechaza información obsoleta).
+  2. **Cadencia E9 Opción B firme — animar 20s con cadencia Venation completa.** Recortar en post si procede. Revierte modulación Cambium ella v1.7 (3 beats en 10s) → cadencia v1.6 con cierre largo *"Federated intelligence, carried by Pollen."* + sello SYNCED ✓ + pausa tensa 1.5s entre "Eight." y "Autonomous." Razón: animar versión más larga = flexible, recortar en post es trivial vs reanimar.
+  3. **Frase 6 ubicada en E9b** (votos consensuados Cambium ella + Corola). Plano íntimo doméstico sostiene mejor la frase + conecta con tagline bookend cierre + bookend Meristem (E3b ↔ E9b).
+  4. **Timing total ajustado en montaje** — no forzar 3:00 ahora. Tiempos teóricos suman 3:20 con E9 a 20s. Decisión Bea día 20.
+  
+  **Estado v1.8:** los 4 abiertos cerrados. Sesión conjunta los tres ya no es bloqueante para producción. Venation desbloqueada total animando 480 frames a 20s. Bract desbloqueada total con copies + montage_brief actualizables a v1.8. Frente vídeo entra en producción real.
 
 - **v1.7 — giro estratégico día 18-19** (2026-05-04, día 19, Corola) — cambios estratégicos cerrados por Bea + Cambium ella día 18, iterados día 19, cerrados por Corola día 19 con seis votos firmes de Bea ("Plano tierra ok. No nos preocupemos en ajustar a 3 minutos. Opción C a tope. Cutaway posible no asegurado. Voz humana Bea confirmada. Te animas a cerrar guion?"). Cambios consolidados:
   1. **Estructura: 12 escenas** (era 9). Añadidas E0 (cartela apertura Sprout, 5s), E3b (Meristem prepara, 10s, después de E3), E9b (Meristem recibe + cierre íntimo, 10s).

@@ -1,6 +1,6 @@
-# Montage brief para Bract (CapCut) — Sprout vídeo v1.7
+# Montage brief para Bract (CapCut) — Sprout vídeo v1.8
 
-**Versión:** v0.1 (esquema parcial sobre v1.7 — escenas estables E2-E7 desarrolladas. Escenas inestables E0/E1/E3b/E8/E9/E9b TBD-sesión día 20.)
+**Versión:** v0.2 (apilado completo sobre v1.8 — Bea cerró los 4 abiertos día 20. Las 12 escenas con detalle disponible para Bract.)
 **Fecha:** 2026-05-05 (día 20)
 **Autora:** Corola
 **Para:** Bract (montadora CapCut, lectura repo)
@@ -26,22 +26,22 @@
 
 ---
 
-## Estado de las escenas en v0.1 del montage_brief
+## Estado de las escenas en v0.2 del montage_brief (post-v1.8)
 
 | Escena | Estado | Notas para Bract |
 |--------|--------|-------------------|
-| **E0** Cartela apertura Sprout | **TBD-sesión** | Diseño cartela cerrado v1.7. Texto pendiente sesión. |
-| **E1** La ausencia con datos globales | **TBD-sesión** | Reformulada drásticamente. 4 datos globales + microcorte tierra agrietada + pregunta abierta. Texto definitivo pendiente revisión Cambium ella. |
+| **E0** Cartela apertura Sprout | ✅ **Estable v1.8** | Wordmark + lema + open-source. Detalle abajo. |
+| **E1** La ausencia con datos globales | ✅ **Estable v1.8** | 4 datos UNCCD/OECD/FAO/ITU + microcorte tierra agrietada + pregunta abierta. Detalle abajo. |
 | **E2** Rhizome decide offline | ✅ **Estable v1.7** | Esquema completo abajo. |
 | **E3** ESP32 SAFE LIMIT | ✅ **Estable v1.7** | Esquema completo abajo. |
-| **E3b** Meristem prepara | **TBD-sesión** | Nueva en v1.7. Cartela en pantalla pendiente. |
+| **E3b** Meristem prepara | ✅ **Estable v1.8** | Plano cocina + portátil + Pollen recibe política. VO Extra E3b. Detalle abajo. |
 | **E4** Llega Pollen | ✅ **Estable v1.7** | Esquema completo abajo. |
 | **E5** La persona da una misión | ✅ **Estable v1.7** | Voz humana castellano literal. UI Pollen pendiente coordinación con Floema. |
 | **E6** Ferry A→B | ✅ **Estable v1.7** | Contingencia meteo (con/sin) documentada. |
 | **E7** Watering criteria updated (CLIMAX) | ✅ **Estable v1.7** | Esquema completo abajo. |
-| **E8** Caducidad | **TBD-sesión** | Pendiente decisión: ¿sobrevive? Si sí, esquema rápido de añadir. |
-| **E9** Cenital federado | **TBD-sesión** | Cadencia + duración pendiente sesión + PR #88 a Venation. |
-| **E9b** Meristem recibe + cierre | **TBD-sesión** | Nueva. Frase 6 + tagline bookend + tarjeta logo final. |
+| **E8** Caducidad | ✅ **Estable v1.8 — NO se mata** | Decisión Bea día 20. F4 + plano `expired → rejected`. Detalle abajo. |
+| **E9** Cenital federado | ✅ **Estable v1.8 — Opción B firme** | 20s con cadencia Venation completa. Detalle abajo. |
+| **E9b** Meristem recibe + cierre | ✅ **Estable v1.8** | Plano íntimo cocina + F6 + tagline bookend + tarjeta logo final. Detalle abajo. |
 
 ---
 
@@ -288,18 +288,229 @@
 
 ---
 
-## TBD-sesión día 20 — escenas inestables (esquema rápido cuando sesión cierre)
+## Escena 0 · 0:00 – 0:05 · Cartela apertura Sprout ✅ ESTABLE v1.8
 
-Las siguientes escenas tienen elementos pendientes de cierre:
+**Plano 0A · 0:00–0:05 (5s)** · Fondo casi-negro (`soil.graphite` o más oscuro). Cartela centrada compuesta: wordmark `Sprout` + subtítulo + línea inferior "Safe · explainable · open-source". Entrada con stagger 120ms (kicker → wordmark → tag). Sostén ~3.5s. Salida fade 0.4s al negro.
+- **Origen:** `venation-asset` (cartela apertura compuesta).
+- **VO EN:** ninguno.
+- **VO ES:** ninguno.
+- **Cartela EN central:** `Sprout` (Manrope titular grande, `soil.oat` sobre `soil.graphite`) + **"AI Local-first irrigation decisions."** (Manrope mediano) + **"Safe · explainable · open-source."** (Manrope pequeña).
+- **Microcartela atribución Gemma NO va aquí** (decisión Bea día 19 — va en cierre concentrado).
+- **Transición a E1:** fade al negro.
+- **#sfx:** silencio sostenido o ambiente muy sutil.
 
-- **E0 Cartela apertura Sprout** (5s) — diseño cerrado v1.7. Texto pendiente sesión.
-- **E1 La ausencia con datos globales** (20s) — reformulada drásticamente. 4 datos UNCCD/OECD/FAO/ITU + microcorte 0.5s tierra agrietada (Venation pendiente confirmar B-roll producible) + pregunta abierta.
-- **E3b Meristem prepara** (10s) — nueva. Plano cocina + portátil + Pollen (móvil). Coordinación pendiente con Meristem para UI.
-- **E8 Caducidad** (10s) — pendiente decisión: ¿sobrevive? Si sí, esquema rápido (cartela `Three days later` + log `expired → rejected` + frase fuerte 4).
-- **E9 Cenital federado** (10s o 20s pendiente sesión) — animación HTML + secuencia PNG transparente de Venation (PR #88). Cadencia cartela final pendiente sesión.
-- **E9b Meristem recibe + cierre íntimo** (10s) — nueva. Plano cocina + portátil + Pollen entregando + cutaway opcional macetas reales + frase fuerte 6 + tagline bookend cierre + tarjeta logo final con microcartela atribución Gemma.
+---
 
-**Tras sesión, completar v0.2** con todas las escenas + revisión final de transiciones.
+## Escena 1 · 0:05 – 0:25 · La ausencia con datos globales ✅ ESTABLE v1.8
+
+**Sin VO.** Opener tipográfico con 4 datos globales + microcorte 0.5s tierra agrietada + pregunta abierta. Cataluña como ejemplo del patrón global.
+
+**Plano 1A · 0:05–0:09 (4s)** · Dato 1 sobre fondo casi-negro.
+- **Origen:** `venation-asset` (cartela tipográfica).
+- **VO EN:** ninguno.
+- **Cartela EN:** **"In 2023, 48% of the world's land area suffered at least one month of extreme drought."** + microcita pequeña `[UNCCD World Drought Atlas]` (IBM Plex Mono `soil.ash`).
+- **Transición a 1B:** fade out + fade in.
+- **#sfx:** silencio o ambiente muy sutil.
+
+**Plano 1B · 0:09–0:13 (4s)** · Dato 2 sobre fondo casi-negro.
+- **Origen:** `venation-asset` (cartela tipográfica).
+- **VO EN:** ninguno.
+- **Cartela EN:** **"1.8 billion people affected. $300 billion per year in losses."** + microcita pequeña `[UNCCD]`.
+- **Transición a 1C:** **microcorte seco** (sin fade).
+- **#sfx:** silencio.
+
+**Plano 1C · 0:13–0:13.5 (0.5s)** · **Microcorte tierra agrietada.** Bisagra emocional macro→concreto.
+- **Origen:** `b-roll` (tierra real agrietada). **Pendiente confirmar producible con Venation o se descarta.**
+- **VO EN:** ninguno.
+- **Sin cartela.**
+- **Transición a 1D:** corte limpio.
+- **#sfx:** silencio (o sonido sutil de tierra crujiendo).
+
+**Plano 1D · 0:13.5–0:17.5 (4s)** · Dato 3 (Cataluña) sobre fondo casi-negro.
+- **Origen:** `venation-asset`.
+- **Cartela EN:** **"In Catalonia 2024, agriculture cut water for irrigation by 80%."** + microcita pequeña `[Generalitat de Catalunya]`.
+- **Transición a 1E:** fade out + fade in.
+- **#sfx:** silencio.
+
+**Plano 1E · 0:17.5–0:21.5 (4s)** · Dato 4 (ITU — bisagra con conectividad) sobre fondo casi-negro.
+- **Origen:** `venation-asset`.
+- **Cartela EN:** **"58% of the rural population uses internet. In low-income countries: only 14%."** + microcita pequeña `[ITU 2025]`.
+- **Transición a 1F:** fade out a negro.
+- **#sfx:** silencio.
+
+**Plano 1F · 0:21.5–0:25 (3.5s)** · **Pregunta abierta** centro grande.
+- **Origen:** `venation-asset` (cartela tipográfica grande).
+- **Cartela EN:** **"When network is absent — and the human is far — what makes the right call?"** (Manrope grande, `soil.oat` sobre `soil.graphite`).
+- **Transición a E2:** corte seco a la cajita Jetson.
+- **#sfx:** silencio sostenido sobre la pregunta.
+
+---
+
+## Escena 3b · 1:05 – 1:15 · Meristem prepara la política ✅ ESTABLE v1.8
+
+**Plano 3bA · 1:05–1:08 (3s)** · Plano cocina (continuidad visual con E9b — bookend doméstico). Bea de espaldas o en perfil borroso (no vemos cara, agnóstico al portador). Portátil casero abierto sobre mesa.
+- **Origen:** `rodaje` (cocina doméstica).
+- **VO EN:** ninguno.
+- **Sin cartela.**
+- **Transición a 3bB:** plano sostenido, detalle a pantalla.
+- **#sfx:** ambiente cocina sutil.
+
+**Plano 3bB · 1:08–1:12 (4s)** · Detalle pantalla del portátil. UI Meristem componiendo política. `signal.seed` activo en momento clave.
+- **Origen:** `screen-meristem` (UI real Meristem preferida o mock fiel basado en `docs/12_meristem_spec.md`).
+- **VO EN:** ninguno.
+- **Sin cartela on-screen** (la UI Meristem en pantalla del portátil habla por sí sola).
+- **Transición a 3bC:** plano sobre la mesa.
+- **#sfx:** click suave de teclado o procesamiento.
+
+**Plano 3bC · 1:12–1:15 (3s)** · Plano sobre la mesa: Pollen (móvil) recibe la política de Meristem. Posible animación de transferencia o conexión visual entre los dos dispositivos.
+- **Origen:** `rodaje` + `screen-pollen` (transferencia visible en pantalla del móvil).
+- **VO EN (Extra E3b — cerrada Bea día 19):** *"Meristem composes the policy."* (~5 palabras).
+- **VO ES (referencia):** *"Meristem compone la política."*
+- **Cartela EN superpuesta** (2-3s, Manrope): `Meristem composes.` o `Policy composed.` (eligir una).
+- **Transición a E4:** corte limpio a persona en plano.
+- **#sfx:** click de transferencia.
+
+---
+
+## Escena 8 · 2:40 – 2:50 · Caducidad ✅ ESTABLE v1.8 — NO SE MATA
+
+**Plano 8A · 2:40–2:42 (2s)** · Cartela limpia salto temporal sobre fondo casi-negro.
+- **Origen:** `venation-asset` (cartela compuesta).
+- **VO EN:** ninguno.
+- **Cartela EN central:** **"Three days later"** (Manrope sobre fondo casi-negro).
+- **Transición a 8B:** corte seco a pantalla del Jetson.
+- **#sfx:** silencio.
+
+**Plano 8B · 2:42–2:46 (4s)** · Pantalla del Jetson. El `WeatherDigest` que Pollen entregó en E6 ha llegado a su `valid_until`. El sistema lo evalúa y rechaza. Tres líneas en pantalla.
+- **Origen:** `screen-jetson` (captura real o mock fiel).
+- **VO EN:** ninguno.
+- **Cartela EN superpuesta** (2s, IBM Plex Mono con borde doble `status.blocked`): `expired → rejected`.
+- **Log diseñado en pantalla:**
+  ```
+  WeatherDigest #2026-05-04-001
+  status: EXPIRED → REJECTED
+  reason: ttl exceeded
+  ```
+- **Transición a 8C:** plano sostenido sobre el rechazo.
+- **#sfx:** sello seco al rechazo (sin glitch).
+
+**Plano 8C · 2:46–2:50 (4s)** · Plano sostenido sobre la pantalla del rechazo.
+- **Origen:** `screen-jetson` (continuación 8B).
+- **VO EN (frase fuerte 4 — cerrada Bea día 19):** *"Every intelligence has jurisdiction. And expiry."* (~7 palabras).
+- **VO ES (referencia):** *"Toda inteligencia tiene jurisdicción. Y caducidad."*
+- **Sin cartela adicional** (deja respirar la frase).
+- **Transición a E9:** corte limpio + morph a parcela flat.
+- **#sfx:** silencio sobre la frase.
+
+---
+
+## Escena 9 · 2:50 – 3:10 · Cenital federado ✅ ESTABLE v1.8 — OPCIÓN B FIRME (20s)
+
+**Sin VO.** Cadencia Venation completa: 5 cartelas asimétricas + pausa tensa + cierre largo + sello SYNCED ✓.
+
+**Plano 9A · 2:50–2:52 (2s)** · **Morph maceta real → parcela flat.** La maceta de la última toma se difumina, los bordes se expanden, aparece la primera parcela flat.
+- **Origen:** `rodaje` + `venation-asset` (animación HTML del cenital con morph inicial).
+- **VO EN:** ninguno.
+- **Sin cartela.**
+- **Transición a 9B:** continuidad de la animación Venation.
+- **#sfx:** transición sutil.
+
+**Plano 9B · 2:52–2:53.5 (1.5s)** · Pollen-nodo aparece como punto luminoso `signal.seed`. Cartela progresiva 1.
+- **Origen:** `venation-asset` (animación cenital).
+- **VO EN:** ninguno.
+- **Cartela progresiva 1** (Manrope): **"One plot."**
+- **Transición a 9C:** continuidad animación.
+- **#sfx:** silencio.
+
+**Plano 9C · 2:53.5–2:55 (1.5s)** · Segunda parcela aparece sincronizada con cartela 2.
+- **Origen:** `venation-asset`.
+- **Cartela progresiva 2** (Manrope): **"Two."**
+- **Transición a 9D:** continuidad.
+
+**Plano 9D · 2:55–2:57.5 (2.5s)** · Resto de parcelas aparecen progresivamente hasta completar las 8.
+- **Origen:** `venation-asset`.
+- **Cartela progresiva 3** (Manrope): **"Eight."**
+- **Transición a 9E:** PAUSA TENSA narrativa.
+
+**Plano 9E · 2:57.5–2:59 (1.5s)** · **PAUSA TENSA NARRATIVA.** Pollen-nodo recorre las parcelas con halos progresivos encendiéndose en cada toque (modo B1 cascada). Mensajes técnicos breves apareciendo.
+- **Origen:** `venation-asset`.
+- **Sin cartela progresiva.**
+- **Mensajes técnicos en pantalla** (IBM Plex Mono integrado en diseño flat, apareciendo y desapareciendo en cada toque del nodo): `WeatherDigest accepted`, `MissionPatch delivered`, `DecisionReceipt synced`, `ValidationStamp issued`, `Context cached`.
+- **Transición a 9F:** continuidad.
+- **#sfx:** click suave en cada toque del nodo.
+
+**Plano 9F · 2:59–3:02 (3s)** · Pollen-nodo llega al nodo Meristem (disco mayor azul desaturado o grafito claro). Cartela progresiva 4.
+- **Origen:** `venation-asset`.
+- **Cartela progresiva 4** (Manrope): **"Autonomous."**
+- **Transición a 9G:** continuidad.
+
+**Plano 9G · 3:02–3:04 (2s)** · Transición a cartela cumbre.
+- **Origen:** `venation-asset`.
+- **Sin cartela visible.**
+- **Transición a 9H:** entrada cartela cumbre.
+
+**Plano 9H · 3:04–3:10 (6s sostén)** · **Cartela cumbre** + sello SYNCED ✓.
+- **Origen:** `venation-asset`.
+- **Cartela progresiva 5 cumbre** (Manrope, sostén 6s): **"Federated intelligence, carried by Pollen."** + sello **`SYNCED ✓`**.
+- **Transición a E9b:** corte seco a imagen real cocina.
+- **#sfx:** silencio sostenido sobre la cartela final.
+
+**Notas Bract:** la animación Venation viene como secuencia PNG transparente (480 frames a 24fps a 1920×1080). Bract codifica MP4 con ffmpeg sobre los PNG. Si en montaje final se decide compresión a 10s, recortar pausa tensa + sostén final largo (manteniendo cartelas 1-4 + cumbre).
+
+---
+
+## Escena 9b · 3:10 – 3:20 · Meristem recibe + cierre íntimo ✅ ESTABLE v1.8
+
+**Bookend con E3b.** La política sale de casa al campo (E3b) → campo decide (E2-E8) → datos vuelven a casa (E9b).
+
+**Plano 9bA · 3:10–3:13 (3s)** · Plano cocina (continuidad visual con E3b). Bea de espaldas o en perfil borroso. Portátil casero abierto. Pollen (móvil) sobre la mesa entregando datos al portátil.
+- **Origen:** `rodaje` (cocina doméstica) + `screen-meristem`.
+- **VO EN:** ninguno.
+- **Cartela EN on-screen** (3s, IBM Plex Mono en pantalla del portátil): `Pulling Rhizome data...`
+- **Transición a 9bB:** plano sostenido, pantalla cambia.
+- **#sfx:** ambiente cocina sutil + click suave de transferencia.
+
+**Plano 9bB · 3:13–3:16 (3s)** · Pantalla del portátil cambia. UI Meristem procesando. `signal.seed` activo.
+- **Origen:** `screen-meristem`.
+- **VO EN:** ninguno.
+- **Cartela EN on-screen** (2s, IBM Plex Mono): `Adjusting policies...`
+- **Transición a 9bC:** opcional cutaway.
+
+**Plano 9bC · 3:16–3:18 (2s)** · **Cutaway opcional** micro a las macetas reales en la terraza (Sprout escala 1 corriendo en la terraza de Bea en Castellar). Si no se rueda, plano cocina sigue.
+- **Origen:** `rodaje` (macetas reales en terraza). **Decisión Bea día 19: posible, no asegurado.**
+- **VO EN:** ninguno.
+- **Sin cartela.**
+- **Transición a 9bD:** corte de vuelta a la cocina.
+- **#sfx:** ambiente exterior breve si se rueda.
+
+**Plano 9bD · 3:18–3:20 (2s)** · Vuelta a la cocina.
+- **Origen:** `rodaje` (cocina, continuación 9bB).
+- **VO EN (frase fuerte 6 — ubicada aquí, decisión Bea día 20):** *"Meristem stores and processes. Tomorrow, it will learn."* (~10 palabras).
+- **VO ES (referencia):** *"Meristem guarda y procesa. Mañana, aprenderá."*
+- **Tagline bookend cierre** entra por fade sobre la pantalla difuminada del portátil al final del plano.
+- **Cartela EN tagline bookend** (Manrope, sostén 2s): **"When network is absent — and the human is far — local criteria still irrigate."**
+- **Transición a tarjeta logo final:** fade.
+- **#sfx:** silencio sobre la frase 6 + tagline.
+
+**Plano 9bE · ~3:20+ (2-3s sostén)** · Tarjeta logo final.
+- **Origen:** `venation-asset` (tarjeta logo compuesta).
+- **VO EN:** ninguno.
+- **Tarjeta logo final:**
+  ```
+  Sprout
+  AI Local-first irrigation decisions.
+  Safe · explainable · open-source
+
+  zigiella · Apache 2.0
+  github.com/zigiella/sprout
+
+  Built on Gemma 4 by Google.
+  Gemma is a trademark of Google LLC.
+  ```
+- **Transición:** fade out final.
+- **#sfx:** silencio sostenido.
+
+**Microcartela atribución Gemma trademark CONFIRMADA en cierre** (Bea día 19, por reglas hackathon).
 
 ---
 
@@ -345,4 +556,5 @@ Bea graba la frase castellana literal (*"Vuelvo el viernes. Esta planta aguanta 
 
 ## Historial
 
+- **v0.2** (2026-05-05, día 20, Corola) — apilado completo sobre v1.8 tras Bea cerrar los 4 abiertos día 20. Añadidas escenas inestables E0, E1, E3b, E8, E9, E9b con detalle plano-por-plano. Decisiones consolidadas en v1.8: E8 sobrevive (NO se mata), E9 Opción B firme (20s con cadencia Venation completa: 5 cartelas asimétricas + pausa tensa + cierre largo + sello SYNCED ✓), F6 ubicada en E9b. La animación cenital E9 viene como secuencia PNG transparente de Venation (480 frames a 24fps a 1920×1080); Bract codifica MP4 con ffmpeg. **Recortable en post si se decide compresión a 10s** (cortar pausa tensa + sostén final largo).
 - **v0.1** (2026-05-05, día 20, Corola) — primer apilado del montage_brief en formato Bract (CapCut). Escenas estables E2-E7 desarrolladas plano-por-plano con tiempo, origen, VO EN/ES, cartelas, transiciones y sfx. Escenas inestables E0/E1/E3b/E8/E9/E9b marcadas TBD-sesión día 20. Notas operativas para Bract sobre carteles físicos, decisión de rodaje un Rhizome dos roles, voz humana E5, master de exportación, pendientes coordinación cross-frente.

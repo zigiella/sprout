@@ -1,7 +1,8 @@
-# Shot list — Sprout v1.6 (apilado completo: escenas 1-9 + sistema visual Venation aplicado)
+# Shot list — Sprout v1.6 (referencia visual y producción · v1.7 y v1.8 documentadas en script.md)
 
-**Versión:** v1.6 (día 17 — sistema visual Venation adoptado: Soil protocol + Water ledger con tokens, tipografía Manrope + IBM Plex Mono, `signal.seed` cross-escena, tres cambios de copy aplicados [E7 ancla, E3 técnica, E6 contingencia], tarjeta logo reformulada, log E2 diseñado, motion E5 Pollen, EDGE NODE cartel caja electrónica.)
-**Fecha:** 2026-05-02 (día 17)
+**Versión:** v1.6 — apilado completo de las 9 escenas v1.6 con detalle plano-por-plano. **NOTA v1.8 (día 20):** los cambios estratégicos de v1.7 (12 escenas con E0/E3b/E9b nuevas, VO inglés master, frases reformuladas) y v1.8 (4 abiertos cerrados por Bea día 20: E8 sobrevive, E9 Opción B 20s firme, F6 en E9b, timing en montaje) están completamente documentados en `video/script.md` v1.8 + `video/copies_bilingual.md` v0.3 + `video/montage_brief.md` v0.2. **Este shot_list.md no se ha re-apilado a v1.7/v1.8 todavía** porque los cambios son de copy y cadencia (no de planos físicos). Queda como pendiente post-rodaje si procede actualizar.
+**Fecha original:** 2026-05-02 (día 17)
+**Última nota:** 2026-05-05 (día 20)
 **Autora:** Corola
 **Rodaje previsto:** días 26-27 abril 2026
 **Equipo de rodaje:** Bea (dirección + VO castellano + posible voz humana real escena 5) + Corola (dirección de arte + segunda cámara) + apoyo técnico de Xilema/Floema en sus nodos.
