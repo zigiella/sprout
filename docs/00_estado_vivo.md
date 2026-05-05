@@ -5,8 +5,8 @@
 > (incluida una nueva miembra que se incorpore) puede leer esto en 30
 > segundos y reconstruir contexto sin tener que escarbar 50 bitácoras.
 >
-> **Fecha de última actualización:** 2026-05-04 (cierre del día 19)
-> **Día del proyecto:** 19 de 30. Quedan 11 días.
+> **Fecha de última actualización:** 2026-05-05 (cierre del día 20)
+> **Día del proyecto:** 20 de 30. Quedan 10 días.
 
 ---
 
@@ -36,7 +36,21 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 
 > *"Imagine this pot is a whole plot."* (Bract, día 19) — convención maceta-parcela para cartela del video.
 
+> *"Un sensor físico no puede parecer dos. UI, contrato y narrativa tienen que decir lo mismo."* (Endodermis, día 20) — frase para writeup §5 sobre coherencia narrativa-técnica.
+
+> *"Menos piezas, mejor demo, menos humo literal y metafórico."* (Xilema, día 20) — frase sobre alcance MVP físico (recorte a 1-línea), va al writeup §6.
+
+> *"Material flexible vence material apretado. Animar 20s completo + recortar en post es siempre más barato que reanimar."* (Bea, día 20) — principio operativo de producción audiovisual, va al writeup §5.
+
+> *"Tu trabajo se mantiene aunque las decisiones cambien."* (Corola, día 20) — apunte cultural sobre aceptación sin defensividad de revocaciones, va al writeup §5.
+
+> *"En sistemas físicos, la pregunta correcta de un coordinador puede liberar dominios completos a un especialista, no solo capas."* (apunte cultural día 20 — Bea→Meristem→Venation reframing) — va al writeup §5.
+
 **Tagline final confirmada (bookend del video, inicio + cierre):** *"When network is absent — and the human is far — local criteria still irrigate."*
+
+**Guion v1.8 firmado día 20** (Corola + Bea, PR #96 mergeado). Diferencias respecto a v1.7: E8 sobrevive, **E9 Opción B 20s firme** (cadencia v1.6 con cierre largo, modulación Cambium 3-beats queda plan B post-edición), F6 va en E9b (no E9), timing en montaje (post-edición decide compresión final).
+
+**Feature beta voz → política inmediata (día 20-22 implementación)**: spec Mini-Evaluator de Meristem firme (PR #92, 624 líneas + 12 casos test). Reparto: Floema (~13h, Mini-Evaluator Kotlin + structured output Gemma 4 E4B + cliente HTTP + UI BETA + tests E2E), Endo (~3h, endpoint POST /policy en :13010). Conservador por defecto: si confianza no suficiente, no aplica. **Tres capas de defensa**: schema validation Pollen + Mini-Evaluator local + ESP32 último filtro físico.
 
 **Guion v1.7 cerrado día 19** (Corola, commits `55fcac2` + `3ee6d0a`, mergeado a main como PR #59 / `6cfce71`): 12 escenas + cartela apertura E0 + E3b + E9b. VO inglés master. 7 frases fuertes (incluida F6 nueva *"Tomorrow, it will learn"* + Extra E3b *"Meristem composes the policy"*). Microcorte 0.5s tierra agrietada en E1. Cenital E9 a 10s con animación Venation. Microcartela Gemma trademark al cierre.
 
@@ -78,7 +92,7 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 
 ---
 
-## Estado por frente — día 19 cierre
+## Estado por frente — día 20 cierre
 
 ### Rhizome físico (Xilema + Endo)
 
@@ -260,7 +274,7 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 
 ---
 
-## Pendientes activos día 20
+## Pendientes activos día 21
 
 ### Bea
 - **Montaje Fase A** según schematics #73 con apoyo Xilema (BME280, USB, depósito, tubos, bomba/caudal/válvulas físicamente sin energizar, borneras y etiquetas)
