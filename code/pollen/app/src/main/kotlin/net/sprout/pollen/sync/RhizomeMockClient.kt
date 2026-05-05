@@ -141,8 +141,13 @@ class RhizomeMockClient : RhizomeClient {
         )
     }
 
-    override suspend fun explainDecision(id: String): String {
-        return "El modelo Gemma 4 E2B en Rhizome decidió regar porque la humedad del suelo estaba por debajo del umbral de la política activa, y había agua suficiente en el depósito."
+    override suspend fun explainDecision(id: String, locale: String): String {
+        kotlinx.coroutines.delay(1200) // Simular latencia real de red y generación LLM
+        if (locale == "es") {
+            return "El modelo Gemma 4 E2B en Rhizome decidió regar porque la humedad del suelo estaba por debajo del umbral de la política activa, y había agua suficiente en el depósito."
+        } else {
+            return "The Gemma 4 E2B model on Rhizome decided to water because soil moisture was below the active policy threshold, and there was enough water in the tank."
+        }
     }
 
     override suspend fun getSummarySince(since: String?, locale: String): net.sprout.pollen.schemas.SummarySinceResponse {

@@ -148,11 +148,11 @@ fun VisitarRhizomeScreen(
                         }
                     }
                 },
-                modifier = Modifier.fillMaxWidth().height(48.dp),
+                modifier = Modifier.fillMaxWidth().height(64.dp),
                 shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer, contentColor = MaterialTheme.colorScheme.onSecondaryContainer)
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50), contentColor = Color.White)
             ) {
-                Text(stringResource(R.string.what_happened), fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.what_happened), fontWeight = FontWeight.Bold, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             }
             
             Spacer(modifier = Modifier.height(24.dp))
@@ -184,8 +184,9 @@ fun VisitarRhizomeScreen(
                         OutlinedButton(
                             onClick = {
                                 scope.launch {
-                                    explanationText = client.explainDecision(receipt.decisionId)
+                                    explanationText = "Cargando justificación..."
                                     showExplanationDialog = true
+                                    explanationText = client.explainDecision(receipt.decisionId, locale = currentLocale)
                                 }
                             },
                             shape = RoundedCornerShape(8.dp)
