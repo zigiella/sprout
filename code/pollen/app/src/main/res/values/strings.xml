@@ -31,8 +31,8 @@
     <string name="explanation_title">Explanation from Gemma 4</string>
     <string name="close">Close</string>
     <string name="water_level">WATER</string>
-    <string name="soil_a">SOIL A</string>
-    <string name="soil_b">SOIL B</string>
+    <string name="soil_moisture">SOIL MOISTURE</string>
+    <string name="what_happened">What happened since my absence?</string>
     <!-- Mission compiler -->
     <string name="mission_voice_note">Voice note</string>
     <string name="mission_compiled_patch">Compiled patch</string>

@@ -8,4 +8,5 @@ interface RhizomeClient {
     suspend fun getLatestSnapshot(): RhizomeSnapshot
     suspend fun getReceipts(since: String? = null): List<DecisionReceipt>
     suspend fun explainDecision(id: String): String
+    suspend fun getSummarySince(since: String? = null, locale: String = "es"): net.sprout.pollen.schemas.SummarySinceResponse
 }

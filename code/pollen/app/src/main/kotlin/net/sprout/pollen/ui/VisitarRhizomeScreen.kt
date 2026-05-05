@@ -33,15 +33,17 @@ import net.sprout.pollen.sync.RhizomeNetworkClient
 
 @Composable
 fun VisitarRhizomeScreen(
+    plotId: String,
     onDataFetched: (RhizomeSnapshot, List<DecisionReceipt>) -> Unit = { _, _ -> },
     onChatClicked: () -> Unit = {},
     onAuditClicked: () -> Unit = {}
 ) {
-    val client: RhizomeClient = remember { 
+    val client: RhizomeClient = remember(plotId) { 
         if (net.sprout.pollen.BuildConfig.FLAVOR == "demo") {
             RhizomeMockClient()
         } else {
-            RhizomeNetworkClient("http://192.168.1.60:13010/")
+            val port = if (plotId.contains("02")) "13020" else "13010"
+            RhizomeNetworkClient("http://192.168.1.60:$port/")
         }
     }
     val scope = rememberCoroutineScope()
@@ -53,6 +55,12 @@ fun VisitarRhizomeScreen(
     var step by remember { mutableIntStateOf(0) }
     var showExplanationDialog by remember { mutableStateOf(false) }
     var explanationText by remember { mutableStateOf("") }
+    
+    var showSummaryDialog by remember { mutableStateOf(false) }
+    var summaryData by remember { mutableStateOf<net.sprout.pollen.schemas.SummarySinceResponse?>(null) }
+    var isLoadingSummary by remember { mutableStateOf(false) }
+    
+    val currentLocale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0].language
     
     LaunchedEffect(Unit) {
         kotlinx.coroutines.delay(400)
@@ -120,9 +128,31 @@ fun VisitarRhizomeScreen(
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 snapshot?.let { snap ->
                     TelemetryTileUI(label = stringResource(R.string.water_level), value = "${snap.sensors.tankLevelPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
-                    TelemetryTileUI(label = stringResource(R.string.soil_a), value = "${snap.sensors.soilMoistureAPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
-                    TelemetryTileUI(label = stringResource(R.string.soil_b), value = "${snap.sensors.soilMoistureBPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
+                    TelemetryTileUI(label = stringResource(R.string.soil_moisture), value = "${snap.sensors.soilMoistureAPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
                 }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Button(
+                onClick = {
+                    scope.launch {
+                        isLoadingSummary = true
+                        showSummaryDialog = true
+                        try {
+                            summaryData = client.getSummarySince(locale = currentLocale)
+                        } catch (e: Exception) {
+                            summaryData = null
+                        } finally {
+                            isLoadingSummary = false
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth().height(48.dp),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer, contentColor = MaterialTheme.colorScheme.onSecondaryContainer)
+            ) {
+                Text(stringResource(R.string.what_happened), fontWeight = FontWeight.Bold)
             }
             
             Spacer(modifier = Modifier.height(24.dp))
@@ -196,6 +226,41 @@ fun VisitarRhizomeScreen(
             text = { Text(explanationText) },
             confirmButton = {
                 TextButton(onClick = { showExplanationDialog = false }) {
+                    Text(stringResource(R.string.close))
+                }
+            }
+        )
+    }
+    
+    if (showSummaryDialog) {
+        AlertDialog(
+            onDismissRequest = { showSummaryDialog = false },
+            title = { Text(stringResource(R.string.what_happened)) },
+            text = { 
+                if (isLoadingSummary) {
+                    Text("Cargando...")
+                } else if (summaryData != null) {
+                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                        Text(summaryData!!.headline, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(bottom = 8.dp))
+                        Text(summaryData!!.summary, modifier = Modifier.padding(bottom = 12.dp))
+                        
+                        if (summaryData!!.highlights.isNotEmpty()) {
+                            Text("Highlights:", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 4.dp))
+                            summaryData!!.highlights.forEach { h ->
+                                Text("• $h", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(start = 8.dp, bottom = 2.dp))
+                            }
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
+                        
+                        Text("Recomendación:", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 4.dp))
+                        Text(summaryData!!.recommendation, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+                    }
+                } else {
+                    Text("Error al cargar el resumen.")
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showSummaryDialog = false }) {
                     Text(stringResource(R.string.close))
                 }
             }

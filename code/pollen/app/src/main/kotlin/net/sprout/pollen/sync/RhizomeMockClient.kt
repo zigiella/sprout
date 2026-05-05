@@ -144,4 +144,15 @@ class RhizomeMockClient : RhizomeClient {
     override suspend fun explainDecision(id: String): String {
         return "El modelo Gemma 4 E2B en Rhizome decidió regar porque la humedad del suelo estaba por debajo del umbral de la política activa, y había agua suficiente en el depósito."
     }
+
+    override suspend fun getSummarySince(since: String?, locale: String): net.sprout.pollen.schemas.SummarySinceResponse {
+        kotlinx.coroutines.delay(1000)
+        return net.sprout.pollen.schemas.SummarySinceResponse(
+            headline = if (locale == "es") "2 alertas resueltas" else "2 alerts resolved",
+            summary = if (locale == "es") "El nivel de humedad del suelo bajó peligrosamente pero se compensó con el riego nocturno. El tanque requiere atención." else "Soil moisture dropped dangerously but was compensated by night watering. Tank requires attention.",
+            highlights = if (locale == "es") listOf("Riego de emergencia: +15%", "Alerta: Tanque bajo") else listOf("Emergency watering: +15%", "Alert: Low tank"),
+            recommendation = if (locale == "es") "Rellenar tanque principal." else "Refill main tank.",
+            severity = "warning"
+        )
+    }
 }

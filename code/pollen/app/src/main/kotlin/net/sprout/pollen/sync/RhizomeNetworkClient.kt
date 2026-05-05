@@ -28,6 +28,9 @@ interface RhizomeApi {
 
     @GET("/explain/decision/{id}")
     suspend fun explainDecision(@Path("id") id: String): ExplanationResponse
+
+    @GET("/summary/since")
+    suspend fun getSummarySince(@Query("since") since: String?, @Query("locale") locale: String): net.sprout.pollen.schemas.SummarySinceResponse
 }
 
 class RhizomeNetworkClient(baseUrl: String) : RhizomeClient {
@@ -57,5 +60,9 @@ class RhizomeNetworkClient(baseUrl: String) : RhizomeClient {
     
     override suspend fun explainDecision(id: String): String {
         return api.explainDecision(id).explanation
+    }
+
+    override suspend fun getSummarySince(since: String?, locale: String): net.sprout.pollen.schemas.SummarySinceResponse {
+        return api.getSummarySince(since, locale)
     }
 }

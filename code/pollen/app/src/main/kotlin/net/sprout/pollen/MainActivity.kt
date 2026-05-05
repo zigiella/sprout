@@ -146,6 +146,7 @@ class MainActivity : ComponentActivity() {
                                         Text("${stringResource(R.string.selected_plot)}: $selectedRhizomeId", modifier = Modifier.padding(12.dp), style = MaterialTheme.typography.labelMedium.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace), color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
                                     VisitarRhizomeScreen(
+                                        plotId = selectedRhizomeId,
                                         onDataFetched = { snap, rec -> 
                                             globalSnapshot = snap
                                             globalReceipts = rec 
