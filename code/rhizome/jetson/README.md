@@ -154,6 +154,7 @@ GET /status
 GET /snapshot/latest
 GET /receipts?since=...
 GET /explain/decision/{id}
+GET /summary/since?since=...&locale=es|en
 ```
 
 Base URL para Pollen en la red local del dia 19:
@@ -161,6 +162,24 @@ Base URL para Pollen en la red local del dia 19:
 ```text
 http://192.168.1.60:13010/
 ```
+
+Para el video se puede levantar una segunda fachada simulada en el mismo
+Jetson:
+
+```bash
+./start_demo_two_rhizomes.sh
+```
+
+Endpoints de demo:
+
+```text
+rhizome_01 -> http://192.168.1.60:13010/
+rhizome_02 -> http://192.168.1.60:13020/
+```
+
+`rhizome_02` usa datos de `code/rhizome/demo_data/rhizome_02`. Es una
+simulacion host-side de interoperabilidad multi-Rhizome: no hay segundo ESP32,
+no hay segunda bomba y no se toca hardware fisico.
 
 Baseline operativo:
 

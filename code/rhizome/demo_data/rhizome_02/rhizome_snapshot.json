@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-04-16T15:12:05Z",
+  "origin_node_id": "rhizome_02",
+  "signature": null,
+  "snapshot_id": "snap_rhizome_02_20260416T151205_b7c9",
+  "mode": "conservative",
+  "active_policy_id": "pkt_rhizome_02_20260416T083015_a8c4",
+  "active_policy_expires_at": "2026-04-17T08:30:15Z",
+  "sensors": {
+    "soil_moisture_a_pct": 31.4,
+    "soil_moisture_b_pct": 34.8,
+    "tank_level_pct": 43.0,
+    "flow_rate_lpm": 0.0,
+    "last_reading_at": "2026-04-16T15:11:58Z"
+  },
+  "vision": {
+    "last_capture_at": "2026-04-16T15:05:00Z",
+    "parcel_a_status": "dry_edges",
+    "parcel_b_status": "stable",
+    "visual_notes": "parcel A shows mild edge dryness; parcel B remains stable"
+  },
+  "health": {
+    "cpu_temp_c": 56.1,
+    "cpu_load_pct": 37.0,
+    "ram_used_gb": 4.6,
+    "ram_total_gb": 7.4,
+    "esp32_heartbeat_ok": true,
+    "last_esp32_ack_at": "2026-04-16T15:12:00Z"
+  },
+  "last_decision_id": "rec_rhizome_02_20260416T151000_e2b1",
+  "pending_contradictions": []
+}
