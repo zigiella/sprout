@@ -1,75 +1,251 @@
 # Copies bilingües del vídeo Sprout — ES / EN
 
-**Versión:** v0.1 (apilado parcial — escenas 1-3 completas. Escenas 4-9 pendientes)
-**Fecha:** 2026-05-01 (día 16)
+**Versión:** v0.2 (apilado parcial post-v1.7 — escenas estables E2-E7 actualizadas. Escenas inestables E0/E1/E3b/E8/E9/E9b TBD-sesión día 20)
+**Fecha:** 2026-05-05 (día 20)
 **Autora:** Corola
-**Origen:** decisión Bea día 16 — "Necesitaré tener siempre los copies del video (textos VO, voz en off, cartelas, etc en ES y EN)."
+**Origen:** decisión Bea día 16 — *"Necesitaré tener siempre los copies del video (textos VO, voz en off, cartelas, etc en ES y EN)."* Actualizado al giro estratégico día 18-19 (12 escenas, VO inglés master, frases fuertes reformuladas, Meristem en MVP).
 
 ---
 
-## Convenciones
+## Convenciones (v1.7 — actualizadas tras giro estratégico día 18-19)
 
-- **VO** (voice-over) — castellano grabado por Bea. La columna EN es referencia para subtítulos / doblaje EN si procede.
-- **Cartelas y overlays on-screen** — inglés en pantalla. La columna ES es referencia interna para conversaciones del equipo.
-- **Cartel físico** — inglés en plano (decisión Bea día 16).
-- **Voz humana real escena 5 (`operator_note`)** — castellano literal, **no se traduce** ni en pantalla ni en doblaje. Es la única excepción a la regla de bilingüismo: se respeta como voz humana auténtica.
-
----
-
-## Escena 1 — La ausencia (0:00–0:20)
-
-**Sin VO.** Cero palabras habladas. Apertura silenciosa.
-
-| Elemento | ES (referencia) | EN (en pantalla) | Posición / Tiempo |
-|----------|-----------------|------------------|-------------------|
-| Cartela 1 | "Imagina que esta maceta es una parcela entera." | **"Imagine this pot is a whole plot."** | Centro · 0:06–0:11 (5s) |
-| Cartela 2 | "Esta parcela tiene visita humana cada cierto tiempo." | **"This plot is visited periodically by a human."** | Centro · 0:11–0:16 (5s) |
-| Cartel físico maceta | "Parcela 01 con Rhizoma 01" | **"PLOT_01 with RHIZOME_01"** | En la maceta · todo el plano |
-| Cartel físico caja electrónica | "Rhizoma 01" | **"RHIZOME_01"** | En la cajita Jetson+ESP32 (visible cuando se filme detalle del Rhizome en escenas 2-3) |
+- **VO master** — **inglés** grabado por Bea (cambio v1.7 sobre v1.6: era castellano). Versión ES dub aparte.
+- **Subtítulos master** — **inglés** (mismo idioma que VO).
+- **Cartelas y overlays on-screen** — **inglés** en pantalla. La columna ES es referencia interna para conversaciones del equipo.
+- **Cartel físico** — inglés en plano.
+- **Voz humana real escena 5 (`operator_note`)** — **castellano literal**, **no se traduce** ni en pantalla ni en doblaje. Es la única excepción a la regla de bilingüismo: se respeta como voz humana auténtica. Subtítulo inglés en master entre comillas marca que es voz humana, no VO.
+- **"AI Local-first"** sustituye sistemáticamente a "Local-first" (decisión v1.7).
 
 ---
 
-## Escena 2 — Rhizome decide offline (0:20–0:45)
+## Estado de las escenas en v0.2
 
-| Elemento | ES (grabación VO) | EN (referencia) | Posición / Tiempo |
-|----------|-------------------|-----------------|-------------------|
-| VO 2A | "Esta parcela no está sola. Tiene un cerebro local. Lee el suelo. Decide." | "This plot is not alone. It has a local brain. It reads the soil. It decides." | Sobre el log del Jetson · 0:24–0:32 (13 palabras ES) |
-| VO 2B | "Y firma lo que hace, para que se pueda explicar." | "And signs what it does, so it can be explained." | Sobre el `DecisionReceipt` · 0:32–0:38 (10 palabras ES) |
-| VO 2C (frase fuerte 1) | **"Rhizome mantiene viva la parcela cuando nadie está."** | "Rhizome keeps the plot alive when no one is there." | Sobre el agua de la válvula · 0:43–0:45 (8 palabras ES) |
-
-| Elemento | ES (referencia) | EN (en pantalla) | Posición / Tiempo |
-|----------|-----------------|------------------|-------------------|
-| Overlay `OFFLINE` | "SIN RED" | **`OFFLINE`** | Esquina sup. izq. · persistente todo el bloque (0:20–0:45) |
-| Stack cartela técnica 1 | "Gemma 4 E2B · local · llama.cpp" | **`Gemma 4 E2B · local · llama.cpp`** | Esquina sup. der. · ~0:24–0:27 (3s) |
-| Sub-cartela técnica | "LLM solo en casos ambiguos" | **`LLM called only when ambiguous`** | Esquina sup. der. · ~0:27–0:30 (3s, tras la stack) |
-| Cartela `DecisionReceipt` | "Recibo de decisión" | **`DecisionReceipt`** | Centro/superpuesta · 0:36–0:38 (2s) |
-
----
-
-## Escena 3 — ESP32 SAFE LIMIT (0:45–1:00)
-
-| Elemento | ES (grabación VO) | EN (referencia) | Posición / Tiempo |
-|----------|-------------------|-----------------|-------------------|
-| VO 3 (frase fuerte 3) | **"La IA propone. El agua la gobierna una capa física prudente."** | "AI proposes. Water is governed by a prudent physical layer." | Sobre el ESP32 modulando · 0:48–0:53 (11 palabras ES) |
-
-| Elemento | ES (referencia) | EN (en pantalla) | Posición / Tiempo |
-|----------|-----------------|------------------|-------------------|
-| Cartela técnica esquina | "tools de lectura/función · sin tools de actuador" | **`function/read tools · no actuator tools`** | Esquina sup. der. · 0:45–0:48 (3s) |
-| Overlay `ESP32 SAFE LIMIT` | "Límite seguro del ESP32" | **`ESP32 SAFE LIMIT`** | Esquina sup. der. · entrada a 0:48, persistente |
-| Cartela ancla central | "Cuando duda, riega menos." | **"When in doubt, water less."** | Centro dominante · 0:53–0:56 (3s) — sobre el `DecisionReceipt` atenuado |
+| Escena | Estado | Notas |
+|--------|--------|-------|
+| **E0** Cartela apertura Sprout | **TBD-sesión día 20** | Microcartela atribución Gemma confirmada en cierre, no en E0. Texto cartela apertura sin cambios pero pendiente sesión. |
+| **E1** La ausencia con datos globales | **TBD-sesión día 20** | Reformulada drásticamente con 4 datos globales + microcorte tierra agrietada + pregunta abierta. Texto definitivo pendiente revisión Cambium ella + Bea. |
+| **E2** Rhizome decide offline | ✅ **Estable v1.7** | Frase fuerte 1 reformulada. VO en inglés. |
+| **E3** ESP32 SAFE LIMIT | ✅ **Estable v1.7** | Frase fuerte 3 reformulada (proposes/disposes). Cartela técnica nueva (AI proposes / ESP32 validates). |
+| **E3b** Meristem prepara | **TBD-sesión día 20** | Nueva en v1.7. Frase Extra E3b cerrada Bea pero ubicación cartela en pantalla pendiente. |
+| **E4** Llega Pollen | ✅ **Estable v1.7** | Frase fuerte 2 reformulada (con Pollen explícito). |
+| **E5** La persona da una misión | ✅ **Estable v1.7** | Voz humana castellano literal. Subtítulo inglés en master. |
+| **E6** Ferry A→B | ✅ **Estable v1.7** | Frase fuerte 5 sin cambios. Contingencia con/sin meteo. |
+| **E7** Watering criteria updated | ✅ **Estable v1.7** | Climax. Cartela ancla `Watering criteria updated.` + invariante esquina. |
+| **E8** Caducidad | **TBD-sesión día 20** | Pendiente decisión: ¿matamos E8 sí/no? Si sobrevive, frase fuerte 4 cerrada. |
+| **E9** Cenital federado | **TBD-sesión día 20** | Cadencia cartela final pendiente (3 beats v1.7 vs 5 cartelas v1.6). PR #88 abierto. |
+| **E9b** Meristem recibe + cierre | **TBD-sesión día 20** | Nueva en v1.7. Frase fuerte 6 + tagline bookend cierre. |
 
 ---
 
-## Pendiente
+## Escena 2 — Rhizome decide offline (0:25–0:50) ✅ ESTABLE v1.7
 
-Escenas 4-9 a apilar en este documento. Plan:
-- Día 16 cierre / día 17 mañana: escenas 4, 5, 6.
-- Día 17 / día 18: escenas 7, 8, 9 + revisión final ES↔EN.
+### VO master (inglés grabado por Bea, ES dub aparte)
 
-**Nota voz humana escena 5:** la frase de la persona — *"Vuelvo el viernes. Esta planta aguanta más seca de lo que crees, riega un poco menos."* — se graba en castellano literal por Bea y **no se traduce al inglés en pantalla**. Es la única excepción a la regla de bilingüismo del documento.
+| Elemento | EN (master VO) | ES (dub) | Posición / Tiempo |
+|----------|----------------|----------|-------------------|
+| VO 2A | **"This plot is not alone. It has a local brain. It reads the soil. It decides."** | *"Esta parcela no está sola. Tiene un cerebro local. Lee el suelo. Decide."* | Sobre el log del Jetson · 0:29–0:37 (~14 palabras EN) |
+| VO 2B | **"And signs what it does, so it can be explained."** | *"Y firma lo que hace, para que se pueda explicar."* | Sobre el `DecisionReceipt` · 0:37–0:43 (~10 palabras EN) |
+| VO 2C (**frase fuerte 1 reformulada**) | **"Rhizome keeps the plot alive — without a person, without a signal."** | *"Rhizome mantiene viva la parcela — sin nadie, sin red."* | Sobre el agua de la válvula · 0:48–0:50 (~12 palabras EN) |
+
+### Cartelas y overlays on-screen (inglés)
+
+| Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
+|----------|------------------|-----------------|-------------------|
+| Overlay persistente | **`OFFLINE`** | "Sin red" | Esquina sup. izq. · todo el bloque (0:25–0:50) |
+| Cartela técnica 1 | **`Gemma 4 E2B · local · llama.cpp`** | "Gemma 4 E2B local llama.cpp" | Esquina sup. der. · ~0:29–0:32 (3s) |
+| Sub-cartela técnica | **`LLM called only when ambiguous`** | "LLM solo en casos ambiguos" | Esquina sup. der. · ~0:32–0:35 (3s) |
+| Cartela `DecisionReceipt` | **`DecisionReceipt`** | "Recibo de decisión" | Centro/superpuesta · 0:41–0:43 (2s) |
+
+### Log diseñado en pantalla del Jetson (Venation, sin traducción — es código del sistema)
+
+```
+SOIL READ
+plot: PLOT_01
+soil: 31%
+threshold: 34%
+
+DECISION
+candidate: WATER
+final_action: 18s
+why_short: Soil below minimum. Budget available.
+```
+
+`WATER` y `final_action` resaltados en `signal.seed`. Resto en gris atenuado.
+
+---
+
+## Escena 3 — ESP32 SAFE LIMIT (0:50–1:05) ✅ ESTABLE v1.7
+
+### VO master
+
+| Elemento | EN (master VO) | ES (dub) | Posición / Tiempo |
+|----------|----------------|----------|-------------------|
+| VO 3 (**frase fuerte 3 reformulada**) | **"AI proposes. Physical safety disposes."** | *"La IA propone, la capa física dispone."* | Sobre el ESP32 modulando · 0:53–0:58 (~6 palabras EN) |
+
+### Cartelas y overlays on-screen (inglés)
+
+| Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
+|----------|------------------|-----------------|-------------------|
+| Cartela técnica esquina | **`AI proposes / ESP32 validates`** | "La IA propone / el ESP32 valida" | Esquina sup. der. · 0:50–0:53 (3s) |
+| Overlay `ESP32 SAFE LIMIT` | **`ESP32 SAFE LIMIT`** | "Límite seguro del ESP32" | Esquina sup. der. · entrada a 0:50, persistente |
+| Cartela ancla central | **"When in doubt, water less."** | *"Cuando duda, riega menos."* | Centro dominante · 0:58–1:01 (3s) — sobre el `DecisionReceipt` atenuado |
+
+### Cambios v1.7 sobre v1.6
+
+- Cartela técnica: `function/read tools · no actuator tools` → `AI proposes / ESP32 validates` (Venation, voto Bea aceptado).
+- Frase fuerte 3 reformulada: `"La IA propone. El agua la gobierna una capa física prudente."` → `"AI proposes. Physical safety disposes."` (juego proposes/disposes).
+
+---
+
+## Escena 4 — Llega Pollen (1:15–1:40) ✅ ESTABLE v1.7
+
+### VO master
+
+| Elemento | EN (master VO) | ES (dub) | Posición / Tiempo |
+|----------|----------------|----------|-------------------|
+| VO 4 (**frase fuerte 2 reformulada**) | **"Every Pollen visit can change the local criterion."** | *"Cada visita de Pollen puede cambiar el criterio local."* | Sobre el plano de la persona mirando la planta · 1:32–1:40 (~8 palabras EN) |
+
+### Cartelas y overlays on-screen (inglés)
+
+| Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
+|----------|------------------|-----------------|-------------------|
+| Cartela técnica esquina | **`Gemma 4 E4B · LiteRT-LM · on-device`** | "Gemma 4 E4B LiteRT-LM en el dispositivo" | Esquina sup. der. · 1:20–1:23 (3s) |
+| Pregunta UI (en pantalla del móvil) | **`What happened since my last visit?`** | "¿Qué ha pasado desde mi última visita?" | Pantalla del móvil · 1:20–1:25 (5s) |
+| Bloque resumen UI (en pantalla del móvil) | **`SINCE LAST VISIT / 2 watering events / 1 skipped decision / 0 blocked actions`** + receipts (`WATER · 18s · 14:00`, `WATER · 12s · 09:30`, `SKIP · 22:00 · soil above threshold`) | "Desde la última visita..." | Pantalla del móvil · 1:25–1:32 (7s) |
+
+### Cambios v1.7 sobre v1.6
+
+- Frase fuerte 2 reformulada: `"Cada visita puede cambiar el criterio local."` → `"Every Pollen visit can change the local criterion."` (Pollen explícito).
+- Recortada de 30s a 25s.
+
+---
+
+## Escena 5 — La persona da una misión (1:40–2:00) ✅ ESTABLE v1.7
+
+### Voz humana real (CASTELLANO LITERAL — excepción narrativa deliberada)
+
+| Elemento | ES (grabación literal Bea) | EN (subtítulo en master, entre comillas) | Posición / Tiempo |
+|----------|----------------------------|------------------------------------------|-------------------|
+| Voz humana E5 | **"Vuelvo el viernes. Esta planta aguanta más seca de lo que crees, riega un poco menos."** | *"I'll be back Friday. This plant takes drier than you think — water it a bit less."* | Sobre plano cercano del móvil · 1:43–1:50 (14 palabras ES) |
+
+**No se traduce en pantalla del móvil ni en `operator_note`. Subtítulo inglés en master entre comillas marca que es voz humana, no VO.**
+
+### VO master (inglés)
+
+| Elemento | EN (master VO) | ES (dub) | Posición / Tiempo |
+|----------|----------------|----------|-------------------|
+| VO 5 cierre | **"What the person says becomes policy."** | *"Lo que la persona dice se convierte en política."* | Plano cerrado del móvil · 1:58–2:00 (~6 palabras EN) |
+
+### Cartelas y overlays on-screen (inglés)
+
+| Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
+|----------|------------------|-----------------|-------------------|
+| UI motion procesamiento Pollen | **`listening → compiling → validating`** | "escuchando → compilando → validando" | Pantalla del móvil · 1:50–1:53 (3 estados secuenciales 1s cada uno) |
+| UI compilación `MissionPatch` | **`VOICE NOTE`** + frase castellana literal + **`COMPILED PATCH`** + cuatro campos resaltados con `signal.seed` (`horizon_h: 72`, `soil_thresholds.dry: 35 → 25`, `budget_cap_ml: 900`, `operator_note: preserved`) | UI sistema (sin traducción — es output del compilador) | Pantalla del móvil · 1:53–1:58 (5s) |
+| Cartela superpuesta | **`MissionPatch validated`** | "MissionPatch validado" | Centro/superpuesta · 1:55–1:57 (2s) |
+
+### Notas críticas
+
+- **`operator_note: preserved`** es la etiqueta del sistema que indica que la voz humana literal se almacena sin recortar. La frase coloquial castellana queda en `VOICE NOTE` arriba.
+- Bea graba la voz humana en días 24-25 antes del rodaje principal.
+- Coordinación pendiente con Floema sobre UI exacta del compilador (mock fiel si captura real no llega a tiempo).
+
+---
+
+## Escena 6 — Ferry A→B (2:00–2:20) ✅ ESTABLE v1.7
+
+### VO master
+
+| Elemento | EN (master VO) | ES (dub) | Posición / Tiempo |
+|----------|----------------|----------|-------------------|
+| VO 6A | **"Pollen brings questions, answers, and context."** | *"Pollen trae preguntas, respuestas y contexto."* | Sobre el ferry · 2:00–2:05 (~6 palabras EN) |
+| VO 6B (**frase fuerte 5**) | **"Pollen turns those visits into federated intelligence."** | *"Pollen convierte esas visitas en inteligencia federada."* | Sobre el Rhizome 02 con bundle aceptado · 2:17–2:20 (~8 palabras EN) |
+
+**Eco interno:** *"those"* en F5 hace eco directo a *"every Pollen visit"* en F2 (E4). Coherencia narrativa cross-escena.
+
+### Cartelas y overlays on-screen (inglés) — contingencia meteo
+
+#### Con estación meteo conectada (ruta principal)
+
+| Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
+|----------|------------------|-----------------|-------------------|
+| Cartela superpuesta ferry | **`WeatherDigest ferry`** | "Ferry de WeatherDigest" | Centro/superpuesta · 2:02–2:04 (2s) |
+| Cartela en pantalla Rhizome 02 | **`WeatherDigest accepted · Source: rhizome_01`** | "WeatherDigest aceptado · Origen: rhizome_01" | Pantalla Rhizome 02 · 2:08–2:12 (4s) |
+
+#### Sin estación meteo (contingencia)
+
+| Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
+|----------|------------------|-----------------|-------------------|
+| Cartela superpuesta ferry | **`Context ferry`** | "Ferry de contexto" | Centro/superpuesta · 2:02–2:04 (2s) |
+| Cartela en pantalla Rhizome 02 | **`Context accepted · Source: rhizome_01`** | "Contexto aceptado · Origen: rhizome_01" | Pantalla Rhizome 02 · 2:08–2:12 (4s) |
+
+### Carteles físicos visibles en escena 6
+
+| Elemento | EN (en plano) | ES (referencia) |
+|----------|---------------|-----------------|
+| Cartel maceta PLOT_01 | **`PLOT_01 with RHIZOME_01`** | "Parcela 01 con Rhizoma 01" |
+| Cartel caja electrónica RHIZOME_01 | **`RHIZOME_01 / EDGE NODE`** | "Rhizoma 01 / Nodo edge" |
+| Cartel maceta PLOT_02 | **`PLOT_02 with RHIZOME_02`** | "Parcela 02 con Rhizoma 02" |
+| Cartel caja electrónica RHIZOME_02 | **`RHIZOME_02 / EDGE NODE`** | "Rhizoma 02 / Nodo edge" |
+
+---
+
+## Escena 7 — Watering criteria updated (2:20–2:40) ✅ ESTABLE v1.7 — CLIMAX
+
+### VO master
+
+| Elemento | EN (master VO) | ES (dub) | Posición / Tiempo |
+|----------|----------------|----------|-------------------|
+| VO 7 (sobrio) | **"The system updates its care."** | *"El sistema ajusta los cuidados."* | Sobre el plano del agua (chorro corto) · 2:32–2:40 (~5 palabras EN) |
+
+### Cartelas y overlays on-screen (inglés)
+
+| Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
+|----------|------------------|-----------------|-------------------|
+| Cartela esquina invariante | **`Physical layer prevails. / Rhizome arbitrates. / Pollen mediates. / Meristem refines.`** | "La capa física prevalece. / Rhizome arbitra. / Pollen media. / Meristem afina." | Esquina inferior derecha · 2:24–2:29 (5s, IBM Plex Mono pequeña, paleta sobria) |
+| Cartela ancla central | **"Watering criteria updated."** | *"Criterios de riego actualizados."* | Centro dominante · 2:29–2:32 (3s) — sobre los tres bloques de evidencia atenuados |
+
+### Log diseñado en pantalla del Jetson (sin traducción — es código del sistema)
+
+```
+MISSION PATCH ACCEPTED
+id: mp_004
+ttl: 21600s
+
+POLICY DIFF
+soil_thresholds.dry    35 → 25
+daily_budget_ml        1500 → 900
+
+NEXT DECISION CHANGED
+final_action           12s
+why_short              Mission compiled from human voice
+```
+
+`POLICY DIFF` con dos campos resaltados en `signal.seed` (los que cambian). Resto en gris atenuado.
+
+### Cambios v1.7 sobre v1.6
+
+- Cartela ancla central confirmada: `Watering criteria updated.` (era `Criterion updated.` en v1.4 → cambio Venation día 17 ratificado).
+- Climax narrativo confirmado en E7 (no E6 transferencia A→B) por Bea día 18-19.
+
+---
+
+## TBD-sesión día 20 — escenas inestables
+
+Las siguientes escenas tienen elementos pendientes de cierre en sesión conjunta los tres (Bea + Cambium ella + Corola):
+
+- **E0 Cartela apertura Sprout** — texto cartela apertura sin cambios v1.7. Pendiente sesión por coherencia con resto.
+- **E1 La ausencia con datos globales** — reformulada drásticamente. 4 datos globales + microcorte tierra agrietada + pregunta abierta. Texto definitivo pendiente revisión Cambium ella.
+- **E3b Meristem prepara** — nueva. Frase Extra E3b cerrada Bea (*"Meristem composes the policy."*). Cartela en pantalla pendiente decisión final.
+- **E8 Caducidad** — pendiente: ¿matamos E8 sí/no? Si sobrevive, frase fuerte 4 cerrada (*"Every intelligence has jurisdiction. And expiry."*).
+- **E9 Cenital federado** — cadencia cartela final pendiente (3 beats v1.7 modulación Cambium ella vs 5 cartelas v1.6 con cadencia Venation 20s). Decisión post-sesión, PR #88 abierto a Venation.
+- **E9b Meristem recibe + cierre íntimo** — nueva. Frase fuerte 6 cerrada (*"Meristem stores and processes. Tomorrow, it will learn."*). Tagline bookend cierre cerrada (*"When network is absent — and the human is far — local criteria still irrigate."*). Tarjeta logo final con microcartela atribución Gemma confirmada.
+
+**Tras sesión, completar v0.3** con todas las escenas cerradas + revisión final ES↔EN del documento entero.
 
 ---
 
 ## Historial
 
-- **v0.1** (2026-05-01, día 16, Corola) — primer apilado de copies bilingües tras petición Bea día 16. Escenas 1-3 completas. Convenciones documentadas. Excepción única (voz humana E5) anotada.
+- **v0.2** (2026-05-05, día 20, Corola) — actualización post-giro estratégico día 18-19 (v1.7 del guion). Cambios: VO master pasa a inglés (era castellano), añadidas escenas E2-E7 con copies bilingües completos, frases fuertes reformuladas (F1, F2, F3, F5 sin cambios), voz humana E5 castellano literal preservada con subtítulo EN entre comillas, contingencia meteo E6 documentada (con/sin), cartela invariante E7 con texto firme. Escenas inestables (E0, E1, E3b, E8, E9, E9b) marcadas TBD-sesión día 20.
+- **v0.1** (2026-05-01, día 16, Corola) — primer apilado de copies bilingües tras petición Bea día 16. Escenas 1-3 completas en formato v1.6 (VO castellano). Convenciones documentadas. Excepción única (voz humana E5) anotada.
