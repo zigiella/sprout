@@ -56,6 +56,59 @@ Writeup, video, research y demo los cubre el core del equipo (coordinacion + pro
 - Abrir PR contra `main`. En la descripcion del PR: `Closes #N` + resumen + como probar
 - Review por Cambium antes de merge. Sin review, no hay merge
 
+### 3.4 Mensajes de coordinacion: inicio de dia, cierre y cross-frente
+
+> Convencion validada empiricamente dia 19-20 (Bea + Cambium): hacer explicitas
+> las dependencias entre miembras en los mensajes reduce overhead de
+> coordinacion y desbloquea decisiones que de otra forma quedan implicitas.
+
+**Cuando aplica esta convencion**:
+- Mensajes de inicio de dia donde varias miembras tienen dependencias cruzadas (Cambium los redacta y Bea los modula).
+- Mensajes cross-frente cuando una miembra bloquea o depende de otra.
+- Mensajes de cierre de dia cuando lo que se cerro afecta el plan del dia siguiente de otra miembra.
+
+**Plantilla obligatoria** cuando hay dependencias activas: cada mensaje incluye una seccion **"Interrelaciones"** con tres campos (omitir el que no aplique):
+
+```markdown
+### Interrelaciones [dia X o tema]
+
+- **ESPERAS DE [persona]**: [que necesitas concretamente] [cuando idealmente].
+  Sin eso, [que queda bloqueado].
+- **BLOQUEAS a [persona]**: [que le bloqueas] [hasta cuando].
+  Si no lo cierras, [coste para el otro frente].
+- **COORDINAS con [persona]**: [en que cosa] [modo: bidireccional, sincrono, asincrono].
+```
+
+**Campos opcionales** que se anaden cuando son relevantes:
+- **DESBLOQUEAS a [persona]** cuando [evento].
+- **APUNTAS a [persona]** sin urgencia, para que sepa.
+
+**Por que la plantilla**:
+1. Cada miembra ve sin esfuerzo a quien depende y a quien afecta.
+2. Las decisiones operativas pequenas que destrabar dependencias se hacen visibles y se cierran rapido.
+3. Reduce el ruido tipo "no sabia que estabas esperando esto" y los reproches retroactivos.
+4. Permite a la coordinadora (Bea) y a la tech lead (Cambium) hacer un mapa visual de bloqueos del dia con un vistazo a los mensajes.
+
+**Ejemplo real (mensaje a Floema dia 20)**:
+
+```markdown
+### Interrelaciones dia 20
+
+- **BLOQUEAS a Bea/Bract**: empaquetado release APK demo flavor + Appetize.io = live demo.
+  Sin tu APK, no hay live demo en submission. Plazo draft dia 22.
+- **ESPERAS DE Meristem**: implementacion servidor WS para que tu cliente WS pueda conectar.
+  Coordinacion bidireccional desde primera hora si quieres avanzar rapido.
+- **ESPERAS DE Endo**: que la fachada Jetson :13010 siga viva.
+  Si cae o tiene regresion, no puedes consolidar `RhizomeNetworkClient`.
+- **COORDINAS con Venation**: capturas Pollen UI bilingue en alta fidelidad para validacion copy
+  definitivo. Material pre-rodaje.
+```
+
+**Cuando NO hace falta la plantilla**:
+- Mensajes 1:1 sin dependencias cruzadas (Cambium → Bea sobre un detalle puntual).
+- Bitacoras self-contained donde la dependencia ya esta en el cuerpo y nombrarla aparte sumaria ruido.
+- Mensajes de pure-comunicacion sin acciones operativas.
+
 ---
 
 ## 4. Bitacora: como escribir una entrada
@@ -461,6 +514,46 @@ Writeup, video, research, and demo are covered by the core team (coordination + 
 - If architecture changed, update the matching doc in `docs/`
 - Open a PR against `main`. PR body: `Closes #N` + summary + how to test
 - Review by Cambium before merge. No review, no merge.
+
+### 3.4 Coordination messages: day-start, day-close and cross-frontier
+
+> Convention validated empirically days 19-20 (Bea + Cambium): making
+> dependencies between team members explicit reduces coordination overhead
+> and unblocks decisions that would otherwise stay implicit.
+
+**When this convention applies**:
+- Day-start messages where several team members have cross dependencies (Cambium drafts, Bea modulates).
+- Cross-frontier messages when one team member blocks or depends on another.
+- Day-close messages when what closed affects another member's next-day plan.
+
+**Mandatory template** when active dependencies exist: each message includes an **"Interrelaciones"** (Spanish) section with three fields (omit any that don't apply):
+
+```markdown
+### Interrelaciones [day X or topic]
+
+- **ESPERAS DE [person]**: [what you need concretely] [when ideally].
+  Without it, [what stays blocked].
+- **BLOQUEAS a [person]**: [what you block them on] [until when].
+  If you don't close it, [cost to the other frontier].
+- **COORDINAS con [person]**: [on what] [mode: bidirectional, sync, async].
+```
+
+**Optional fields** added when relevant:
+- **DESBLOQUEAS a [person]** when [event].
+- **APUNTAS a [person]** without urgency, just so they know.
+
+**Why the template**:
+1. Each member sees without effort whom they depend on and whom they affect.
+2. Small operational decisions that unblock dependencies become visible and close fast.
+3. Reduces "I didn't know you were waiting on this" noise and retroactive blame.
+4. Lets the coordinator (Bea) and tech lead (Cambium) make a visual blocking map of the day at a glance.
+
+**When the template is NOT needed**:
+- 1:1 messages without cross dependencies.
+- Self-contained bitacoras where the dependency is already in the body.
+- Pure-communication messages without operational actions.
+
+(Section heading `Interrelaciones` stays in Spanish in EN messages too — it's a project term used as-is.)
 
 ---
 
