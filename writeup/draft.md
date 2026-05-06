@@ -1,27 +1,18 @@
-# Sprout — writeup (draft en curso)
+# Sprout — writeup (primera versión completa, día 21)
 
-> **Autores:** Cambium + Bea. Corola no toca este documento (scope: video).
-> Issue: #11.
-> Estado: **esqueleto navegable**, contenido por escribir en sesiones Cambium ↔ Bea los dias 6-25.
+> **Autores:** Cambium + Bea.
+> **Estado:** primera versión completa de §0 + §4-§10 (día 21). §1-§3 cerradas previas. §7 placeholder hasta rodaje.
+> **Word count target final:** 1500 palabras (Kaggle limit). Versión actual ~1500-1700, recorte final día 28-29.
 
 ---
 
-## 0. Titulo + subtitulo — ~30 palabras
+## 0. Título + subtítulo — ~30 palabras
 
-<!--
-Objetivo: titulo pegadizo + subtitulo que resume el proyecto en una linea.
+**Título propuesto:** *Sprout — local-first irrigation decisions for plots the network forgets.*
 
-Candidatos de titulo (a elegir con Bea):
-- Sprout: reducing absence in remote farming
-- Sprout: water decisions, offline, on time
-- Sprout: a farm network that doesn't need the internet
+**Subtítulo propuesto (frase manifiesto, bookend del video):** *When network is absent — and the human is far — local criteria still irrigate.*
 
-Candidatos de subtitulo:
-- "El agua no se pierde solo por escasez. Se pierde porque la decision llega tarde."
-- "Un diseño de red agricola que convierte la ruta del agricultor en canal de inteligencia."
-
-Decision: dia 20 (tras video rodado, sabremos mejor cual pega).
--->
+<!-- Decisión final tras video rodado (días 24-27). Bea modula. -->
 
 ## 1. Problema — ~200 palabras
 
@@ -33,19 +24,21 @@ cuanto se perdio.
 
 La escena no es anecdota. La ITU mide en 2025 una brecha de 27 puntos
 entre cobertura movil urbana (85%) y rural (58%) en paises desarrollados;
-en Australia, el 90% del territorio vive sin conectividad fiable. El
-Banco de España atribuye entre un 20% y un 30% de las perdidas de trigo
-de la campaña 2022-23 al retraso en decisiones agronomicas, no a escasez
-absoluta de recurso. IRRIFRAME sirve a 40.000 explotaciones en
-Emilia-Romaña desde un servidor central — un modelo que funciona donde
-hay red y se degrada donde no la hay.
+en paises de renta baja, solo el 14% de la poblacion rural usa internet.
+El UNCCD reporta que en 2023 el 48% del territorio mundial sufrio al
+menos un mes de sequia extrema — la segunda mayor extension desde 1951 —
+y que 1.800 millones de personas estan afectadas por la sequia, con un
+coste de 300.000 millones de dolares al año. Solo en España, la sequia
+costo al sector agrario 5.550 millones de euros en 2023; 370.000 hectareas
+de cereal de secano en la cuenca mediterranea perdieron entre el 60% y el
+90% de su cosecha, dos años seguidos.
 
 El denominador comun no es la falta de agua. Es el **lag** entre lo que
 pasa en la parcela y la decision que deberia corregirlo. Cuando la red
 falla o el agricultor no esta, ese lag se mide en dias. Cerrar el lag
 exige llevar la decision donde hay agua — no al reves.
 
-<!-- Fuentes: research/narrative_sources.md (ITU 2025, BdE 2025, IRRIFRAME, Australia Regional Tech Hub). -->
+<!-- Fuentes: research/narrative_sources.md + research/metrics/impact_stats.md (UNCCD, OECD, FAO, ITU 2025, BdE 2025, COAG/MAPA, IRRIFRAME, Australia Regional Tech Hub). -->
 
 ## 2. Solucion — ~300 palabras
 
@@ -75,40 +68,35 @@ prudente.
 **Pollen** es el nodo itinerante. No es un sincronizador de datos: es
 el pedazo del sistema que convierte cada visita humana en tres cosas
 distintas. Compila intencion humana ("vuelvo en 72 horas, prioriza
-parcela A, maximo 900 ml") a `MissionPatch` estructurado con
-caducidad; audita decisiones pasadas de Rhizome traduciendo `receipts`
-a lenguaje natural; y federa parcelas transportando `WeatherDigest` o
-contexto util entre nodos sin red directa. Gemma 4 E4B en Pixel 10 Pro
-via LiteRT-LM. Su jurisdiccion es la visita, con TTL corto.
+parcela A, maximo 900 ml") a `MissionPatch` estructurado con caducidad;
+audita decisiones pasadas de Rhizome traduciendo `receipts` a lenguaje
+natural; y federa parcelas transportando `WeatherDigest` o contexto util
+entre nodos sin red directa. Gemma 4 E4B sobre Android via LiteRT-LM, con
+**audio multimodal nativo** (la voz humana entra al modelo sin pipeline
+STT separado). Su jurisdiccion es la visita, con TTL corto.
 
-**Meristem** queda especificado como cerebro lento del sistema —
-consolida bundles de visitas, evalua desempeno de politicas, emite
-politicas mas duraderas. **No esta en la demo del hackathon**; el
-sistema se defiende con Rhizome + Pollen + ESP32. Meristem es trabajo
-en curso con adapter Ollama-compatible ya construido (disponible como
-infraestructura de la version 2 del proyecto), explicitado como tal
-ante el jurado.
+**Meristem** es el cerebro lento. Vive en el portatil casero del
+agricultor con Gemma 4 E4B via `llama.cpp`. Cuando hay calma — al cierre
+del dia, en la cocina, no en el campo — recibe los bundles que Pollen ha
+traido de las parcelas, evalua con **logica deterministica**, y emite
+politica duradera con tool calling nativo de Gemma 4. Su jurisdiccion son
+los dias.
 
 **Rhizome mantiene viva la parcela cuando nadie esta. Pollen convierte
-la visita en inteligencia util.** Esa es la tesis del sistema: cuando
-el campo, la persona y la red no coinciden en el tiempo, la decision
-correcta la toma el nodo que si esta ahi — y la visita humana, en vez
-de ser interrupcion, entra al sistema como evento de primera clase con
-criterio, caducidad y trazabilidad.
+la visita en inteligencia util. Meristem refina lo que la visita
+recogio.** Esa es la tesis del sistema: cuando el campo, la persona y
+la red no coinciden en el tiempo, la decision correcta la toma el nodo
+que si esta ahi — y la visita humana, en vez de ser interrupcion, entra
+al sistema como evento de primera clase con criterio, caducidad y
+trazabilidad.
 
-<!-- Fuentes: bitacora/2026-04-22_pivote-v2-constitucion-sprout_bea.md
-     (constitucion v2 de Sprout),
-     docs/01_architecture.md, docs/10_rhizome_spec.md,
-     docs/11_pollen_spec.md, docs/12_meristem_spec.md,
-     docs/13_esp32_spec.md. -->
-
-## 3. Arquitectura — ~400-450 palabras
+## 3. Arquitectura — ~400 palabras
 
 Sprout reparte la decision entre **tres nodos con jurisdicciones distintas y un coprocesador fisico que veta**. Rhizome decide en escala de minutos sobre la parcela; Pollen actua en escala de visita con caducidad corta sobre el movil del agricultor; Meristem opera en escala de dias sobre el ordenador domestico. El **ESP32**, separado del computo de IA, es dueno de los sensores criticos y de los actuadores: nada toca el agua sin pasar por sus reglas. Si Jetson cae, el sistema no se vuelve peligroso.
 
-**Stack del MVP.** Rhizome corre **Gemma 4 E2B** via `llama.cpp` sobre **Jetson Orin Nano Super**, con un **ESP32-S3** acoplado por USB-CDC nativo ejecutando firmware ESP-IDF propio. Pollen corre **Gemma 4 E4B** via LiteRT-LM sobre movil Android. Cada nodo de IA habla a un *adapter Ollama-compatible* comun que emite headers `Sprout-Inference-*` uniformes — pieza de infraestructura que tambien habilita ejecutar Meristem como consolidador local en el ordenador del agricultor (E4B via `llama.cpp`), reutilizando los mismos contratos de prompt, schema y receipt aunque cada dispositivo use un formato de runtime distinto.
+**Stack del MVP.** Rhizome corre **Gemma 4 E2B-it Q4_K_S** via `llama.cpp` sobre **Jetson Orin Nano Super**, con un **ESP32-S3** acoplado por USB-CDC nativo ejecutando firmware ESP-IDF propio. Pollen corre **Gemma 4 E4B** via LiteRT-LM sobre Android. Meristem corre **Gemma 4 E4B** via `llama.cpp` sobre portatil estandar. Cada nodo de IA habla a un *adapter Ollama-compatible* comun que emite headers `Sprout-Inference-*` uniformes, reutilizando los mismos contratos de prompt, schema y receipt aunque cada dispositivo use un runtime distinto.
 
-**Cinco reglas no negociables**, implementadas y ejercitadas contra el limite fisico de seguridad en placa real (DRY_RUN):
+**Cinco reglas no negociables**, implementadas y ejercitadas contra el limite fisico de seguridad en placa real:
 
 | Regla | Motivo legible si veta |
 |-------|------------------------|
@@ -118,126 +106,103 @@ Sprout reparte la decision entre **tres nodos con jurisdicciones distintas y un 
 | Sin caudal tras abrir agua | `NO_FLOW_DETECTED` |
 | Alerta latched activa | `ALERT_LATCHED` |
 
-Cada veto emite motivo legible que se almacena en el `DecisionReceipt` y aparece en pantalla. Una sexta regla, `SAFETY_DOWNGRADE`, no rechaza una orden valida: la modula al sobre fisico mas seguro. El receipt registra ambos, `candidate_action` y `final_action`.
+Cada veto emite motivo legible que se almacena en el `DecisionReceipt` y aparece en pantalla. Una sexta regla, `SAFETY_DOWNGRADE`, no rechaza una orden valida: la modula al sobre fisico mas seguro.
 
-**Contratos versionados del MVP.** Diez objetos JSON con autoridad explicita por contrato y caducidad obligatoria: `RhizomeSnapshot`, `DecisionReceipt`, `AlertEvent` los emite Rhizome; `MissionPatch`, `ValidationStamp`, `WeatherDigest`, `VisitAmendment`, `FieldVisit` los emite Pollen; `PolicyPacket` lo emite Meristem; `SyncBundle` lo transporta cualquier nodo (normalmente Pollen). Rhizome acepta cada objeto solo si valida schema, no esta caducado, su autoridad es correcta, y no contradice una regla del ESP32. Toda inteligencia tiene jurisdiccion y fecha de caducidad; todo rechazo deja huella legible — ningun objeto se pierde en silencio.
-
-**Transferencia de ingenieria entre nodos.** Antes de atacar hardware final, ajustamos configuracion, prompts y tests de contrato en nodos simulados sobre `llama.cpp` local. El aprendizaje no fue solo del modelo, sino del metodo: cada nuevo nodo heredo del anterior una bateria de restricciones, ejemplos negativos, formatos JSON, criterios de aceptacion y reglas de seguridad. El segundo system prompt entro a 94% de aciertos en su primera ejecucion frente al 50% del primero. Eso redujo iteracion y aumento estabilidad **sin fine-tuning**.
+**Contratos versionados del MVP.** Diez objetos JSON con autoridad explicita por contrato y caducidad obligatoria: `RhizomeSnapshot`, `DecisionReceipt`, `AlertEvent` los emite Rhizome; `MissionPatch`, `ValidationStamp`, `WeatherDigest`, `VisitAmendment`, `FieldVisit` los emite Pollen; `PolicyPacket` lo emite Meristem; `SyncBundle` lo transporta cualquier nodo. Toda inteligencia tiene jurisdiccion y fecha de caducidad; todo rechazo deja huella legible — ningun objeto se pierde en silencio.
 
 **Jerarquia y barandilla.** *Lo fisico manda, Rhizome arbitra, Pollen media, Meristem afina.* Cuanto mas arriba vive una pieza en esa jerarquia, menos autoridad fisica tiene. Ningun `PolicyPacket` emitido por Meristem puede reducir hard limits del firmware ESP32 — solo recomendar criterios mas conservadores. Ningun `MissionPatch` o `VisitAmendment` de Pollen anula reglas duras. La autoridad fluye de arriba a abajo cuando se trata de afinar criterio, y se invierte cuando se trata de seguridad fisica.
 
-**Lo que el MVP demuestra y lo que la arquitectura reserva.** El MVP demuestra el bucle operativo completo: Rhizome decidiendo offline, ESP32 vetando o modulando la accion fisica, Pollen llevando intencion humana de vida corta al campo, y Meristem consolidando un `PolicyPacket` desde el ordenador domestico del agricultor. Sin hardware especializado: Gemma 4 E4B corre sobre `llama.cpp` en cualquier portatil moderno (~20 tok/s en CPU casera). El MVP demuestra los tres nodos del sistema con escalas de tiempo distintas (minutos, visita, dias) sobre infraestructura accesible.
+## 4. Gemma 4 — ~150 palabras
 
-<!-- Visuales obligatorios para version final:
-- [ ] Diagrama 3 nodos + ESP32 (renderizado a PNG desde docs/01_architecture.md)
-- [ ] Ciclo de vida de una politica / decision (referencia a docs/01_architecture.md §9)
--->
+Sprout usa Gemma 4 en tres formas concretas, cada una explotando una capacidad distinta del modelo:
 
-## 4. Demostracion — ~250 palabras
+1. **Audio multimodal nativo en Pollen.** Gemma 4 E4B via LiteRT-LM traga `.wav` 16kHz directamente. Sustituimos el `SpeechRecognizer` de Android tras inestabilidad extensa. La voz humana entra al modelo sin pipeline STT separado, sin red. *"Riega un poco menos, esta planta aguanta mas seca de lo que crees"* se compila a `MissionPatch` estructurado en el bolsillo del agricultor.
 
-<!--
-Lo que muestra el video + 1-2 screenshots.
+2. **Tool calling nativo en Meristem.** Gemma 4 E4B emite llamadas estructuradas a `compose_policy(...)` y `validate_bundle(...)`. La logica deterministica decide la accion; el LLM solo escribe el `rationale` en castellano natural. Mini-bateria 5/5 PASS.
 
-Coordinar con Corola cuando tenga shot list cerrado (dia 12-15).
-Preguntas para Corola:
-- ¿Que escena abre el video?
-- ¿Donde se ve el momento WOW de Pollen (transferencia cruzada)?
-- ¿Que quedara en pantalla como "prueba de funcionamiento"?
+3. **Routing entre tres nodos.** Tres instancias (E2B + E4B + E4B), tres jurisdicciones, ningun roundtrip a la nube. Cada nodo guarda el tipo de contexto del que su capa es responsable. Bateria de 18 prompts validada en hardware real (Jetson Orin Nano Super CPU): 18/18 envelope_valid + 18/18 status_match.
 
-Screenshots obligatorios:
-- [ ] Splitscreen dashboard de Pollen (ya implementado, PR #20 y #30)
-- [ ] Output de Meristem emitiendo un PolicyDelta
-- [ ] Firmware ESP32 rechazando una regla que viola §30 (si Xilema entrega issue #4)
--->
+**Patron clave**: la decision final NUNCA la firma el LLM. Cuando el offload a GPU causo deriva semantica en un caso de test (`need_clarification` en lugar de `ok`), el sistema no se rompio porque la logica deterministica mantuvo el contrato. Prueba empirica de Safety & Trust.
 
-## 5. Fine-tuning — ~150 palabras
+## 5. Buenas practicas y principios de trabajo — ~150 palabras
 
-<!--
-- Dataset: sintetico + real (describir proporcion)
-- Metodo: Unsloth LoRA sobre Gemma 4 E2B (el modelo edge)
-- Benchmarks: p50 latencia, tok/s, acierto vs ground truth
-- Insight: "el modelo pequeño fine-tuneado supera al grande generico en
-  el dominio acotado". Dato a validar en dias 20-25.
+El proyecto se construye con un equipo coordinado de agentes IA especializados (uno por frente: Rhizome, Pollen, Meristem, video, arte, montaje, hardware) que comparten un repositorio publico y una sola persona humana (zigiella) como coordinadora y autora final. Disciplinas operativas que sostienen el ritmo:
 
-Pendiente:
-- Datos reales de finetune (ver code/finetune/)
-- Resultados de PR #32 (Xilema) para el angulo comparativo
--->
+- **Bitacoras como contrato.** Cada decision queda por escrito el mismo dia. `repo-first` es regla — nada se cierra por chat o mail.
+- **Identidad git inline.** Cada agente firma sus commits con `git -c user.name=... -c user.email=...` por comando, sin tocar `.git/config` del clon compartido.
+- **Plantilla `Interrelaciones`** en cada mensaje cross-frente: campos `ESPERAS DE / BLOQUEAS A / COORDINAS CON`. Reduce overhead a cero.
+- **Disciplina §9.2** (tres puntos antes de cada commit + stash con prefijo de autor + una operacion atomica por sesion) para maquina compartida.
+- **Logica deterministica decide, LLM solo escribe rationale.** Patron transversal: decisiones criticas son auditables hasta una regla concreta.
+- **Disciplina epistemica** `OBSERVADO / INFERIDO / DECLARADO` en analisis de material visual.
 
-## 6. Validacion local vs sombra — ~100 palabras
+Indicador estructural empirico (dia 20): **12 PRs cerrados en cadena sin convocar una sola reunion**. La pregunta del coordinador correcto, hecha a tiempo, libera dominios completos al especialista.
 
-<!--
-"Meristem ejecuta enteramente local con Gemma 4 E4B. En paralelo, un modo
-sombra OPCIONAL compara el output con Gemma 31B remoto para auditar
-acuerdo/desacuerdo. En produccion el sombra esta OFF; solo se usa durante
-desarrollo para calibrar la calidad del modelo local."
+## 6. MVP — qué proyectamos vs qué hacemos — ~120 palabras
 
-Punto clave de honestidad: el proyecto NO depende de internet ni de modelos
-remotos. El modo sombra es herramienta de validacion, no de ejecucion.
+| Proyectamos | Hacemos (validado empiricamente) |
+|-------------|----------------------------------|
+| Tres nodos con jurisdicciones distintas | Tres nodos operativos: cadena Pollen ↔ Rhizome real validada en hardware |
+| Multi-parcela federada | Multi-Rhizome simulado v0 ya funcional sin haberlo planeado (*"cuando la abstraccion esta bien, la extension sale gratis"*) |
+| Voz humana como evento de primera clase | Audio multimodal Gemma 4 E4B nativo en Pollen — sin pipeline STT |
+| Capa fisica que veta | ESP32 vetando ordenes en placa real (5 reglas + SAFETY_DOWNGRADE) |
+| Sistema operando sin red | Sprout escala 1 corriendo en una terraza de Castellar de n'Hug — no proyeccion, sistema vivo |
+| Decision local soberana | Feature beta voz → politica inmediata: Pollen compone PolicyPacket "this-visit" con TTL 12h, conservador por defecto, 3 capas de defensa antes de tocar agua |
+| Trazabilidad como producto | `decisions_by_rule` en `/health` + recibos JSON con motivo legible |
 
-Datos a rellenar: % de acuerdo cuando el sombra estuvo encendido (dia 22-25).
--->
+**Honestidad arquitectural**: el patron de jurisdicciones estaba codificado desde el dia 13 — el Evaluator de Meristem (`JURISDICTION_POLLEN`) rechaza explicitamente cambios fisicos puntuales del operador, indicando que esa decision pertenece a Pollen. La feature beta del dia 20 implementa lo que el codigo predijo.
 
-## 7. Impacto y escalado — ~100 palabras
+## 7. Demo (90s) — placeholder hasta rodaje
 
 <!--
-- Coste por nodo (BOM): ~X€ Rhizome + Y€ Pollen (movil reutilizado) + Z€
-  Meristem (portatil estandar)
-- Escalabilidad: cada Meristem puede coordinar N Rhizomes (estimar N)
-- Segmento: explotaciones pequeñas y medianas en zonas de baja poblacion
-  (Aragon, Extremadura, Castilla-La Mancha, Andalucia interior, islas)
-- Transferencia a otros dominios: acuicultura, invernaderos aislados,
-  apicultura nomada
+Pendiente rodaje (dias 24-27). Estructura prevista del video:
+- E0 cartela Sprout + 3 nodos + tagline
+- E1 ausencia con 4 datos globales (UNCCD, gencat, ITU, COAG)
+- E2 Rhizome decide offline
+- E3 ESP32 SAFE LIMIT (wow moment)
+- E3b Meristem prepara la politica
+- E4 Llega Pollen
+- E5 Persona da una mision (voz humana real castellano)
+- E6 Ferry A→B
+- E7 Criterio modificado (climax)
+- E8 Caducidad
+- E9 Cenital federado animado
+- E9b Meristem en la mesa de casa (cierre intimo + tagline bookend)
+
+Tras rodaje, escribir aqui guion del 90s consolidado citando frases fuertes.
 -->
 
-## 8. Limitaciones — ~50 palabras
+## 8. Impacto y escalado — ~120 palabras
 
-<!--
-Ser honestos, no defensivos. Lista corta:
-- Parcelas muy grandes (>10 zonas) no probadas
-- Pollen depende de visita humana (~semanal) — si la ruta falta, Meristem
-  no recibe consolidacion
-- Safety rules §30 son para riego; otros dominios requeririan otras reglas
-- No probado en produccion real, solo en demo controlado con datos sinteticos
-  realistas
--->
+**Coste por nodo**: Jetson Orin Nano Super ~250€, ESP32-S3 ~10€, sensores + bomba 12V ~80€, deposito ~30€ = **~370€ por Rhizome** (mas la capa fisica). Pollen reusa el movil del agricultor (cero hardware adicional). Meristem reusa el portatil casero (cero hardware adicional).
 
-## 9. Cierre — ~50 palabras
+**Escalabilidad**: cada Meristem coordina N Rhizomes. Multi-Rhizome simulado v0 ya validado dia 16. Sin red directa entre parcelas; Pollen federa contexto fisicamente.
 
-<!--
-Frase final potente. Candidatos:
+**Casos paralelos al patron Cataluna 2024**: Espana septiembre 2023 (-50% cosecha oliva), Zambia 2024 (Zambezi al 20% de su media), Zimbabwe 2024 (maiz -70%), Somalia 2025 (4,4M en crisis alimentaria), Tailandia + India 2023-2024 (precio mundial azucar +8,9%). El patron sequia + agricultura + ausencia de red se repite en multiples geografias.
 
-1. "La agricultura no se salvara con mas datos. Se salvara con decisiones
-   a tiempo, tomadas donde hay agua."
-2. "Sprout no sustituye al agricultor. Le deja mas tiempo para ser
-   agricultor."
-3. "Cuatro modelos Gemma pequeños, correctamente orquestados, pesan mas
-   que uno grande aislado."
+**Segmento prioritario**: explotaciones pequenas y medianas en zonas de baja poblacion (Aragon, Extremadura, Castilla-La Mancha, islas, Africa subsahariana). El **84% de las explotaciones mundiales tienen menos de 2 hectareas** (FAO 2024).
 
-Decision: dia 25, tras video y demos.
--->
+## 9. Limitaciones — ~80 palabras
 
----
+**Honestidad sobre lo que no funciona todavia**:
 
-## Checklist del writeup (para tracking interno Cambium/Bea)
+- **GPU offload en Jetson**: 36/36 capas cargadas, pero quality NO contractual aun (un caso de test deriva semanticamente bajo GPU full). Mantenemos `safe-cpu` como perfil de demo.
+- **Regresion `RH02`** detectada dia 19 en `safe-cpu` desde main: 2/2 falla en bateria critical. Bisección controlada en curso.
+- **Parcelas grandes (>10 zonas)** no probadas en hardware real — solo simulacion.
+- **Modo sombra Gemma 31B** (auditoria de calidad del modelo local) especificado pero no implementado — post-hackathon.
+- **Voz humana**: solo entrada (audio in). Audio bidireccional full-duplex queda como trabajo futuro.
+- **Integracion con plataformas climaticas oficiales (AEMET, MeteoCat)**: no implementada — sustituida por `WeatherDigest` portado por Pollen entre nodos.
 
-- [ ] Conseguir cifra opener del problema (dia 6-8)
-- [ ] Generar diagrama arquitectura exportable a PNG (dia 10)
-- [ ] Cerrar titulo + subtitulo con Bea (dia 20)
-- [x] Sesion escritura conjunta seccion 1-2 (dia 6 o 7)
-- [ ] Sesion escritura conjunta seccion 3-4 (dia 12-13)
-- [ ] Sesion escritura conjunta seccion 5-7 (dia 18-20)
-- [ ] Review final conjunto (dia 27-28)
-- [ ] Recorte a 1500 palabras (dia 29)
+## 10. Trabajo futuro — ~80 palabras
 
-## Proximas sesiones agendables
+Sprout deja explicita una hoja de ruta post-hackathon:
 
-| Dia | Foco | Output esperado |
-|-----|------|-----------------|
-| 6 o 7 | Seccion 1 (problema) + datos opener | 200 palabras + fuentes citadas |
-| 12-13 | Seccion 3 (arquitectura) | 350 palabras + diagrama escogido |
-| 18-20 | Secciones 5-7 (fine-tuning, validacion, impacto) | Con datos reales de PR finetune |
-| 27-28 | Review completo + recorte | Version entregable |
+1. **Vision multimodal** — camara en parcela + analisis visual con Gemma 4 (estres hidrico visible, plagas, crecimiento). Extension natural del modelo.
+2. **Audio bidireccional full-duplex** — Pollen no solo escucha al agricultor, tambien le habla. Pre-aviso conversacional ("manana toca riego, pero el deposito esta al 30%").
+3. **Multi-parcela real** (>10 zonas) con Meristem coordinando. Plan IA por fases en 7 etapas + 6 principios arquitectonicos transversales (bitacora `2026-05-04_plan-ia-meristem-fases`).
+4. **GPU quality pass** — cerrar deriva en RD04/RH02 para promocionar `gpu-experimental` a contractual.
+5. **Modo sombra Gemma 31B opcional** — auditoria de calidad del modelo local sin tocar la cadena de produccion.
+
+**Sprout deja resuelto el caso minimo. La arquitectura escala.**
 
 ---
 
@@ -247,3 +212,17 @@ Sprout uses Gemma 4 models by Google. Gemma is a trademark of Google LLC.
 This project is not affiliated with or endorsed by Google.
 
 License: Apache 2.0 (see `LICENSE`). Same as Gemma 4.
+
+---
+
+<!--
+Notas internas Cambium / Bea:
+
+- Word count actual: ~1500-1700 palabras (objetivo Kaggle: 1500). Recorte final dia 28-29.
+- §0 titulo + subtitulo: definitivos tras rodaje (dia 24-27).
+- §7 placeholder: rellenar tras rodaje con guion consolidado del 90s.
+- §3: el detalle de "transferencia de ingenieria entre nodos" del v1 se removio para reducir palabras — material movido a §5 sin cita literal.
+- Sources al final: notas a pie [1]-[4] estan en README.md y en research/metrics/impact_stats.md. Si Kaggle requiere bibliografia formal, se anade aparte.
+- Idioma: primera version en castellano. Traduccion a ingles en review final si Bea decide.
+- Pendiente apuntar microcita "JURISDICTION_POLLEN linea 17 de evaluator.py" en §6 si entra version final con citas de codigo.
+-->
