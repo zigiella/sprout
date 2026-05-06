@@ -2,6 +2,8 @@ package net.sprout.pollen.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
@@ -42,11 +44,14 @@ fun SplitscreenDash(viewModel: PollenViewModel) {
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
         // Upper Half: Rhizome State & rationale_short
         Box(
             modifier = Modifier
-                .weight(1f)
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
@@ -58,7 +63,6 @@ fun SplitscreenDash(viewModel: PollenViewModel) {
         // Middle Half: Audit Streamer
         Box(
             modifier = Modifier
-                .weight(1f)
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
@@ -72,7 +76,6 @@ fun SplitscreenDash(viewModel: PollenViewModel) {
         // Lower Half: Active Policy & TTL
         Box(
             modifier = Modifier
-                .weight(1f)
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
@@ -84,7 +87,6 @@ fun SplitscreenDash(viewModel: PollenViewModel) {
         // Bottom Half: Voice Beta
         Box(
             modifier = Modifier
-                .weight(1f)
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
