@@ -57,4 +57,13 @@ class GemmaEngine(private val context: Context, private val modelPath: String = 
             rationaleEs = "Aplicar comando de voz: $transcript"
         )
     }
+
+    suspend fun parseVoiceFileToMissionPatch(audioFile: java.io.File, snapshot: RhizomeSnapshot): net.sprout.pollen.schemas.MissionPatch {
+        delay(1500) // Simulate LiteRT-LM multimodal inference latency
+        
+        // Simulating the STT output from the Gemma 4 E4B model for the audio file
+        val mockTranscript = "Riega la parcela A 30 segundos más"
+        
+        return parseVoiceToMissionPatch(mockTranscript, snapshot)
+    }
 }

@@ -11,6 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import net.sprout.pollen.voice.PollenVoiceInfra
 import androidx.compose.ui.unit.dp
 import net.sprout.pollen.schemas.DecisionReceipt
 import net.sprout.pollen.schemas.PolicyPacket
@@ -99,8 +105,23 @@ fun SplitscreenDash(viewModel: PollenViewModel) {
 fun VoiceBetaPanel(client: RhizomeMockClient, snapshot: RhizomeSnapshot) {
     var state by remember { mutableStateOf("Idle") }
     var resultText by remember { mutableStateOf("") }
+    var isRecording by remember { mutableStateOf(false) }
+    
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    val voiceInfra = remember { PollenVoiceInfra(context) }
+    
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            isRecording = true
+            voiceInfra.startRecording()
+            state = "Recording audio (.wav 16kHz)..."
+        } else {
+            state = "Error: Microphone permission denied."
+        }
+    }
     
     Column {
         Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
@@ -133,52 +154,73 @@ fun VoiceBetaPanel(client: RhizomeMockClient, snapshot: RhizomeSnapshot) {
         Spacer(modifier = Modifier.height(8.dp))
         Button(
             onClick = {
-                coroutineScope.launch {
-                    state = "Listening & Compiling (LiteRT-LM)..."
-                    resultText = ""
-                    val engine = GemmaEngine(context)
-                    val patch = engine.parseVoiceToMissionPatch("riega la parcela a 30 segundos más", snapshot)
-                    
-                    state = "Validating (Mini-Evaluator)..."
-                    delay(800)
-                    
-                    // Dummy active policy for evaluation
-                    val activePolicy = PolicyPacket(
-                        policyId = "pol_mock",
-                        targetNodeId = snapshot.originNodeId,
-                        originNodeId = "meristem",
-                        createdAt = "2026-05-01T12:00:00Z",
-                        validUntil = "2026-05-10T12:00:00Z",
-                        versionChain = emptyList(),
-                        modeDefault = Mode.NORMAL,
-                        rules = PolicyPacket.Rules(
-                            wateringWindow = PolicyPacket.WateringWindow(0, 23),
-                            soilMoistureThresholds = emptyMap(),
-                            maxWateringDurationS = 120,
-                            dailyWaterBudgetLiters = 10f,
-                            tankMinimumPct = 15f,
-                            requireVisionConfirmation = false,
-                            conservativeTriggers = emptyList()
-                        )
-                    )
+                if (isRecording) {
+                    // Stop recording and process
+                    isRecording = false
+                    val file = voiceInfra.stopRecording()
+                    if (file != null) {
+                        coroutineScope.launch {
+                            state = "Listening & Compiling (LiteRT-LM)..."
+                            resultText = "Processing audio file: ${file.name}"
+                            val engine = GemmaEngine(context)
+                            val patch = engine.parseVoiceFileToMissionPatch(file, snapshot)
+                            
+                            state = "Validating (Mini-Evaluator)..."
+                            delay(800)
+                            
+                            // Dummy active policy for evaluation
+                            val activePolicy = PolicyPacket(
+                                policyId = "pol_mock",
+                                targetNodeId = snapshot.originNodeId,
+                                originNodeId = "meristem",
+                                createdAt = "2026-05-01T12:00:00Z",
+                                validUntil = "2026-05-10T12:00:00Z",
+                                versionChain = emptyList(),
+                                modeDefault = Mode.NORMAL,
+                                rules = PolicyPacket.Rules(
+                                    wateringWindow = PolicyPacket.WateringWindow(0, 23),
+                                    soilMoistureThresholds = emptyMap(),
+                                    maxWateringDurationS = 120,
+                                    dailyWaterBudgetLiters = 10f,
+                                    tankMinimumPct = 15f,
+                                    requireVisionConfirmation = false,
+                                    conservativeTriggers = emptyList()
+                                )
+                            )
 
-                    val eval = MiniEvaluator.evaluate("riega la parcela a 30 segundos más", patch, patch.rationaleEs, 0.85, snapshot, activePolicy)
-                    
-                    if (eval.action == net.sprout.pollen.schemas.EvaluationAction.APPLY_AS_IS || eval.action == net.sprout.pollen.schemas.EvaluationAction.APPLY_CONSERVATIVE) {
-                        state = "Sending Policy to Rhizome..."
-                        delay(500)
-                        client.pushPolicy(eval.policyPacket!!)
-                        state = "Acknowledged"
-                        resultText = "Action: ${eval.action}\nDetail: ${eval.details}"
+                            val eval = MiniEvaluator.evaluate("Riega la parcela A 30 segundos más", patch, patch.rationaleEs, 0.85, snapshot, activePolicy)
+                            
+                            if (eval.action == net.sprout.pollen.schemas.EvaluationAction.APPLY_AS_IS || eval.action == net.sprout.pollen.schemas.EvaluationAction.APPLY_CONSERVATIVE) {
+                                state = "Sending Policy to Rhizome..."
+                                delay(500)
+                                client.pushPolicy(eval.policyPacket!!)
+                                state = "Acknowledged"
+                                resultText = "Action: ${eval.action}\nDetail: ${eval.details}"
+                            } else {
+                                state = "Refused"
+                                resultText = "Action: ${eval.action}\nReason: ${eval.reasonCode}\nDetail: ${eval.details}"
+                            }
+                        }
                     } else {
-                        state = "Refused"
-                        resultText = "Action: ${eval.action}\nReason: ${eval.reasonCode}\nDetail: ${eval.details}"
+                        state = "Error saving audio file"
+                    }
+                } else {
+                    // Request permission and start recording
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                        isRecording = true
+                        voiceInfra.startRecording()
+                        state = "Recording audio (.wav 16kHz)..."
+                    } else {
+                        permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
                     }
                 }
             },
-            enabled = state == "Idle" || state == "Acknowledged" || state == "Refused"
+            enabled = state == "Idle" || state == "Acknowledged" || state == "Refused" || isRecording,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isRecording) Color.Red else MaterialTheme.colorScheme.primary
+            )
         ) {
-            Text("Simular Voz: 'Riega la parcela A 30 segundos más'")
+            Text(if (isRecording) "Stop Recording" else "Hablar a Gemma 4 (Grabar)")
         }
     }
 }
