@@ -1,6 +1,6 @@
 # Copies bilingües del vídeo Sprout — ES / EN
 
-**Versión:** v0.5 (recuperación cartela *"Imagine this pot is a whole plot."* al inicio de E2 con gráfica "Three days later", día 21 — apilado completo de las 12 escenas v1.8.2)
+**Versión:** v0.6 (cierre decisión Bea día 21 sobre Asset 9 E6: ruta principal `Context`, `WeatherDigest` plan B reactivable. Apilado completo de las 12 escenas v1.8.3)
 **Fecha:** 2026-05-06 (día 21)
 **Autora:** Corola
 **Origen:** decisión Bea día 16 — *"Necesitaré tener siempre los copies del video (textos VO, voz en off, cartelas, etc en ES y EN)."* Actualizado al giro estratégico día 18-19 (12 escenas, VO inglés master, frases fuertes reformuladas, Meristem en MVP).
@@ -29,7 +29,7 @@
 | **E3b** Meristem prepara | ✅ **Estable v1.8** | Plano cocina + portátil + Pollen recibiendo política. VO Extra E3b: *"Meristem composes the policy."* |
 | **E4** Llega Pollen | ✅ **Estable v1.7** | Frase fuerte 2 reformulada (con Pollen explícito). |
 | **E5** La persona da una misión | ✅ **Estable v1.7** | Voz humana castellano literal. Subtítulo inglés en master. |
-| **E6** Ferry A→B | ✅ **Estable v1.7** | Frase fuerte 5 sin cambios. Contingencia con/sin meteo. |
+| **E6** Ferry A→B | ✅ **Estable v1.8.3** | Frase fuerte 5 sin cambios. **Ruta principal v1.8.3:** solo `Context`, sin meteo en rodaje (decisión Bea día 21, Venation tiene captura `WeatherDigest` reactivable como plan B en CapCut). |
 | **E7** Watering criteria updated | ✅ **Estable v1.7** | Climax. Cartela ancla `Watering criteria updated.` + invariante esquina. |
 | **E8** Caducidad | ✅ **Estable v1.8 — NO se mata** | Decisión Bea día 20. F4 + plano `expired → rejected` se quedan. Vale para Safety & Trust. |
 | **E9** Cenital federado | ✅ **Estable v1.8 — Opción B firme** | 20s con cadencia Venation completa (5 cartelas asimétricas + pausa tensa + cierre largo + sello SYNCED ✓). Cartela final v1.6: *"Federated intelligence, carried by Pollen."* Decisión Bea día 20. |
@@ -166,21 +166,25 @@ why_short: Soil below minimum. Budget available.
 
 **Eco interno:** *"those"* en F5 hace eco directo a *"every Pollen visit"* en F2 (E4). Coherencia narrativa cross-escena.
 
-### Cartelas y overlays on-screen (inglés) — contingencia meteo
+### Cartelas y overlays on-screen (inglés)
 
-#### Con estación meteo conectada (ruta principal)
+**Decisión Bea día 21 (v1.8.3):** ruta principal **sin meteo** (`Context`). Plan B reactivable con `WeatherDigest` si en rodaje al final hay tiempo (Venation tiene captura producida).
 
-| Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
-|----------|------------------|-----------------|-------------------|
-| Cartela superpuesta ferry | **`WeatherDigest ferry`** | "Ferry de WeatherDigest" | Centro/superpuesta · 2:02–2:04 (2s) |
-| Cartela en pantalla Rhizome 02 | **`WeatherDigest accepted · Source: rhizome_01`** | "WeatherDigest aceptado · Origen: rhizome_01" | Pantalla Rhizome 02 · 2:08–2:12 (4s) |
-
-#### Sin estación meteo (contingencia)
+#### Ruta principal v1.8.3 — sin estación meteo, solo `Context`
 
 | Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
 |----------|------------------|-----------------|-------------------|
 | Cartela superpuesta ferry | **`Context ferry`** | "Ferry de contexto" | Centro/superpuesta · 2:02–2:04 (2s) |
 | Cartela en pantalla Rhizome 02 | **`Context accepted · Source: rhizome_01`** | "Contexto aceptado · Origen: rhizome_01" | Pantalla Rhizome 02 · 2:08–2:12 (4s) |
+
+#### Plan B reactivable — con estación meteo, `WeatherDigest`
+
+Solo se usa si en rodaje al final hay tiempo y Bea decide incluir estación meteo física al lado del PLOT_01. **Cartelas ya producidas por Venation en iteraciones anteriores — sustitución directa de 2 PNGs en CapCut, no requiere re-producir.**
+
+| Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
+|----------|------------------|-----------------|-------------------|
+| Cartela superpuesta ferry | **`WeatherDigest ferry`** | "Ferry de WeatherDigest" | Centro/superpuesta · 2:02–2:04 (2s) |
+| Cartela en pantalla Rhizome 02 | **`WeatherDigest accepted · Source: rhizome_01`** | "WeatherDigest aceptado · Origen: rhizome_01" | Pantalla Rhizome 02 · 2:08–2:12 (4s) |
 
 ### Carteles físicos visibles en escena 6
 
@@ -382,6 +386,7 @@ Gemma is a trademark of Google LLC.
 
 ## Historial
 
+- **v0.6** (2026-05-06, día 21, Corola) — cierre decisión Bea Asset 9 E6: ruta principal `Context`, `WeatherDigest` plan B reactivable. Cambio sobre v0.5: sección "Cartelas y overlays on-screen E6" reescrita — ruta principal v1.8.3 = sin meteo (`Context`), plan B reactivable = con meteo (`WeatherDigest`, captura ya producida por Venation, sustitución directa en CapCut). Decisión Bea día 21 cerrada en caliente con Venation: *"no da tiempo a hacer la meteo. Si al final da tiempo, ella ya tiene hecha la captura."* Actualizado estado E6 en tabla resumen + cabecera + sección detalle + carteles físicos (sin estación meteo en plano físico). Origen del cambio en docs (no en producción): Venation entregó lote ya con decisión aplicada, yo (Corola) hice review pidiendo inicialmente que añadiese `WeatherDigest`, Bea aclaró, retiré petición y registro decisión aquí.
 - **v0.5** (2026-05-06, día 21, Corola) — recuperación cartela *"Imagine this pot is a whole plot."* al inicio de E2 con misma gráfica que `"Three days later"` (E8). Cambio sobre v0.4: añadida cartela bisagra apertura E2 (Manrope full-screen sobre `soil.graphite`, 0:25–0:28, 3s, sin VO). Función narrativa: bisagra tipográfica entre E1 (datos globales) y E2 (plano técnico) — recupera contrato visual con el espectador (filmamos macetas, hablamos de parcelas) que vivía en E1 v1.6 y se cayó en v1.7. Decisión Bea día 21 tras pregunta retrospectiva sobre v1.6. Actualizada la tabla de Escena 2 + nota explicativa al final de la sección + estado v1.7 → v1.8.2.
 - **v0.4** (2026-05-06, día 21, Corola) — refinamiento de cartelas técnicas E2 y E4 por petición de Bea: ampliadas con nodo + dispositivo. E2: `Gemma 4 E2B · local · llama.cpp` → `Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`. E4: `Gemma 4 E4B · LiteRT-LM · on-device` → `Pollen: Android · Gemma 4 E4B · LiteRT-LM · on-device`. Refuerza jerarquía visible nodo → dispositivo → modelo → runtime y conecta con carteles físicos PLOT_01/02 + RHIZOME_01/02 EDGE NODE.
 - **v0.3** (2026-05-05, día 20, Corola) — apilado completo post-v1.8 tras Bea cerrar los 4 abiertos día 20. Añadidas escenas inestables E0, E1, E3b, E8, E9, E9b con copies bilingües completos. Decisiones consolidadas: E8 sobrevive, E9 Opción B firme (20s con cadencia Venation completa + cierre largo *"Federated intelligence, carried by Pollen."* + sello SYNCED ✓), F6 ubicada en E9b. Cartela final E9 revierte de modulación Cambium ella v1.7 (3 beats) a cadencia v1.6 con cierre largo. Tarjeta logo final con microcartela atribución Gemma confirmada en cierre por reglas hackathon.

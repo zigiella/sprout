@@ -1,6 +1,13 @@
-# Script — Sprout v1.8.2 (día 21: recuperación cartela "Imagine this pot is a whole plot." al inicio de E2)
+# Script — Sprout v1.8.3 (día 21: cierre decisión Bea Asset 9 E6 ferry — solo `Context`, `WeatherDigest` plan B reactivable)
 
-**Versión:** v1.8.2 (día 21 — segunda iteración del día: tras pregunta retrospectiva de Bea sobre v1.6 *"¿Ya no decimos aquello de 'imagina que esta maceta es una parcela'?"*, recuperamos esa cartela como contrato visual con el espectador. Cambios sobre v1.8.1:
+**Versión:** v1.8.3 (día 21 — tercera iteración del día: Bea cerró en caliente con Venation que **descartamos la versión `WeatherDigest` de E6** por falta de tiempo para producir la meteo en rodaje. Cambios sobre v1.8.2:
+- **E6 ruta principal:** solo `Context ferry` + `Context accepted · Source: rhizome_01`. Sin estación meteorológica conectada en plano físico.
+- **`WeatherDigest` queda como plan B reactivable:** Venation tiene la captura producida de iteraciones anteriores. Si en rodaje al final hay tiempo y Bea decide incluir meteo, se sustituye en CapCut sin re-producir.
+- **Carteles físicos E6:** solo `PLOT_01 with RHIZOME_01` y `PLOT_02 with RHIZOME_02` + sus cajas `RHIZOME_0X / EDGE NODE`. Sin anemómetro ni panel solar al lado del PLOT_01.
+
+**Decisión Bea día 21 textual:** *"no da tiempo a hacer la meteo. Si al final da tiempo, ella ya tiene hecha la captura."* Cerrada lateralmente entre Bea y Venation antes de que Venation produjese el lote completo v1.8.1 (entregado a Bract por chat con Bea día 21).
+
+Versión v1.8.2 (día 21 — segunda iteración del día: tras pregunta retrospectiva de Bea sobre v1.6 *"¿Ya no decimos aquello de 'imagina que esta maceta es una parcela'?"*, recuperamos esa cartela como contrato visual con el espectador. Cambios sobre v1.8.1:
 - **E2 inicio:** se recupera cartela *"Imagine this pot is a whole plot."* como **cartela full-screen tipográfica con la misma gráfica que `"Three days later"` (E8)**: Manrope centrada sobre fondo casi-negro `soil.graphite`, sin plano de maceta debajo, sin VO. 3s. Decisión Bea día 21.
 - **Función narrativa:** bisagra tipográfica entre E1 (cartelas datos globales sobre `soil.graphite`) y E2 (plano físico del Rhizome). Equivalente a la bisagra temporal *"Three days later"* en E8. Misma cadencia visual, misma jerarquía.
 - **E2 split del primer beat (0:25–0:29, 4s)** en dos sub-beats: 0:25–0:28 (3s) cartela full-screen *"Imagine this pot is a whole plot."* (estilo "Three days later") / 0:28–0:29 (1s) fade/corte al Jetson en su caja con carteles físicos. **E2 mantiene 25s totales**, no se expande timing.
@@ -341,17 +348,19 @@ Aparecen uno tras otro (1s cada uno). Pulso suave, no parpadeo agresivo. Marca e
 
 ---
 
-### Escena 6 — Ferry A→B (2:00–2:20)
+### Escena 6 — Ferry A→B (2:00–2:20) — RUTA PRINCIPAL `Context` (v1.8.3)
 
-**Beat narrativo:** una parcela tiene ojos al cielo, la otra no. Pero ambas reciben el mismo conocimiento, porque alguien lo lleva. Federación demostrada en acción física: corte limpio entre dos planos del mismo Rhizome físico haciendo dos roles lógicos. La frase fuerte 5 cierra el bloque sobre el Rhizome B aceptando el digest. **El "those" de F5 hace eco directo a "every Pollen visit" de F2** — coherencia interna fuerte.
+**Beat narrativo:** una parcela y otra. Ambas reciben el mismo contexto, porque alguien lo lleva. Federación demostrada en acción física: corte limpio entre dos planos del mismo Rhizome físico haciendo dos roles lógicos. La frase fuerte 5 cierra el bloque sobre el Rhizome B aceptando el bundle. **El "those" de F5 hace eco directo a "every Pollen visit" de F2** — coherencia interna fuerte.
 
-**Cronología:**
+**Decisión Bea día 21 (v1.8.3):** ruta principal es **`Context`**, sin estación meteo en rodaje. Plan B con `WeatherDigest` reactivable si en rodaje al final hay tiempo (Venation tiene captura).
+
+**Cronología (ruta principal v1.8.3):**
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 2:00–2:05 (5s) | Plano de la persona junto al **PLOT_01** (cartel maceta "PLOT_01 with RHIZOME_01" + cartel caja "RHIZOME_01 / EDGE NODE" + **estación meteo conectada si la incluimos**). El móvil descarga el `WeatherDigest` (con meteo) o `Context bundle` (sin). Pantalla del móvil: lectura viajando del Rhizome al teléfono. **VO inglés:** *"Pollen brings questions, answers, and context."* (~6 palabras) | **Cartela superpuesta** (2s, Manrope): `WeatherDigest ferry` (con meteo) o `Context ferry` (sin meteo) |
+| 2:00–2:05 (5s) | Plano de la persona junto al **PLOT_01** (cartel maceta "PLOT_01 with RHIZOME_01" + cartel caja "RHIZOME_01 / EDGE NODE", **sin estación meteo**). El móvil descarga el `Context bundle`. Pantalla del móvil: lectura viajando del Rhizome al teléfono. **VO inglés:** *"Pollen brings questions, answers, and context."* (~6 palabras) | **Cartela superpuesta** (2s, Manrope): `Context ferry` |
 | 2:05–2:06 (1s) | **Corte limpio.** Sin pasos en plano. | — |
-| 2:06–2:14 (8s) | Plano de la persona junto al **PLOT_02** (cartel maceta "PLOT_02 with RHIZOME_02" + cartel caja "RHIZOME_02 / EDGE NODE", sin meteo, segunda zona de la terraza, distinta planta). Pollen entrega el bundle al Rhizome 02. Pantalla del móvil: subida. Pantalla del Rhizome 02: aceptación con cita de origen. | **Cartela en pantalla del Rhizome** (visible 4s, IBM Plex Mono): `WeatherDigest accepted · Source: rhizome_01` (con meteo) o `Context accepted · Source: rhizome_01` (sin meteo) |
+| 2:06–2:14 (8s) | Plano de la persona junto al **PLOT_02** (cartel maceta "PLOT_02 with RHIZOME_02" + cartel caja "RHIZOME_02 / EDGE NODE", segunda zona de la terraza, distinta planta). Pollen entrega el bundle al Rhizome 02. Pantalla del móvil: subida. Pantalla del Rhizome 02: aceptación con cita de origen. | **Cartela en pantalla del Rhizome** (visible 4s, IBM Plex Mono): `Context accepted · Source: rhizome_01` |
 | 2:14–2:17 (3s) | Silencio breve. Plano del Rhizome 02 con bundle aceptado. La cámara respira. | — |
 | 2:17–2:20 (3s) | **VO inglés (sentencia plana, frase fuerte 5):** *"Pollen turns those visits into federated intelligence."* (~8 palabras) | — |
 
@@ -359,12 +368,14 @@ Aparecen uno tras otro (1s cada uno). Pulso suave, no parpadeo agresivo. Marca e
 - **EN master:** *"Pollen turns those visits into federated intelligence."*
 - **ES dub:** *"Pollen convierte esas visitas en inteligencia federada."*
 
-**Lo que se siente:** Pollen es **portador de más que voz humana**. Lleva también meteorología/contexto. Las dos parcelas viven en el mismo terreno pero no se hablan — Pollen las hace hablar. El "those" de F5 hace eco directo a "every Pollen visit" de F2 — coherencia narrativa fuerte cross-escena.
+**Plan B reactivable (con `WeatherDigest`):** si en rodaje hay tiempo y Bea decide incluir estación meteo física al lado del PLOT_01, las cartelas se sustituyen en CapCut por las versiones `WeatherDigest ferry` + `WeatherDigest accepted · Source: rhizome_01`. Venation tiene esas dos cartelas producidas de iteraciones anteriores. **No requiere re-producir nada.** El cambio es solo en planos del rodaje (incluir/excluir estación meteo) y en CapCut (sustituir 2 PNGs).
+
+**Lo que se siente:** Pollen es **portador de contexto**. Las dos parcelas viven en el mismo terreno pero no se hablan — Pollen las hace hablar. El "those" de F5 hace eco directo a "every Pollen visit" de F2 — coherencia narrativa fuerte cross-escena.
 
 **VO:** ~14 palabras inglés (6 + 8).
-**Cartelas:** 2 (`WeatherDigest ferry` o `Context ferry` + cartela aceptación en pantalla del Rhizome).
+**Cartelas (ruta principal v1.8.3):** 2 (`Context ferry` + `Context accepted · Source: rhizome_01`).
 **Overlays:** ninguno.
-**Producción:** rotación del Rhizome físico entre PLOT_01 y PLOT_02. Estación meteo se conecta para PLOT_01 y se retira para PLOT_02. Carteles físicos visibles. Misma persona en plano (continuidad). **Contingencia "sin meteo"** documentada como ruta válida — la frase fuerte 5 se sostiene igual (la federación es de contexto en general).
+**Producción:** rotación del Rhizome físico entre PLOT_01 y PLOT_02. **Sin estación meteo en rodaje principal.** Carteles físicos visibles. Misma persona en plano (continuidad). La frase fuerte 5 se sostiene igual — la federación es de contexto en general, no específicamente de meteorología.
 
 ---
 
@@ -601,6 +612,17 @@ Gemma is a trademark of Google LLC.
 ---
 
 ## Historial de versiones
+
+- **v1.8.3 — cierre decisión Bea Asset 9 E6: solo `Context`, `WeatherDigest` plan B reactivable** (2026-05-06, día 21, Corola) — tercera iteración del día. Bea cerró en caliente con Venation que descartamos la versión `WeatherDigest` por falta de tiempo para producir la meteo en rodaje. Cambios mecánicos sobre v1.8.2:
+  - **E6 ruta principal:** solo `Context ferry` + `Context accepted · Source: rhizome_01`. Sin estación meteorológica conectada en plano físico.
+  - **`WeatherDigest` queda como plan B reactivable.** Venation tiene la captura producida de iteraciones anteriores. Si en rodaje al final hay tiempo y Bea decide incluir meteo, se sustituye en CapCut sin re-producir.
+  - **Carteles físicos E6:** solo `PLOT_01 with RHIZOME_01` y `PLOT_02 with RHIZOME_02` + cajas `RHIZOME_0X / EDGE NODE`. Sin anemómetro ni panel solar al lado del PLOT_01.
+
+  **Decisión Bea día 21 textual:** *"no da tiempo a hacer la meteo. Si al final da tiempo, ella ya tiene hecha la captura."* Cerrada lateralmente entre Bea y Venation antes de que Venation produjese el lote completo v1.8.1.
+
+  **Origen del cambio en docs (no en producción):** Venation entregó el lote ya con la decisión aplicada (solo `Context`). Yo (Corola) hice review y pedí inicialmente que añadiese `WeatherDigest`, no sabiendo de la decisión cerrada lateralmente. Bea aclaró, retiré la petición, y registro aquí la decisión en docs para que Bract no espere doble versión. Aprendizaje operativo: cuando vea descarte en lote entregado, preguntar antes de pedir ajuste — la decisión podría haberse cerrado lateralmente sin pasar por mí.
+
+  Aplicado a `script.md`, `copies_bilingual.md` v0.5 → v0.6, `montage_brief.md` v0.4 → v0.5, `bitacora/2026-05-06_paquete-material-definitivo-venation_corola.md` (Asset 9 actualizado).
 
 - **v1.8.2 — recuperación cartela "Imagine this pot is a whole plot." al inicio de E2** (2026-05-06, día 21, Corola) — segunda iteración del día tras pregunta retrospectiva de Bea sobre v1.6 (*"¿Ya no decimos aquello de 'imagina que esta maceta es una parcela'?"*). Recuperamos esa cartela como **contrato visual con el espectador** antes de bajar al plano técnico del Rhizome. Cambios mecánicos sobre v1.8.1:
   - **E2 split del primer beat (0:25–0:29, 4s)** en dos sub-beats: 0:25–0:28 (3s) cartela full-screen *"Imagine this pot is a whole plot."* / 0:28–0:29 (1s) corte al Jetson en su caja con carteles físicos. **E2 mantiene 25s totales**, sin expandir timing.
