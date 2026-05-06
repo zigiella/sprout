@@ -3,8 +3,10 @@
 **Fecha:** 2026-05-06 (día 21)
 **Autora:** Corola
 **Para:** Venation (recibe vía Bea por chat — ver mensaje al final)
-**Referencia narrativa:** `video/script.md` v1.8.1 + `video/copies_bilingual.md` v0.4 + `video/montage_brief.md` v0.3 + sistema visual Venation `sprout_design_pack_v1` (en main desde día 17).
-**Rama:** `feat/corola-guion-v1.8.1` — PR #101 abierta a main (mergeable).
+**Referencia narrativa:** `video/script.md` v1.8.2 + `video/copies_bilingual.md` v0.5 + `video/montage_brief.md` v0.4 + sistema visual Venation `sprout_design_pack_v1` (en main desde día 17).
+**Rama:** `feat/corola-guion-v1.8.2-imagine-pot-e2` — PR a main (mergeable, apilada sobre PR #101 v1.8.1).
+
+**ACTUALIZACIÓN v1.8.2 (día 21, segunda iteración):** se añade Asset 4-bis (cartela bisagra apertura E2 *"Imagine this pot is a whole plot."* full-screen estilo "Three days later"). Total de assets: 16 (era 15). Decisión Bea día 21 tras pregunta retrospectiva sobre v1.6.
 
 ---
 
@@ -26,6 +28,7 @@ Este documento es el **inventario definitivo** de assets que Venation debe produ
 | 2 | **E1 5 cartelas tipográficas datos globales** (4 datos + pregunta) | A producir | Alta |
 | 3 | **E1 microcorte 0.5s tierra agrietada** | Confirmar producible o se descarta | Media |
 | 4 | **E2 cartela técnica + sub-cartela + DecisionReceipt overlay** | Refinar texto E2 (nodo + dispositivo) | **Alta — texto cambió hoy v1.8.1** |
+| **4-bis** | **E2 Cartela bisagra apertura *"Imagine this pot is a whole plot."*** (3s, full-screen, **misma gráfica que `"Three days later"` E8**) | **A producir — NUEVA v1.8.2 (día 21)** | **Alta — recuperada hoy v1.8.2** |
 | 5 | **E3 cartela técnica + ESP32 SAFE LIMIT overlay + cartela ancla "When in doubt, water less."** | Estable, refinar si procede | Media |
 | 6 | **E3b cartela cierre `Meristem composes.`** + UI Meristem composing (mock fiel si Meristem no entrega) | A producir | Alta |
 | 7 | **E4 cartela técnica + UI Pollen "Since last visit"** | Refinar texto E4 (nodo + dispositivo) | **Alta — texto cambió hoy v1.8.1** |
@@ -156,6 +159,35 @@ OFFLINE
 ```
 
 **NOTA:** la cartela técnica antes era `Gemma 4 E2B · local · llama.cpp`. Ahora se amplía con **`Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`** para nombrar nodo + dispositivo + modelo + runtime.
+
+---
+
+### Asset 4-bis — E2 Cartela bisagra apertura *"Imagine this pot is a whole plot."* (NUEVA v1.8.2) ⚠️
+
+**ESTE ASSET ES NUEVO HOY DÍA 21 (v1.8.2).**
+
+**Cartela full-screen tipográfica** (3s, 0:25–0:28):
+
+```
+Imagine this pot is a whole plot.
+```
+
+**Tratamiento gráfico — IDÉNTICO al de la cartela `"Three days later"` (E8, Asset 11).** Es decir:
+
+- **Tipografía:** Manrope titular (la misma jerarquía que `"Three days later"`).
+- **Color texto:** `soil.oat` o blanco roto (mismo que `"Three days later"`).
+- **Fondo:** casi-negro `soil.graphite` (#1A1A18) — full-screen, sin plano físico debajo.
+- **Composición:** centrada horizontal y verticalmente. Espacio negativo generoso. Sin overlays, sin sub-cartelas, sin nada más en pantalla.
+- **Entrada:** fade in 0.3s.
+- **Sostén:** ~2.4s.
+- **Salida:** fade out 0.3s al corte del Plano 2A (Jetson en su caja).
+- **Sin VO. Sin sfx.** Silencio respiratorio.
+
+**Función narrativa:** bisagra tipográfica entre E1 (cartelas datos globales sobre `soil.graphite`) y E2 (plano físico del Rhizome). Equivalente visual a `"Three days later"` en E8 — misma jerarquía, mismo lenguaje, distinta función (E2 es bisagra conceptual "filmamos macetas pero hablamos de parcelas"; E8 es bisagra temporal). El espectador llega a E2 con el contrato visual aceptado: lo que ve es maceta, lo que se cuenta es parcela.
+
+**Por qué se recupera hoy:** la frase vivía en E1 v1.6 como cartela inicial bilingüe sobre plano de maceta. En v1.7 cayó cuando E1 pasó a opener tipográfico con 4 datos globales. La idea seguía documentada como convención de equipo en `dossiers/README.md`, pero ya no se enunciaba on-screen. Bea día 21, tras pregunta retrospectiva sobre v1.6, decide recuperarla y reubicarla al inicio de E2 con la gráfica de `"Three days later"`.
+
+**Naming sugerido:** `E02_cartela_bisagra_imagine_pot.png` (PNG transparente o composición sobre `soil.graphite` directo, según prefieras).
 
 ---
 
@@ -422,7 +454,8 @@ E01_microcorte_tierra_agrietada.mov
 E01_cartela_3_dato_catalonia.png
 E01_cartela_4_dato_itu.png
 E01_cartela_5_pregunta_abierta.png
-E02_cartela_tecnica_rhizome.png   ← TEXTO v1.8.1
+E02_cartela_bisagra_imagine_pot.png   ← NUEVA v1.8.2 (full-screen, gráfica "Three days later")
+E02_cartela_tecnica_rhizome.png       ← TEXTO v1.8.1
 E02_subcartela_llm_ambiguous.png
 E02_overlay_offline.png
 E02_cartela_decisionreceipt.png
@@ -487,30 +520,32 @@ Mensaje completo abajo. Bea lo copia textual al chat de Venation tras leer la bi
 
 Venation,
 
-Tras Bea cerrar todos los abiertos del guion día 20 (v1.8) + dos cambios de copy día 21 (v1.8.1), el frente vídeo entra en producción definitiva. Necesito de ti el material visual final que Bract integrará en CapCut.
+Tras Bea cerrar todos los abiertos del guion día 20 (v1.8) + dos cambios de copy día 21 (v1.8.1) + recuperación cartela bisagra E2 día 21 (v1.8.2), el frente vídeo entra en producción definitiva. Necesito de ti el material visual final que Bract integrará en CapCut.
 
-**Acabo de mergear PR #101** en `feat/corola-guion-v1.8.1` (ya rebajado a main vía Cambium ella). Léete:
+**Léete v1.8.2 (apilada sobre v1.8.1):**
 
-- `video/script.md` v1.8.1
-- `video/copies_bilingual.md` v0.4
-- `video/montage_brief.md` v0.3
-- `bitacora/2026-05-06_paquete-material-definitivo-venation_corola.md` ← **inventario completo de 15 assets que necesito de ti**
+- `video/script.md` v1.8.2
+- `video/copies_bilingual.md` v0.5
+- `video/montage_brief.md` v0.4
+- `bitacora/2026-05-06_paquete-material-definitivo-venation_corola.md` ← **inventario completo de 16 assets que necesito de ti** (Asset 4-bis nuevo v1.8.2)
 
 **Lo más importante:**
 
-1. **Dos cartelas técnicas cambiaron hoy día 21** (v1.8.1). Si ya empezaste a producir las versiones antiguas, regenera con texto nuevo:
+1. **NUEVO ASSET v1.8.2 — cartela bisagra apertura E2** (Asset 4-bis): *"Imagine this pot is a whole plot."* Full-screen tipográfica, **misma gráfica que `"Three days later"` (E8, Asset 11)** — Manrope titular sobre `soil.graphite` casi-negro, sin plano físico debajo, sin VO. 3s en 0:25–0:28. Función narrativa: bisagra tipográfica entre E1 (datos globales) y E2 (plano técnico). Detalle completo en bitácora Asset 4-bis. Naming sugerido: `E02_cartela_bisagra_imagine_pot.png`.
+
+2. **Dos cartelas técnicas cambiaron día 21** (v1.8.1). Si ya empezaste a producir las versiones antiguas, regenera con texto nuevo:
    - **E2 antes:** `Gemma 4 E2B · local · llama.cpp` → **AHORA:** `Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`
    - **E4 antes:** `Gemma 4 E4B · LiteRT-LM · on-device` → **AHORA:** `Pollen: Android · Gemma 4 E4B · LiteRT-LM · on-device`
 
    Razón: nombrar nodo + dispositivo refuerza la jerarquía visible y conecta con los carteles físicos PLOT_01/02 + RHIZOME_01/02 EDGE NODE.
 
-2. **El cenital E09 sigue en producción** según decisión Opción B firme de Bea día 20 (animar 20s con cadencia completa, recortar en post si procede). Sin cambios sobre lo que tenías.
+3. **El cenital E09 sigue en producción** según decisión Opción B firme de Bea día 20 (animar 20s con cadencia completa, recortar en post si procede). Sin cambios sobre lo que tenías.
 
-3. **Los demás 13 assets** están detallados en la bitácora con textos definitivos, tiempos, estilos y razonamiento por cada uno.
+4. **Los demás 12 assets** están detallados en la bitácora con textos definitivos, tiempos, estilos y razonamiento por cada uno.
 
-4. **Naming sugerido:** snake_case según patrón Bract. Detallado en bitácora.
+5. **Naming sugerido:** snake_case según patrón Bract. Detallado en bitácora.
 
-5. **Plazo ideal:** día 24-25. Mínimo viable día 26-27.
+6. **Plazo ideal:** día 24-25. Mínimo viable día 26-27.
 
 **Lo que NO necesito de ti:**
 - Cartelas E5 UI compilador (Floema entrega).

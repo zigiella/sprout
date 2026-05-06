@@ -1,6 +1,6 @@
 # Copies bilingües del vídeo Sprout — ES / EN
 
-**Versión:** v0.4 (refinamiento cartelas técnicas E2 + E4 con nodo + dispositivo, día 21 — apilado completo de las 12 escenas v1.8.1)
+**Versión:** v0.5 (recuperación cartela *"Imagine this pot is a whole plot."* al inicio de E2 con gráfica "Three days later", día 21 — apilado completo de las 12 escenas v1.8.2)
 **Fecha:** 2026-05-06 (día 21)
 **Autora:** Corola
 **Origen:** decisión Bea día 16 — *"Necesitaré tener siempre los copies del video (textos VO, voz en off, cartelas, etc en ES y EN)."* Actualizado al giro estratégico día 18-19 (12 escenas, VO inglés master, frases fuertes reformuladas, Meristem en MVP).
@@ -24,7 +24,7 @@
 |--------|--------|-------|
 | **E0** Cartela apertura Sprout | ✅ **Estable v1.8** | Wordmark Sprout + subtítulo "AI Local-first irrigation decisions." + "Safe · explainable · open-source." Microcartela atribución Gemma trademark NO va aquí (va en cierre). |
 | **E1** La ausencia con datos globales | ✅ **Estable v1.8** | 4 datos globales (UNCCD, OECD, FAO, ITU) + microcorte 0.5s tierra agrietada + pregunta abierta. |
-| **E2** Rhizome decide offline | ✅ **Estable v1.7** | Frase fuerte 1 reformulada. VO en inglés. |
+| **E2** Rhizome decide offline | ✅ **Estable v1.8.2** | Frase fuerte 1 reformulada. VO en inglés. **Cartela bisagra apertura recuperada v1.8.2** (*"Imagine this pot is a whole plot."* full-screen estilo "Three days later", 0:25–0:28, 3s). |
 | **E3** ESP32 SAFE LIMIT | ✅ **Estable v1.7** | Frase fuerte 3 reformulada (proposes/disposes). Cartela técnica nueva (AI proposes / ESP32 validates). |
 | **E3b** Meristem prepara | ✅ **Estable v1.8** | Plano cocina + portátil + Pollen recibiendo política. VO Extra E3b: *"Meristem composes the policy."* |
 | **E4** Llega Pollen | ✅ **Estable v1.7** | Frase fuerte 2 reformulada (con Pollen explícito). |
@@ -37,7 +37,7 @@
 
 ---
 
-## Escena 2 — Rhizome decide offline (0:25–0:50) ✅ ESTABLE v1.7
+## Escena 2 — Rhizome decide offline (0:25–0:50) ✅ ESTABLE v1.8.2
 
 ### VO master (inglés grabado por Bea, ES dub aparte)
 
@@ -51,10 +51,13 @@
 
 | Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
 |----------|------------------|-----------------|-------------------|
-| Overlay persistente | **`OFFLINE`** | "Sin red" | Esquina sup. izq. · todo el bloque (0:25–0:50) |
-| Cartela técnica 1 | **`Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`** | "Gemma 4 E2B local llama.cpp" | Esquina sup. der. · ~0:29–0:32 (3s) |
+| **Cartela bisagra apertura E2 (NUEVA v1.8.2)** | **"Imagine this pot is a whole plot."** | *"Imagina que esta maceta es una parcela entera."* | **Centro full-screen · 0:25–0:28 (3s) · misma gráfica que `"Three days later"` E8: Manrope titular sobre fondo casi-negro `soil.graphite`, sin plano físico debajo, sin VO** |
+| Overlay persistente | **`OFFLINE`** | "Sin red" | Esquina sup. izq. · entra a 0:28, persistente resto del bloque (0:28–0:50) |
+| Cartela técnica 1 | **`Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`** | "Rhizome: Jetson Orin Nano · Gemma 4 E2B local llama.cpp" | Esquina sup. der. · ~0:29–0:32 (3s) |
 | Sub-cartela técnica | **`LLM called only when ambiguous`** | "LLM solo en casos ambiguos" | Esquina sup. der. · ~0:32–0:35 (3s) |
 | Cartela `DecisionReceipt` | **`DecisionReceipt`** | "Recibo de decisión" | Centro/superpuesta · 0:41–0:43 (2s) |
+
+**Nota cartela bisagra (v1.8.2):** recuperada de E1 v1.6 (era cartela inicial bilingüe sobre plano de maceta). En v1.7 cayó cuando E1 pasó a opener tipográfico con 4 datos globales. En v1.8.2 vuelve al inicio de E2 con gráfica de E8 *"Three days later"* — bisagra tipográfica entre E1 (datos globales) y E2 (plano técnico). Decisión Bea día 21.
 
 ### Log diseñado en pantalla del Jetson (Venation, sin traducción — es código del sistema)
 
@@ -379,6 +382,7 @@ Gemma is a trademark of Google LLC.
 
 ## Historial
 
+- **v0.5** (2026-05-06, día 21, Corola) — recuperación cartela *"Imagine this pot is a whole plot."* al inicio de E2 con misma gráfica que `"Three days later"` (E8). Cambio sobre v0.4: añadida cartela bisagra apertura E2 (Manrope full-screen sobre `soil.graphite`, 0:25–0:28, 3s, sin VO). Función narrativa: bisagra tipográfica entre E1 (datos globales) y E2 (plano técnico) — recupera contrato visual con el espectador (filmamos macetas, hablamos de parcelas) que vivía en E1 v1.6 y se cayó en v1.7. Decisión Bea día 21 tras pregunta retrospectiva sobre v1.6. Actualizada la tabla de Escena 2 + nota explicativa al final de la sección + estado v1.7 → v1.8.2.
 - **v0.4** (2026-05-06, día 21, Corola) — refinamiento de cartelas técnicas E2 y E4 por petición de Bea: ampliadas con nodo + dispositivo. E2: `Gemma 4 E2B · local · llama.cpp` → `Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`. E4: `Gemma 4 E4B · LiteRT-LM · on-device` → `Pollen: Android · Gemma 4 E4B · LiteRT-LM · on-device`. Refuerza jerarquía visible nodo → dispositivo → modelo → runtime y conecta con carteles físicos PLOT_01/02 + RHIZOME_01/02 EDGE NODE.
 - **v0.3** (2026-05-05, día 20, Corola) — apilado completo post-v1.8 tras Bea cerrar los 4 abiertos día 20. Añadidas escenas inestables E0, E1, E3b, E8, E9, E9b con copies bilingües completos. Decisiones consolidadas: E8 sobrevive, E9 Opción B firme (20s con cadencia Venation completa + cierre largo *"Federated intelligence, carried by Pollen."* + sello SYNCED ✓), F6 ubicada en E9b. Cartela final E9 revierte de modulación Cambium ella v1.7 (3 beats) a cadencia v1.6 con cierre largo. Tarjeta logo final con microcartela atribución Gemma confirmada en cierre por reglas hackathon.
 - **v0.2** (2026-05-05, día 20, Corola) — actualización post-giro estratégico día 18-19 (v1.7 del guion). Cambios: VO master pasa a inglés (era castellano), añadidas escenas E2-E7 con copies bilingües completos, frases fuertes reformuladas (F1, F2, F3, F5 sin cambios), voz humana E5 castellano literal preservada con subtítulo EN entre comillas, contingencia meteo E6 documentada (con/sin), cartela invariante E7 con texto firme. Escenas inestables (E0, E1, E3b, E8, E9, E9b) marcadas TBD-sesión día 20.

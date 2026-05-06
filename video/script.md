@@ -1,6 +1,13 @@
-# Script — Sprout v1.8.1 (día 21: cartelas técnicas E2 + E4 ampliadas con nodo + dispositivo)
+# Script — Sprout v1.8.2 (día 21: recuperación cartela "Imagine this pot is a whole plot." al inicio de E2)
 
-**Versión:** v1.8.1 (día 21 — refinamiento de copies por Bea: cartelas técnicas E2 + E4 ampliadas para nombrar el **nodo + dispositivo** explícitamente, no solo el modelo Gemma. Cambios sobre v1.8:
+**Versión:** v1.8.2 (día 21 — segunda iteración del día: tras pregunta retrospectiva de Bea sobre v1.6 *"¿Ya no decimos aquello de 'imagina que esta maceta es una parcela'?"*, recuperamos esa cartela como contrato visual con el espectador. Cambios sobre v1.8.1:
+- **E2 inicio:** se recupera cartela *"Imagine this pot is a whole plot."* como **cartela full-screen tipográfica con la misma gráfica que `"Three days later"` (E8)**: Manrope centrada sobre fondo casi-negro `soil.graphite`, sin plano de maceta debajo, sin VO. 3s. Decisión Bea día 21.
+- **Función narrativa:** bisagra tipográfica entre E1 (cartelas datos globales sobre `soil.graphite`) y E2 (plano físico del Rhizome). Equivalente a la bisagra temporal *"Three days later"* en E8. Misma cadencia visual, misma jerarquía.
+- **E2 split del primer beat (0:25–0:29, 4s)** en dos sub-beats: 0:25–0:28 (3s) cartela full-screen *"Imagine this pot is a whole plot."* (estilo "Three days later") / 0:28–0:29 (1s) fade/corte al Jetson en su caja con carteles físicos. **E2 mantiene 25s totales**, no se expande timing.
+
+Vivía en E1 v1.6, se cayó en v1.7 cuando E1 pasó a ser opener tipográfico con 4 datos globales. Ahora regresa al inicio de E2 — ancla la convención narrativa "filmamos macetas, hablamos de parcelas" antes de bajar al plano técnico del Rhizome. La idea seguía documentada en `dossiers/README.md` como convención de equipo, pero no se enunciaba on-screen. Recuperarla cierra ese gap sin tocar E1 (4 datos globales sigue intacto).
+
+Versión v1.8.1 (día 21 — refinamiento de copies por Bea: cartelas técnicas E2 + E4 ampliadas para nombrar el **nodo + dispositivo** explícitamente, no solo el modelo Gemma. Cambios sobre v1.8:
 - E2 cartela técnica: `Gemma 4 E2B · local · llama.cpp` → **`Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`**
 - E4 cartela técnica: `Gemma 4 E4B · LiteRT-LM · on-device` → **`Pollen: Android · Gemma 4 E4B · LiteRT-LM · on-device`**
 
@@ -174,7 +181,8 @@ Si Venation no tiene B-roll producible, microcorte se descarta sin drama. Pero s
 
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
-| 0:25–0:29 (4s) | Corte. Plano cerrado del Jetson en su caja con cartel **"PLOT_01 with RHIZOME_01"** + cartel caja **"RHIZOME_01 / EDGE NODE"**. LED en `signal.seed` (#C5F26B) parpadea cuando el sistema decide. Camera baja al sensor de humedad clavado en la tierra. | **Overlay esquina sup. izq.** (persistente todo el bloque): `OFFLINE` |
+| 0:25–0:28 (3s) | **Cartela full-screen tipográfica** con la **misma gráfica que `"Three days later"` (E8)**: fondo casi-negro `soil.graphite`, texto centrado en Manrope titular `soil.oat`. Sin plano físico debajo, sin VO. Función: bisagra tipográfica entre E1 (datos globales) y E2 (plano técnico) — contrato visual con el espectador. Recuperada de v1.6, decisión Bea día 21. | **Cartela full-screen** (3s, Manrope): *"Imagine this pot is a whole plot."* |
+| 0:28–0:29 (1s) | Fade/corte. Plano cerrado del Jetson en su caja con cartel **"PLOT_01 with RHIZOME_01"** + cartel caja **"RHIZOME_01 / EDGE NODE"**. LED en `signal.seed` (#C5F26B) parpadea cuando el sistema decide. Camera baja al sensor de humedad clavado en la tierra. | **Overlay esquina sup. izq.** (entra a 0:28, persistente resto del bloque): `OFFLINE` |
 | 0:29–0:37 (8s) | Pantalla del Jetson llenando el plano. Fondo `soil.graphite`. Tipografía IBM Plex Mono. Log diseñado entrando con cadencia musical (1 línea/s). Bloque `SOIL READ` primero, bloque `DECISION` después. `WATER` y `final_action: 18s` resaltados en `signal.seed`. Resto del log en gris claro. **VO inglés:** *"This plot is not alone. It has a local brain. It reads the soil. It decides."* (~14 palabras) | **Cartela esquina sup. der.** (3s, IBM Plex Mono): `Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp` / **Sub-cartela** (3s): `LLM called only when ambiguous` |
 | 0:37–0:43 (6s) | Captura del `DecisionReceipt` llenando un cuarto de pantalla. Tres campos resaltados (`signal.seed`): `decision_type: WATER`, `final_action: 18s`, `why_short: "Soil below minimum. Budget available."` Resto del JSON atenuado. **VO inglés:** *"And signs what it does, so it can be explained."* (~10 palabras) | **Cartela superpuesta** (2s sobre el receipt, Manrope editorial): `DecisionReceipt` |
 | 0:43–0:48 (5s) | Salida al campo. Plano de la válvula. Se abre. Sonido de agua sobre tierra. | — |
@@ -205,9 +213,9 @@ Resaltados: `WATER` y `final_action` en `signal.seed`. Contexto en gris atenuado
 **Lo que se siente:** el sistema funciona solo. Sin red, sin nube, sin nadie mirando. La frase fuerte 1 aterriza sobre el agua que sale — promesa cumplida en el mismo plano que se afirma.
 
 **VO:** 31 palabras.
-**Cartelas:** 3 (`Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`, `LLM called only when ambiguous`, `DecisionReceipt`).
-**Overlays:** 1 (`OFFLINE` persistente).
-**Tokens dirección de arte:** fondo `soil.graphite`, texto base gris claro, resaltados en `signal.seed`. Tipografía log en IBM Plex Mono. Cartelas en Manrope.
+**Cartelas:** 4 (full-screen *"Imagine this pot is a whole plot."* estilo "Three days later", `Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`, `LLM called only when ambiguous`, `DecisionReceipt`).
+**Overlays:** 1 (`OFFLINE` persistente desde 0:28).
+**Tokens dirección de arte:** fondo `soil.graphite`, texto base gris claro, resaltados en `signal.seed`. Tipografía log en IBM Plex Mono. Cartelas en Manrope. Cartela bisagra tipográfica de apertura usa misma gráfica que `"Three days later"` E8.
 
 ---
 
@@ -593,6 +601,15 @@ Gemma is a trademark of Google LLC.
 ---
 
 ## Historial de versiones
+
+- **v1.8.2 — recuperación cartela "Imagine this pot is a whole plot." al inicio de E2** (2026-05-06, día 21, Corola) — segunda iteración del día tras pregunta retrospectiva de Bea sobre v1.6 (*"¿Ya no decimos aquello de 'imagina que esta maceta es una parcela'?"*). Recuperamos esa cartela como **contrato visual con el espectador** antes de bajar al plano técnico del Rhizome. Cambios mecánicos sobre v1.8.1:
+  - **E2 split del primer beat (0:25–0:29, 4s)** en dos sub-beats: 0:25–0:28 (3s) cartela full-screen *"Imagine this pot is a whole plot."* / 0:28–0:29 (1s) corte al Jetson en su caja con carteles físicos. **E2 mantiene 25s totales**, sin expandir timing.
+  - **Tratamiento gráfico:** misma gráfica que `"Three days later"` (E8) — Manrope titular centrada sobre fondo casi-negro `soil.graphite`, sin plano físico debajo, sin VO. Decisión Bea día 21.
+  - **Función narrativa:** bisagra tipográfica entre E1 (cartelas datos globales sobre `soil.graphite`) y E2 (plano físico del Rhizome). Equivalente a la bisagra temporal *"Three days later"* en E8. Misma cadencia visual, misma jerarquía.
+
+  **Razonamiento:** la frase vivía en E1 v1.6 como invitación al espectador y contrato narrativo (filmamos macetas, hablamos de parcelas), pero se cayó en v1.7 cuando E1 pasó a opener tipográfico con 4 datos globales. La idea seguía documentada como convención de equipo en `dossiers/README.md`, pero ya no se enunciaba on-screen. Recuperarla cierra ese gap sin tocar E1 (4 datos globales sigue intacto). Reubicarla al inicio de E2 con tratamiento "Three days later" la convierte en bisagra explícita entre el opener tipográfico de E1 y el plano técnico de E2.
+
+  Aplicado a `script.md`, `copies_bilingual.md` v0.4 → v0.5, `montage_brief.md` v0.3 → v0.4, `shot_list.md` (nota encabezado), `bitacora/2026-05-06_paquete-material-definitivo-venation_corola.md` (Asset 4-bis añadido para Venation).
 
 - **v1.8.1 — refinamiento cartelas técnicas E2 + E4** (2026-05-06, día 21, Corola) — Bea pide ampliar las cartelas técnicas para nombrar el **nodo + dispositivo** explícitamente, no solo el modelo Gemma. Cambios mecánicos sobre v1.8:
   - **E2 cartela técnica:** `Gemma 4 E2B · local · llama.cpp` → **`Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`**.
