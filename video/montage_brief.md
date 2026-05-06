@@ -1,6 +1,6 @@
 # Montage brief para Bract (CapCut) — Sprout vídeo v1.8
 
-**Versión:** v0.4 (recuperación cartela *"Imagine this pot is a whole plot."* al inicio de E2 con gráfica "Three days later", día 21 — apilado completo de las 12 escenas v1.8.2)
+**Versión:** v0.5 (cierre decisión Bea día 21 sobre Asset 9 E6: ruta principal `Context`, `WeatherDigest` plan B reactivable. Apilado completo de las 12 escenas v1.8.3)
 **Fecha:** 2026-05-06 (día 21)
 **Autora:** Corola
 **Para:** Bract (montadora CapCut, lectura repo)
@@ -37,7 +37,7 @@
 | **E3b** Meristem prepara | ✅ **Estable v1.8** | Plano cocina + portátil + Pollen recibe política. VO Extra E3b. Detalle abajo. |
 | **E4** Llega Pollen | ✅ **Estable v1.7** | Esquema completo abajo. |
 | **E5** La persona da una misión | ✅ **Estable v1.7** | Voz humana castellano literal. UI Pollen pendiente coordinación con Floema. |
-| **E6** Ferry A→B | ✅ **Estable v1.7** | Contingencia meteo (con/sin) documentada. |
+| **E6** Ferry A→B | ✅ **Estable v1.8.3** | Ruta principal `Context` (sin meteo, decisión Bea día 21). Plan B reactivable `WeatherDigest` con captura Venation ya producida — sustitución directa de 2 PNGs en CapCut si rodaje al final tiene tiempo. |
 | **E7** Watering criteria updated (CLIMAX) | ✅ **Estable v1.7** | Esquema completo abajo. |
 | **E8** Caducidad | ✅ **Estable v1.8 — NO se mata** | Decisión Bea día 20. F4 + plano `expired → rejected`. Detalle abajo. |
 | **E9** Cenital federado | ✅ **Estable v1.8 — Opción B firme** | 20s con cadencia Venation completa. Detalle abajo. |
@@ -211,29 +211,27 @@
 
 ---
 
-## Escena 6 · 2:00 – 2:20 · Ferry A→B ✅ ESTABLE v1.7
+## Escena 6 · 2:00 – 2:20 · Ferry A→B ✅ ESTABLE v1.8.3
 
-**Contingencia documentada: con / sin estación meteo.** Las cartelas cambian según ruta.
+**Decisión Bea día 21 (v1.8.3):** ruta principal **`Context`** (sin meteo). Plan B reactivable con `WeatherDigest` si en rodaje al final hay tiempo (Venation tiene captura producida — sustitución directa de 2 PNGs en CapCut, no requiere re-producir).
 
-**Plano 6A · 2:00–2:05 (5s)** · Plano de la persona junto al **PLOT_01** (cartel maceta `PLOT_01 with RHIZOME_01` + cartel caja `RHIZOME_01 / EDGE NODE` + estación meteo conectada al Rhizome 01 si la incluimos). El móvil descarga el `WeatherDigest` (con meteo) o `Context bundle` (sin). Pantalla del móvil: lectura del bundle viajando del Rhizome al teléfono.
-- **Origen:** `rodaje` (persona junto a PLOT_01) + `screen-pollen` (UI descarga).
+**Plano 6A · 2:00–2:05 (5s)** · Plano de la persona junto al **PLOT_01** (cartel maceta `PLOT_01 with RHIZOME_01` + cartel caja `RHIZOME_01 / EDGE NODE`, **sin estación meteo** en plano físico v1.8.3). El móvil descarga el `Context bundle`. Pantalla del móvil: lectura del bundle viajando del Rhizome al teléfono.
+- **Origen:** `rodaje` (persona junto a PLOT_01, sin meteo) + `screen-pollen` (UI descarga).
 - **VO EN:** *"Pollen brings questions, answers, and context."* (~6 palabras).
 - **VO ES (referencia):** *"Pollen trae preguntas, respuestas y contexto."*
-- **Cartela EN superpuesta** (2s, Manrope):
-  - **Con meteo:** `WeatherDigest ferry`
-  - **Sin meteo:** `Context ferry`
+- **Cartela EN superpuesta** (2s, Manrope, ruta principal v1.8.3): `Context ferry`
+- **Plan B reactivable** (CapCut sustitución 2 PNGs si rodaje incluye meteo): `WeatherDigest ferry`
 - **Transición a 6B:** **corte limpio.** Sin pasos en plano.
 - **#sfx:** ambiente exterior + click de descarga.
 
 **Plano 6B · 2:05–2:06 (1s)** · **Corte limpio.**
 - **Transición:** corte seco.
 
-**Plano 6C · 2:06–2:14 (8s)** · Plano de la persona junto al **PLOT_02** (cartel maceta `PLOT_02 with RHIZOME_02` + cartel caja `RHIZOME_02 / EDGE NODE`, sin meteo, segunda zona de la terraza, distinta planta). Pollen entrega el bundle al Rhizome 02. Pantalla del móvil: subida. Pantalla del Rhizome 02: aceptación con cita de origen.
+**Plano 6C · 2:06–2:14 (8s)** · Plano de la persona junto al **PLOT_02** (cartel maceta `PLOT_02 with RHIZOME_02` + cartel caja `RHIZOME_02 / EDGE NODE`, segunda zona de la terraza, distinta planta). Pollen entrega el bundle al Rhizome 02. Pantalla del móvil: subida. Pantalla del Rhizome 02: aceptación con cita de origen.
 - **Origen:** `rodaje` (persona junto a PLOT_02 — rotación del mismo Rhizome físico) + `screen-pollen` (UI subida) + `screen-jetson` (pantalla Rhizome 02 aceptando).
 - **VO EN:** ninguno (cartela en pantalla del Rhizome hace el trabajo).
-- **Cartela EN en pantalla del Rhizome 02** (4s, IBM Plex Mono):
-  - **Con meteo:** `WeatherDigest accepted · Source: rhizome_01`
-  - **Sin meteo:** `Context accepted · Source: rhizome_01`
+- **Cartela EN en pantalla del Rhizome 02** (4s, IBM Plex Mono, ruta principal v1.8.3): `Context accepted · Source: rhizome_01`
+- **Plan B reactivable** (CapCut sustitución 2 PNGs si rodaje incluye meteo): `WeatherDigest accepted · Source: rhizome_01`
 - **Transición a 6D:** plano sostenido del Rhizome 02.
 - **#sfx:** click de subida, click de aceptación.
 
@@ -566,6 +564,7 @@ Bea graba la frase castellana literal (*"Vuelvo el viernes. Esta planta aguanta 
 
 ## Historial
 
+- **v0.5** (2026-05-06, día 21, Corola) — cierre decisión Bea Asset 9 E6: ruta principal `Context`, `WeatherDigest` plan B reactivable. Cambio sobre v0.4: sección Escena 6 reescrita — ruta principal v1.8.3 = sin meteo (`Context ferry` + `Context accepted`), plan B reactivable = con meteo (`WeatherDigest ferry` + `WeatherDigest accepted`, captura ya producida por Venation). Estado E6 actualizado en tabla resumen + cabecera + planos 6A y 6C (sin estación meteo en plano físico, plan B reactivable documentado para Bract en CapCut). Decisión Bea día 21 cerrada en caliente con Venation antes de producir lote v1.8.1: *"no da tiempo a hacer la meteo. Si al final da tiempo, ella ya tiene hecha la captura."*
 - **v0.4** (2026-05-06, día 21, Corola) — recuperación cartela *"Imagine this pot is a whole plot."* al inicio de E2 con misma gráfica que `"Three days later"` (E8). Cambio sobre v0.3: split del Plano 2A (4s) en Plano 2A-pre (3s, cartela full-screen tipográfica) + Plano 2A (1s, plano del Jetson). E2 mantiene 25s totales. Función narrativa: bisagra tipográfica entre E1 (datos globales) y E2 (plano técnico) — equivalente visual a `"Three days later"` en E8. Recupera contrato visual con el espectador (filmamos macetas, hablamos de parcelas) que vivía en E1 v1.6 y se cayó en v1.7. Decisión Bea día 21 tras pregunta retrospectiva sobre v1.6.
 - **v0.3** (2026-05-06, día 21, Corola) — refinamiento de cartelas técnicas E2 y E4 por petición de Bea: ampliadas con nodo + dispositivo. E2: `Gemma 4 E2B · local · llama.cpp` → `Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`. E4: `Gemma 4 E4B · LiteRT-LM · on-device` → `Pollen: Android · Gemma 4 E4B · LiteRT-LM · on-device`. Sin cambios estructurales, solo texto de cartelas.
 - **v0.2** (2026-05-05, día 20, Corola) — apilado completo sobre v1.8 tras Bea cerrar los 4 abiertos día 20. Añadidas escenas inestables E0, E1, E3b, E8, E9, E9b con detalle plano-por-plano. Decisiones consolidadas en v1.8: E8 sobrevive (NO se mata), E9 Opción B firme (20s con cadencia Venation completa: 5 cartelas asimétricas + pausa tensa + cierre largo + sello SYNCED ✓), F6 ubicada en E9b. La animación cenital E9 viene como secuencia PNG transparente de Venation (480 frames a 24fps a 1920×1080); Bract codifica MP4 con ffmpeg. **Recortable en post si se decide compresión a 10s** (cortar pausa tensa + sostén final largo).

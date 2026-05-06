@@ -3,8 +3,10 @@
 **Fecha:** 2026-05-06 (día 21)
 **Autora:** Corola
 **Para:** Venation (recibe vía Bea por chat — ver mensaje al final)
-**Referencia narrativa:** `video/script.md` v1.8.2 + `video/copies_bilingual.md` v0.5 + `video/montage_brief.md` v0.4 + sistema visual Venation `sprout_design_pack_v1` (en main desde día 17).
-**Rama:** `feat/corola-guion-v1.8.2-imagine-pot-e2` — PR a main (mergeable, apilada sobre PR #101 v1.8.1).
+**Referencia narrativa:** `video/script.md` v1.8.3 + `video/copies_bilingual.md` v0.6 + `video/montage_brief.md` v0.5 + sistema visual Venation `sprout_design_pack_v1` (en main desde día 17).
+**Rama:** `feat/corola-guion-v1.8.3-decision-meteo-descartada` — PR a main (mergeable, apilada sobre PR #108 v1.8.2).
+
+**ACTUALIZACIÓN v1.8.3 (día 21, tercera iteración):** Asset 9 (E6) ruta principal cambia a solo `Context` (sin meteo). Decisión Bea cerrada en caliente con Venation antes de producir lote v1.8.1: *"no da tiempo a hacer la meteo. Si al final da tiempo, ella ya tiene hecha la captura."* Versión `WeatherDigest` queda como plan B reactivable — Venation tiene captura producida, sustitución directa de 2 PNGs en CapCut si rodaje al final tiene tiempo.
 
 **ACTUALIZACIÓN v1.8.2 (día 21, segunda iteración):** se añade Asset 4-bis (cartela bisagra apertura E2 *"Imagine this pot is a whole plot."* full-screen estilo "Three days later"). Total de assets: 16 (era 15). Decisión Bea día 21 tras pregunta retrospectiva sobre v1.6.
 
@@ -33,7 +35,7 @@ Este documento es el **inventario definitivo** de assets que Venation debe produ
 | 6 | **E3b cartela cierre `Meristem composes.`** + UI Meristem composing (mock fiel si Meristem no entrega) | A producir | Alta |
 | 7 | **E4 cartela técnica + UI Pollen "Since last visit"** | Refinar texto E4 (nodo + dispositivo) | **Alta — texto cambió hoy v1.8.1** |
 | 8 | **E5 UI compilador Pollen `MissionPatch validated`** + procesamiento 3 estados | Coordinar con Floema (real preferida o mock fiel) | Media |
-| 9 | **E6 cartelas ferry: `WeatherDigest ferry` / `Context ferry` (contingencia con/sin meteo)** | Producir las 2 versiones | Media |
+| 9 | **E6 cartelas ferry — solo `Context` (ruta principal v1.8.3)** | Decisión Bea día 21 cerrada en caliente — solo `Context` se entrega en lote, `WeatherDigest` queda como plan B reactivable (Venation tiene captura producida) | Media |
 | 10 | **E7 cartela ancla `Watering criteria updated.` + cartela invariante esquina (4 líneas)** | Estable, ya en main | ✓ Producido |
 | 11 | **E8 cartela `Three days later` + `expired → rejected`** | A producir | Media |
 | 12 | **E9 cenital animado 20s** (animación HTML + secuencia PNG transparente 480 frames) | EN PRODUCCIÓN (Venation arrancó día 20 con decisión Opción B firme) | **Alta** |
@@ -300,15 +302,18 @@ MissionPatch validated
 
 ---
 
-### Asset 9 — E6 cartelas ferry contingencia con/sin meteo (2:00–2:20, 20s)
+### Asset 9 — E6 cartelas ferry — ruta principal `Context` (v1.8.3) + plan B `WeatherDigest`
 
-**Producir DOS versiones de las cartelas — Bea decidirá en rodaje cuál se usa según si la estación meteo está conectada o no.**
+**ACTUALIZADO v1.8.3 (día 21):** decisión Bea cerrada en caliente con Venation antes de producir el lote v1.8.1: *"no da tiempo a hacer la meteo. Si al final da tiempo, ella ya tiene hecha la captura."*
 
-**Versión "con meteo":**
+- **Ruta principal v1.8.3:** solo versión `Context` (sin meteo). Las dos cartelas que sí entrega Venation en el lote.
+- **Plan B reactivable:** versión `WeatherDigest` (con meteo) producida por Venation en iteraciones anteriores. Si en rodaje al final hay tiempo y Bea decide incluir estación meteo física al lado del PLOT_01, las 2 cartelas se sustituyen directamente en CapCut. **No requiere re-producir.**
+
+**Versión "con meteo" (plan B reactivable, NO entregar de nuevo, ya producida):**
 - Cartela superpuesta (2s, ~2:02–2:04, Manrope): **`WeatherDigest ferry`**
 - Cartela en pantalla Rhizome 02 (4s, ~2:08–2:12, IBM Plex Mono): **`WeatherDigest accepted · Source: rhizome_01`**
 
-**Versión "sin meteo":**
+**Versión "sin meteo" (RUTA PRINCIPAL v1.8.3, las dos cartelas que entrega Venation en lote):**
 - Cartela superpuesta (2s, ~2:02–2:04, Manrope): **`Context ferry`**
 - Cartela en pantalla Rhizome 02 (4s, ~2:08–2:12, IBM Plex Mono): **`Context accepted · Source: rhizome_01`**
 
