@@ -70,8 +70,10 @@ visitar la parcela sin depender de mocks Android:
 - `GET /receipts?since=...`
 - `GET /explain/decision/{id}`
 - `GET /summary/since?since=...&locale=es|en`
+- `POST /policy`
+- `GET /policy/active`
 
-Como paso MVP, `src/rhizome_sync_facade.py` sirve esos cuatro endpoints desde
+Como paso MVP, `src/rhizome_sync_facade.py` sirve esos endpoints desde
 JSON locales con forma de contrato compartido (`code/shared/schemas/examples`).
 Es una fachada de interoperabilidad: no toca ESP32, no abre actuadores, no llama
 al LLM y no sustituye la persistencia real de Rhizome. Su valor es permitir que
@@ -92,6 +94,20 @@ No usa el LLM todavia. Es intencional: desbloquea la UX con una pieza
 testeable y segura. La evolucion natural es que Gemma 4 E2B ayude a redactar
 ese resumen sobre datos ya agregados, sin cambiar hechos ni decisiones.
 
+`POST /policy` recibe la politica transitoria que Pollen genera durante una
+visita, por ejemplo desde la beta voz -> politica. El endpoint:
+
+- acepta solo `PolicyPacket` con `policy_origin="pollen-visit"`;
+- normaliza `policy_scope` a `transient`;
+- exige `target_node_id` igual al `node_id` de la fachada;
+- exige `valid_until` con TTL maximo de 12h;
+- persiste la politica como activa para la siguiente decision;
+- no valida hard limits fisicos.
+
+Esa ultima linea es intencional. La fachada es solo schema gate y persistencia
+host-side; los hard limits viven en el Mini-Evaluator de Pollen antes de enviar
+la politica y en el ESP32 cuando Rhizome intenta ejecutar una accion.
+
 Arranque local/Jetson:
 
 ```bash
@@ -106,6 +122,13 @@ curl http://127.0.0.1:13010/status
 curl http://127.0.0.1:13010/snapshot/latest
 curl http://127.0.0.1:13010/receipts
 curl "http://127.0.0.1:13010/summary/since?locale=es"
+```
+
+Smoke de politica desde Jetson:
+
+```bash
+cd code/rhizome/jetson
+./smoke_policy.sh
 ```
 
 Base URL para Pollen en la red local del dia 19:
