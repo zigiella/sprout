@@ -1,7 +1,7 @@
 # Montage brief para Bract (CapCut) — Sprout vídeo v1.8
 
-**Versión:** v0.2 (apilado completo sobre v1.8 — Bea cerró los 4 abiertos día 20. Las 12 escenas con detalle disponible para Bract.)
-**Fecha:** 2026-05-05 (día 20)
+**Versión:** v0.3 (refinamiento cartelas técnicas E2 + E4 con nodo + dispositivo, día 21 — apilado completo de las 12 escenas v1.8.1)
+**Fecha:** 2026-05-06 (día 21)
 **Autora:** Corola
 **Para:** Bract (montadora CapCut, lectura repo)
 **Formato:** según mensaje Bract en PR #65 / borrador-mensaje-corola-incoherencias_bract.md (el formato que ella pidió en su día).
@@ -59,7 +59,7 @@
 - **Origen:** `screen-jetson` (captura real Xilema, mock fiel si no llega).
 - **VO EN:** *"This plot is not alone. It has a local brain. It reads the soil. It decides."* (~14 palabras).
 - **VO ES (referencia):** *"Esta parcela no está sola. Tiene un cerebro local. Lee el suelo. Decide."*
-- **Cartela EN esquina sup. der.** (3s, ~0:29–0:32): `Gemma 4 E2B · local · llama.cpp` (IBM Plex Mono pequeña).
+- **Cartela EN esquina sup. der.** (3s, ~0:29–0:32): `Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp` (IBM Plex Mono pequeña).
 - **Sub-cartela EN esquina sup. der.** (3s, ~0:32–0:35): `LLM called only when ambiguous` (IBM Plex Mono pequeña).
 - **Resaltados en log:** `WATER` y `final_action: 18s` en `signal.seed`. Resto del log en gris claro.
 - **Transición a 2C:** dissolve corto.
@@ -136,7 +136,7 @@
 **Plano 4B · 1:20–1:25 (5s)** · Pantalla del móvil llenando un tercio del cuadro. App Pollen abierta. La persona pulsa botón. En la pantalla aparece la pregunta.
 - **Origen:** `screen-pollen` (captura real Pollen Floema, mock fiel si no llega).
 - **VO EN:** ninguno (la cartela en pantalla del móvil hace el trabajo).
-- **Cartela EN esquina sup. der.** (3s, IBM Plex Mono): `Gemma 4 E4B · LiteRT-LM · on-device`.
+- **Cartela EN esquina sup. der.** (3s, IBM Plex Mono): `Pollen: Android · Gemma 4 E4B · LiteRT-LM · on-device`.
 - **Cartela EN en pantalla del móvil** (5s): `What happened since my last visit?`
 - **Cartela ES (referencia):** "¿Qué ha pasado desde mi última visita?"
 - **Transición a 4C:** la pantalla del móvil cambia (no corte de cámara).
@@ -556,5 +556,6 @@ Bea graba la frase castellana literal (*"Vuelvo el viernes. Esta planta aguanta 
 
 ## Historial
 
+- **v0.3** (2026-05-06, día 21, Corola) — refinamiento de cartelas técnicas E2 y E4 por petición de Bea: ampliadas con nodo + dispositivo. E2: `Gemma 4 E2B · local · llama.cpp` → `Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`. E4: `Gemma 4 E4B · LiteRT-LM · on-device` → `Pollen: Android · Gemma 4 E4B · LiteRT-LM · on-device`. Sin cambios estructurales, solo texto de cartelas.
 - **v0.2** (2026-05-05, día 20, Corola) — apilado completo sobre v1.8 tras Bea cerrar los 4 abiertos día 20. Añadidas escenas inestables E0, E1, E3b, E8, E9, E9b con detalle plano-por-plano. Decisiones consolidadas en v1.8: E8 sobrevive (NO se mata), E9 Opción B firme (20s con cadencia Venation completa: 5 cartelas asimétricas + pausa tensa + cierre largo + sello SYNCED ✓), F6 ubicada en E9b. La animación cenital E9 viene como secuencia PNG transparente de Venation (480 frames a 24fps a 1920×1080); Bract codifica MP4 con ffmpeg. **Recortable en post si se decide compresión a 10s** (cortar pausa tensa + sostén final largo).
 - **v0.1** (2026-05-05, día 20, Corola) — primer apilado del montage_brief en formato Bract (CapCut). Escenas estables E2-E7 desarrolladas plano-por-plano con tiempo, origen, VO EN/ES, cartelas, transiciones y sfx. Escenas inestables E0/E1/E3b/E8/E9/E9b marcadas TBD-sesión día 20. Notas operativas para Bract sobre carteles físicos, decisión de rodaje un Rhizome dos roles, voz humana E5, master de exportación, pendientes coordinación cross-frente.

@@ -1,7 +1,7 @@
 # Copies bilingües del vídeo Sprout — ES / EN
 
-**Versión:** v0.3 (apilado completo post-v1.8 — Bea cerró los 4 abiertos día 20, todas las 12 escenas con copies bilingües completos)
-**Fecha:** 2026-05-05 (día 20)
+**Versión:** v0.4 (refinamiento cartelas técnicas E2 + E4 con nodo + dispositivo, día 21 — apilado completo de las 12 escenas v1.8.1)
+**Fecha:** 2026-05-06 (día 21)
 **Autora:** Corola
 **Origen:** decisión Bea día 16 — *"Necesitaré tener siempre los copies del video (textos VO, voz en off, cartelas, etc en ES y EN)."* Actualizado al giro estratégico día 18-19 (12 escenas, VO inglés master, frases fuertes reformuladas, Meristem en MVP).
 
@@ -52,7 +52,7 @@
 | Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
 |----------|------------------|-----------------|-------------------|
 | Overlay persistente | **`OFFLINE`** | "Sin red" | Esquina sup. izq. · todo el bloque (0:25–0:50) |
-| Cartela técnica 1 | **`Gemma 4 E2B · local · llama.cpp`** | "Gemma 4 E2B local llama.cpp" | Esquina sup. der. · ~0:29–0:32 (3s) |
+| Cartela técnica 1 | **`Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`** | "Gemma 4 E2B local llama.cpp" | Esquina sup. der. · ~0:29–0:32 (3s) |
 | Sub-cartela técnica | **`LLM called only when ambiguous`** | "LLM solo en casos ambiguos" | Esquina sup. der. · ~0:32–0:35 (3s) |
 | Cartela `DecisionReceipt` | **`DecisionReceipt`** | "Recibo de decisión" | Centro/superpuesta · 0:41–0:43 (2s) |
 
@@ -109,7 +109,7 @@ why_short: Soil below minimum. Budget available.
 
 | Elemento | EN (en pantalla) | ES (referencia) | Posición / Tiempo |
 |----------|------------------|-----------------|-------------------|
-| Cartela técnica esquina | **`Gemma 4 E4B · LiteRT-LM · on-device`** | "Gemma 4 E4B LiteRT-LM en el dispositivo" | Esquina sup. der. · 1:20–1:23 (3s) |
+| Cartela técnica esquina | **`Pollen: Android · Gemma 4 E4B · LiteRT-LM · on-device`** | "Gemma 4 E4B LiteRT-LM en el dispositivo" | Esquina sup. der. · 1:20–1:23 (3s) |
 | Pregunta UI (en pantalla del móvil) | **`What happened since my last visit?`** | "¿Qué ha pasado desde mi última visita?" | Pantalla del móvil · 1:20–1:25 (5s) |
 | Bloque resumen UI (en pantalla del móvil) | **`SINCE LAST VISIT / 2 watering events / 1 skipped decision / 0 blocked actions`** + receipts (`WATER · 18s · 14:00`, `WATER · 12s · 09:30`, `SKIP · 22:00 · soil above threshold`) | "Desde la última visita..." | Pantalla del móvil · 1:25–1:32 (7s) |
 
@@ -379,6 +379,7 @@ Gemma is a trademark of Google LLC.
 
 ## Historial
 
+- **v0.4** (2026-05-06, día 21, Corola) — refinamiento de cartelas técnicas E2 y E4 por petición de Bea: ampliadas con nodo + dispositivo. E2: `Gemma 4 E2B · local · llama.cpp` → `Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`. E4: `Gemma 4 E4B · LiteRT-LM · on-device` → `Pollen: Android · Gemma 4 E4B · LiteRT-LM · on-device`. Refuerza jerarquía visible nodo → dispositivo → modelo → runtime y conecta con carteles físicos PLOT_01/02 + RHIZOME_01/02 EDGE NODE.
 - **v0.3** (2026-05-05, día 20, Corola) — apilado completo post-v1.8 tras Bea cerrar los 4 abiertos día 20. Añadidas escenas inestables E0, E1, E3b, E8, E9, E9b con copies bilingües completos. Decisiones consolidadas: E8 sobrevive, E9 Opción B firme (20s con cadencia Venation completa + cierre largo *"Federated intelligence, carried by Pollen."* + sello SYNCED ✓), F6 ubicada en E9b. Cartela final E9 revierte de modulación Cambium ella v1.7 (3 beats) a cadencia v1.6 con cierre largo. Tarjeta logo final con microcartela atribución Gemma confirmada en cierre por reglas hackathon.
 - **v0.2** (2026-05-05, día 20, Corola) — actualización post-giro estratégico día 18-19 (v1.7 del guion). Cambios: VO master pasa a inglés (era castellano), añadidas escenas E2-E7 con copies bilingües completos, frases fuertes reformuladas (F1, F2, F3, F5 sin cambios), voz humana E5 castellano literal preservada con subtítulo EN entre comillas, contingencia meteo E6 documentada (con/sin), cartela invariante E7 con texto firme. Escenas inestables (E0, E1, E3b, E8, E9, E9b) marcadas TBD-sesión día 20.
 - **v0.1** (2026-05-01, día 16, Corola) — primer apilado de copies bilingües tras petición Bea día 16. Escenas 1-3 completas en formato v1.6 (VO castellano). Convenciones documentadas. Excepción única (voz humana E5) anotada.

@@ -1,6 +1,12 @@
-# Script — Sprout v1.8 (día 20: 4 abiertos cerrados por Bea — caducidad sobrevive, cadencia E9 Opción B, frase 6 en E9b, timing en montaje)
+# Script — Sprout v1.8.1 (día 21: cartelas técnicas E2 + E4 ampliadas con nodo + dispositivo)
 
-**Versión:** v1.8 (día 20 — Bea cierra los 4 abiertos pendientes de sesión sin esperar a sesión conjunta. Cambios sobre v1.7:
+**Versión:** v1.8.1 (día 21 — refinamiento de copies por Bea: cartelas técnicas E2 + E4 ampliadas para nombrar el **nodo + dispositivo** explícitamente, no solo el modelo Gemma. Cambios sobre v1.8:
+- E2 cartela técnica: `Gemma 4 E2B · local · llama.cpp` → **`Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`**
+- E4 cartela técnica: `Gemma 4 E4B · LiteRT-LM · on-device` → **`Pollen: Android · Gemma 4 E4B · LiteRT-LM · on-device`**
+
+Razonamiento: refuerza la jerarquía nodo → dispositivo → modelo → runtime, conecta con los carteles físicos PLOT_01/02 + RHIZOME_01/02 EDGE NODE, y da contexto operativo completo al espectador técnico (Gusthema y similares).
+
+Versión v1.8 (día 20 — Bea cierra los 4 abiertos pendientes de sesión sin esperar a sesión conjunta). Cambios sobre v1.7:
 1. **E8 Caducidad NO se mata** — frase fuerte 4 (*"Every intelligence has jurisdiction. And expiry."*) + plano `expired → rejected` se quedan. Decisión Bea día 20.
 2. **Cadencia cenital E9 Opción B firme** — animar a 20s con cadencia completa Venation (5 cartelas asimétricas + pausa tensa + cierre largo). Recortar en post-edición si procede. Mantiene cartela final v1.6 *"Federated intelligence, carried by Pollen."* (revierte modulación Cambium ella v1.7). Decisión Bea día 20.
 3. **Frase 6 ubicada en E9b** (no en E9 cenital). Plano íntimo doméstico sostiene mejor la frase + conecta con tagline bookend cierre + bookend Meristem (E3b ↔ E9b). Decisión Bea día 20 (votos consensuados Cambium ella + Corola previos).
@@ -19,7 +25,7 @@ Cambios anteriores v1.7 sobre v1.6:
 8. **Cartela progresiva final E9 → modulación Cambium ella** (*"One plot. Two. Eight. Federated. Autonomous."*) por compresión de E9 a 10s. **REVERTIDA EN v1.8:** vuelve a cadencia v1.6 con cartela final *"Federated intelligence, carried by Pollen."* a 20s con cadencia Venation completa.
 9. **"AI Local-first"** sustituye a "Local-first" sistemáticamente.
 10. **Atribución Gemma trademark** confirmada en cierre: *"Built on Gemma 4 by Google. Gemma is a trademark of Google LLC."* (decisión Bea día 19, por reglas hackathon).)
-**Fecha:** 2026-05-05 (día 20)
+**Fecha:** 2026-05-06 (día 21 — refinamiento copies cartelas técnicas)
 **Autora:** Corola (decisiones consolidadas Bea día 18-20)
 **Duración objetivo:** ≤ 3:00 (límite hackathon). Tiempos teóricos v1.8 suman 3:20 con E9 a 20s — **ajuste fino en montaje**, decisión Bea día 20 ("hagamos B y luego recortaremos. No nos preocupemos en ajustar a 3 minutos, cuadraremos montando").
 **Estructura:** 12 escenas (E0, E1, E2, E3, E3b, E4, E5, E6, E7, E8, E9, E9b).
@@ -169,7 +175,7 @@ Si Venation no tiene B-roll producible, microcorte se descarta sin drama. Pero s
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
 | 0:25–0:29 (4s) | Corte. Plano cerrado del Jetson en su caja con cartel **"PLOT_01 with RHIZOME_01"** + cartel caja **"RHIZOME_01 / EDGE NODE"**. LED en `signal.seed` (#C5F26B) parpadea cuando el sistema decide. Camera baja al sensor de humedad clavado en la tierra. | **Overlay esquina sup. izq.** (persistente todo el bloque): `OFFLINE` |
-| 0:29–0:37 (8s) | Pantalla del Jetson llenando el plano. Fondo `soil.graphite`. Tipografía IBM Plex Mono. Log diseñado entrando con cadencia musical (1 línea/s). Bloque `SOIL READ` primero, bloque `DECISION` después. `WATER` y `final_action: 18s` resaltados en `signal.seed`. Resto del log en gris claro. **VO inglés:** *"This plot is not alone. It has a local brain. It reads the soil. It decides."* (~14 palabras) | **Cartela esquina sup. der.** (3s, IBM Plex Mono): `Gemma 4 E2B · local · llama.cpp` / **Sub-cartela** (3s): `LLM called only when ambiguous` |
+| 0:29–0:37 (8s) | Pantalla del Jetson llenando el plano. Fondo `soil.graphite`. Tipografía IBM Plex Mono. Log diseñado entrando con cadencia musical (1 línea/s). Bloque `SOIL READ` primero, bloque `DECISION` después. `WATER` y `final_action: 18s` resaltados en `signal.seed`. Resto del log en gris claro. **VO inglés:** *"This plot is not alone. It has a local brain. It reads the soil. It decides."* (~14 palabras) | **Cartela esquina sup. der.** (3s, IBM Plex Mono): `Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp` / **Sub-cartela** (3s): `LLM called only when ambiguous` |
 | 0:37–0:43 (6s) | Captura del `DecisionReceipt` llenando un cuarto de pantalla. Tres campos resaltados (`signal.seed`): `decision_type: WATER`, `final_action: 18s`, `why_short: "Soil below minimum. Budget available."` Resto del JSON atenuado. **VO inglés:** *"And signs what it does, so it can be explained."* (~10 palabras) | **Cartela superpuesta** (2s sobre el receipt, Manrope editorial): `DecisionReceipt` |
 | 0:43–0:48 (5s) | Salida al campo. Plano de la válvula. Se abre. Sonido de agua sobre tierra. | — |
 | 0:48–0:50 (2s) | Plano se mantiene sobre el agua. **VO inglés (frase fuerte 1 reformulada):** *"Rhizome keeps the plot alive — without a person, without a signal."* (~12 palabras) | — |
@@ -199,7 +205,7 @@ Resaltados: `WATER` y `final_action` en `signal.seed`. Contexto en gris atenuado
 **Lo que se siente:** el sistema funciona solo. Sin red, sin nube, sin nadie mirando. La frase fuerte 1 aterriza sobre el agua que sale — promesa cumplida en el mismo plano que se afirma.
 
 **VO:** 31 palabras.
-**Cartelas:** 3 (`Gemma 4 E2B · local · llama.cpp`, `LLM called only when ambiguous`, `DecisionReceipt`).
+**Cartelas:** 3 (`Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`, `LLM called only when ambiguous`, `DecisionReceipt`).
 **Overlays:** 1 (`OFFLINE` persistente).
 **Tokens dirección de arte:** fondo `soil.graphite`, texto base gris claro, resaltados en `signal.seed`. Tipografía log en IBM Plex Mono. Cartelas en Manrope.
 
@@ -270,7 +276,7 @@ El verbo "compose" conecta con `PolicyComposer` de la arquitectura (Meristem dí
 | t | Acción / VO | Cartela / Overlay |
 |---|-------------|-------------------|
 | 1:15–1:20 (5s) | Cambio de luz. Entra una persona en plano. **No vemos su cara** — vemos manos, móvil en la mano, cartel **"PLOT_01 with RHIZOME_01"** visible al fondo. Cartel caja **"RHIZOME_01 / EDGE NODE"**. Plano medio. La persona se acerca a la maceta. | — |
-| 1:20–1:25 (5s) | Pantalla del móvil llenando un tercio del cuadro. App Pollen abierta. La persona pulsa botón. En la pantalla aparece la pregunta. | **Cartela esquina sup. der.** (3s, IBM Plex Mono): `Gemma 4 E4B · LiteRT-LM · on-device`. **Cartela en pantalla del móvil**: *"What happened since my last visit?"* |
+| 1:20–1:25 (5s) | Pantalla del móvil llenando un tercio del cuadro. App Pollen abierta. La persona pulsa botón. En la pantalla aparece la pregunta. | **Cartela esquina sup. der.** (3s, IBM Plex Mono): `Pollen: Android · Gemma 4 E4B · LiteRT-LM · on-device`. **Cartela en pantalla del móvil**: *"What happened since my last visit?"* |
 | 1:25–1:32 (7s) | Pantalla del móvil cambia: `SINCE LAST VISIT` con resumen + receipts. UI sobre paleta del sistema. Tres líneas: `2 watering events / 1 skipped decision / 0 blocked actions` + receipts `WATER · 18s · 14:00`, `WATER · 12s · 09:30`, `SKIP · 22:00 · soil above threshold`. | — |
 | 1:32–1:40 (8s) | Plano de la persona mirando la planta, contrastando lo que ve con lo que el móvil le dice. **VO inglés (frase fuerte 2 reformulada):** *"Every Pollen visit can change the local criterion."* (~8 palabras) | — |
 
@@ -283,7 +289,7 @@ Añadir "Pollen" gana especificidad respecto a v1.6 (*"Cada visita puede cambiar
 **Lo que se siente:** el humano entra como interlocutor, no como configurador. La conversación móvil-Rhizome es horizontal, no jerárquica. La frase fuerte 2 es **promesa testable** — escena 5 viene a continuación y la prueba.
 
 **VO:** ~8 palabras inglés.
-**Cartelas:** 2 (`Gemma 4 E4B · LiteRT-LM · on-device` esquina + *"What happened since my last visit?"* + bloque `SINCE LAST VISIT` en pantalla del móvil).
+**Cartelas:** 2 (`Pollen: Android · Gemma 4 E4B · LiteRT-LM · on-device` esquina + *"What happened since my last visit?"* + bloque `SINCE LAST VISIT` en pantalla del móvil).
 **Overlays:** ninguno.
 **Producción:** cartel "PLOT_01 with RHIZOME_01" visible + cartel caja "RHIZOME_01 / EDGE NODE". Persona sin cara reconocible. Coordinación con Floema sobre UI del móvil (capturas reales preferidas, mock fiel si no llega).
 
@@ -587,6 +593,14 @@ Gemma is a trademark of Google LLC.
 ---
 
 ## Historial de versiones
+
+- **v1.8.1 — refinamiento cartelas técnicas E2 + E4** (2026-05-06, día 21, Corola) — Bea pide ampliar las cartelas técnicas para nombrar el **nodo + dispositivo** explícitamente, no solo el modelo Gemma. Cambios mecánicos sobre v1.8:
+  - **E2 cartela técnica:** `Gemma 4 E2B · local · llama.cpp` → **`Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`**.
+  - **E4 cartela técnica:** `Gemma 4 E4B · LiteRT-LM · on-device` → **`Pollen: Android · Gemma 4 E4B · LiteRT-LM · on-device`**.
+  
+  **Razonamiento:** refuerza la jerarquía visible nodo → dispositivo → modelo → runtime → ubicación, conecta con los carteles físicos PLOT_01/02 + RHIZOME_01/02 EDGE NODE (que ya nombran el nodo + rol en plano físico), y da contexto operativo completo al espectador técnico. Antes el espectador veía solo "Gemma 4 E2B" sin saber dónde corre; ahora ve "Rhizome: Jetson Orin Nano" → contexto explícito.
+  
+  Aplicado a `script.md`, `copies_bilingual.md` v0.3 → v0.4, `montage_brief.md` v0.2 → v0.3, `shot_list.md` (nota encabezado).
 
 - **v1.8 — los 4 abiertos cerrados por Bea día 20** (2026-05-05, día 20, Corola) — Bea cierra los 4 abiertos pendientes de sesión sin esperar a sesión conjunta los tres. Decisiones consolidadas:
   1. **E8 Caducidad NO se mata.** Frase fuerte 4 (*"Every intelligence has jurisdiction. And expiry."*) + plano `expired → rejected` se quedan. F4 vale para Safety & Trust del concurso (sistema rechaza información obsoleta).
