@@ -463,6 +463,36 @@ def _build_app() -> FastAPI:
             "ws_events_by_type": persistence.count_ws_events_by_event(),
         }
 
+    @app.get("/bundles/recent")
+    async def bundles_recent(limit: int = 20) -> dict[str, Any]:
+        """Últimos N bundles recibidos vía POST /visit.
+
+        Para zona "Visitas recibidas" de la UI Meristem. Cada item
+        incluye `reason_code` y `rule_applied` de la decisión que se
+        tomó sobre ese bundle (joineando con `decisions`). Si todavía
+        no hay decisión (REFUSE branch o race condition), ambos son
+        None.
+        """
+        capped = max(1, min(int(limit), 200))
+        return {
+            "limit": capped,
+            "items": persistence.list_recent_bundles(limit=capped),
+        }
+
+    @app.get("/policies/recent")
+    async def policies_recent(limit: int = 20) -> dict[str, Any]:
+        """Últimas N policies emitidas (orden DESC).
+
+        Para zona "Políticas emitidas" de la UI Meristem. Cada item
+        incluye `policy_id`, `target_node_id`, `mode_default`,
+        `valid_until`, rationale técnico recortado a 160 chars.
+        """
+        capped = max(1, min(int(limit), 200))
+        return {
+            "limit": capped,
+            "items": persistence.list_recent_policies(limit=capped),
+        }
+
     return app
 
 
