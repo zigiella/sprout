@@ -1,6 +1,6 @@
 # Montage brief para Bract (CapCut) — Sprout vídeo v1.8
 
-**Versión:** v0.3 (refinamiento cartelas técnicas E2 + E4 con nodo + dispositivo, día 21 — apilado completo de las 12 escenas v1.8.1)
+**Versión:** v0.4 (recuperación cartela *"Imagine this pot is a whole plot."* al inicio de E2 con gráfica "Three days later", día 21 — apilado completo de las 12 escenas v1.8.2)
 **Fecha:** 2026-05-06 (día 21)
 **Autora:** Corola
 **Para:** Bract (montadora CapCut, lectura repo)
@@ -32,7 +32,7 @@
 |--------|--------|-------------------|
 | **E0** Cartela apertura Sprout | ✅ **Estable v1.8** | Wordmark + lema + open-source. Detalle abajo. |
 | **E1** La ausencia con datos globales | ✅ **Estable v1.8** | 4 datos UNCCD/OECD/FAO/ITU + microcorte tierra agrietada + pregunta abierta. Detalle abajo. |
-| **E2** Rhizome decide offline | ✅ **Estable v1.7** | Esquema completo abajo. |
+| **E2** Rhizome decide offline | ✅ **Estable v1.8.2** | Esquema completo abajo. **Cartela bisagra apertura nueva** (*"Imagine this pot is a whole plot."* full-screen estilo "Three days later", 0:25–0:28). |
 | **E3** ESP32 SAFE LIMIT | ✅ **Estable v1.7** | Esquema completo abajo. |
 | **E3b** Meristem prepara | ✅ **Estable v1.8** | Plano cocina + portátil + Pollen recibe política. VO Extra E3b. Detalle abajo. |
 | **E4** Llega Pollen | ✅ **Estable v1.7** | Esquema completo abajo. |
@@ -45,13 +45,23 @@
 
 ---
 
-## Escena 2 · 0:25 – 0:50 · Rhizome decide en local ✅ ESTABLE v1.7
+## Escena 2 · 0:25 – 0:50 · Rhizome decide en local ✅ ESTABLE v1.8.2
 
-**Plano 2A · 0:25–0:29 (4s)** · Plano cerrado del Jetson en su caja con cartel **"PLOT_01 with RHIZOME_01"** + cartel caja **"RHIZOME_01 / EDGE NODE"**. LED en `signal.seed` (#C5F26B) parpadea cuando el sistema decide. Cámara baja al sensor de humedad clavado en la tierra.
+**Plano 2A-pre · 0:25–0:28 (3s)** · **Cartela bisagra full-screen tipográfica** sobre fondo casi-negro `soil.graphite` (#1A1A18). Texto centrado en Manrope titular `soil.oat`. **Misma gráfica que `"Three days later"` (E8)** — sin plano físico debajo, sin VO.
+- **Origen:** `venation-asset` (cartela tipográfica producida por Venation, idéntico tratamiento gráfico que cartela `"Three days later"` E8).
+- **VO EN:** ninguno (cartela respiratoria sin VO).
+- **VO ES:** ninguno.
+- **Cartela EN central full-screen** (3s, Manrope titular, fondo `soil.graphite`): *"Imagine this pot is a whole plot."*
+- **Cartela ES (referencia interna):** *"Imagina que esta maceta es una parcela entera."*
+- **Función narrativa:** bisagra tipográfica entre E1 (cartelas datos globales sobre `soil.graphite`) y E2 (plano físico del Rhizome). Equivalente a `"Three days later"` en E8 — misma jerarquía visual, mismo lenguaje. Recupera contrato visual con el espectador (filmamos macetas, hablamos de parcelas) que vivía en E1 v1.6 y se cayó en v1.7. Decisión Bea día 21.
+- **Transición a 2A:** fade rápido al plano del Jetson, ~0.3s.
+- **#sfx:** silencio respiratorio (el espectador procesa el contrato visual).
+
+**Plano 2A · 0:28–0:29 (1s)** · Plano cerrado del Jetson en su caja con cartel **"PLOT_01 with RHIZOME_01"** + cartel caja **"RHIZOME_01 / EDGE NODE"**. LED en `signal.seed` (#C5F26B) parpadea cuando el sistema decide. Cámara baja al sensor de humedad clavado en la tierra. (Antes 4s en v1.8.1; recortado a 1s en v1.8.2 para acomodar cartela bisagra 2A-pre y mantener E2 a 25s totales.)
 - **Origen:** `rodaje` (terraza con Jetson y carteles físicos visibles).
 - **VO EN:** ninguno (el VO empieza en plano 2B).
 - **VO ES:** ninguno.
-- **Overlay EN (todo el bloque):** `OFFLINE` esquina sup. izq.
+- **Overlay EN (entra a 0:28, persistente resto del bloque hasta 0:50):** `OFFLINE` esquina sup. izq.
 - **Transición a 2B:** corte seco.
 - **#sfx:** ambiente terraza (viento sutil, lejano).
 
@@ -556,6 +566,7 @@ Bea graba la frase castellana literal (*"Vuelvo el viernes. Esta planta aguanta 
 
 ## Historial
 
+- **v0.4** (2026-05-06, día 21, Corola) — recuperación cartela *"Imagine this pot is a whole plot."* al inicio de E2 con misma gráfica que `"Three days later"` (E8). Cambio sobre v0.3: split del Plano 2A (4s) en Plano 2A-pre (3s, cartela full-screen tipográfica) + Plano 2A (1s, plano del Jetson). E2 mantiene 25s totales. Función narrativa: bisagra tipográfica entre E1 (datos globales) y E2 (plano técnico) — equivalente visual a `"Three days later"` en E8. Recupera contrato visual con el espectador (filmamos macetas, hablamos de parcelas) que vivía en E1 v1.6 y se cayó en v1.7. Decisión Bea día 21 tras pregunta retrospectiva sobre v1.6.
 - **v0.3** (2026-05-06, día 21, Corola) — refinamiento de cartelas técnicas E2 y E4 por petición de Bea: ampliadas con nodo + dispositivo. E2: `Gemma 4 E2B · local · llama.cpp` → `Rhizome: Jetson Orin Nano · Gemma 4 E2B · local · llama.cpp`. E4: `Gemma 4 E4B · LiteRT-LM · on-device` → `Pollen: Android · Gemma 4 E4B · LiteRT-LM · on-device`. Sin cambios estructurales, solo texto de cartelas.
 - **v0.2** (2026-05-05, día 20, Corola) — apilado completo sobre v1.8 tras Bea cerrar los 4 abiertos día 20. Añadidas escenas inestables E0, E1, E3b, E8, E9, E9b con detalle plano-por-plano. Decisiones consolidadas en v1.8: E8 sobrevive (NO se mata), E9 Opción B firme (20s con cadencia Venation completa: 5 cartelas asimétricas + pausa tensa + cierre largo + sello SYNCED ✓), F6 ubicada en E9b. La animación cenital E9 viene como secuencia PNG transparente de Venation (480 frames a 24fps a 1920×1080); Bract codifica MP4 con ffmpeg. **Recortable en post si se decide compresión a 10s** (cortar pausa tensa + sostén final largo).
 - **v0.1** (2026-05-05, día 20, Corola) — primer apilado del montage_brief en formato Bract (CapCut). Escenas estables E2-E7 desarrolladas plano-por-plano con tiempo, origen, VO EN/ES, cartelas, transiciones y sfx. Escenas inestables E0/E1/E3b/E8/E9/E9b marcadas TBD-sesión día 20. Notas operativas para Bract sobre carteles físicos, decisión de rodaje un Rhizome dos roles, voz humana E5, master de exportación, pendientes coordinación cross-frente.
