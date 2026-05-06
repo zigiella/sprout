@@ -2,9 +2,8 @@ package net.sprout.pollen.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -73,6 +72,56 @@ fun SplitscreenDash(viewModel: PollenViewModel) {
                 .padding(16.dp)
         ) {
             ActivePolicyPanel(snapshot, currentTime)
+        }
+
+        Divider(color = Color.DarkGray, thickness = 2.dp)
+
+        // Bottom Half: Voice Beta
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            VoiceBetaPanel(mockClient, snapshot)
+        }
+    }
+}
+
+@Composable
+fun VoiceBetaPanel(client: RhizomeMockClient, snapshot: RhizomeSnapshot) {
+    var state by remember { mutableStateOf("Idle") }
+    
+    Column {
+        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            Text(text = "Voice Command", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.width(8.dp))
+            Surface(
+                color = Color(0xFFFF9800), // Amber/Orange
+                shape = RoundedCornerShape(4.dp)
+            ) {
+                Text(
+                    text = "BETA", 
+                    color = Color.White,
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                )
+            }
+        }
+        Text(
+            text = "Esta feature está en beta — si el sistema no entiende con seguridad, te lo dirá.",
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.Gray
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text("Status: $state", color = MaterialTheme.colorScheme.primary)
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = {
+            state = "compiling -> validating -> sending -> ack"
+        }) {
+            Text("Simular Voz: 'Riega 30s más'")
         }
     }
 }
