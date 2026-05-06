@@ -15,10 +15,14 @@
     <p class="muted">Plot node · Gemma 4 E2B Q4_K_S · Jetson Orin Nano Super · jurisdiction: minutes</p>
 
     <div class="demo-disclaimer">
-      <strong>DEMO via API.</strong> The real app runs Gemma 4 E2B fully local on Jetson with no
-      network dependency. We use the API in this demo so you can probe the system from any browser.
-      Latency on the live system in production is in the order of <code>1–2 s</code> for a simple
-      decision; the mock here adds variance (~1 s) on purpose.
+      <strong>DEMO with deterministic mocks.</strong> The real app runs Gemma 4 E2B fully local on
+      Jetson Orin Nano Super with <em>no network dependency</em> — exactly the property this project
+      is built around. We use mocks here so you can probe the architecture from any browser <em>without
+      network</em>, mirroring how the real system never depends on the cloud. The mock code is in
+      <a href="https://github.com/zigiella/sprout/blob/main/landing-demo/js/api.js">js/api.js</a>
+      in the public repo: read it, the responses are not magic. To see Gemma 4 E2B running for real,
+      check the video, run <code>make test</code> in <code>code/meristem_node/</code>, or build
+      Rhizome on a Jetson following the repo guide.
     </div>
   </div>
 </header>

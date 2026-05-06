@@ -20,6 +20,10 @@
       we accept text instead of audio (browsers can't ship an Android model). The compilation logic and
       schema validation are the same as on the device. <strong>If the system can't translate with
       enough confidence, it won't apply — it will tell you to rephrase.</strong>
+      <br><br>
+      <strong>The responses below are deterministic mocks</strong> (code in
+      <a href="https://github.com/zigiella/sprout/blob/main/landing-demo/js/api.js">js/api.js</a>,
+      read it). The real app runs Gemma 4 E4B fully local on Pixel — to see that, install the APK below.
     </div>
   </div>
 </header>
@@ -62,6 +66,45 @@
       <h3>Rationale</h3>
       <p id="pollen-rationale-es" style="font-style:italic;"></p>
       <p id="pollen-rationale-en" style="color:var(--ink-soft); font-size:14px;"></p>
+    </div>
+  </div>
+
+  <h2 style="margin-top:48px;">Or try the real APK on your Android</h2>
+  <p>
+    The browser demo above proves the architecture. <strong>The real proof is Gemma 4 E4B running on a
+    pocket device with no network.</strong> Pollen ships in two flavors:
+  </p>
+
+  <div class="demo-grid">
+    <div class="demo-panel">
+      <h3>Demo flavor — runs anywhere</h3>
+      <p>
+        Lightweight build (~30 MB) with mock LiteRT inference. No model bundled, no OOM.
+        Runs on any Android emulator or low-RAM phone. Use this to walk through the UI.
+      </p>
+      <p>
+        <a class="btn btn-primary" href="https://github.com/zigiella/sprout/releases" rel="noopener">
+          Download Pollen <code>demo</code> APK
+        </a>
+        <span class="muted small" style="margin-left:8px;">(GitHub Releases — published when packaged)</span>
+      </p>
+      <p class="muted small">
+        Or try in the browser via Appetize embed when published — <em>placeholder, link to follow</em>.
+      </p>
+    </div>
+    <div class="demo-panel">
+      <h3>Device flavor — runs Gemma 4 E4B</h3>
+      <p>
+        Full build with LiteRT-LM and Gemma 4 E4B Q4_K_S bundled (~2 GB).
+        Requires Android 12 / API 31+, 12 GB RAM recommended (16 GB ideal),
+        at least 6 GB free. CPU runtime is the stable path; GPU/NPU varies by device.
+      </p>
+      <p>
+        Build it from source:
+      </p>
+      <pre class="output-block">git clone https://github.com/zigiella/sprout
+cd sprout/code/pollen
+# See code/pollen/README.md for Gradle device flavor</pre>
     </div>
   </div>
 

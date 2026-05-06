@@ -15,10 +15,14 @@
     <p class="muted">Slow brain · Gemma 4 E4B · llama.cpp · jurisdiction: days</p>
 
     <div class="demo-disclaimer">
-      <strong>DEMO via API.</strong> The real Meristem runs on the farmer's home laptop with Gemma 4
-      E4B locally — no cloud roundtrip. We use the API in this demo so you can probe it from any
-      browser. The deterministic logic (the <em>Evaluator</em>: 4 rules with precedence + tool calling)
-      is identical to what runs offline.
+      <strong>DEMO with deterministic mocks.</strong> The real Meristem runs on the farmer's home
+      laptop with Gemma 4 E4B fully local via <code>llama.cpp</code> — <em>no cloud roundtrip,
+      ever</em>. The deterministic Evaluator (4 rules of precedence + tool calling) you see below
+      is identical to what runs offline; it's just the Gemma 4 rationale that comes from a mock
+      instead of a live model. Mock code in
+      <a href="https://github.com/zigiella/sprout/blob/main/landing-demo/js/api.js">js/api.js</a> —
+      transparent, no magic. To see the real Meristem with Gemma 4 E4B writing rationales, run
+      <code>make run</code> in <code>code/meristem_node/</code>.
     </div>
   </div>
 </header>

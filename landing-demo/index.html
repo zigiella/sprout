@@ -31,9 +31,13 @@
 <section id="try-it" class="container section">
   <h2>Try the three nodes hands-on</h2>
   <p class="muted">
-    Each demo runs Gemma 4 via API for the live experience. <strong>The real app runs Gemma 4 fully local</strong>
-    on Jetson, Pixel and laptop with no network dependency. We use the API in this demo so you can probe
-    the system from any browser without flashing a Jetson or sideloading an APK.
+    Each demo runs against <strong>deterministic mocks</strong> in your browser — no cloud, no API key,
+    no model download. <strong>This is intentional and coherent with the thesis:</strong> the real
+    system runs Gemma 4 fully local on Jetson, Pixel and laptop with no network dependency, and we
+    want you to be able to probe the architecture exactly the same way — from any browser, without
+    network. To see Gemma 4 actually running, watch the video, install the APK
+    (Pollen <code>demo</code> flavor), or run <code>make test</code> on the repo. The mock code is
+    public and easy to read: <a href="https://github.com/zigiella/sprout/blob/main/landing-demo/js/api.js">js/api.js</a>.
   </p>
 
   <div class="grid cards-3">
