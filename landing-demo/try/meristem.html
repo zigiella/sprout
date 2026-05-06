@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Try Meristem — Sprout</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="demo-header">
+  <div class="container">
+    <p class="breadcrumb"><a href="../index.html">← Sprout</a> · Try Meristem</p>
+    <h1>Meristem</h1>
+    <p class="muted">Slow brain · Gemma 4 E4B · llama.cpp · jurisdiction: days</p>
+
+    <div class="demo-disclaimer">
+      <strong>DEMO via API.</strong> The real Meristem runs on the farmer's home laptop with Gemma 4
+      E4B locally — no cloud roundtrip. We use the API in this demo so you can probe it from any
+      browser. The deterministic logic (the <em>Evaluator</em>: 4 rules with precedence + tool calling)
+      is identical to what runs offline.
+    </div>
+  </div>
+</header>
+
+<section class="container section">
+
+  <h2>Two simulated Rhizomes report in</h2>
+  <p>
+    Meristem receives <em>bundles</em> from Pollen at the end of the day — collected receipts, alerts,
+    weather digests from each Rhizome. Below: a synthetic dashboard with two plots reporting their
+    last 7 days. Choose a scenario and ask Meristem to evaluate.
+  </p>
+
+  <form class="demo-form" id="meristem-form">
+    <label for="scenario">Scenario</label>
+    <select id="scenario">
+      <option value="stable">Both plots stable, normal week</option>
+      <option value="alert">Plot A had repeated TANK_LOW blocks</option>
+      <option value="conservative">Mixed receipts with disputed observations</option>
+    </select>
+    <p class="hint">Each scenario triggers a different rule of the Evaluator (stable / alert / conservative).</p>
+
+    <p style="margin-top:16px;">
+      <button class="btn btn-primary" type="submit">Send bundles to Meristem</button>
+    </p>
+  </form>
+
+  <div class="demo-grid">
+    <div class="demo-panel">
+      <h3>rhizome_01 (with weather station)</h3>
+      <pre class="output-block" id="r01">scenario: stable
+last 7 days:
+  decisions: 28 irrigate, 4 skip, 0 block
+  avg confidence: 0.91
+  alerts persistent: 0
+weather_digest: ok</pre>
+    </div>
+    <div class="demo-panel">
+      <h3>rhizome_02 <span class="status-pill warn" style="font-size:10px;">simulated host-side</span></h3>
+      <pre class="output-block" id="r02">scenario: stable
+last 7 days:
+  decisions: 24 irrigate, 6 skip, 1 block
+  avg confidence: 0.88
+  alerts persistent: 0
+weather_digest: from_rhizome_01 (ferry by Pollen)</pre>
+    </div>
+  </div>
+
+  <h2 style="margin-top:48px;">Meristem says</h2>
+  <p id="meristem-pipeline" class="muted small" style="margin:0 0 12px;">idle</p>
+
+  <div class="demo-grid">
+    <div class="demo-panel">
+      <h3>PolicyPacket emitted</h3>
+      <pre class="output-block" id="policy-output">Awaiting bundle...</pre>
+    </div>
+    <div class="demo-panel">
+      <h3>Rationale (LLM)</h3>
+      <p style="font-size:13px; color:var(--muted); margin:0 0 8px;">
+        The deterministic Evaluator decides. Gemma 4 E4B writes the rationale via tool calling.
+      </p>
+      <p id="meristem-rationale-es" style="font-style:italic;"></p>
+      <p id="meristem-rationale-en" style="color:var(--ink-soft); font-size:14px;"></p>
+    </div>
+  </div>
+
+  <h2 style="margin-top:48px;"><code>decisions_by_rule</code> — traceability as product</h2>
+  <p>
+    The system exposes how often each rule of the Evaluator has fired in the last day.
+    This is not debugging metadata; it's <strong>visible accountability of the decision logic</strong>.
+    A judge or a farmer can see, at a glance, which rule fires most often and whether the system is
+    operating in stable, conservative or alert mode.
+  </p>
+  <pre class="output-block" id="rules-output">stable: —
+alert: —
+conservative: —
+refuse: —</pre>
+
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>
+      <strong>Sprout uses Gemma 4 models by Google. Gemma is a trademark of Google LLC.</strong>
+      This project is not affiliated with or endorsed by Google.
+    </p>
+    <p class="muted small">
+      Apache 2.0 · <a href="../index.html">back to overview</a> ·
+      <a href="https://github.com/zigiella/sprout">github.com/zigiella/sprout</a>
+    </p>
+  </div>
+</footer>
+
+<script src="../js/api.js"></script>
+<script src="../js/meristem-demo.js"></script>
+</body>
+</html>
