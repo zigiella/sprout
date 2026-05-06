@@ -75,6 +75,40 @@ Windows porque el `bash` disponible vive en otro espacio de red que el servidor
 Python local. El script queda validado por sintaxis y debe correrse en Jetson,
 donde fachada y script comparten Linux/localhost.
 
+## Validacion en Jetson
+
+Despues de publicar la rama, probe en Jetson `rhizome-01-node` con SHA
+`548b9b2`:
+
+```bash
+cd ~/sprout
+git fetch origin refs/heads/feat/endodermis/rhizome-policy-endpoint:refs/remotes/origin/feat/endodermis/rhizome-policy-endpoint
+git checkout -B feat/endodermis/rhizome-policy-endpoint origin/feat/endodermis/rhizome-policy-endpoint
+
+cd code/rhizome/jetson
+bash -n start_sync_facade.sh
+bash -n smoke_policy.sh
+./start_demo_two_rhizomes.sh
+./smoke_policy.sh
+FACADE_URL=http://127.0.0.1:13020 TARGET_NODE_ID=rhizome_02 ./smoke_policy.sh
+```
+
+Resultado:
+
+- `rhizome_01` en `:13010` arranca OK.
+- `rhizome_02` simulado en `:13020` arranca OK.
+- `smoke_sync_facade.sh` pasa en ambos.
+- `smoke_policy.sh` pasa en ambos.
+- Desde la maquina local, `GET http://192.168.1.60:13010/status` y
+  `GET http://192.168.1.60:13020/status` devuelven `active_policy_id`.
+
+Politicas activas de smoke:
+
+- `rhizome_01`: `pkt_rhizome_01_pollen_visit_20260506T103138Z`
+- `rhizome_02`: `pkt_rhizome_02_pollen_visit_20260506T103138Z`
+
+La respuesta mantiene `hard_limits_checked_by_facade=false` en ambos nodos.
+
 ## Riesgos / limites
 
 - La politica queda persistida y visible como activa, pero la aplicacion real
