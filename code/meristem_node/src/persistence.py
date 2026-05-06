@@ -503,3 +503,95 @@ def get_recent_ws_events(
             "created_at": r["created_at"],
         })
     return result
+
+
+# ---------------------------------------------------------------------------
+# Listas recientes (para UI: zona "visitas recibidas" + "policies emitidas")
+# ---------------------------------------------------------------------------
+
+
+def list_recent_bundles(
+    limit: int = 20, db_path: Path | str = DEFAULT_DB_PATH,
+) -> list[dict[str, Any]]:
+    """Devuelve los últimos N bundles entregados a Meristem (orden DESC).
+
+    Cada item incluye también el reason_code de la decision que se
+    tomó sobre ese bundle (joineando contra decisions). Si el bundle
+    aún no tiene decision (no debería pasar tras /visit completo),
+    reason_code es None.
+    """
+    with _connect(db_path) as con:
+        rows = con.execute(
+            """
+            SELECT
+                b.bundle_id,
+                b.received_at,
+                b.source_pollen_id,
+                b.target_rhizome_id,
+                b.active_policy_id,
+                d.reason_code,
+                d.rule_applied
+            FROM bundles b
+            LEFT JOIN decisions d ON d.bundle_id = b.bundle_id
+            ORDER BY b.received_at DESC
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+    return [
+        {
+            "bundle_id": r["bundle_id"],
+            "received_at": r["received_at"],
+            "source_pollen_id": r["source_pollen_id"],
+            "target_rhizome_id": r["target_rhizome_id"],
+            "active_policy_id": r["active_policy_id"],
+            "reason_code": r["reason_code"],
+            "rule_applied": r["rule_applied"],
+        }
+        for r in rows
+    ]
+
+
+def list_recent_policies(
+    limit: int = 20, db_path: Path | str = DEFAULT_DB_PATH,
+) -> list[dict[str, Any]]:
+    """Devuelve las últimas N policies emitidas (orden DESC por emitted_at).
+
+    Cada item incluye policy_id, target_node_id, mode, valid_until,
+    rationale (recortado si es largo) y evidencia.
+    """
+    with _connect(db_path) as con:
+        rows = con.execute(
+            """
+            SELECT policy_id, emitted_at, target_node_id, raw_json, evidence_refs
+            FROM policies
+            ORDER BY emitted_at DESC
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+    result = []
+    for r in rows:
+        try:
+            packet = json.loads(r["raw_json"])
+        except json.JSONDecodeError:
+            packet = {}
+        try:
+            ev_refs = json.loads(r["evidence_refs"])
+        except (json.JSONDecodeError, TypeError):
+            ev_refs = []
+        rationale = packet.get("rationale", "")
+        # Recortamos rationale técnico para list view (full visible en drill-down)
+        rationale_short = (
+            rationale if len(rationale) <= 160 else rationale[:157] + "..."
+        )
+        result.append({
+            "policy_id": r["policy_id"],
+            "emitted_at": r["emitted_at"],
+            "target_node_id": r["target_node_id"],
+            "mode_default": packet.get("mode_default"),
+            "valid_until": packet.get("valid_until"),
+            "rationale_short": rationale_short,
+            "evidence_refs": ev_refs,
+        })
+    return result

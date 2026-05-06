@@ -142,11 +142,14 @@ code, .mono {
     grid-template-columns: 2fr 1fr;
     grid-template-areas:
       "dashboard control"
-      "log       log";
+      "log       log"
+      "bundles   policies";
   }
   .zone-dashboard { grid-area: dashboard; }
   .zone-control   { grid-area: control; }
   .zone-log       { grid-area: log; }
+  .zone-bundles   { grid-area: bundles; }
+  .zone-policies  { grid-area: policies; }
 }
 
 .zone {
@@ -435,6 +438,101 @@ code, .mono {
 .event-trace {
   color: var(--soil-text-muted);
   font-size: 10px;
+}
+
+/* ===================================================================
+   Trail tables (zonas 4 y 5: Bundles recientes + Policies emitidas)
+   =================================================================== */
+
+.trail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
+.trail-table thead {
+  background: var(--soil-bg);
+  text-align: left;
+}
+
+.trail-table th {
+  padding: var(--space-2) var(--space-3);
+  font-weight: 600;
+  color: var(--soil-text-muted);
+  border-bottom: 1px solid var(--soil-border);
+  white-space: nowrap;
+}
+
+.trail-table tbody tr {
+  border-bottom: 1px solid var(--soil-border);
+}
+
+.trail-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.trail-table td {
+  padding: var(--space-2) var(--space-3);
+  vertical-align: top;
+  color: var(--soil-text);
+}
+
+.trail-table .col-time { width: 80px; color: var(--soil-text-muted); }
+.trail-table .col-target { width: 120px; }
+.trail-table .col-pollen { width: 120px; color: var(--soil-text-muted); }
+.trail-table .col-mode { width: 100px; }
+.trail-table .col-validity { width: 110px; color: var(--soil-text-muted); }
+.trail-table .col-reason { }
+.trail-table .col-rationale {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--soil-text-muted);
+}
+
+.trail-empty td {
+  text-align: center;
+  font-style: italic;
+  color: var(--soil-text-muted);
+  padding: var(--space-4);
+}
+
+/* Reason code chips embebidos en tabla */
+.reason-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.reason-chip[data-rule="confirm_policy"]      { background: var(--mode-normal-bg); color: var(--mode-normal); }
+.reason-chip[data-rule="conservative_policy"] { background: var(--mode-conservative-bg); color: var(--mode-conservative); }
+.reason-chip[data-rule="alert_policy"]        { background: var(--mode-alert-bg); color: var(--mode-alert); }
+.reason-chip[data-rule="refuse"]              { background: var(--mode-unknown-bg); color: var(--mode-unknown); }
+
+/* Mode tag inline (similar al de cards pero compacto) */
+.mode-inline {
+  display: inline-flex;
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.mode-inline[data-mode="normal"]       { background: var(--mode-normal-bg); color: var(--mode-normal); }
+.mode-inline[data-mode="conservative"] { background: var(--mode-conservative-bg); color: var(--mode-conservative); }
+.mode-inline[data-mode="alert"]        { background: var(--mode-alert-bg); color: var(--mode-alert); }
+.mode-inline[data-mode="unknown"]      { background: var(--mode-unknown-bg); color: var(--mode-unknown); }
+
+/* policy_id mostrado abreviado, hover con tooltip nativo */
+.policy-id-short {
+  font-family: var(--font-mono);
+  color: var(--soil-text-muted);
+  font-size: 11px;
 }
 
 /* ===================================================================

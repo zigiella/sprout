@@ -33,12 +33,18 @@
   const $eventLog = document.getElementById("event-log");
   const $footerMeta = document.getElementById("footer-meta");
   const $trazabilidadPills = document.querySelectorAll(".pill[data-rule]");
+  const $bundlesTbody = document.getElementById("bundles-tbody");
+  const $policiesTbody = document.getElementById("policies-tbody");
+  const $bundlesMeta = document.getElementById("bundles-meta");
+  const $policiesMeta = document.getElementById("policies-meta");
 
   // ----- State -----
   let state = {
     health: null,
     status: null,
     syncState: null,
+    bundlesRecent: null,
+    policiesRecent: null,
     activeOperation: null,  // "push_bundles" | "pull_policies" | null
   };
 
@@ -224,6 +230,62 @@
     $eventLog.innerHTML = items.join("");
   }
 
+  function renderBundlesRecent(bundlesData) {
+    if (!bundlesData || !bundlesData.items || bundlesData.items.length === 0) {
+      $bundlesTbody.innerHTML = '<tr class="trail-empty"><td colspan="4">Sin visitas todavía.</td></tr>';
+      $bundlesMeta.textContent = "0";
+      return;
+    }
+    const items = bundlesData.items.slice(0, 12);
+    $bundlesMeta.textContent = `${items.length} de ${bundlesData.items.length}`;
+    $bundlesTbody.innerHTML = items.map(b => {
+      const time = formatTime(b.received_at);
+      const reason = b.reason_code || "—";
+      const ruleClass = b.rule_applied || "";
+      return `<tr>
+        <td class="col-time">${time}</td>
+        <td class="col-target mono">${escape(b.target_rhizome_id || "—")}</td>
+        <td class="col-pollen mono">${escape(b.source_pollen_id || "—")}</td>
+        <td class="col-reason">
+          <span class="reason-chip" data-rule="${escape(ruleClass)}">${escape(reason)}</span>
+        </td>
+      </tr>`;
+    }).join("");
+  }
+
+  function renderPoliciesRecent(policiesData) {
+    if (!policiesData || !policiesData.items || policiesData.items.length === 0) {
+      $policiesTbody.innerHTML = '<tr class="trail-empty"><td colspan="5">Sin policies todavía.</td></tr>';
+      $policiesMeta.textContent = "0";
+      return;
+    }
+    const items = policiesData.items.slice(0, 12);
+    $policiesMeta.textContent = `${items.length} de ${policiesData.items.length}`;
+    $policiesTbody.innerHTML = items.map(p => {
+      const time = formatTime(p.emitted_at);
+      const mode = p.mode_default || "unknown";
+      const validity = p.valid_until ? formatDate(p.valid_until) : "—";
+      // policy_id mostrado abreviado: pkt_meristem_xxxxx_yyyyy → pkt_..._yyyyy
+      const policyShort = p.policy_id
+        ? p.policy_id.length > 24
+          ? p.policy_id.slice(0, 12) + "…" + p.policy_id.slice(-8)
+          : p.policy_id
+        : "—";
+      return `<tr>
+        <td class="col-time">${time}</td>
+        <td class="col-target mono" title="${escape(p.policy_id || "")}">
+          ${escape(p.target_node_id || "—")}<br>
+          <span class="policy-id-short">${escape(policyShort)}</span>
+        </td>
+        <td class="col-mode">
+          <span class="mode-inline" data-mode="${escape(mode)}">${mode === "unknown" ? "—" : mode.toUpperCase()}</span>
+        </td>
+        <td class="col-validity">${validity}</td>
+        <td class="col-rationale" title="${escape(p.rationale_short || "")}">${escape(p.rationale_short || "—")}</td>
+      </tr>`;
+    }).join("");
+  }
+
   // ----- Helpers -----
 
   function escape(str) {
@@ -297,20 +359,26 @@
   // ----- Loop principal -----
 
   async function refresh() {
-    const [health, status, syncState] = await Promise.all([
+    const [health, status, syncState, bundlesRecent, policiesRecent] = await Promise.all([
       fetchJSON("/health"),
       fetchJSON("/status"),
       fetchJSON("/sync-state"),
+      fetchJSON("/bundles/recent?limit=20"),
+      fetchJSON("/policies/recent?limit=20"),
     ]);
     if (health) state.health = health;
     if (status) state.status = status;
     if (syncState) state.syncState = syncState;
+    if (bundlesRecent) state.bundlesRecent = bundlesRecent;
+    if (policiesRecent) state.policiesRecent = policiesRecent;
 
     renderTopbar(state.health, state.syncState);
     renderCards(state.status);
     renderTrazabilidad(state.health);
     renderControlPanel(state.health, state.syncState);
     renderEventLog(state.syncState);
+    renderBundlesRecent(state.bundlesRecent);
+    renderPoliciesRecent(state.policiesRecent);
 
     if (state.health) {
       $footerMeta.textContent = `Meristem ${state.health.meristem_id || "—"} v${state.health.version || "0.1"} · slow brain doméstico`;
