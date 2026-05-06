@@ -169,10 +169,10 @@ fun VoiceBetaPanel(client: RhizomeMockClient, snapshot: RhizomeSnapshot) {
                         delay(500)
                         client.pushPolicy(eval.policyPacket!!)
                         state = "Acknowledged"
-                        resultText = "Action: \${eval.action}\\nDetail: \${eval.details}"
+                        resultText = "Action: ${eval.action}\nDetail: ${eval.details}"
                     } else {
                         state = "Refused"
-                        resultText = "Action: \${eval.action}\\nReason: \${eval.reasonCode}\\nDetail: \${eval.details}"
+                        resultText = "Action: ${eval.action}\nReason: ${eval.reasonCode}\nDetail: ${eval.details}"
                     }
                 }
             },
