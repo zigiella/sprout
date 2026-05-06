@@ -5,8 +5,8 @@
 > (incluida una nueva miembra que se incorpore) puede leer esto en 30
 > segundos y reconstruir contexto sin tener que escarbar 50 bitácoras.
 >
-> **Fecha de última actualización:** 2026-05-05 (cierre del día 20)
-> **Día del proyecto:** 20 de 30. Quedan 10 días.
+> **Fecha de última actualización:** 2026-05-06 (cierre del día 21)
+> **Día del proyecto:** 21 de 30. Quedan 9 días.
 
 ---
 
@@ -45,6 +45,24 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 > *"Tu trabajo se mantiene aunque las decisiones cambien."* (Corola, día 20) — apunte cultural sobre aceptación sin defensividad de revocaciones, va al writeup §5.
 
 > *"En sistemas físicos, la pregunta correcta de un coordinador puede liberar dominios completos a un especialista, no solo capas."* (apunte cultural día 20 — Bea→Meristem→Venation reframing) — va al writeup §5.
+
+> *"Una bomba probada vale más que un esquema perfecto sin probar."* (Xilema, día 21) — frase para writeup §5.
+
+> *"Piezas que no gritan y aun así hacen que el sistema empiece a parecer real."* (Endodermis, día 21) — frase para writeup §5 como cierre del bloque "MVP qué proyectamos vs qué hacemos".
+
+> *"HTML estructural bien pensado al inicio = ampliación indolora."* (Meristem, día 21) — apunte arquitectural sobre UI.
+
+> *"El flujo lote HTML → batch render → CapCut se cerró en menos de una hora desde que llegó el ZIP."* (Bract, día 21) — frase sobre velocidad de integración audiovisual.
+
+> *"Cuando vea descarte en lote entregado, preguntar antes de pedir ajuste — la decisión puede haberse cerrado lateralmente sin pasar por mí."* (Corola, día 21) — apunte cultural sobre coordinación lateral.
+
+> *"La tesis del proyecto es local-first. Si en la demo usamos API hosteada, estamos demostrando lo contrario de lo que defendemos."* (Cambium, reformulación tras pregunta Bea día 21) — patrón de coherencia narrativa.
+
+**Feature beta voz → política día 21**: implementación operativa en local. Floema cerró Mini-Evaluator + RhizomeNetworkClient + VoiceBetaPanel UI con captura real de micrófono. Endo cerró endpoint `POST /policy` + `GET /policy/active` en fachada Rhizome `:13010` con smoke Jetson real OK. **Pendiente día 22**: Xilema confirma lista canónica hard limits firmware (consulta cherry-pick mergeada día 21) + smoke E2E Pollen → Jetson real con Endo.
+
+**Decisión Bea día 21 sobre landing demo (mocks vs API)**: quedarnos con mocks deterministas como **coherente con la tesis local-first** — la demo se prueba sin red porque el sistema real tampoco depende de red. Reformulación de disclaimers en `landing-demo/` para reflejar coherencia. Cero infra externa, código mock público y transparente en `js/api.js`.
+
+**MVP físico día 21**: bomba 12V validada con fuente directa (Xilema + Bea). Alcance recortado a 1-línea mantiene firmeza (sin electroválvulas, sin A/B físico, semántica `WATER A` visible en UI). Relé COM+NO (no NC) — bomba apagada por defecto. Próximo paso día 22: relé controlado + bomba vía relé sin ESP32.
 
 **Tagline final confirmada (bookend del video, inicio + cierre):** *"When network is absent — and the human is far — local criteria still irrigate."*
 
@@ -92,7 +110,7 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 
 ---
 
-## Estado por frente — día 20 cierre
+## Estado por frente — día 21 cierre
 
 ### Rhizome físico (Xilema + Endo)
 
@@ -274,7 +292,7 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 
 ---
 
-## Pendientes activos día 21
+## Pendientes activos día 22
 
 ### Bea
 - **Montaje Fase A** según schematics #73 con apoyo Xilema (BME280, USB, depósito, tubos, bomba/caudal/válvulas físicamente sin energizar, borneras y etiquetas)
