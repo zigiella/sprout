@@ -32,7 +32,7 @@ Las dos parcelas lógicas (`rhizome_01` con estación meteo + `rhizome_02` sin m
 
 Honesto con el MVP: simula la federación tal como ocurriría en una explotación que empezó con un nodo y añadió otro más adelante. Misma decisión documentada en `docs/40_pitch_video.md §4` cabecera.
 
-**Producción:** preparar **cuatro carteles físicos** antes del rodaje — los prepara Bea (Helvetica, mayúsculas, fondo neutro, en inglés):
+**Producción:** preparar **cuatro carteles físicos** antes del rodaje — **diseño delegado a Venation día 21** (decisión Bea — coherencia visual cross-canal con las corner cards on-screen del lote v1.8.1). Bea imprime + lamina. Tipografía recomendada IBM Plex Mono (Manrope alternativo para carteles maceta), paleta sobria del sistema, en inglés. Detalle completo en `bitacora/2026-05-06_carteleria-fisica-rodaje_corola.md`:
 - **2 carteles de maceta:** "PLOT_01 with RHIZOME_01" y "PLOT_02 with RHIZOME_02"
 - **2 carteles de caja electrónica (dos líneas cada uno):** "RHIZOME_01 / EDGE NODE" y "RHIZOME_02 / EDGE NODE"
 

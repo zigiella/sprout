@@ -582,7 +582,7 @@ Gemma is a trademark of Google LLC.
 - [x] Apilar 9 escenas v1.3-v1.6 (días 13-17). **Apilar v1.7 con 12 escenas** + giro estratégico (día 19).
 - [x] Persona VO castellano confirmada: **Bea**. Persona VO inglés master: **Bea** (día 19).
 - [x] Voz humana real E5 confirmada: **Bea graba** literal castellano (días 24-25 antes de rodaje).
-- [x] **Carteles físicos** los prepara Bea: 4 carteles (2 maceta + 2 caja electrónica `EDGE NODE`).
+- [x] **Carteles físicos:** 4 carteles (2 maceta + 2 caja electrónica `EDGE NODE`). **Diseño delegado a Venation día 21** (decisión Bea — coherencia visual cross-canal con corner cards on-screen). Bea imprime + lamina. Detalle en `bitacora/2026-05-06_carteleria-fisica-rodaje_corola.md`.
 - [x] **Invariante Xilema E7** aplicada como cartela esquina inferior derecha.
 - [x] **Sistema visual Venation** aplicado.
 - [x] **Cartela ancla E7** confirmada: `Watering criteria updated.` (Venation, voto Bea día 17).
