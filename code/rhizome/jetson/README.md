@@ -155,6 +155,26 @@ GET /snapshot/latest
 GET /receipts?since=...
 GET /explain/decision/{id}
 GET /summary/since?since=...&locale=es|en
+POST /policy
+GET /policy/active
+```
+
+`POST /policy` es el receptor beta de politicas transitorias generadas por
+Pollen durante una visita. Acepta `PolicyPacket` con
+`policy_origin="pollen-visit"` y TTL maximo de 12h, lo persiste como politica
+activa para la siguiente decision y devuelve un ack JSON. No valida hard limits
+fisicos: esa frontera sigue en Mini-Evaluator + ESP32.
+
+Smoke de politica:
+
+```bash
+./smoke_policy.sh
+```
+
+Para la fachada simulada de `rhizome_02`:
+
+```bash
+FACADE_URL=http://127.0.0.1:13020 TARGET_NODE_ID=rhizome_02 ./smoke_policy.sh
 ```
 
 Base URL para Pollen en la red local del dia 19:
