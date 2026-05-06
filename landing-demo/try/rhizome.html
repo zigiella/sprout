@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Try Rhizome — Sprout</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="demo-header">
+  <div class="container">
+    <p class="breadcrumb"><a href="../index.html">← Sprout</a> · Try Rhizome</p>
+    <h1>Rhizome <span class="status-pill ok">running</span></h1>
+    <p class="muted">Plot node · Gemma 4 E2B Q4_K_S · Jetson Orin Nano Super · jurisdiction: minutes</p>
+
+    <div class="demo-disclaimer">
+      <strong>DEMO via API.</strong> The real app runs Gemma 4 E2B fully local on Jetson with no
+      network dependency. We use the API in this demo so you can probe the system from any browser.
+      Latency on the live system in production is in the order of <code>1–2 s</code> for a simple
+      decision; the mock here adds variance (~1 s) on purpose.
+    </div>
+  </div>
+</header>
+
+<section class="container section">
+
+  <h2>Probe a decision</h2>
+  <p>
+    Set the local state of the plot and ask Rhizome to decide. The output includes the rationale
+    in Spanish (the real app's primary language for the Spanish-speaking farmer) and English.
+  </p>
+
+  <form class="demo-form" id="rhizome-form">
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap:16px;">
+      <label>
+        Soil moisture (%)
+        <input type="number" id="soil_pct" min="0" max="100" value="22">
+      </label>
+      <label>
+        Tank level (%)
+        <input type="number" id="tank_pct" min="0" max="100" value="65">
+      </label>
+      <label>
+        Jetson heartbeat age (s)
+        <input type="number" id="heartbeat_age_s" min="0" max="300" value="8">
+      </label>
+      <label>
+        Preset
+        <select id="preset">
+          <option value="">— custom —</option>
+          <option value="dry">Dry plot, ample tank</option>
+          <option value="ok">Comfortable plot</option>
+          <option value="tank_low">Tank below minimum</option>
+          <option value="heartbeat_lost">Heartbeat lost</option>
+          <option value="modulated">SAFE_LIMIT modulation case</option>
+        </select>
+      </label>
+    </div>
+    <p style="margin-top:16px;">
+      <button class="btn btn-primary" type="submit">Ask Rhizome</button>
+    </p>
+  </form>
+
+  <div class="demo-grid">
+    <div class="demo-panel">
+      <h3>Decision Receipt</h3>
+      <div id="receipt-status" class="status-pill idle">idle</div>
+      <pre class="output-block" id="receipt-output">Awaiting input...</pre>
+    </div>
+    <div class="demo-panel">
+      <h3>Rationale (LLM)</h3>
+      <p style="font-size:13px; color:var(--muted); margin:0 0 8px;">
+        The deterministic logic decides. Gemma 4 E2B only writes the rationale.
+      </p>
+      <p id="rationale-es" style="font-style:italic;"></p>
+      <p id="rationale-en" style="color:var(--ink-soft); font-size:14px;"></p>
+    </div>
+  </div>
+
+  <h2 style="margin-top:48px;">Live decision log (last 10)</h2>
+  <p>
+    A simulated stream of decisions Rhizome would emit over a 10-minute window in the field.
+    Click <em>Start log</em> to watch the system run autonomously. ESP32 SAFE_LIMIT events are highlighted.
+  </p>
+  <p>
+    <button class="btn btn-secondary" id="log-toggle">Start log</button>
+    <button class="btn btn-ghost" id="log-clear">Clear</button>
+  </p>
+  <div class="log-area" id="log-area"></div>
+
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>
+      <strong>Sprout uses Gemma 4 models by Google. Gemma is a trademark of Google LLC.</strong>
+      This project is not affiliated with or endorsed by Google.
+    </p>
+    <p class="muted small">
+      Apache 2.0 · <a href="../index.html">back to overview</a> ·
+      <a href="https://github.com/zigiella/sprout">github.com/zigiella/sprout</a>
+    </p>
+  </div>
+</footer>
+
+<script src="../js/api.js"></script>
+<script src="../js/rhizome-demo.js"></script>
+</body>
+</html>

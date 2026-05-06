@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Try Pollen — Sprout</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="demo-header">
+  <div class="container">
+    <p class="breadcrumb"><a href="../index.html">← Sprout</a> · Try Pollen <span class="beta-badge">BETA</span></p>
+    <h1>Pollen</h1>
+    <p class="muted">Mobile node · Gemma 4 E4B (multimodal audio) · LiteRT-LM · jurisdiction: visit TTL</p>
+
+    <div class="demo-disclaimer">
+      <strong>BETA — voice → policy.</strong> The real Pollen app on Android feeds raw <code>.wav</code>
+      audio directly to Gemma 4 E4B via LiteRT-LM, with no separate STT pipeline. In this browser demo
+      we accept text instead of audio (browsers can't ship an Android model). The compilation logic and
+      schema validation are the same as on the device. <strong>If the system can't translate with
+      enough confidence, it won't apply — it will tell you to rephrase.</strong>
+    </div>
+  </div>
+</header>
+
+<section class="container section">
+
+  <h2>The farmer speaks. Pollen compiles.</h2>
+  <p>
+    Imagine you're in the plot. Type what you would say to the farmer's phone — short, colloquial,
+    not a structured command. Pollen compiles your voice into a <code>MissionPatch</code> the
+    Rhizome can apply <em>immediately</em>. No round-trip to the cloud, no waiting until the farmer
+    is back home.
+  </p>
+
+  <form class="demo-form" id="pollen-form">
+    <label for="transcript">What you say to the phone</label>
+    <textarea id="transcript" placeholder="e.g. 'Vuelvo el viernes. Esta planta aguanta más seca de lo que crees, riega un poco menos.'">Vuelvo el viernes. Esta planta aguanta más seca de lo que crees, riega un poco menos.</textarea>
+    <p class="hint">Try a few. Try something nonsense too — Pollen should refuse with confidence.</p>
+
+    <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top:12px;">
+      <button type="button" class="btn btn-ghost" data-sample="es-clear">ES · clear instruction</button>
+      <button type="button" class="btn btn-ghost" data-sample="en-clear">EN · clear instruction</button>
+      <button type="button" class="btn btn-ghost" data-sample="ambiguous">Ambiguous (refuse)</button>
+    </div>
+
+    <p style="margin-top:16px;">
+      <button class="btn btn-primary" type="submit">Compile</button>
+    </p>
+  </form>
+
+  <h3 style="margin-top:32px;">Pollen says</h3>
+  <div id="pollen-pipeline" class="muted small" style="margin:0 0 12px;">idle</div>
+
+  <div class="demo-grid">
+    <div class="demo-panel">
+      <h3>MissionPatch</h3>
+      <pre class="output-block" id="patch-output">Awaiting input...</pre>
+    </div>
+    <div class="demo-panel">
+      <h3>Rationale</h3>
+      <p id="pollen-rationale-es" style="font-style:italic;"></p>
+      <p id="pollen-rationale-en" style="color:var(--ink-soft); font-size:14px;"></p>
+    </div>
+  </div>
+
+  <h2 style="margin-top:48px;">How does Pollen know it understood?</h2>
+  <p>
+    Four checks, in order. If any fails, Pollen <strong>refuses</strong> and asks the farmer to
+    rephrase — it never applies a low-confidence translation.
+  </p>
+  <ol>
+    <li><strong>Schema validation</strong> — the JSON the LLM emits must match the <code>MissionPatch</code> schema.</li>
+    <li><strong>No conflict with hard limits</strong> — the proposed policy must not violate the firmware's safety envelope.</li>
+    <li><strong>Syntactic-semantic match</strong> — at least one keyword or number from the transcript must appear in the LLM's rationale or in the patch fields.</li>
+    <li><strong>Explicit model confidence</strong> — if LiteRT-LM exposes <code>logprobs</code>, the threshold is 0.7.</li>
+  </ol>
+  <p>
+    The full spec lives in <a href="https://github.com/zigiella/sprout/blob/main/bitacora/2026-05-05_spec-mini-evaluator-pollen-meristem-a-floema.md">spec-mini-evaluator-pollen</a>
+    (624 lines, 12 test cases, Meristem authored, day 20).
+  </p>
+
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>
+      <strong>Sprout uses Gemma 4 models by Google. Gemma is a trademark of Google LLC.</strong>
+      This project is not affiliated with or endorsed by Google.
+    </p>
+    <p class="muted small">
+      Apache 2.0 · <a href="../index.html">back to overview</a> ·
+      <a href="https://github.com/zigiella/sprout">github.com/zigiella/sprout</a>
+    </p>
+  </div>
+</footer>
+
+<script src="../js/api.js"></script>
+<script src="../js/pollen-demo.js"></script>
+</body>
+</html>
