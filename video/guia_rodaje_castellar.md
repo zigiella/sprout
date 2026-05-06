@@ -332,28 +332,45 @@ Vuelta al plano cocina para cerrar.
 
 ---
 
-## VO en inglés master (graba aparte, no durante rodaje en cuadro)
+## VO de referencia en castellano (graba aparte, no durante rodaje en cuadro)
 
-Esto es **audio aparte**, sin imagen. Idealmente el día anterior o posterior al rodaje, en interior silencioso.
+Esto es **audio aparte**, sin imagen. Lo grabas tú **en castellano como
+referencia para timing y sincronización en montaje**. La versión inglés
+master se hace después (doblaje con ElevenLabs o regrabación tuya en
+inglés en otra sesión).
 
-Frases que lees (todas, en orden, en inglés). Tono **calmado, declarativo, no enfático**. Pausa entre frase y frase. Bract sincroniza en montaje.
+Idealmente: día previo o posterior al rodaje, en interior silencioso, con
+el mismo micro que usas para la voz humana E5.
 
-| Escena | VO |
+Tono **calmado, declarativo, no enfático**. Pausa entre frase y frase
+(útil para que Bract pueda recortar limpio en montaje). No teatral.
+
+Frases que lees (todas, en orden, en castellano):
+
+| Escena | VO castellano referencia |
 |---|---|
-| E2 plano 2B | *"This plot is not alone. It has a local brain. It reads the soil. It decides."* |
-| E2 plano 2C | *"And signs what it does, so it can be explained."* |
-| E2 plano 2E (frase ancla 1) | *"Rhizome keeps the plot alive — without a person, without a signal."* |
-| E3 plano 3B (frase ancla 3) | *"AI proposes. Physical safety disposes."* |
-| E3b plano 3bC | *"Meristem composes the policy."* |
-| E4 plano 4D (frase ancla 2) | *"Every Pollen visit can change the local criterion."* |
-| E5 plano 5E | *"What the person says becomes policy."* |
-| E6 plano 6A | *"Pollen brings questions, answers, and context."* |
-| E6 plano 6E (frase ancla 5) | *"Pollen turns those visits into federated intelligence."* |
-| E7 plano 7E | *"The system updates its care."* |
-| E8 plano 8C (frase ancla 4) | *"Every intelligence has jurisdiction. And expiry."* |
-| E9b plano 9bD (frase ancla 6) | *"Meristem stores and processes. Tomorrow, it will learn."* |
+| E2 plano 2B | *"Esta parcela no está sola. Tiene un cerebro local. Lee el suelo. Decide."* |
+| E2 plano 2C | *"Y firma lo que hace, para que se pueda explicar."* |
+| E2 plano 2E (frase ancla 1) | *"Rhizome mantiene viva la parcela — sin nadie, sin red."* |
+| E3 plano 3B (frase ancla 3) | *"La IA propone, la capa física dispone."* |
+| E3b plano 3bC | *"Meristem compone la política."* |
+| E4 plano 4D (frase ancla 2) | *"Cada visita de Pollen puede cambiar el criterio local."* |
+| E5 plano 5E | *"Lo que la persona dice se convierte en política."* |
+| E6 plano 6A | *"Pollen trae preguntas, respuestas y contexto."* |
+| E6 plano 6E (frase ancla 5) | *"Pollen convierte esas visitas en inteligencia federada."* |
+| E7 plano 7E | *"El sistema ajusta los cuidados."* |
+| E8 plano 8C (frase ancla 4) | *"Toda inteligencia tiene jurisdicción. Y caducidad."* |
+| E9b plano 9bD (frase ancla 6) | *"Meristem guarda y procesa. Mañana, aprenderá."* |
 
 **Graba cada frase 3 veces como mínimo** y déjame elegir el take.
+
+**Cómo lo nombras**: en archivo separado por escena (`vo_E2_2B_take1.wav`,
+etc.) o en una sola sesión continua diciendo *"E2 plano 2B take 1"* antes
+de cada frase. Bract corta y cataloga después.
+
+**Excepción** — la voz humana de E5 plano 5B *"Vuelvo el viernes…"* va en
+cuadro durante rodaje, no aquí. Esa es la única VO que se graba con la
+imagen.
 
 ---
 
