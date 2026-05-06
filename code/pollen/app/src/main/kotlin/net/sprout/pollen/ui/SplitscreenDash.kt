@@ -7,15 +7,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import net.sprout.pollen.schemas.DecisionReceipt
+import net.sprout.pollen.schemas.PolicyPacket
 import net.sprout.pollen.schemas.RhizomeSnapshot
 import net.sprout.pollen.sync.RhizomeMockClient
 import java.time.Instant
 import java.time.Duration
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.sprout.pollen.inference.GemmaEngine
+import net.sprout.pollen.inference.MiniEvaluator
+import net.sprout.pollen.schemas.Mode
 // androidx.lifecycle.viewmodel.compose.viewModel / ViewModelProvider eran
 // imports sin uso y requerian dependencia no declarada. Removidos por Cambium.
 
@@ -91,6 +96,9 @@ fun SplitscreenDash(viewModel: PollenViewModel) {
 @Composable
 fun VoiceBetaPanel(client: RhizomeMockClient, snapshot: RhizomeSnapshot) {
     var state by remember { mutableStateOf("Idle") }
+    var resultText by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     
     Column {
         Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
@@ -115,13 +123,60 @@ fun VoiceBetaPanel(client: RhizomeMockClient, snapshot: RhizomeSnapshot) {
         )
         Spacer(modifier = Modifier.height(8.dp))
         
-        Text("Status: $state", color = MaterialTheme.colorScheme.primary)
+        Text("Status: $state", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+        if (resultText.isNotEmpty()) {
+            Text(text = resultText, style = MaterialTheme.typography.bodyMedium, color = Color.DarkGray)
+        }
         
         Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = {
-            state = "compiling -> validating -> sending -> ack"
-        }) {
-            Text("Simular Voz: 'Riega 30s más'")
+        Button(
+            onClick = {
+                coroutineScope.launch {
+                    state = "Listening & Compiling (LiteRT-LM)..."
+                    resultText = ""
+                    val engine = GemmaEngine(context)
+                    val patch = engine.parseVoiceToMissionPatch("riega la parcela a 30 segundos más", snapshot)
+                    
+                    state = "Validating (Mini-Evaluator)..."
+                    delay(800)
+                    
+                    // Dummy active policy for evaluation
+                    val activePolicy = PolicyPacket(
+                        policyId = "pol_mock",
+                        targetNodeId = snapshot.originNodeId,
+                        originNodeId = "meristem",
+                        createdAt = "2026-05-01T12:00:00Z",
+                        validUntil = "2026-05-10T12:00:00Z",
+                        versionChain = emptyList(),
+                        modeDefault = Mode.NORMAL,
+                        rules = PolicyPacket.Rules(
+                            wateringWindow = PolicyPacket.WateringWindow(0, 23),
+                            soilMoistureThresholds = emptyMap(),
+                            maxWateringDurationS = 120,
+                            dailyWaterBudgetLiters = 10f,
+                            tankMinimumPct = 15f,
+                            requireVisionConfirmation = false,
+                            conservativeTriggers = emptyList()
+                        )
+                    )
+
+                    val eval = MiniEvaluator.evaluate("riega la parcela a 30 segundos más", patch, patch.rationaleEs, 0.85, snapshot, activePolicy)
+                    
+                    if (eval.action == net.sprout.pollen.schemas.EvaluationAction.APPLY_AS_IS || eval.action == net.sprout.pollen.schemas.EvaluationAction.APPLY_CONSERVATIVE) {
+                        state = "Sending Policy to Rhizome..."
+                        delay(500)
+                        client.pushPolicy(eval.policyPacket!!)
+                        state = "Acknowledged"
+                        resultText = "Action: \${eval.action}\\nDetail: \${eval.details}"
+                    } else {
+                        state = "Refused"
+                        resultText = "Action: \${eval.action}\\nReason: \${eval.reasonCode}\\nDetail: \${eval.details}"
+                    }
+                }
+            },
+            enabled = state == "Idle" || state == "Acknowledged" || state == "Refused"
+        ) {
+            Text("Simular Voz: 'Riega la parcela A 30 segundos más'")
         }
     }
 }
