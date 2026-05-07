@@ -5,8 +5,8 @@
 > (incluida una nueva miembra que se incorpore) puede leer esto en 30
 > segundos y reconstruir contexto sin tener que escarbar 50 bitácoras.
 >
-> **Fecha de última actualización:** 2026-05-06 (cierre del día 21)
-> **Día del proyecto:** 21 de 30. Quedan 9 días.
+> **Fecha de última actualización:** 2026-05-07 (cierre del día 22)
+> **Día del proyecto:** 22 de 30. Quedan 8 días.
 
 ---
 
@@ -55,6 +55,16 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 > *"El flujo lote HTML → batch render → CapCut se cerró en menos de una hora desde que llegó el ZIP."* (Bract, día 21) — frase sobre velocidad de integración audiovisual.
 
 > *"Cuando vea descarte en lote entregado, preguntar antes de pedir ajuste — la decisión puede haberse cerrado lateralmente sin pasar por mí."* (Corola, día 21) — apunte cultural sobre coordinación lateral.
+
+> *"A estas alturas, saber no forzar también es progreso."* (Xilema, día 22) — frase para writeup §5 sobre disciplina técnica.
+
+> *"Hoy evitamos un drift antes de que Floema lo hardcodeara."* (Xilema, día 22) — frase para writeup §5 sobre la distinción `FirmwareHardLimits` vs `PolicyGuardrails` como precisión diagnóstica.
+
+**Día 22 técnico**: PR #118 (Xilema) cierra distinción cristalina entre los 4 valores **firmware enforcement actual ESP32 v0** (`tank_minimum_pct=20`, `max WATER=30s`, `heartbeat_timeout=5000ms`, `ALERT_LATCHED` hasta `RESET_ALERT`) y los 2 valores **guardrails de política razonables** (180s max event + 60s entre eventos + 600s/día) que NO son enforcement actual del firmware. Drift evitado antes de hardcoding en Mini-Evaluator. Patrón cultural para writeup §5.
+
+**Día 22 video**: Bea + Bract grabaron material informal pre-rodaje principal. *"Regulinchi"* (Bea) — exactamente la información que ahorra horas en rodaje real. Bract arranca primera versión del montaje día 23.
+
+**Día 22 writeup**: §5 reescrita técnica + §9 sin sombra + §10 nuevo enfoque (Meristem más inteligente + sensores y complejidad parcela + multiagentes Jetson + GPU/audio/deuda) tras feedback Bea. Material proceso guardado en `CAJON/articulo_como_trabajamos_borrador.md` para artículo aparte post-hackathon.
 
 > *"La tesis del proyecto es local-first. Si en la demo usamos API hosteada, estamos demostrando lo contrario de lo que defendemos."* (Cambium, reformulación tras pregunta Bea día 21) — patrón de coherencia narrativa.
 
@@ -110,7 +120,7 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 
 ---
 
-## Estado por frente — día 21 cierre
+## Estado por frente — día 22 cierre
 
 ### Rhizome físico (Xilema + Endo)
 
@@ -292,7 +302,7 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 
 ---
 
-## Pendientes activos día 22
+## Pendientes activos día 23
 
 ### Bea
 - **Montaje Fase A** según schematics #73 con apoyo Xilema (BME280, USB, depósito, tubos, bomba/caudal/válvulas físicamente sin energizar, borneras y etiquetas)
