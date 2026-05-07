@@ -43,4 +43,27 @@ class GemmaEngine(private val context: Context, private val modelPath: String = 
         delay(300)
         emit(AuditEvent.Done(AuditResult.NoDiscrepancy(rationale = "Metrics align with conservative threshold logic. No conflicts found in the policy execution.")))
     }
+
+    suspend fun parseVoiceToMissionPatch(transcript: String, snapshot: RhizomeSnapshot): net.sprout.pollen.schemas.MissionPatch {
+        delay(1000) // Simulate LiteRT-LM latency
+        
+        val lower = transcript.lowercase()
+        val duration = Regex("\\d+").find(lower)?.value?.toInt() ?: 30
+        
+        return net.sprout.pollen.schemas.MissionPatch(
+            targetNodeId = snapshot.originNodeId,
+            action = if (lower.contains("salta")) "skip_next_cycle" else "water_extra",
+            durationS = if (lower.contains("salta")) null else duration,
+            rationaleEs = "Aplicar comando de voz: $transcript"
+        )
+    }
+
+    suspend fun parseVoiceFileToMissionPatch(audioFile: java.io.File, snapshot: RhizomeSnapshot): net.sprout.pollen.schemas.MissionPatch {
+        delay(1500) // Simulate LiteRT-LM multimodal inference latency
+        
+        // Simulating the STT output from the Gemma 4 E4B model for the audio file
+        val mockTranscript = "Riega la parcela A 30 segundos más"
+        
+        return parseVoiceToMissionPatch(mockTranscript, snapshot)
+    }
 }

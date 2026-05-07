@@ -20,7 +20,10 @@ data class PolicyPacket(
     @SerialName("rules") val rules: Rules,
     
     @SerialName("rationale") val rationale: String? = null,
-    @SerialName("notes") val notes: String? = null
+    @SerialName("notes") val notes: String? = null,
+    
+    @SerialName("policy_origin") val policyOrigin: String = "meristem-durable",
+    @SerialName("policy_scope") val policyScope: String = "durable"
 ) {
     @Serializable
     data class Rules(

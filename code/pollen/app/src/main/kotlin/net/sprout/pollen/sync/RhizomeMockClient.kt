@@ -73,4 +73,9 @@ class RhizomeMockClient {
             )
         )
     }
+
+    fun pushPolicy(packet: PolicyPacket): Boolean {
+        // Mock successful push
+        return true
+    }
 }

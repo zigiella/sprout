@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
@@ -37,11 +38,9 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        // 1.5.13 es el Compose Compiler compatible con Kotlin 1.9.23.
-        // Matriz: https://developer.android.com/jetpack/androidx/releases/compose-kotlin
-        kotlinCompilerExtensionVersion = "1.5.13"
-    }
+    // composeOptions {
+    //     kotlinCompilerExtensionVersion = "1.5.13"
+    // }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -66,6 +65,11 @@ dependencies {
 
     // MediaPipe GenAI (Gemma)
     implementation("com.google.mediapipe:tasks-genai:0.10.14")
+
+    // Networking
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
