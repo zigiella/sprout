@@ -124,18 +124,23 @@ Sprout usa Gemma 4 en tres formas concretas, cada una explotando una capacidad d
 
 **Patron clave**: la decision final NUNCA la firma el LLM. Cuando el offload a GPU causo deriva semantica en un caso de test (`need_clarification` en lugar de `ok`), el sistema no se rompio porque la logica deterministica mantuvo el contrato. Prueba empirica de Safety & Trust.
 
-## 5. Buenas practicas y principios de trabajo — ~150 palabras
+## 5. Buenas practicas tecnicas — ~250 palabras
 
-El proyecto se construye con un equipo coordinado de agentes IA especializados (uno por frente: Rhizome, Pollen, Meristem, video, arte, montaje, hardware) que comparten un repositorio publico y una sola persona humana (zigiella) como coordinadora y autora final. Disciplinas operativas que sostienen el ritmo:
+**Jurisdicciones explicitas + LLM como criterio, no actuador.** Cada capa sabe que puede decidir y que no: Pollen propone intencion de visita, Rhizome decide en minutos, Meristem afina en dias, ESP32 veta lo fisico. Gemma 4 razona, resume y redacta — pero el riego pasa por contrato, validacion, receipt y veto fisico. Incluso en `POST /policy` la fachada Rhizome devuelve `hard_limits_checked_by_facade=false` explicito: la fachada no se atribuye autoridad que no tiene. La logica deterministica decide; el LLM solo escribe el rationale. Cuando la GPU causo deriva semantica en RD04 (`need_clarification` en lugar de `ok`), el sistema no se rompio porque el Evaluator mantuvo el contrato. Patron validado empiricamente.
 
-- **Bitacoras como contrato.** Cada decision queda por escrito el mismo dia. `repo-first` es regla — nada se cierra por chat o mail.
-- **Identidad git inline.** Cada agente firma sus commits con `git -c user.name=... -c user.email=...` por comando, sin tocar `.git/config` del clon compartido.
-- **Plantilla `Interrelaciones`** en cada mensaje cross-frente: campos `ESPERAS DE / BLOQUEAS A / COORDINAS CON`. Reduce overhead a cero.
-- **Disciplina §9.2** (tres puntos antes de cada commit + stash con prefijo de autor + una operacion atomica por sesion) para maquina compartida.
-- **Logica deterministica decide, LLM solo escribe rationale.** Patron transversal: decisiones criticas son auditables hasta una regla concreta.
-- **Disciplina epistemica** `OBSERVADO / INFERIDO / DECLARADO` en analisis de material visual.
+**Contratos versionados con TTL como API publica.** Diez objetos JSON con autoridad explicita y caducidad obligatoria (`RhizomeSnapshot`, `DecisionReceipt`, `PolicyPacket`, `MissionPatch`, `WeatherDigest`, etc.). No son blobs: cada objeto declara origen, jurisdiccion, validez y motivo legible. *Toda inteligencia tiene jurisdiccion y fecha de caducidad; todo rechazo deja huella legible — ningun objeto se pierde en silencio.* Schema validation Pydantic en Python + `kotlinx.serialization` en Kotlin sobre los mismos schemas canonicos.
 
-Indicador estructural empirico (dia 20): **12 PRs cerrados en cadena sin convocar una sola reunion**. La pregunta del coordinador correcto, hecha a tiempo, libera dominios completos al especialista.
+**Experimentos reproducibles + perfiles distinguidos.** En Jetson, `code/rhizome/jetson/` deja scripts versionados: `run_runtime.sh`, `start_adapter.sh`, `smoke_adapter.sh`, `collect_baseline.sh`, `run_battery.sh`. Dos perfiles: `safe-cpu` (lento pero contractual, 18/18 PASS) y `gpu-experimental` (rapido pero no quality pass aun). El hallazgo `--fit off --no-op-offload` en llama.cpp queda documentado, probado y situado, no anecdota. Bateria 18 prompts con metricas duras (envelope_valid + status_match), separacion `bench/` performance vs `tuning/` quality. Helper estricto que falla si encuentra `envelope_valid=false`, error HTTP o `status_match` roto: en demo fisica, un pass silencioso vale menos que un fail trazable.
+
+**Smokes pequenos antes de E2E grandes.** Primero `/status`, luego adapter, luego bateria critica, luego full battery, luego cliente Pollen, luego dos Rhizomes simulados. Esa secuencia evita depurar cinco capas a la vez.
+
+**Honestidad tecnica visible.** Cuando una pieza es simulacion, lo decimos: `rhizome_02` (segundo nodo desde una sola Jetson) queda rotulado como simulacion host-side en UI, en endpoint y en bitacora. Cuando GPU cargo modelo pero fallo contrato, no se vendio como pass. Cuando UI mostraba dos sensores y solo habia uno fisico, se corrigio: UI, contrato y narrativa tienen que decir lo mismo. **DRY_RUN antes de actuadores fisicos** + **rele COM+NO** (no NC, bomba apagada por defecto) como decisiones de seguridad firmes desde dia 1.
+
+**Adapter Ollama-compatible como abstraccion estable.** Ollama fue muleta de arranque; llama.cpp es paridad Jetson + Meristem casero. Cambia runtime, no cambia el sistema. Cada nodo de IA habla a un adapter comun que emite headers `Sprout-Inference-*` uniformes — pieza de infraestructura que reutiliza los mismos contratos de prompt, schema y receipt aunque cada dispositivo use un runtime distinto. Modelo intacto, sin fine-tuning para el MVP: prompt y arquitectura mutables, modelo estable.
+
+**Trazabilidad como producto, no como debug.** `decisions_by_rule` en `/health` muestra que reglas del Evaluator se han activado y en que proporcion. Persistencia SQLite con FK + audit trail WS. El jurado puede ver en pantalla, durante la demo, que las cuatro reglas se han ejercitado. La diferencia entre afirmar *"el sistema es seguro"* y demostrarlo con un contador en pantalla.
+
+**Conservador por defecto.** El Mini-Evaluator de Pollen prefiere `REFUSE_RETRY` con mensaje al agricultor *"no estoy seguro, repite por favor"* antes que aplicar dudoso. Privacidad por defecto: datos solo en el portatil del agricultor; nada sale a la nube.
 
 ## 6. MVP — qué proyectamos vs qué hacemos — ~120 palabras
 
@@ -188,19 +193,22 @@ Tras rodaje, escribir aqui guion del 90s consolidado citando frases fuertes.
 - **GPU offload en Jetson**: 36/36 capas cargadas, pero quality NO contractual aun (un caso de test deriva semanticamente bajo GPU full). Mantenemos `safe-cpu` como perfil de demo.
 - **Regresion `RH02`** detectada dia 19 en `safe-cpu` desde main: 2/2 falla en bateria critical. Bisección controlada en curso.
 - **Parcelas grandes (>10 zonas)** no probadas en hardware real — solo simulacion.
-- **Modo sombra Gemma 31B** (auditoria de calidad del modelo local) especificado pero no implementado — post-hackathon.
 - **Voz humana**: solo entrada (audio in). Audio bidireccional full-duplex queda como trabajo futuro.
 - **Integracion con plataformas climaticas oficiales (AEMET, MeteoCat)**: no implementada — sustituida por `WeatherDigest` portado por Pollen entre nodos.
+- **Tests automatizados de UI estatica**: deuda apuntada desde dia 16 — actualmente smoke manual.
+- **API docs no auto-generadas**: contratos JSON estan documentados en `docs/20_data_contracts.md` pero no hay OpenAPI publicado.
 
-## 10. Trabajo futuro — ~80 palabras
+## 10. Trabajo futuro — ~120 palabras
 
-Sprout deja explicita una hoja de ruta post-hackathon:
+Sprout deja explicita una hoja de ruta post-hackathon en cuatro ejes:
 
-1. **Vision multimodal** — camara en parcela + analisis visual con Gemma 4 (estres hidrico visible, plagas, crecimiento). Extension natural del modelo.
-2. **Audio bidireccional full-duplex** — Pollen no solo escucha al agricultor, tambien le habla. Pre-aviso conversacional ("manana toca riego, pero el deposito esta al 30%").
-3. **Multi-parcela real** (>10 zonas) con Meristem coordinando. Plan IA por fases en 7 etapas + 6 principios arquitectonicos transversales (bitacora `2026-05-04_plan-ia-meristem-fases`).
-4. **GPU quality pass** — cerrar deriva en RD04/RH02 para promocionar `gpu-experimental` a contractual.
-5. **Modo sombra Gemma 31B opcional** — auditoria de calidad del modelo local sin tocar la cadena de produccion.
+1. **Meristem mas inteligente.** El cerebro lento entra en MVP con Evaluator de 4 reglas + tool calling Gemma 4 E4B. Post-hackathon: ampliacion a 8-12 reglas (estacionalidad, cultivos heterogeneos, presupuesto multi-mes), fine-tuning E4B sobre dataset agricola sintetico+real con Unsloth, modo paralelo de varios LLMs comparando rationale para auditoria de calidad sin tocar produccion. Plan documentado en 7 fases progresivas + 6 principios arquitectonicos transversales (bitacora `2026-05-04_plan-ia-meristem-fases-arquitectura`).
+
+2. **Mas sensores y complejidad en parcela.** El MVP corre con humedad de suelo + nivel deposito + caudalimetro + un actuador (bomba). Post-hackathon: vision multimodal (camara con Gemma 4 detectando estres hidrico visible, plagas, crecimiento), riego variable por electrovavula multi-zona, conductividad / pH / temperatura suelo, integracion con plataformas climaticas oficiales (AEMET, MeteoCat) sustituyendo `WeatherDigest` portado.
+
+3. **Multiagentes en Jetson.** El MVP demuestra dos Rhizomes (uno fisico + uno simulado host-side) desde una sola Jetson. Post-hackathon: scheduler local que coordine N nodos logicos en una sola Jetson para explotaciones medianas con multiples zonas + federacion real entre multiples Jetson para explotaciones grandes con varias parcelas geograficamente separadas.
+
+4. **GPU quality pass + audio bidireccional + cierre de deuda.** Cerrar deriva GPU RD04/RH02 para promocionar `gpu-experimental` a contractual. Audio bidireccional full-duplex (Pollen tambien le habla al agricultor: pre-aviso conversacional *"manana toca riego, pero el deposito esta al 30%"*). Cierre de deuda apuntada (tests automatizados UI, API docs auto-generadas, branch jumping origen sistemico, signal-seed oficial #C5F26B en todos los frontends).
 
 **Sprout deja resuelto el caso minimo. La arquitectura escala.**
 
