@@ -17,7 +17,12 @@
     </div>
     <div class="topbar-chips">
       <span class="chip chip-llm" id="chip-llm">LLM: …</span>
-      <span class="chip chip-pollen" id="chip-pollen">Pollen: desconectado</span>
+      <span class="chip chip-pollen" id="chip-pollen">Pollen: …</span>
+      <button class="lang-toggle" id="lang-toggle" type="button" aria-label="Cambiar idioma">
+        <span class="lang-opt" data-locale="es" id="lang-es">ES</span>
+        <span class="lang-sep">/</span>
+        <span class="lang-opt" data-locale="en" id="lang-en">EN</span>
+      </button>
     </div>
   </header>
 
@@ -127,6 +132,7 @@
     <span class="footer-meta" id="footer-meta">Meristem v0.1 · slow brain doméstico</span>
   </footer>
 
+  <script src="/ui/i18n.js"></script>
   <script src="/ui/app.js"></script>
 </body>
 </html>

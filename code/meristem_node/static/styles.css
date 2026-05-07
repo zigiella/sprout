@@ -124,6 +124,43 @@ code, .mono {
   border-color: var(--mode-normal);
 }
 
+/* Toggle ES/EN */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--mode-unknown-bg);
+  color: var(--soil-text-muted);
+  border: 1px solid var(--soil-border);
+  cursor: pointer;
+  user-select: none;
+}
+
+.lang-toggle:hover {
+  background: var(--soil-paper);
+}
+
+.lang-opt {
+  padding: 0 4px;
+  border-radius: var(--radius-sm);
+}
+
+.lang-opt.active {
+  background: var(--signal-seed);
+  color: var(--soil-paper);
+  font-weight: 600;
+}
+
+.lang-sep {
+  color: var(--soil-text-muted);
+  opacity: 0.5;
+}
+
 /* ===================================================================
    Main grid
    =================================================================== */
