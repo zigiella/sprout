@@ -6,6 +6,18 @@ import java.time.temporal.ChronoUnit
 
 object MiniEvaluator {
 
+    object FirmwareHardLimits {
+        const val TANK_MINIMUM_PCT = 20f
+        const val MAX_WATER_SECONDS_MVP = 30
+        const val HOST_HEARTBEAT_TIMEOUT_MS = 5000L
+    }
+
+    object PolicyGuardrails {
+        const val MIN_SECONDS_BETWEEN_EVENTS = 60
+        const val MAX_TOTAL_SECONDS_PER_DAY = 600
+        const val MAX_SECONDS_PER_EVENT = 180
+    }
+
     fun evaluate(
         transcript: String,
         missionPatch: MissionPatch,
@@ -75,9 +87,19 @@ object MiniEvaluator {
     }
 
     private fun checkHardLimits(patch: MissionPatch): String? {
-        if (patch.tankMinimumPct != null && patch.tankMinimumPct < 20f) return "tank_minimum_pct < 20"
-        if (patch.durationS != null && patch.durationS > 180) return "duration_s > 180"
-        if (patch.minSecondsBetweenEvents != null && patch.minSecondsBetweenEvents < 60) return "min_seconds_between_events < 60"
+        // Firmware limits validation (ESP32 physically enforces these)
+        if (patch.tankMinimumPct != null && patch.tankMinimumPct < FirmwareHardLimits.TANK_MINIMUM_PCT) {
+            return "FIRMWARE_LIMIT: tank_minimum_pct < ${FirmwareHardLimits.TANK_MINIMUM_PCT}"
+        }
+        
+        // Policy guardrails (Pollen/Meristem prudency before sending to Jetson)
+        if (patch.durationS != null && patch.durationS > PolicyGuardrails.MAX_SECONDS_PER_EVENT) {
+            return "POLICY_GUARDRAIL: duration_s > ${PolicyGuardrails.MAX_SECONDS_PER_EVENT}"
+        }
+        if (patch.minSecondsBetweenEvents != null && patch.minSecondsBetweenEvents < PolicyGuardrails.MIN_SECONDS_BETWEEN_EVENTS) {
+            return "POLICY_GUARDRAIL: min_seconds_between_events < ${PolicyGuardrails.MIN_SECONDS_BETWEEN_EVENTS}"
+        }
+        
         return null
     }
 
