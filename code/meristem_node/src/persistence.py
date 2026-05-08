@@ -66,11 +66,19 @@ CREATE TABLE IF NOT EXISTS policies (
     emitted_at TEXT NOT NULL,
     target_node_id TEXT NOT NULL,
     raw_json TEXT NOT NULL,
-    evidence_refs TEXT NOT NULL  -- JSON list of bundle_ids
+    evidence_refs TEXT NOT NULL,  -- JSON list of bundle_ids
+    -- Sub-PR aditivo dia 23 (forward-compat con feature beta voz->politica):
+    policy_origin TEXT NOT NULL DEFAULT 'meristem-durable',
+    policy_scope TEXT NOT NULL DEFAULT 'durable'
 );
 
 CREATE INDEX IF NOT EXISTS idx_policies_target
     ON policies(target_node_id, emitted_at DESC);
+
+-- NOTA: indice idx_policies_target_scope se crea en _run_migrations
+-- porque referencia a policy_scope, columna añadida en sub-PR día 23.
+-- El executescript del SCHEMA falla si la columna aún no existe en BBDDs
+-- antiguas; la migración aditiva crea la columna primero y luego el índice.
 
 CREATE TABLE IF NOT EXISTS decisions (
     decision_id TEXT PRIMARY KEY,
@@ -105,10 +113,41 @@ CREATE INDEX IF NOT EXISTS idx_pollen_sync_log_trace
 
 
 def init_db(db_path: Path | str = DEFAULT_DB_PATH) -> None:
-    """Crea tablas e índices si no existen. Idempotente."""
+    """Crea tablas e índices si no existen. Idempotente.
+
+    Ejecuta también migraciones aditivas para BBDDs anteriores al
+    sub-PR de día 23 (policy_origin / policy_scope columns).
+    """
     db_path = Path(db_path)
     with sqlite3.connect(db_path) as con:
         con.executescript(SCHEMA)
+        _run_migrations(con)
+
+
+def _run_migrations(con: sqlite3.Connection) -> None:
+    """Migraciones aditivas idempotentes para BBDDs ya creadas.
+
+    Día 23: añade `policy_origin` y `policy_scope` a tabla `policies`
+    si todavía no existen (BBDDs creadas antes del sub-PR aditivo).
+    Defaults preservan retrocompatibilidad — policies antiguas se
+    interpretan como meristem-durable + durable.
+    """
+    cols = {row[1] for row in con.execute("PRAGMA table_info(policies)").fetchall()}
+    if "policy_origin" not in cols:
+        con.execute(
+            "ALTER TABLE policies ADD COLUMN policy_origin TEXT NOT NULL "
+            "DEFAULT 'meristem-durable'"
+        )
+    if "policy_scope" not in cols:
+        con.execute(
+            "ALTER TABLE policies ADD COLUMN policy_scope TEXT NOT NULL "
+            "DEFAULT 'durable'"
+        )
+    # Indice puede crearse de forma idempotente independientemente.
+    con.execute(
+        "CREATE INDEX IF NOT EXISTS idx_policies_target_scope "
+        "ON policies(target_node_id, policy_scope, emitted_at DESC)"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -174,8 +213,9 @@ def insert_policy(
         con.execute(
             """
             INSERT OR REPLACE INTO policies
-            (policy_id, emitted_at, target_node_id, raw_json, evidence_refs)
-            VALUES (?, ?, ?, ?, ?)
+            (policy_id, emitted_at, target_node_id, raw_json, evidence_refs,
+             policy_origin, policy_scope)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 record.policy_id,
@@ -183,6 +223,8 @@ def insert_policy(
                 record.target_node_id,
                 record.raw_json,
                 json.dumps(record.evidence_refs),
+                policy.policy_origin,
+                policy.policy_scope,
             ),
         )
     return record
@@ -297,6 +339,23 @@ def count_decisions_by_rule(
     return {r["rule_applied"]: int(r["c"]) for r in rows}
 
 
+def count_policies_by_scope(
+    db_path: Path | str = DEFAULT_DB_PATH,
+) -> dict[str, int]:
+    """Para `/health` y demo: distribución de policies por scope.
+
+    Sub-PR aditivo día 23. Cuando la feature beta voz→política
+    (Mini-Evaluator Pollen, PR #92) entregue policies transitorias,
+    este desglose visibiliza el reparto durable vs transient en demo
+    y writeup.
+    """
+    with _connect(db_path) as con:
+        rows = con.execute(
+            "SELECT policy_scope, COUNT(*) AS c FROM policies GROUP BY policy_scope"
+        ).fetchall()
+    return {r["policy_scope"]: int(r["c"]) for r in rows}
+
+
 # ---------------------------------------------------------------------------
 # Vista por target (para /status — demo MVP multi-Rhizome)
 # ---------------------------------------------------------------------------
@@ -353,16 +412,30 @@ def get_target_summary(
         bundles_received = int(bundle_row["c"])
         last_bundle_at = bundle_row["last_at"]
 
-        # 2. Policies count + última policy
+        # 2. Policies count + desglose por scope + última policy
         pol_count = con.execute(
             "SELECT COUNT(*) AS c FROM policies WHERE target_node_id = ?",
             (target_node_id,),
         ).fetchone()
         policies_emitted = int(pol_count["c"]) if pol_count else 0
 
+        # Desglose por scope (durable / transient) — sub-PR aditivo día 23
+        scope_rows = con.execute(
+            """
+            SELECT policy_scope, COUNT(*) AS c FROM policies
+            WHERE target_node_id = ?
+            GROUP BY policy_scope
+            """,
+            (target_node_id,),
+        ).fetchall()
+        scope_counts = {r["policy_scope"]: int(r["c"]) for r in scope_rows}
+        policies_durable_count = scope_counts.get("durable", 0)
+        policies_transient_count = scope_counts.get("transient", 0)
+
         latest_pol_row = con.execute(
             """
-            SELECT policy_id, emitted_at, raw_json FROM policies
+            SELECT policy_id, emitted_at, raw_json, policy_origin, policy_scope
+            FROM policies
             WHERE target_node_id = ?
             ORDER BY emitted_at DESC LIMIT 1
             """,
@@ -373,9 +446,13 @@ def get_target_summary(
         latest_policy_emitted_at = None
         latest_policy_mode = None
         latest_policy_valid_until = None
+        latest_policy_origin = None
+        latest_policy_scope = None
         if latest_pol_row:
             latest_policy_id = latest_pol_row["policy_id"]
             latest_policy_emitted_at = latest_pol_row["emitted_at"]
+            latest_policy_origin = latest_pol_row["policy_origin"]
+            latest_policy_scope = latest_pol_row["policy_scope"]
             try:
                 pkt = PolicyPacket.model_validate_json(latest_pol_row["raw_json"])
                 latest_policy_mode = pkt.mode_default
@@ -404,10 +481,14 @@ def get_target_summary(
         "bundles_received": bundles_received,
         "last_bundle_at": last_bundle_at,
         "policies_emitted": policies_emitted,
+        "policies_durable_count": policies_durable_count,
+        "policies_transient_count": policies_transient_count,
         "latest_policy_id": latest_policy_id,
         "latest_policy_emitted_at": latest_policy_emitted_at,
         "latest_policy_mode": latest_policy_mode,
         "latest_policy_valid_until": latest_policy_valid_until,
+        "latest_policy_origin": latest_policy_origin,
+        "latest_policy_scope": latest_policy_scope,
         "latest_reason_code": latest_reason_code,
         "latest_rule_applied": latest_rule_applied,
     }

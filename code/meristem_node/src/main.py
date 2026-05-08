@@ -172,6 +172,7 @@ def _build_app() -> FastAPI:
             "bundles_received_total": persistence.count_bundles(),
             "policies_emitted_total": persistence.count_policies(),
             "decisions_by_rule": persistence.count_decisions_by_rule(),
+            "policies_by_scope": persistence.count_policies_by_scope(),
             "targets_known": persistence.list_known_targets(),
             "pollen_connection": pollen_manager.state_snapshot(),
             "ws_events_by_type": persistence.count_ws_events_by_event(),
