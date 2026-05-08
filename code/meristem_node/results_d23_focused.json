@@ -1,0 +1,218 @@
+[
+  {
+    "bundle": "M1",
+    "num_ctx": 1024,
+    "latency_ms": 217572,
+    "status": "ok",
+    "reason_code": "STABLE_BUNDLE",
+    "rationale_chars": 82,
+    "_raw_response": {
+      "task": "afinar_policy",
+      "status": "ok",
+      "reason_code": "STABLE_BUNDLE",
+      "question_es": null,
+      "payload": {
+        "policy_packet": {
+          "schema_version": "1.0",
+          "policy_id": "pkt_meristem_1778870828_90765c",
+          "target_node_id": "rhizome_01",
+          "valid_until": "2026-05-15T18:47:08.013994Z",
+          "mode_default": "normal",
+          "rules": {
+            "_evaluator_rule": "confirm_policy",
+            "_reason_code": "STABLE_BUNDLE"
+          },
+          "rationale": "Bundle limpio: sin emergencias, sin disputas, evidencia coherente. Meristem confirma policy activa con valid_until extendido +7 días.",
+          "signature": "<placeholder-meristem-v0>",
+          "policy_origin": "meristem-durable",
+          "policy_scope": "durable"
+        },
+        "rationale_for_operator": "Tu Rhizome sigue funcionando bien. He extendido la política activa una semana más.",
+        "evidence_refs": [
+          "b_11f88844b89d"
+        ]
+      }
+    },
+    "_error": null
+  },
+  {
+    "bundle": "M1",
+    "num_ctx": 2048,
+    "latency_ms": 221716,
+    "status": "ok",
+    "reason_code": "STABLE_BUNDLE",
+    "rationale_chars": 137,
+    "_raw_response": {
+      "task": "afinar_policy",
+      "status": "ok",
+      "reason_code": "STABLE_BUNDLE",
+      "question_es": null,
+      "payload": {
+        "policy_packet": {
+          "schema_version": "1.0",
+          "policy_id": "pkt_meristem_1778871049_6ea369",
+          "target_node_id": "rhizome_01",
+          "valid_until": "2026-05-15T18:50:49.732338Z",
+          "mode_default": "normal",
+          "rules": {
+            "_evaluator_rule": "confirm_policy",
+            "_reason_code": "STABLE_BUNDLE"
+          },
+          "rationale": "El sistema ha procesado datos estables de humedad del suelo (A: 35%, B: 42%) y condiciones climáticas favorables (soleado, sin precipitación). Dado que no se detectan desviaciones críticas ni anomalías en los parámetros de entrada, la política confirma la continuidad de los parámetros operativos establecidos.",
+          "signature": "<placeholder-meristem-v0>",
+          "policy_origin": "meristem-durable",
+          "policy_scope": "durable"
+        },
+        "rationale_for_operator": "No se requiere ningún cambio. Las condiciones del suelo y el clima son estables, por lo que se mantiene la programación operativa actual.",
+        "evidence_refs": [
+          "b_df35860be428"
+        ]
+      }
+    },
+    "_error": null
+  },
+  {
+    "bundle": "M1",
+    "num_ctx": 4096,
+    "latency_ms": 282328,
+    "status": "ok",
+    "reason_code": "STABLE_BUNDLE",
+    "rationale_chars": 165,
+    "_raw_response": {
+      "task": "afinar_policy",
+      "status": "ok",
+      "reason_code": "STABLE_BUNDLE",
+      "question_es": null,
+      "payload": {
+        "policy_packet": {
+          "schema_version": "1.0",
+          "policy_id": "pkt_meristem_1778871331_ddc040",
+          "target_node_id": "rhizome_01",
+          "valid_until": "2026-05-15T18:55:31.980383Z",
+          "mode_default": "normal",
+          "rules": {
+            "_evaluator_rule": "confirm_policy",
+            "_reason_code": "STABLE_BUNDLE"
+          },
+          "rationale": "El bundle es estable y coherente. Los niveles de suelo A y B son 35% y 42%, respectivamente, y el tanque está al 78%. El digest meteorológico indica tres días de sol moderado sin lluvia esperada, lo que permite confirmar la política activa.",
+          "signature": "<placeholder-meristem-v0>",
+          "policy_origin": "meristem-durable",
+          "policy_scope": "durable"
+        },
+        "rationale_for_operator": "Todo está en orden. Los datos de hoy son estables y no hay alertas. Mantenemos la política actual, ya que el ecosistema se encuentra en un estado normal y saludable.",
+        "evidence_refs": [
+          "b_7075a5d1345e"
+        ]
+      }
+    },
+    "_error": null
+  },
+  {
+    "bundle": "M1",
+    "num_ctx": 8192,
+    "latency_ms": 275189,
+    "status": "ok",
+    "reason_code": "STABLE_BUNDLE",
+    "rationale_chars": 185,
+    "_raw_response": {
+      "task": "afinar_policy",
+      "status": "ok",
+      "reason_code": "STABLE_BUNDLE",
+      "question_es": null,
+      "payload": {
+        "policy_packet": {
+          "schema_version": "1.0",
+          "policy_id": "pkt_meristem_1778871607_e346d0",
+          "target_node_id": "rhizome_01",
+          "valid_until": "2026-05-15T19:00:07.215195Z",
+          "mode_default": "normal",
+          "rules": {
+            "_evaluator_rule": "confirm_policy",
+            "_reason_code": "STABLE_BUNDLE"
+          },
+          "rationale": "El bundle es estable, mostrando lecturas de suelo (A: 35%, B: 42%) y tanque (78%) dentro de parámetros normales. El digest meteorológico confirma tres días de sol moderado sin lluvia esperada. El Evaluator confirma la política activa (pkt_rhizome_01_baseline) debido a la coherencia de la evidencia.",
+          "signature": "<placeholder-meristem-v0>",
+          "policy_origin": "meristem-durable",
+          "policy_scope": "durable"
+        },
+        "rationale_for_operator": "Todo está estable. Los niveles de suelo y el clima son normales, por lo que mantenemos la política de operación actual. No se detectan emergencias ni cambios necesarios en el protocolo.",
+        "evidence_refs": [
+          "b_7e55d7447fe8"
+        ]
+      }
+    },
+    "_error": null
+  },
+  {
+    "bundle": "M1",
+    "num_ctx": 16384,
+    "latency_ms": 260966,
+    "status": "ok",
+    "reason_code": "STABLE_BUNDLE",
+    "rationale_chars": 132,
+    "_raw_response": {
+      "task": "afinar_policy",
+      "status": "ok",
+      "reason_code": "STABLE_BUNDLE",
+      "question_es": null,
+      "payload": {
+        "policy_packet": {
+          "schema_version": "1.0",
+          "policy_id": "pkt_meristem_1778871868_beac44",
+          "target_node_id": "rhizome_01",
+          "valid_until": "2026-05-15T19:04:28.134593Z",
+          "mode_default": "normal",
+          "rules": {
+            "_evaluator_rule": "confirm_policy",
+            "_reason_code": "STABLE_BUNDLE"
+          },
+          "rationale": "El bundle es estable y no presenta contradicciones. El snapshot muestra niveles de suelo A del 35% y suelo B del 42%, con el tanque al 78%. El Evaluator confirma la política activa debido a la coherencia de la evidencia.",
+          "signature": "<placeholder-meristem-v0>",
+          "policy_origin": "meristem-durable",
+          "policy_scope": "durable"
+        },
+        "rationale_for_operator": "Todo está estable. El sistema confirma la política actual, ya que no se detectan emergencias ni disputas en los datos de la parcela.",
+        "evidence_refs": [
+          "b_6c0def9a6f14"
+        ]
+      }
+    },
+    "_error": null
+  },
+  {
+    "bundle": "M1",
+    "num_ctx": 32768,
+    "latency_ms": 292638,
+    "status": "ok",
+    "reason_code": "STABLE_BUNDLE",
+    "rationale_chars": 152,
+    "_raw_response": {
+      "task": "afinar_policy",
+      "status": "ok",
+      "reason_code": "STABLE_BUNDLE",
+      "question_es": null,
+      "payload": {
+        "policy_packet": {
+          "schema_version": "1.0",
+          "policy_id": "pkt_meristem_1778872160_d7c41a",
+          "target_node_id": "rhizome_01",
+          "valid_until": "2026-05-15T19:09:20.784222Z",
+          "mode_default": "normal",
+          "rules": {
+            "_evaluator_rule": "confirm_policy",
+            "_reason_code": "STABLE_BUNDLE"
+          },
+          "rationale": "El bundle es estable y no presenta contradicciones. Los niveles de suelo registrados son A del 35% y B del 42%, con el tanque al 78%. El digest meteorológico confirma tres días de sol moderado sin lluvia esperada.",
+          "signature": "<placeholder-meristem-v0>",
+          "policy_origin": "meristem-durable",
+          "policy_scope": "durable"
+        },
+        "rationale_for_operator": "Todo está en orden. Los datos recopilados son estables y no hay alertas. Mantenemos la política actual para asegurar el desarrollo normal de la parcela.",
+        "evidence_refs": [
+          "b_4ecb96e677af"
+        ]
+      }
+    },
+    "_error": null
+  }
+]

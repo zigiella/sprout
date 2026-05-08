@@ -85,7 +85,7 @@ def post_visit_with_num_ctx(
     }
     t_start = time.perf_counter()
     try:
-        with httpx.Client(timeout=300.0) as client:
+        with httpx.Client(timeout=600.0) as client:
             r = client.post(f"{meristem_url}/visit", json=bundle, headers=headers)
         latency_ms = int((time.perf_counter() - t_start) * 1000)
         return latency_ms, r.json()

@@ -102,8 +102,22 @@ def _parse_rationale_json(content: str) -> tuple[str, str] | None:
         obj = json.loads(text)
     except json.JSONDecodeError:
         return None
-    rt = obj.get("rationale_tecnico")
-    ro = obj.get("rationale_para_operador")
+    # Parser tolerante: el LLM a veces traduce las keys al inglés.
+    # Aceptamos variantes; preferimos castellano si están las dos.
+    rt = (
+        obj.get("rationale_tecnico")
+        or obj.get("technical_rationale")
+        or obj.get("rationaleTecnico")
+        or obj.get("technicalRationale")
+    )
+    ro = (
+        obj.get("rationale_para_operador")
+        or obj.get("rationale_operador")
+        or obj.get("user_friendly_rationale")
+        or obj.get("operator_rationale")
+        or obj.get("rationaleParaOperador")
+        or obj.get("userFriendlyRationale")
+    )
     if not isinstance(rt, str) or not isinstance(ro, str):
         return None
     return rt.strip(), ro.strip()
