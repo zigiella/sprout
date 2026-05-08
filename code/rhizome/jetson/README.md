@@ -190,11 +190,31 @@ Jetson:
 ./start_demo_two_rhizomes.sh
 ```
 
+Si la Jetson cambia de WiFi, no depender de recordar la IP anterior. El
+hostname estable por mDNS es:
+
+```text
+rhizome-01-node.local
+```
+
+URLs preferentes:
+
+```text
+rhizome_01 -> http://rhizome-01-node.local:13010/
+rhizome_02 -> http://rhizome-01-node.local:13020/
+```
+
+Si la red bloquea mDNS, usar la IP actual que imprime:
+
+```bash
+./network_info.sh
+```
+
 Endpoints de demo:
 
 ```text
-rhizome_01 -> http://192.168.1.60:13010/
-rhizome_02 -> http://192.168.1.60:13020/
+rhizome_01 -> http://<jetson-host-or-ip>:13010/
+rhizome_02 -> http://<jetson-host-or-ip>:13020/
 ```
 
 `rhizome_02` usa datos de `code/rhizome/demo_data/rhizome_02`. Es una
