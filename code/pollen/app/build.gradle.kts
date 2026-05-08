@@ -49,10 +49,8 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
-    // composeOptions {
-    //     kotlinCompilerExtensionVersion = "1.5.13"
-    // }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -71,12 +69,18 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
+    implementation("com.airbnb.android:lottie-compose:6.4.0")
 
     // Kotlinx Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
-    // MediaPipe GenAI (Gemma)
-    implementation("com.google.mediapipe:tasks-genai:0.10.14")
+    "deviceImplementation"("com.google.ai.edge.litertlm:litertlm-android:+")
+
+    // Retrofit para conexión con Rhizome (Jetson/ESP32)
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-kotlinx-serialization:2.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // Networking
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

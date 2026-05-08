@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">Pollen</string>
+
+    <!-- Header / nav -->
+    <string name="every_event_receipt">Every event leaves a receipt.</string>
+    <string name="nearby_rhizomes">Associated rhizomes</string>
+    <string name="meristem_sub">Slow brain · weekly handoff</string>
+    <string name="physical_prevails">Physical layer prevails. Rhizome arbitrates. Pollen mediates. Meristem refines.</string>
+
+    <!-- Status -->
+    <string name="connected">Connected</string>
+    <string name="offline">Offline</string>
+    <string name="stale">Stale</string>
+    <string name="syncing">Syncing</string>
+    <string name="blocked">Blocked</string>
+    <string name="expired">Expired</string>
+    <string name="validated">Validated</string>
+    <string name="ai_evidence_only">evidence-only</string>
+
+    <!-- Visit console -->
+    <string name="visit_connect">Connect to rhizome</string>
+    <string name="visit_snapshot">Pull snapshot</string>
+    <string name="visit_receipts">Sync receipts</string>
+    <string name="visit_action">Choose action</string>
+    <string name="visit_checklist">visit checklist</string>
+    <string name="telemetry_current">telemetry · current</string>
+    <string name="chat_pollen">Chat with Pollen</string>
+    <string name="audit_pollen">Audit History</string>
+    <string name="selected_plot">Selected plot</string>
+    <string name="explain_decision">Explain Decision (LLM)</string>
+    <string name="explanation_title">Explanation from Rhizome</string>
+    <string name="close">Close</string>
+    <string name="water_level">WATER</string>
+    <string name="soil_moisture">SOIL MOISTURE</string>
+    <string name="what_happened">What happened since my absence?</string>
+    <!-- Mission compiler -->
+    <string name="mission_voice_note">Voice note</string>
+    <string name="mission_compiled_patch">Compiled patch</string>
+    <string name="mission_acknowledged">Mission acknowledged.</string>
+    <string name="mission_review_before_send">Review before sending to rhizome.</string>
+    <string name="send">Send</string>
+    <string name="last_decision">Last decision</string>
+    <string name="safe_envelope">Within safe envelope</string>
+    <string name="active_mission">Active mission</string>
+    <string name="ask_placeholder">What happened since last visit?</string>
+    <string name="budget_cap">budget_cap_ml</string>
+    <string name="watering_window">watering_window</string>
+
+    <!-- Restored strings -->
+    <string name="home_title">Pollen App (Sprout system)</string>
+    <string name="home_welcome">Welcome to the field. Select a node to begin.</string>
+    <string name="home_my_plots">My Plots (Rhizomes)</string>
+    <string name="home_home_node">Home Node (Meristem)</string>
+    <string name="notif_vision_title">Vision Confirmation Required</string>
+    <string name="notif_vision_desc">The active policy requires a manual vision confirmation on the field before watering starts.</string>
+    <string name="back_to_home">Back to Home</string>
+    <string name="plot_north">North Plot</string>
+    <string name="plot_south">South Plot</string>
+    <string name="visit_connect_sub">BLE / WiFi · 0.4s</string>
+    <string name="visit_snapshot_sub">6.2 KB</string>
+    <string name="visit_receipts_sub">24h Window</string>
+</resources>

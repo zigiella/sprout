@@ -1,0 +1,58 @@
+<resources>
+    <string name="app_name">Pollen</string>
+
+    <string name="every_event_receipt">Cada evento deja un recibo.</string>
+    <string name="nearby_rhizomes">Rhizomes asociados</string>
+    <string name="meristem_sub">Cerebro lento · handoff semanal</string>
+    <string name="physical_prevails">La capa física prevalece. Rhizome arbitra. Pollen media. Meristem refina.</string>
+
+    <string name="connected">Conectado</string>
+    <string name="offline">Sin conexión</string>
+    <string name="stale">Obsoleto</string>
+    <string name="syncing">Sincronizando</string>
+    <string name="blocked">Bloqueado</string>
+    <string name="expired">Caducado</string>
+    <string name="validated">Validado</string>
+    <string name="ai_evidence_only">solo evidencia</string>
+
+    <string name="visit_connect">Conectar al rhizome</string>
+    <string name="visit_snapshot">Extraer snapshot</string>
+    <string name="visit_receipts">Sincronizar recibos</string>
+    <string name="visit_action">Elegir acción</string>
+    <string name="visit_checklist">visit checklist</string>
+    <string name="telemetry_current">telemetría · actual</string>
+    <string name="chat_pollen">Chatear con Pollen</string>
+    <string name="audit_pollen">Historial</string>
+    <string name="selected_plot">Parcela seleccionada</string>
+    <string name="explain_decision">Explicar Decisión (LLM)</string>
+    <string name="explanation_title">Explicación de Rhizome</string>
+    <string name="close">Cerrar</string>
+    <string name="water_level">AGUA</string>
+    <string name="soil_moisture">Humedad suelo</string>
+    <string name="what_happened">¿Qué ha pasado desde mi ausencia?</string>
+    <string name="mission_voice_note">Nota de voz</string>
+    <string name="mission_compiled_patch">Patch compilado</string>
+    <string name="mission_acknowledged">Misión confirmada.</string>
+    <string name="mission_review_before_send">Revisa antes de enviar al rhizome.</string>
+    <string name="send">Enviar</string>
+    <string name="last_decision">Última decisión</string>
+    <string name="safe_envelope">Dentro del envelope seguro</string>
+    <string name="active_mission">Misión activa</string>
+    <string name="ask_placeholder">¿Qué ha pasado desde mi última visita?</string>
+    <string name="budget_cap">budget_cap_ml</string>
+    <string name="watering_window">watering_window</string>
+
+    <!-- Restored strings -->
+    <string name="home_title">Pollen App (Sprout system)</string>
+    <string name="home_welcome">Bienvenido al campo. Selecciona un nodo para empezar.</string>
+    <string name="home_my_plots">Mis Parcelas (Rhizomes)</string>
+    <string name="home_home_node">Cerebro Doméstico (Meristem)</string>
+    <string name="notif_vision_title">Confirmación Visual Requerida</string>
+    <string name="notif_vision_desc">La política activa exige que el operario confirme visualmente el estado del campo antes de regar.</string>
+    <string name="back_to_home">Volver a inicio</string>
+    <string name="plot_north">Parcela Norte</string>
+    <string name="plot_south">Parcela Sur</string>
+    <string name="visit_connect_sub">BLE / WiFi · 0.4s</string>
+    <string name="visit_snapshot_sub">6.2 KB</string>
+    <string name="visit_receipts_sub">Ventana 24h</string>
+</resources>
