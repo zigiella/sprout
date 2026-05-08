@@ -4,7 +4,7 @@ Mide cómo se comporta Gemma 4 E4B Q4_K_M en CPU Alder Lake variando
 `num_ctx`, con o sin tool calling, sobre un subset de los bundles
 ejemplo de Meristem-nodo.
 
-Material para writeup §3 (Arquitectura → memoria por tools, no por
+Material para writeup §3 (Arquitectura -> memoria por tools, no por
 stuffing) y para validar empíricamente el principio "decisión vs
 explicación se separan, siempre".
 
@@ -85,7 +85,7 @@ def post_visit_with_num_ctx(
     }
     t_start = time.perf_counter()
     try:
-        with httpx.Client(timeout=300.0) as client:
+        with httpx.Client(timeout=600.0) as client:
             r = client.post(f"{meristem_url}/visit", json=bundle, headers=headers)
         latency_ms = int((time.perf_counter() - t_start) * 1000)
         return latency_ms, r.json()
@@ -128,7 +128,7 @@ def run_experiment(
             print(f"⚠ {e}")
             continue
         for num_ctx in num_ctx_values:
-            print(f"→ {bundle_name} @ num_ctx={num_ctx}...", end=" ", flush=True)
+            print(f"-> {bundle_name} @ num_ctx={num_ctx}...", end=" ", flush=True)
             latency_ms, response = post_visit_with_num_ctx(
                 bundle, num_ctx, meristem_url
             )
@@ -165,7 +165,7 @@ def run_experiment(
             json.dumps(results, indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
-        print(f"\n→ Detalle completo en {output_json}")
+        print(f"\n-> Detalle completo en {output_json}")
 
     return results
 

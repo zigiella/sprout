@@ -27,7 +27,7 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -79,20 +79,29 @@ class CommandRequest(BaseModel):
 
 
 def _compose_rationale(
-    bundle: Bundle, evaluation: EvaluationResult,
+    bundle: Bundle,
+    evaluation: EvaluationResult,
+    num_ctx: int | None = None,
 ) -> tuple[str, str, dict[str, Any]]:
     """Devuelve (rationale_tecnico, rationale_para_operador, llm_metrics).
 
     Si USE_LLM=true (default) y el adapter llamacpp está vivo en
     ADAPTER_URL, llama a Gemma 4 E4B con tool calling y obtiene rationale.
     Si falla, fallback al stub determinista (no rompe pipeline).
+
+    `num_ctx`: si se pasa, override del default (4096) para experimentos.
     """
     if USE_LLM:
         try:
+            kwargs = {"adapter_url": ADAPTER_URL}
+            if num_ctx is not None:
+                kwargs["num_ctx"] = num_ctx
             rt, ro, metrics = compose_rationale_via_llm(
-                bundle, evaluation, adapter_url=ADAPTER_URL
+                bundle, evaluation, **kwargs
             )
             metrics["mode"] = "llm"
+            if num_ctx is not None:
+                metrics["num_ctx_override"] = num_ctx
             return rt, ro, metrics
         except LLMUnavailableError as e:
             logger.warning(
@@ -197,7 +206,10 @@ def _build_app() -> FastAPI:
         return StatusResponse(targets_known=targets_known, targets=targets)
 
     @app.post("/visit", response_model=VisitResponse)
-    async def visit(bundle: Bundle) -> VisitResponse:
+    async def visit(
+        bundle: Bundle,
+        request: Request,
+    ) -> VisitResponse:
         """Pollen entrega bundle. Pipeline:
 
         1. Ingest (validación + persistencia)
@@ -205,6 +217,10 @@ def _build_app() -> FastAPI:
         3a. Si REFUSE → respuesta envelope sin policy
         3b. Si OK → componer PolicyPacket + rationale + persistir
         4. Devolver VisitResponse
+
+        Header opcional `X-Meristem-Num-Ctx`: override de num_ctx para
+        experimentos (mini-experimento día 23). Si no se envía, default
+        4096.
         """
         # 1. Ingest
         ingest_service.ingest(bundle)
@@ -220,9 +236,18 @@ def _build_app() -> FastAPI:
                 payload=None,
             )
 
+        # Header opcional para override num_ctx (experimentos)
+        num_ctx_override: int | None = None
+        try:
+            hdr = request.headers.get("X-Meristem-Num-Ctx")
+            if hdr is not None:
+                num_ctx_override = int(hdr)
+        except (ValueError, TypeError):
+            num_ctx_override = None
+
         # 3b: componer rationale (LLM o fallback) + policy
         rationale_tecnico, rationale_operador, llm_metrics = _compose_rationale(
-            bundle, evaluation
+            bundle, evaluation, num_ctx=num_ctx_override
         )
         policy = compose_policy(bundle, evaluation, rationale_tecnico)
 

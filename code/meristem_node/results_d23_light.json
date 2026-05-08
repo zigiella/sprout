@@ -1,0 +1,148 @@
+[
+  {
+    "bundle": "M1",
+    "num_ctx": 2048,
+    "latency_ms": 253537,
+    "status": "ok",
+    "reason_code": "STABLE_BUNDLE",
+    "rationale_chars": 82,
+    "_raw_response": {
+      "task": "afinar_policy",
+      "status": "ok",
+      "reason_code": "STABLE_BUNDLE",
+      "question_es": null,
+      "payload": {
+        "policy_packet": {
+          "schema_version": "1.0",
+          "policy_id": "pkt_meristem_1778869386_e4010e",
+          "target_node_id": "rhizome_01",
+          "valid_until": "2026-05-15T18:23:06.128295Z",
+          "mode_default": "normal",
+          "rules": {
+            "_evaluator_rule": "confirm_policy",
+            "_reason_code": "STABLE_BUNDLE"
+          },
+          "rationale": "Bundle limpio: sin emergencias, sin disputas, evidencia coherente. Meristem confirma policy activa con valid_until extendido +7 días.",
+          "signature": "<placeholder-meristem-v0>",
+          "policy_origin": "meristem-durable",
+          "policy_scope": "durable"
+        },
+        "rationale_for_operator": "Tu Rhizome sigue funcionando bien. He extendido la política activa una semana más.",
+        "evidence_refs": [
+          "b_05424bd1735b"
+        ]
+      }
+    },
+    "_error": null
+  },
+  {
+    "bundle": "M1",
+    "num_ctx": 4096,
+    "latency_ms": 303129,
+    "status": "?",
+    "reason_code": null,
+    "rationale_chars": 0,
+    "_raw_response": null,
+    "_error": "timed out"
+  },
+  {
+    "bundle": "M1",
+    "num_ctx": 8192,
+    "latency_ms": 302997,
+    "status": "?",
+    "reason_code": null,
+    "rationale_chars": 0,
+    "_raw_response": null,
+    "_error": "timed out"
+  },
+  {
+    "bundle": "M1",
+    "num_ctx": 16384,
+    "latency_ms": 232461,
+    "status": "?",
+    "reason_code": null,
+    "rationale_chars": 0,
+    "_raw_response": null,
+    "_error": "[WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto"
+  },
+  {
+    "bundle": "M3",
+    "num_ctx": 2048,
+    "latency_ms": 5003,
+    "status": "?",
+    "reason_code": null,
+    "rationale_chars": 0,
+    "_raw_response": null,
+    "_error": "[WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión"
+  },
+  {
+    "bundle": "M3",
+    "num_ctx": 4096,
+    "latency_ms": 5024,
+    "status": "?",
+    "reason_code": null,
+    "rationale_chars": 0,
+    "_raw_response": null,
+    "_error": "[WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión"
+  },
+  {
+    "bundle": "M3",
+    "num_ctx": 8192,
+    "latency_ms": 4766,
+    "status": "?",
+    "reason_code": null,
+    "rationale_chars": 0,
+    "_raw_response": null,
+    "_error": "[WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión"
+  },
+  {
+    "bundle": "M3",
+    "num_ctx": 16384,
+    "latency_ms": 4773,
+    "status": "?",
+    "reason_code": null,
+    "rationale_chars": 0,
+    "_raw_response": null,
+    "_error": "[WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión"
+  },
+  {
+    "bundle": "M6",
+    "num_ctx": 2048,
+    "latency_ms": 4656,
+    "status": "?",
+    "reason_code": null,
+    "rationale_chars": 0,
+    "_raw_response": null,
+    "_error": "[WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión"
+  },
+  {
+    "bundle": "M6",
+    "num_ctx": 4096,
+    "latency_ms": 4648,
+    "status": "?",
+    "reason_code": null,
+    "rationale_chars": 0,
+    "_raw_response": null,
+    "_error": "[WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión"
+  },
+  {
+    "bundle": "M6",
+    "num_ctx": 8192,
+    "latency_ms": 4611,
+    "status": "?",
+    "reason_code": null,
+    "rationale_chars": 0,
+    "_raw_response": null,
+    "_error": "[WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión"
+  },
+  {
+    "bundle": "M6",
+    "num_ctx": 16384,
+    "latency_ms": 4607,
+    "status": "?",
+    "reason_code": null,
+    "rationale_chars": 0,
+    "_raw_response": null,
+    "_error": "[WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión"
+  }
+]

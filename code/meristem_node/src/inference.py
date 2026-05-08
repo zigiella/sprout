@@ -36,26 +36,36 @@ logger = logging.getLogger(__name__)
 # Configuración por defecto. Override por env si toca.
 ADAPTER_URL_DEFAULT = "http://localhost:12000"
 MAX_TOOL_ITERATIONS = 3
-HTTP_TIMEOUT_S = 180.0  # E4B + tool calling puede tardar
+HTTP_TIMEOUT_S = 600.0  # E4B + tool calling + num_ctx grande puede tardar bastante
 
 
 class LLMUnavailableError(Exception):
     """Error genérico al hablar con el adapter. Caller debe fallback."""
 
 
+DEFAULT_NUM_CTX = 4096
+DEFAULT_NUM_PREDICT = 1024
+
+
 def _post_chat(
     adapter_url: str,
     messages: list[dict[str, Any]],
     tools: list[dict[str, Any]] | None,
+    num_ctx: int = DEFAULT_NUM_CTX,
+    num_predict: int = DEFAULT_NUM_PREDICT,
 ) -> dict[str, Any]:
-    """POST a /api/chat del adapter. Devuelve respuesta Ollama-format."""
+    """POST a /api/chat del adapter. Devuelve respuesta Ollama-format.
+
+    `num_ctx` y `num_predict` son configurables para experimentos
+    (mini-experimento contexto día 23).
+    """
     payload: dict[str, Any] = {
         "model": "gemma4:e4b",  # alias resuelto por config.py del adapter
         "messages": messages,
         "options": {
             "temperature": 0.3,
-            "num_ctx": 4096,
-            "num_predict": 1024,
+            "num_ctx": num_ctx,
+            "num_predict": num_predict,
         },
         "stream": False,
         "think": True,  # Meristem es slow brain, thinking ON
@@ -92,8 +102,22 @@ def _parse_rationale_json(content: str) -> tuple[str, str] | None:
         obj = json.loads(text)
     except json.JSONDecodeError:
         return None
-    rt = obj.get("rationale_tecnico")
-    ro = obj.get("rationale_para_operador")
+    # Parser tolerante: el LLM a veces traduce las keys al inglés.
+    # Aceptamos variantes; preferimos castellano si están las dos.
+    rt = (
+        obj.get("rationale_tecnico")
+        or obj.get("technical_rationale")
+        or obj.get("rationaleTecnico")
+        or obj.get("technicalRationale")
+    )
+    ro = (
+        obj.get("rationale_para_operador")
+        or obj.get("rationale_operador")
+        or obj.get("user_friendly_rationale")
+        or obj.get("operator_rationale")
+        or obj.get("rationaleParaOperador")
+        or obj.get("userFriendlyRationale")
+    )
     if not isinstance(rt, str) or not isinstance(ro, str):
         return None
     return rt.strip(), ro.strip()
@@ -105,6 +129,8 @@ def compose_rationale_via_llm(
     *,
     adapter_url: str = ADAPTER_URL_DEFAULT,
     use_tools: bool = True,
+    num_ctx: int = DEFAULT_NUM_CTX,
+    num_predict: int = DEFAULT_NUM_PREDICT,
 ) -> tuple[str, str, dict[str, Any]]:
     """Devuelve (rationale_tecnico, rationale_operador, llm_metrics).
 
@@ -132,7 +158,10 @@ def compose_rationale_via_llm(
     }
 
     for iteration in range(MAX_TOOL_ITERATIONS):
-        response = _post_chat(adapter_url, messages, tools)
+        response = _post_chat(
+            adapter_url, messages, tools,
+            num_ctx=num_ctx, num_predict=num_predict,
+        )
         msg = (response.get("message") or {})
         content = msg.get("content") or ""
         thinking = msg.get("thinking") or ""
