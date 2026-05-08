@@ -5,8 +5,8 @@
 > (incluida una nueva miembra que se incorpore) puede leer esto en 30
 > segundos y reconstruir contexto sin tener que escarbar 50 bitácoras.
 >
-> **Fecha de última actualización:** 2026-05-07 (cierre del día 22)
-> **Día del proyecto:** 22 de 30. Quedan 8 días.
+> **Fecha de última actualización:** 2026-05-08 (cierre del día 23)
+> **Día del proyecto:** 23 de 30. Quedan 7 días.
 
 ---
 
@@ -59,6 +59,26 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 > *"A estas alturas, saber no forzar también es progreso."* (Xilema, día 22) — frase para writeup §5 sobre disciplina técnica.
 
 > *"Hoy evitamos un drift antes de que Floema lo hardcodeara."* (Xilema, día 22) — frase para writeup §5 sobre la distinción `FirmwareHardLimits` vs `PolicyGuardrails` como precisión diagnóstica.
+
+> *"La prueba correcta no es la más rápida; es la que deja la bomba apagada por defecto si algo falla."* (Xilema, día 23) — frase para writeup §5 sobre disciplina de hardware con voltaje real.
+
+> *"Pequeño trabajo, mucho alivio operativo."* (Endodermis, día 23) — frase para writeup §5 sobre cazar fragilidades operativas (mDNS sustituye IP fija para resilencia ante cambios de WiFi).
+
+> *"Aprendí algo que rechaza mi propia hipótesis. Mejor resultado que confirmarla."* (Meristem, día 23) — frase para writeup §5 sobre disciplina técnica madura.
+
+> *"Bugs silenciosos son los más peligrosos. Degradación sin error visible."* (Meristem, día 23) — frase para writeup §9 limitaciones (parser tolerante retroactivo descubierto).
+
+> *"Bea está dirigiendo con criterio y velocidad — cierra decisiones en una vuelta y deja que el frente avance sin atascos."* (Bract, día 23) — apunte cultural sobre velocidad de coordinación.
+
+**Día 23 técnico — fragilidades cazadas**:
+1. **mDNS Jetson (Endo, PR #126)**: cambio de WiFi expuso fragilidad de IP fija (`192.168.1.60` → `192.168.1.31`). Solución: `rhizome-01-node.local:13010` y `:13020` + `network_info.sh`. Pollen Android validó `.local` funciona. Resilencia ante cambio de red (rodaje 26-27).
+2. **3 bugs silenciosos Meristem (PR #124)**: parser tolerante EN/ES (bug retroactivo — mini-batería día 16 5/5 PASS puede tener casos al stub no detectados), timeouts inconsistentes cliente/server, encoding cp1252. Mini-experimento contexto 6/6 OK con fix.
+3. **Módulo relé "misterioso" (Xilema + Bea)**: jumper `JD-VCC/VCC` mal entendido. Aclarados todos los puntos del montaje (GND común, COM+NO, diodo flyback, alimentación). NO enchufado hoy — mañana día 24 con cabeza fresca.
+4. **Material rodado "regulinchi" (Bract + Bea)**: ingeniería inversa con Gemini 3.1 Pro vía proxies (~$0.20) → draft 17 con material real + 3 cartelas presentadoras (Rhizome / Pollen / Meristem) + VO ES dub provisional + créditos. Pipeline cut_cli + Remotion absorbe drafts 10→17 sin friction.
+
+**Día 23 hito Floema**: smoke test confirmado + LiteRT-LM en local Edge + Pollen genera `MissionPatch` estructurado (no comandos texto) + Mini-Evaluator separa Firmware vs Policy guardrails (PR #118 Xilema día 22 desbloqueó esto). PR #127 (cherry-pick cierre día 23) mergeado.
+
+**Apunte cultural día 23**: Bract puso a **papá de Bea** en créditos del vídeo como *"Rhizome box · daily journal reader"* — coincidencia con apunte cultural del digest día 22. Frase guardada para writeup §5 como ejemplo de convergencias narrativas que se sostienen sin coordinarse.
 
 **Día 22 técnico**: PR #118 (Xilema) cierra distinción cristalina entre los 4 valores **firmware enforcement actual ESP32 v0** (`tank_minimum_pct=20`, `max WATER=30s`, `heartbeat_timeout=5000ms`, `ALERT_LATCHED` hasta `RESET_ALERT`) y los 2 valores **guardrails de política razonables** (180s max event + 60s entre eventos + 600s/día) que NO son enforcement actual del firmware. Drift evitado antes de hardcoding en Mini-Evaluator. Patrón cultural para writeup §5.
 
@@ -120,7 +140,7 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 
 ---
 
-## Estado por frente — día 22 cierre
+## Estado por frente — día 23 cierre
 
 ### Rhizome físico (Xilema + Endo)
 
@@ -302,7 +322,7 @@ Sprout reduce la latencia de decisión de riego en parcelas aisladas — donde e
 
 ---
 
-## Pendientes activos día 23
+## Pendientes activos día 24
 
 ### Bea
 - **Montaje Fase A** según schematics #73 con apoyo Xilema (BME280, USB, depósito, tubos, bomba/caudal/válvulas físicamente sin energizar, borneras y etiquetas)
