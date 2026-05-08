@@ -50,6 +50,8 @@ class Bundle(BaseModel):
 # ---------------------------------------------------------------------------
 
 ModeDefault = Literal["normal", "conservative", "alert"]
+PolicyOrigin = Literal["meristem-durable", "pollen-visit"]
+PolicyScope = Literal["durable", "transient"]
 
 
 class PolicyPacket(BaseModel):
@@ -58,6 +60,13 @@ class PolicyPacket(BaseModel):
     Día 15-16 se alinea exactamente con el schema Kotlin de
     `feat/pollen-f5-rhizome` (clase `PolicyPacket.kt`). Esto es
     placeholder para empezar a iterar.
+
+    Día 23 (sub-PR aditivo): añadidos `policy_origin` y `policy_scope`
+    opcionales para distinguir policies durables (Meristem) de las
+    transitorias (Pollen via visita) según spec Mini-Evaluator
+    (PR #92 mergeado). Defaults preservan retrocompatibilidad: bundles
+    antiguos sin estos campos siguen interpretándose como
+    meristem-durable + durable.
     """
 
     schema_version: str = "1.0"
@@ -68,6 +77,24 @@ class PolicyPacket(BaseModel):
     rules: dict[str, Any] = Field(default_factory=dict)
     rationale: str
     signature: str = "<placeholder-meristem-v0>"
+
+    # Forward-compat con feature beta voz→política (PR #92 spec):
+    policy_origin: PolicyOrigin = Field(
+        default="meristem-durable",
+        description=(
+            "Quién emitió esta policy. 'meristem-durable' es la durable "
+            "del slow brain doméstico. 'pollen-visit' es transitoria de "
+            "una visita Pollen con Mini-Evaluator (feature beta)."
+        ),
+    )
+    policy_scope: PolicyScope = Field(
+        default="durable",
+        description=(
+            "Alcance temporal. 'durable' = TTL ~7 días, autoridad "
+            "completa salvo hard limits. 'transient' = TTL ~12h, "
+            "autoridad limitada (alerta durable siempre gana)."
+        ),
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -202,16 +229,24 @@ class TargetStatus(BaseModel):
     Usado en el endpoint `GET /status`. Pensado para que la demo MVP
     muestre en una pantalla cómo Meristem está gestionando 2 Rhizomes
     simultáneos en el mismo hardware (rhizome_01 + rhizome_02).
+
+    Día 23: añadido desglose `policies_durable_count` +
+    `policies_transient_count` para visibilidad de la distribución
+    durable vs transitoria por target.
     """
 
     target_node_id: str
     bundles_received: int = 0
     last_bundle_at: datetime | None = None
     policies_emitted: int = 0
+    policies_durable_count: int = 0
+    policies_transient_count: int = 0
     latest_policy_id: str | None = None
     latest_policy_emitted_at: datetime | None = None
     latest_policy_mode: ModeDefault | None = None
     latest_policy_valid_until: datetime | None = None
+    latest_policy_origin: PolicyOrigin | None = None
+    latest_policy_scope: PolicyScope | None = None
     latest_reason_code: str | None = None
     latest_rule_applied: str | None = None
 
