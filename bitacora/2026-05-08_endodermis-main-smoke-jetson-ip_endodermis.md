@@ -86,3 +86,39 @@ rhizome_02 -> http://192.168.1.31:13020/
 
 El microfix no cambia contrato, seguridad, politicas ni runtime de inferencia.
 Solo evita mostrar una IP obsoleta cuando cambia la WiFi.
+
+## Mejora antidrama WiFi
+
+Comprobado desde maquina local:
+
+```text
+rhizome-01-node.local -> 192.168.1.31
+```
+
+El puerto SSH responde por mDNS. Por tanto, para pruebas en otra WiFi, la
+primera URL que debe probar Pollen es:
+
+```text
+http://rhizome-01-node.local:13010/
+```
+
+Y para la demo de dos Rhizomes:
+
+```text
+http://rhizome-01-node.local:13010/
+http://rhizome-01-node.local:13020/
+```
+
+Anado `network_info.sh` para imprimir en Jetson:
+
+- hostname;
+- mDNS;
+- WiFi activa;
+- IPs;
+- URLs preferentes por mDNS;
+- URLs fallback por IP actual;
+- health local de `:13010` y `:13020`.
+
+Decision: usar `.local` como ruta preferente y IP actual como fallback. No
+intentamos fijar IP estatica, porque manana se probara en otro sitio y el
+router puede cambiar.
