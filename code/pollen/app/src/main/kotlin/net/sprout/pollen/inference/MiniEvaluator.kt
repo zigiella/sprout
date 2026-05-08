@@ -91,6 +91,9 @@ object MiniEvaluator {
         if (patch.tankMinimumPct != null && patch.tankMinimumPct < FirmwareHardLimits.TANK_MINIMUM_PCT) {
             return "FIRMWARE_LIMIT: tank_minimum_pct < ${FirmwareHardLimits.TANK_MINIMUM_PCT}"
         }
+        if (patch.durationS != null && patch.durationS > FirmwareHardLimits.MAX_WATER_SECONDS_MVP) {
+            return "FIRMWARE_LIMIT: duration_s > ${FirmwareHardLimits.MAX_WATER_SECONDS_MVP}"
+        }
         
         // Policy guardrails (Pollen/Meristem prudency before sending to Jetson)
         if (patch.durationS != null && patch.durationS > PolicyGuardrails.MAX_SECONDS_PER_EVENT) {

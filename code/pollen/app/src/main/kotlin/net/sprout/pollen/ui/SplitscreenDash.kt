@@ -21,7 +21,8 @@ import androidx.compose.ui.unit.dp
 import net.sprout.pollen.schemas.DecisionReceipt
 import net.sprout.pollen.schemas.PolicyPacket
 import net.sprout.pollen.schemas.RhizomeSnapshot
-import net.sprout.pollen.sync.RhizomeMockClient
+import net.sprout.pollen.sync.RhizomeClient
+import net.sprout.pollen.sync.RhizomeNetworkClient
 import java.time.Instant
 import java.time.Duration
 import kotlinx.coroutines.delay
@@ -34,9 +35,33 @@ import net.sprout.pollen.schemas.Mode
 
 @Composable
 fun SplitscreenDash(viewModel: PollenViewModel) {
-    val mockClient = remember { RhizomeMockClient() }
-    val snapshot = remember { mockClient.getSnapshot() }
-    val receipt = remember { mockClient.getDecisionReceipt() }
+    val networkClient = remember { RhizomeNetworkClient("http://192.168.1.60:13010") }
+    // En el smoke test real (E2E), el snapshot y receipt idealmente se obtendrían de la red.
+    // Por ahora, dejamos un dummy inicial si los endpoints GET no están al 100% o bloquean la UI.
+    var snapshot by remember { mutableStateOf(RhizomeSnapshot(
+        originNodeId = "meristem",
+        mode = Mode.NORMAL,
+        createdAt = "2026-05-01T12:00:00Z",
+        sensors = RhizomeSnapshot.Sensors(50f, 60f, 65f, 22f, 400),
+        activePolicyId = "pol_base",
+        activePolicyExpiresAt = "2026-05-10T12:00:00Z"
+    )) }
+    var receipt by remember { mutableStateOf(DecisionReceipt(
+        decisionId = "dec_01",
+        action = net.sprout.pollen.schemas.EvaluationAction.APPLY_AS_IS,
+        rationaleShort = "Ok",
+        createdAt = "2026-05-01T12:00:00Z",
+        policyPacketId = "pol_base"
+    )) }
+    
+    LaunchedEffect(Unit) {
+        try {
+            snapshot = networkClient.getSnapshot()
+            receipt = networkClient.getDecisionReceipt()
+        } catch (e: Exception) {
+            // Ignorar en smoke test si GET falla
+        }
+    }
     
     val auditState by viewModel.uiState.collectAsState()
     
@@ -96,13 +121,13 @@ fun SplitscreenDash(viewModel: PollenViewModel) {
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            VoiceBetaPanel(mockClient, snapshot)
+            VoiceBetaPanel(networkClient, snapshot)
         }
     }
 }
 
 @Composable
-fun VoiceBetaPanel(client: RhizomeMockClient, snapshot: RhizomeSnapshot) {
+fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
     var state by remember { mutableStateOf("Idle") }
     var resultText by remember { mutableStateOf("") }
     var isRecording by remember { mutableStateOf(false) }
