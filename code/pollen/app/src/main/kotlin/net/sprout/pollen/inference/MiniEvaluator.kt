@@ -27,6 +27,15 @@ object MiniEvaluator {
         activePolicy: PolicyPacket
     ): EvaluationResult {
 
+        // Regla 0: El LLM rehusó procesar la petición
+        if (missionPatch.action == "REFUSE") {
+            return EvaluationResult(
+                action = EvaluationAction.REFUSE_HARD,
+                reasonCode = "LLM_SAFETY_REFUSAL",
+                details = missionPatch.rationaleEs,
+            )
+        }
+
         // Regla 1: hard limit
         val hardLimitViolation = checkHardLimits(missionPatch)
         if (hardLimitViolation != null) {
