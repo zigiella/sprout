@@ -1,0 +1,31 @@
+# Sprout · .mailmap
+# ----------------------------------------------------------
+# Reescribe identidades en `git log --use-mailmap` y en la página de
+# Contributors de GitHub, sin modificar la historia del repositorio.
+#
+# Decisión Bea día 24:
+# - Trailers `Co-Authored-By: Claude Opus 4.X <noreply@anthropic.com>`
+#   añadidos automáticamente por Claude Code en algunos commits del
+#   equipo zigiella se mapean a la identidad real (zigiella) — Bea es
+#   el único humano del equipo, los agentes IA del equipo (Cambium,
+#   Floema, Meristem, Xilema, Corola, Endodermis, Bract, Venation)
+#   son herramientas de organización del trabajo, no contributors
+#   externos al proyecto.
+#
+# Sintaxis:
+#   Proper Name <commit@email.xx> Other Name <other@email.xx>
+#   Proper Name <commit@email.xx>                <other@email.xx>
+#
+# Documentación: https://git-scm.com/docs/gitmailmap
+# ----------------------------------------------------------
+
+# Mapea cualquier trailer Co-Authored-By: <noreply@anthropic.com> a zigiella
+zigiella <beatriz.m.v@gmail.com>                <noreply@anthropic.com>
+
+# Consolidación de identidades Cambium (varios sufijos de email
+# usados durante el proyecto — todos referencian al mismo agente)
+Cambium <cambium@sprout.local>                  <cambium@zigiella.local>
+Cambium <cambium@sprout.local>                  <cambium@zigiella>
+
+# Consolidación Meristem (mismo agente, dos sufijos de email)
+Meristem <meristem@sprout.local>                <meristem@zigiella.local>

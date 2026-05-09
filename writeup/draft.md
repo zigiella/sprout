@@ -1,8 +1,8 @@
-# Sprout — writeup (primera versión completa, día 21)
+# Sprout — writeup (día 24)
 
 > **Autores:** Cambium + Bea.
-> **Estado:** primera versión completa de §0 + §4-§10 (día 21). §1-§3 cerradas previas. §7 placeholder hasta rodaje.
-> **Word count target final:** 1500 palabras (Kaggle limit). Versión actual ~1500-1700, recorte final día 28-29.
+> **Estado:** primera versión completa de §0 + §1-§9 (día 24). §7 Demo eliminada — la landing demo es autoexplicativa.
+> **Word count target final:** 1500 palabras (Kaggle limit). Versión actual ~1700-1900, recorte final día 28-29.
 
 ---
 
@@ -148,27 +148,7 @@ Sprout usa Gemma 4 en tres formas concretas, cada una explotando una capacidad d
 
 **Honestidad arquitectural**: el patron de jurisdicciones estaba codificado desde el dia 13 — el Evaluator de Meristem (`JURISDICTION_POLLEN`) rechaza explicitamente cambios fisicos puntuales del operador, indicando que esa decision pertenece a Pollen. La feature beta del dia 20 implementa lo que el codigo predijo.
 
-## 7. Demo (90s) — placeholder hasta rodaje
-
-<!--
-Pendiente rodaje (dias 24-27). Estructura prevista del video:
-- E0 cartela Sprout + 3 nodos + tagline
-- E1 ausencia con 4 datos globales (UNCCD, gencat, ITU, COAG)
-- E2 Rhizome decide offline
-- E3 ESP32 SAFE LIMIT (wow moment)
-- E3b Meristem prepara la politica
-- E4 Llega Pollen
-- E5 Persona da una mision (voz humana real castellano)
-- E6 Ferry A→B
-- E7 Criterio modificado (climax)
-- E8 Caducidad
-- E9 Cenital federado animado
-- E9b Meristem en la mesa de casa (cierre intimo + tagline bookend)
-
-Tras rodaje, escribir aqui guion del 90s consolidado citando frases fuertes.
--->
-
-## 8. Impacto y escalado — ~120 palabras
+## 7. Impacto y escalado — ~120 palabras
 
 **Coste por nodo**: Jetson Orin Nano Super ~250€, ESP32-S3 ~10€, sensores + bomba 12V ~80€, deposito ~30€ = **~370€ por Rhizome** (mas la capa fisica). Pollen reusa el movil del agricultor (cero hardware adicional). Meristem reusa el portatil casero (cero hardware adicional).
 
@@ -178,7 +158,7 @@ Tras rodaje, escribir aqui guion del 90s consolidado citando frases fuertes.
 
 **Segmento prioritario**: explotaciones pequenas y medianas en zonas de baja poblacion (Aragon, Extremadura, Castilla-La Mancha, islas, Africa subsahariana). El **84% de las explotaciones mundiales tienen menos de 2 hectareas** (FAO 2024).
 
-## 9. Limitaciones — ~80 palabras
+## 8. Limitaciones — ~80 palabras
 
 **Honestidad sobre lo que no funciona todavia**:
 
@@ -190,7 +170,7 @@ Tras rodaje, escribir aqui guion del 90s consolidado citando frases fuertes.
 - **Tests automatizados de UI estatica**: deuda apuntada desde dia 16 — actualmente smoke manual.
 - **API docs no auto-generadas**: contratos JSON estan documentados en `docs/20_data_contracts.md` pero no hay OpenAPI publicado.
 
-## 10. Trabajo futuro — ~120 palabras
+## 9. Trabajo futuro — ~120 palabras
 
 Sprout deja explicita una hoja de ruta post-hackathon en cuatro ejes:
 
