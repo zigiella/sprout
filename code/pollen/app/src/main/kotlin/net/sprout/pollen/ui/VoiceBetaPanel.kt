@@ -28,11 +28,16 @@ import android.app.Activity
 import android.content.Intent
 import android.speech.RecognizerIntent
 
+import kotlinx.serialization.json.Json
+
 @Composable
 fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
     var state by remember { mutableStateOf("Idle") }
     var resultText by remember { mutableStateOf("") }
     var isRecording by remember { mutableStateOf(false) }
+    
+    var showPolicyDialog by remember { mutableStateOf(false) }
+    var policyJsonText by remember { mutableStateOf("") }
     
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -77,6 +82,11 @@ fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
                     )
 
                     val eval = MiniEvaluator.evaluate(recognizedText, patch, patch.rationaleEs, 0.85, snapshot, activePolicy)
+                    
+                    if (eval.policyPacket != null) {
+                        val json = Json { prettyPrint = true }
+                        policyJsonText = json.encodeToString(PolicyPacket.serializer(), eval.policyPacket)
+                    }
                     
                     if (eval.action == net.sprout.pollen.schemas.EvaluationAction.APPLY_AS_IS || eval.action == net.sprout.pollen.schemas.EvaluationAction.APPLY_CONSERVATIVE) {
                         state = "Sending Policy to Rhizome..."
@@ -125,6 +135,13 @@ fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
             Text(text = resultText, style = MaterialTheme.typography.bodyMedium, color = Color.DarkGray)
         }
         
+        if (policyJsonText.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(4.dp))
+            TextButton(onClick = { showPolicyDialog = true }) {
+                Text("Ver política generada (JSON)")
+            }
+        }
+        
         Spacer(modifier = Modifier.height(8.dp))
         Button(
             onClick = {
@@ -145,5 +162,21 @@ fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
         ) {
             Text(if (isRecording) "Stop Recording" else "Chat with Rhizome", fontWeight = FontWeight.Bold)
         }
+    }
+    
+    if (showPolicyDialog) {
+        AlertDialog(
+            onDismissRequest = { showPolicyDialog = false },
+            title = { Text("Política Generada por Gemma 4") },
+            text = { 
+                Text(
+                    text = policyJsonText, 
+                    style = MaterialTheme.typography.bodySmall.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace)
+                ) 
+            },
+            confirmButton = {
+                TextButton(onClick = { showPolicyDialog = false }) { Text("Cerrar") }
+            }
+        )
     }
 }
