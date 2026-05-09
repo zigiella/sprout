@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Pollen</string>
 
-    <string name="every_event_receipt">Decisiones respaldadas por datos.</string>
+    <string name="every_event_receipt">Federated AI carried by Pollen app</string>
     <string name="nearby_rhizomes">Rhizomes asociados</string>
     <string name="meristem_sub">Cerebro lento · handoff semanal</string>
     <string name="physical_prevails">La capa física prevalece. Rhizome arbitra. Pollen media. Meristem refina.</string>
