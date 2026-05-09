@@ -2,7 +2,7 @@
     <string name="app_name">Pollen</string>
 
     <!-- Header / nav -->
-    <string name="every_event_receipt">Every event leaves a receipt.</string>
+    <string name="every_event_receipt">Decisions backed by data.</string>
     <string name="nearby_rhizomes">Associated rhizomes</string>
     <string name="meristem_sub">Slow brain · weekly handoff</string>
     <string name="physical_prevails">Physical layer prevails. Rhizome arbitrates. Pollen mediates. Meristem refines.</string>

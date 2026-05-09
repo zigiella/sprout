@@ -138,12 +138,14 @@ fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
                     }
                 }
             },
+            modifier = Modifier.fillMaxWidth().height(48.dp),
+            shape = RoundedCornerShape(14.dp),
             enabled = state == "Idle" || state == "Acknowledged" || state == "Refused" || isRecording,
             colors = ButtonDefaults.buttonColors(
                 containerColor = if (isRecording) Color.Red else MaterialTheme.colorScheme.primary
             )
         ) {
-            Text(if (isRecording) "Stop Recording" else "Hablar a Gemma 4 (Grabar)")
+            Text(if (isRecording) "Stop Recording" else "Chat with Rhizome", fontWeight = FontWeight.Bold)
         }
     }
 }
