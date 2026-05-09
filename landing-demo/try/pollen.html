@@ -93,18 +93,26 @@
       </p>
     </div>
     <div class="demo-panel">
-      <h3>Device flavor — runs Gemma 4 E4B</h3>
+      <h3>Device flavor — runs Gemma 4 E4B (Bring Your Own Model)</h3>
       <p>
-        Full build with LiteRT-LM and Gemma 4 E4B Q4_K_S bundled (~2 GB).
-        Requires Android 12 / API 31+, 12 GB RAM recommended (16 GB ideal),
+        Full build with the LiteRT-LM engine. The model file (<code>gemma-4-E4B-it.litertlm</code>, 3.6 GB)
+        is side-loaded separately. Requires Android 12 / API 31+, 12 GB RAM recommended (16 GB ideal),
         at least 6 GB free. CPU runtime is the stable path; GPU/NPU varies by device.
       </p>
       <p>
-        Build it from source:
+        Three steps to install Pollen device flavor with real Gemma 4 E4B on your phone:
       </p>
-      <pre class="output-block">git clone https://github.com/zigiella/sprout
-cd sprout/code/pollen
-# See code/pollen/README.md for Gradle device flavor</pre>
+      <pre class="output-block"># 1. Build and install the APK (with LiteRT-LM engine)
+cd code/pollen
+./gradlew installDeviceDebug
+
+# 2. Download gemma-4-E4B-it.litertlm (3.6 GB) from project storage
+#    to your computer.
+
+# 3. Side-load the model into the phone
+adb push gemma-4-E4B-it.litertlm /data/local/tmp/
+
+# Open Pollen on your phone — voice + chat run 100% offline.</pre>
     </div>
   </div>
 

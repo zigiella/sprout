@@ -6,7 +6,7 @@
 
 # Sprout
 
-> **AI Local-first irrigation decisions.**
+> **AI Local-first water optimization for plots the network forgets.**
 > *Safe · explainable · open-source.*
 
 > *"When network is absent — and the human is far — local criteria still irrigate."*
@@ -18,7 +18,7 @@
 
 ## In 30 seconds
 
-Sprout is a **local-first AI architecture for irrigation decisions in remote plots** — places where the field, the person and the network rarely coincide in time.
+Sprout is a **local-first AI architecture for water optimization in remote plots** — places where the field, the person and the network rarely coincide in time.
 
 Each plot runs **Rhizome**, an autonomous node that decides offline using **Gemma 4 E2B** on a Jetson Orin Nano Super. Rhizome never moves water directly: an **ESP32-S3** with custom firmware enforces hard safety limits and can veto or modulate any action.
 
@@ -115,6 +115,29 @@ make test   # runs 13 deterministic tests + LLM smoke
 - Rhizome Jetson: [`code/rhizome/jetson/`](code/rhizome/jetson/) (see scripts `run_runtime.sh`, `start_adapter.sh`, `smoke_adapter.sh`)
 - ESP32 firmware: [`hardware/firmware_esp32/README.md`](hardware/firmware_esp32/README.md)
 - Wiring schematics: [`hardware/wiring_diagrams/day19_mounting_schematics.md`](hardware/wiring_diagrams/day19_mounting_schematics.md)
+
+### Install Pollen on your Android device (Bring Your Own Model)
+
+To run Pollen with **real Gemma 4 E4B inference** (not the demo mock), install the *device* flavor and side-load the model. Three steps:
+
+**1. Build and install the APK** (includes the LiteRT-LM engine):
+
+```bash
+cd code/pollen
+./gradlew installDeviceDebug
+```
+
+**2. Download the model file** `gemma-4-E4B-it.litertlm` (3.6 GB) from the project storage to your computer.
+
+**3. Side-load the model into the phone**:
+
+```bash
+adb push gemma-4-E4B-it.litertlm /data/local/tmp/
+```
+
+Open the Pollen app on the phone. The `LiteRtSessionManager` reads the model from `/data/local/tmp/` and voice + chat run **100% offline** — no network round-trip.
+
+> Requires: Android 12 / API 31+, 12 GB RAM recommended (16 GB ideal), at least 6 GB free. CPU runtime is the stable path; GPU/NPU varies by device.
 
 ---
 

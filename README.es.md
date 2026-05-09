@@ -6,7 +6,7 @@
 
 # Sprout
 
-> **Decisiones de riego con AI Local-first.**
+> **Optimización hídrica AI Local-first para parcelas que la red olvida.**
 > *Seguro · explicable · open-source.*
 
 > *"Cuando la red no llega y nadie está cerca, el criterio sigue regando."*
@@ -18,7 +18,7 @@
 
 ## En 30 segundos
 
-Sprout es una **arquitectura local-first de IA para decisiones de riego en parcelas remotas** — lugares donde el campo, la persona y la red rara vez coinciden en el tiempo.
+Sprout es una **arquitectura local-first de IA para optimización hídrica en parcelas remotas** — lugares donde el campo, la persona y la red rara vez coinciden en el tiempo.
 
 Cada parcela ejecuta **Rhizome**, un nodo autónomo que decide offline usando **Gemma 4 E2B** sobre Jetson Orin Nano Super. Rhizome nunca mueve el agua directamente: un **ESP32-S3** con firmware propio impone hard limits de seguridad y puede vetar o modular cualquier acción.
 
@@ -115,6 +115,29 @@ make test   # ejecuta 13 tests deterministas + smoke LLM
 - Rhizome Jetson: [`code/rhizome/jetson/`](code/rhizome/jetson/) (ver scripts `run_runtime.sh`, `start_adapter.sh`, `smoke_adapter.sh`)
 - Firmware ESP32: [`hardware/firmware_esp32/README.md`](hardware/firmware_esp32/README.md)
 - Esquemas de cableado: [`hardware/wiring_diagrams/day19_mounting_schematics.md`](hardware/wiring_diagrams/day19_mounting_schematics.md)
+
+### Instalar Pollen en tu Android (Bring Your Own Model)
+
+Para ejecutar Pollen con **inferencia real de Gemma 4 E4B** (no el mock de demo), instala el sabor *device* y carga el modelo por sideloading. Tres pasos:
+
+**1. Compila e instala el APK** (incluye el motor LiteRT-LM):
+
+```bash
+cd code/pollen
+./gradlew installDeviceDebug
+```
+
+**2. Descarga el archivo del modelo** `gemma-4-E4B-it.litertlm` (3.6 GB) desde el almacenamiento del proyecto a tu ordenador.
+
+**3. Inyecta el modelo en el móvil** (sideloading):
+
+```bash
+adb push gemma-4-E4B-it.litertlm /data/local/tmp/
+```
+
+Abre la app Pollen en el móvil. El `LiteRtSessionManager` lee el modelo desde `/data/local/tmp/` y la voz + chat funcionan **100% offline** — sin round-trip a la red.
+
+> Requisitos: Android 12 / API 31+, 12 GB RAM recomendados (16 GB ideal), al menos 6 GB libres. CPU es la ruta estable; GPU/NPU varía según dispositivo.
 
 ---
 
