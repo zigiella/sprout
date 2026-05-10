@@ -17,6 +17,7 @@ import net.sprout.pollen.schemas.RhizomeSnapshot
 import net.sprout.pollen.schemas.DecisionReceipt
 import androidx.compose.ui.platform.LocalContext
 import net.sprout.pollen.sync.MeristemClient
+import net.sprout.pollen.sync.MeristemNetworkClient
 import net.sprout.pollen.sync.MeristemMockClient
 
 @Composable
@@ -25,8 +26,13 @@ fun VisitarMeristemScreen(
     currentReceipts: List<DecisionReceipt> = emptyList(),
     onPolicyDownloaded: (PolicyPacket) -> Unit = {}
 ) {
-    // Para conectar con el portátil del agricultor, instanciar MeristemNetworkClient("http://<IP_MERISTEM>:8080")
-    val client: MeristemClient = remember { MeristemMockClient() }
+    val client: MeristemClient = remember { 
+        if (net.sprout.pollen.BuildConfig.FLAVOR == "demo") {
+            MeristemMockClient()
+        } else {
+            MeristemNetworkClient("http://meristem.local:13000/")
+        }
+    }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     
@@ -99,7 +105,8 @@ fun VisitarMeristemScreen(
                         scope.launch {
                             isDownloading = true
                             try {
-                                val policy = client.getLatestPolicy()
+                                val targetId = currentSnapshot?.originNodeId ?: "rhizome_01"
+                                val policy = client.getLatestPolicy(targetId)
                                 downloadedPolicy = policy
                                 onPolicyDownloaded(policy)
                             } catch (e: Exception) {

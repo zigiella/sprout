@@ -16,8 +16,8 @@ interface MeristemApi {
     @POST("/visit")
     suspend fun uploadFieldVisit(@Body visit: FieldVisit)
 
-    @GET("/policy/latest")
-    suspend fun getLatestPolicy(): PolicyPacket
+    @GET("/policy/by-target/{id}")
+    suspend fun getPolicyByTarget(@retrofit2.http.Path("id") id: String): PolicyPacket
 }
 
 class MeristemNetworkClient(baseUrl: String) : MeristemClient {
@@ -43,7 +43,7 @@ class MeristemNetworkClient(baseUrl: String) : MeristemClient {
         api.uploadFieldVisit(visit)
     }
 
-    override suspend fun getLatestPolicy(): PolicyPacket {
-        return api.getLatestPolicy()
+    override suspend fun getLatestPolicy(targetId: String): PolicyPacket {
+        return api.getPolicyByTarget(targetId)
     }
 }

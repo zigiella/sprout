@@ -10,14 +10,14 @@ class MeristemMockClient : MeristemClient {
         delay(1500)
     }
 
-    override suspend fun getLatestPolicy(): PolicyPacket {
+    override suspend fun getLatestPolicy(targetId: String): PolicyPacket {
         delay(1500)
         return PolicyPacket(
             schemaVersion = "1.0",
             createdAt = "2026-04-29T10:00:00Z",
             originNodeId = "meristem_01",
             policyId = "pkt_meristem_mock",
-            targetNodeId = "rhizome_01",
+            targetNodeId = targetId,
             validUntil = "2026-05-29T10:00:00Z",
             versionChain = emptyList(),
             modeDefault = Mode.NORMAL,
