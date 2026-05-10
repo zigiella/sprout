@@ -35,13 +35,13 @@ def _config(tmp: str, **overrides):
     return StewardConfig(**values)
 
 
-def _telemetry(*, soil_a_raw=30, tank_level_pct=70.0):
+def _telemetry(*, soil_a_raw=30, tank_level_pct=70.0, flow_pulses=0):
     return Telemetry(
         collected_at=zulu(datetime.now(timezone.utc)),
         soil_a_raw=soil_a_raw,
         soil_b_raw=soil_a_raw,
         tank_level_pct=tank_level_pct,
-        flow_pulses=0,
+        flow_pulses=flow_pulses,
         host_link="FRESH",
         host_age_ms=0,
     )
@@ -102,6 +102,52 @@ class RhizomeStewardTest(unittest.TestCase):
         self.assertEqual(result["action"], "ALERT")
         self.assertFalse(result["executed"])
         self.assertEqual(result["blocked_reason"], "TANK_LOW")
+
+    def test_missing_tank_sensor_defers_by_default(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(tmp, execute_water=True),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=20, tank_level_pct=None)),
+            )
+            result = steward.run_once()
+
+        self.assertEqual(result["action"], "DEFER")
+        self.assertEqual(result["blocked_reason"], "TANK_SENSOR_UNAVAILABLE")
+
+    def test_minimal_hardware_mode_allows_missing_tank_with_trace(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(tmp, execute_water=True, allow_missing_tank_sensor=True),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=20, tank_level_pct=None, flow_pulses=None)),
+            )
+            result = steward.run_once()
+            snapshot = steward.store.load_json("current_snapshot.json")
+            receipt = steward.store.load_json("last_decision_receipt.json")
+
+        self.assertEqual(result["action"], "WATER_A")
+        self.assertTrue(result["executed"])
+        self.assertIsNotNone(snapshot)
+        self.assertIsNotNone(receipt)
+        self.assertIn("tank_level_unavailable", snapshot["pending_contradictions"])
+        self.assertIn("flow_sensor_unavailable", receipt["contradictions"])
+        RhizomeSnapshot.model_validate(snapshot)
+        DecisionReceipt.model_validate(receipt)
+
+    def test_strict_flow_mode_defers_when_flow_sensor_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(
+                    tmp,
+                    execute_water=True,
+                    allow_missing_tank_sensor=True,
+                    allow_missing_flow_sensor=False,
+                ),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=20, tank_level_pct=None, flow_pulses=None)),
+            )
+            result = steward.run_once()
+
+        self.assertEqual(result["action"], "DEFER")
+        self.assertEqual(result["blocked_reason"], "FLOW_SENSOR_UNAVAILABLE")
 
     def test_cooldown_defers_second_water(self):
         with tempfile.TemporaryDirectory() as tmp:

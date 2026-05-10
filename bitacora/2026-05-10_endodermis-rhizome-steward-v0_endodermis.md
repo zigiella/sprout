@@ -46,6 +46,8 @@ El steward:
 - aplica retencion por dias y presupuesto total de bytes.
 - mantiene `RhizomeSnapshot` compatible con schema compartido incluso cuando
   una lectura falta: no inventa riego, marca `pending_contradictions` y aplaza.
+- soporta perfil hardware minimo de maceta: ESP32 con bomba + humedad, mientras
+  deposito y caudalimetro quedan previstos como sensores futuros.
 
 ## Persistencia
 
@@ -136,6 +138,25 @@ cd ~/sprout/code/rhizome/jetson
 ESP32_MODE=serial ESP32_PORT=/dev/ttyACM0 ./run_steward_once.sh
 ESP32_MODE=serial ESP32_PORT=/dev/ttyACM0 ./start_steward_loop.sh
 ```
+
+Perfil minimo sin sensor de deposito instalado:
+
+```bash
+ESP32_MODE=serial ESP32_PORT=/dev/ttyACM0 \
+  ALLOW_MISSING_TANK_SENSOR=1 \
+  ./run_steward_once.sh
+```
+
+Si la firmware inicial solo expone encender/apagar bomba:
+
+```bash
+ESP32_MODE=serial ESP32_PORT=/dev/ttyACM0 \
+  SERIAL_WATER_COMMAND_MODE=pump-toggle \
+  ./run_steward_once.sh
+```
+
+Decision: por defecto falta de deposito aplaza. El perfil minimo exige flag
+explicito y deja `tank_level_unavailable`/`flow_sensor_unavailable` en trazas.
 
 ## Validacion
 

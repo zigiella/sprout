@@ -284,6 +284,20 @@ Una pasada contra ESP32 real sin permitir agua:
 ESP32_MODE=serial ESP32_PORT=/dev/ttyACM0 ./run_steward_once.sh
 ```
 
+Perfil minimo de maceta, previsto para ESP32 con bomba y sensor de humedad pero
+sin caudalimetro ni sensor de nivel todavia:
+
+```bash
+ESP32_MODE=serial \
+ESP32_PORT=/dev/ttyACM0 \
+ALLOW_MISSING_TANK_SENSOR=1 \
+./run_steward_once.sh
+```
+
+En este perfil Rhizome sigue escribiendo `tank_level_unavailable` y
+`flow_sensor_unavailable` cuando corresponda. No se oculta que esos sensores son
+previstos/futuros.
+
 Una pasada contra ESP32 real permitiendo agua. Usar solo con Xilema/Bea en la
 frontera fisica y con duraciones pequenas:
 
@@ -294,6 +308,19 @@ EXECUTE_WATER=1 \
 WATER_SECONDS=8 \
 ./run_steward_once.sh
 ```
+
+Si la firmware minima aun no tiene `WATER A <seconds>` y solo ofrece encender y
+apagar bomba:
+
+```bash
+ESP32_MODE=serial \
+ESP32_PORT=/dev/ttyACM0 \
+SERIAL_WATER_COMMAND_MODE=pump-toggle \
+./run_steward_once.sh
+```
+
+Usar `pump-toggle` solo como puente de bring-up. El modo preferido para demo
+fisica es `water-duration`, con temporizacion y failsafe en ESP32.
 
 Si la humedad llega como raw no calibrado, declarar umbrales raw:
 

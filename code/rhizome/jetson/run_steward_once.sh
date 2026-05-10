@@ -6,7 +6,10 @@ STEWARD_STATE_DIR="${STEWARD_STATE_DIR:-$HOME/.local/share/sprout/rhizome_stewar
 STEWARD_FACADE_DATA_DIR="${STEWARD_FACADE_DATA_DIR:-$STEWARD_STATE_DIR/facade_data}"
 ESP32_MODE="${ESP32_MODE:-fake}"
 ESP32_PORT="${ESP32_PORT:-/dev/ttyACM0}"
+SERIAL_WATER_COMMAND_MODE="${SERIAL_WATER_COMMAND_MODE:-water-duration}"
 EXECUTE_WATER="${EXECUTE_WATER:-0}"
+ALLOW_MISSING_TANK_SENSOR="${ALLOW_MISSING_TANK_SENSOR:-0}"
+REQUIRE_FLOW_SENSOR_FOR_WATER="${REQUIRE_FLOW_SENSOR_FOR_WATER:-0}"
 NODE_ID="${NODE_ID:-rhizome_01}"
 SYNC_FACADE_STATE_DIR="${SYNC_FACADE_STATE_DIR:-/tmp/sprout_rhizome_sync_facade/$NODE_ID}"
 DECISION_INTERVAL_S="${DECISION_INTERVAL_S:-900}"
@@ -39,11 +42,19 @@ ARGS=(
 )
 
 if [ "$ESP32_MODE" = "serial" ]; then
-  ARGS+=(--serial-port "$ESP32_PORT")
+  ARGS+=(--serial-port "$ESP32_PORT" --serial-water-command-mode "$SERIAL_WATER_COMMAND_MODE")
 fi
 
 if [ "$EXECUTE_WATER" = "1" ]; then
   ARGS+=(--execute-water)
+fi
+
+if [ "$ALLOW_MISSING_TANK_SENSOR" = "1" ]; then
+  ARGS+=(--allow-missing-tank-sensor)
+fi
+
+if [ "$REQUIRE_FLOW_SENSOR_FOR_WATER" = "1" ]; then
+  ARGS+=(--require-flow-sensor-for-water)
 fi
 
 if [ -n "$SOIL_DRY_BELOW_RAW" ]; then

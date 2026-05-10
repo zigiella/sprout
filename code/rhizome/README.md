@@ -172,6 +172,8 @@ Propiedades de seguridad:
 - limita eventos autonomos por dia;
 - si no entiende la humedad, aplaza;
 - si deposito baja de minimo, emite `ALERT`;
+- si no hay sensor de deposito, por defecto aplaza salvo permiso explicito de
+  perfil minimo;
 - si una lectura falta, el snapshot conserva schema valido y marca
   `pending_contradictions`;
 - el `ShadowSkeptic` es experimental y no afecta la decision.
@@ -210,6 +212,37 @@ python -m src.rhizome_steward run-once \
   --soil-dry-below-raw 1500 \
   --soil-wet-above-raw 2600
 ```
+
+Perfil hardware minimo de maceta:
+
+```bash
+python -m src.rhizome_steward run-once \
+  --esp32 serial \
+  --serial-port /dev/ttyACM0 \
+  --allow-missing-tank-sensor \
+  --soil-dry-below-raw 1500 \
+  --soil-wet-above-raw 2600
+```
+
+Este perfil existe para una ESP32 minima con bomba y sensor de humedad, mientras
+caudalimetro y nivel de deposito quedan previstos pero aun no instalados. Si se
+permite riego con deposito no sensorizado, el receipt conserva
+`tank_level_unavailable`; si falta caudalimetro, conserva
+`flow_sensor_unavailable`. Cuando esos sensores existan, quitar el flag y usar
+modo estricto.
+
+Si la firmware minima expone solo encender/apagar bomba, no el comando
+temporizado `WATER A <seconds>`, usar:
+
+```bash
+python -m src.rhizome_steward run-once \
+  --esp32 serial \
+  --serial-port /dev/ttyACM0 \
+  --serial-water-command-mode pump-toggle
+```
+
+El modo preferido sigue siendo `water-duration`, porque mantiene la duracion del
+evento bajo control de la frontera ESP32.
 
 Persistencia por defecto:
 

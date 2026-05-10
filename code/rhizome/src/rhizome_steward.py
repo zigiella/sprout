@@ -107,13 +107,13 @@ class Telemetry:
             soil_b_raw = _int_or_none(values.get("soil_b_raw"))
             tank_level_pct = _float_or_none(values.get("tank_level_pct"))
             flow_pulses = _int_or_none(values.get("flow_pulses"))
-            telemetry.soil_a_raw = soil_a_raw if soil_a_raw is not None else telemetry.soil_a_raw
-            telemetry.soil_b_raw = soil_b_raw if soil_b_raw is not None else telemetry.soil_b_raw
-            telemetry.tank_level_pct = tank_level_pct if tank_level_pct is not None else telemetry.tank_level_pct
-            telemetry.flow_pulses = flow_pulses if flow_pulses is not None else telemetry.flow_pulses
+            telemetry.soil_a_raw = soil_a_raw if soil_a_raw is not None and soil_a_raw >= 0 else telemetry.soil_a_raw
+            telemetry.soil_b_raw = soil_b_raw if soil_b_raw is not None and soil_b_raw >= 0 else telemetry.soil_b_raw
+            telemetry.tank_level_pct = tank_level_pct if tank_level_pct is not None and tank_level_pct >= 0 else telemetry.tank_level_pct
+            telemetry.flow_pulses = flow_pulses if flow_pulses is not None and flow_pulses >= 0 else telemetry.flow_pulses
             telemetry.host_link = values.get("host_link", telemetry.host_link)
             host_age_ms = _int_or_none(values.get("host_age_ms"))
-            telemetry.host_age_ms = host_age_ms if host_age_ms is not None else telemetry.host_age_ms
+            telemetry.host_age_ms = host_age_ms if host_age_ms is not None and host_age_ms >= 0 else telemetry.host_age_ms
             telemetry.bme280 = values.get("bme280", telemetry.bme280)
             temp_x100 = _float_or_none(values.get("bme280_temp_c_x100"))
             if temp_x100 is not None and temp_x100 >= -10000:
@@ -177,7 +177,7 @@ class FakeESP32Client:
             f"soil_a_raw={self.current_telemetry.soil_a_raw if self.current_telemetry.soil_a_raw is not None else -1} "
             f"soil_b_raw={self.current_telemetry.soil_b_raw if self.current_telemetry.soil_b_raw is not None else -1} "
             f"tank_level_pct={self.current_telemetry.tank_level_pct if self.current_telemetry.tank_level_pct is not None else -1} "
-            f"flow_pulses={self.current_telemetry.flow_pulses if self.current_telemetry.flow_pulses is not None else 0} "
+            f"flow_pulses={self.current_telemetry.flow_pulses if self.current_telemetry.flow_pulses is not None else -1} "
             f"host_link={self.current_telemetry.host_link} host_age_ms={self.current_telemetry.host_age_ms if self.current_telemetry.host_age_ms is not None else -1} "
             "source=fake"
         )
@@ -194,14 +194,17 @@ class FakeESP32Client:
 
 
 class SerialESP32Client:
-    def __init__(self, port: str, baud: int = 115200, timeout_s: float = 0.1, quiet_s: float = 0.35, max_wait_s: float = 3.0) -> None:
+    def __init__(self, port: str, baud: int = 115200, timeout_s: float = 0.1, quiet_s: float = 0.35, max_wait_s: float = 3.0, water_command_mode: str = "water-duration") -> None:
         try:
             import serial  # type: ignore
         except ModuleNotFoundError as exc:
             raise RuntimeError("pyserial no esta instalado. Instala hardware/host_tools/requirements.txt") from exc
+        if water_command_mode not in {"water-duration", "pump-toggle"}:
+            raise ValueError("water_command_mode debe ser water-duration o pump-toggle")
         self.serial = serial.Serial(port=port, baudrate=baud, timeout=timeout_s)
         self.quiet_s = quiet_s
         self.max_wait_s = max_wait_s
+        self.water_command_mode = water_command_mode
 
     def _collect(self) -> list[str]:
         lines: list[str] = []
@@ -250,7 +253,24 @@ class SerialESP32Client:
         return telemetry
 
     def water(self, plot: str, seconds: int) -> ESP32CommandResult:
-        return self.command(f"WATER {plot} {seconds}")
+        if self.water_command_mode == "water-duration":
+            return self.command(f"WATER {plot} {seconds}")
+        started = self.command("PUMP_ON")
+        if not started.ok:
+            return started
+        deadline = time.monotonic() + seconds
+        while time.monotonic() < deadline:
+            time.sleep(min(0.25, max(0.0, deadline - time.monotonic())))
+        stopped = self.command("PUMP_OFF")
+        return ESP32CommandResult(
+            ok=stopped.ok,
+            command=f"PUMP_ON/PUMP_OFF {seconds}",
+            sent_at=started.sent_at,
+            received_at=stopped.received_at,
+            lines=[*started.lines, *stopped.lines],
+            ack_status=stopped.ack_status,
+            reject_reason=stopped.reject_reason,
+        )
 
     def close(self) -> None:
         self.serial.close()
@@ -273,6 +293,8 @@ class StewardConfig:
     tank_minimum_pct: float = FIRMWARE_TANK_MINIMUM_PCT
     max_water_seconds: int = FIRMWARE_MAX_WATER_SECONDS_MVP
     max_autonomous_waters_per_day: int = 2
+    allow_missing_tank_sensor: bool = False
+    allow_missing_flow_sensor: bool = True
     execute_water: bool = False
     shadow_skeptic_enabled: bool = True
     gemma_rationale_url: str | None = None
@@ -425,6 +447,18 @@ class DeterministicDecisionEngine:
                 blocked_reason="TANK_LOW",
                 policy_refs=[str(active_policy_id), "firmware.tank_minimum_pct"],
             )
+        if tank is None and not config.allow_missing_tank_sensor:
+            return Decision(
+                action="DEFER",
+                action_params={"defer_until": zulu(now + timedelta(seconds=config.decision_interval_s)), "reason": "TANK_SENSOR_UNAVAILABLE"},
+                mode="safety_block",
+                rationale_short="No hay lectura de deposito. Se aplaza hasta sensor o verificacion manual explicita.",
+                rationale_full="Gate determinista: por defecto Rhizome no riega si falta el sensor de deposito previsto por la arquitectura.",
+                confidence=0.90,
+                blocked_reason="TANK_SENSOR_UNAVAILABLE",
+                policy_refs=[str(active_policy_id), "config.allow_missing_tank_sensor"],
+                contradictions=["tank_level_unavailable"],
+            )
 
         if telemetry.host_link not in {"FRESH", "UNKNOWN"}:
             return Decision(
@@ -491,17 +525,43 @@ class DeterministicDecisionEngine:
             )
 
         if soil_value <= dry_below:
+            if telemetry.flow_pulses is None and not config.allow_missing_flow_sensor:
+                return Decision(
+                    action="DEFER",
+                    action_params={"defer_until": zulu(now + timedelta(seconds=config.decision_interval_s)), "reason": "FLOW_SENSOR_UNAVAILABLE"},
+                    mode="safety_block",
+                    rationale_short="No hay caudalimetro disponible para verificar riego. Se aplaza.",
+                    rationale_full="Gate determinista: en modo estricto, Rhizome no ejecuta WATER sin sensor de caudal previsto por la arquitectura.",
+                    confidence=0.88,
+                    blocked_reason="FLOW_SENSOR_UNAVAILABLE",
+                    policy_refs=[str(active_policy_id), "config.allow_missing_flow_sensor"],
+                    contradictions=["flow_sensor_unavailable"],
+                )
             duration_s = max(1, min(config.requested_water_seconds, config.max_water_seconds, FIRMWARE_MAX_WATER_SECONDS_MVP))
             expected_liters = round(duration_s * 0.05, 3)
             unit = "%" if metric_kind == "pct" else "raw"
+            contradictions: list[str] = []
+            policy_refs = [str(active_policy_id), *refs, "firmware.max_water_seconds_mvp"]
+            confidence = 0.84
+            rationale_full = "Gate determinista: suelo seco, deposito aceptable, cooldown cumplido y duracion dentro del limite firmware MVP."
+            if tank is None:
+                contradictions.append("tank_level_unavailable")
+                policy_refs.append("config.allow_missing_tank_sensor")
+                confidence = min(confidence, 0.72)
+                rationale_full = "Gate determinista: suelo seco y cooldown cumplido. En perfil minimo, deposito no sensorizado se permite solo por flag explicito."
+            if telemetry.flow_pulses is None:
+                contradictions.append("flow_sensor_unavailable")
+                policy_refs.append("config.allow_missing_flow_sensor")
+                confidence = min(confidence, 0.74)
             return Decision(
                 action="WATER_A",
                 action_params={"duration_s": duration_s, "expected_liters": expected_liters},
                 mode="fast_path",
                 rationale_short=f"Humedad A {soil_value:.0f}{unit}, por debajo de {dry_below:.0f}{unit}. Riego corto dentro de sobre seguro.",
-                rationale_full="Gate determinista: suelo seco, deposito aceptable, cooldown cumplido y duracion dentro del limite firmware MVP.",
-                confidence=0.84,
-                policy_refs=[str(active_policy_id), *refs, "firmware.max_water_seconds_mvp"],
+                rationale_full=rationale_full,
+                confidence=confidence,
+                policy_refs=policy_refs,
+                contradictions=contradictions,
             )
 
         return Decision(
@@ -601,6 +661,8 @@ def build_snapshot(config: StewardConfig, telemetry: Telemetry, policy: dict[str
         pending_contradictions.append("soil_b_unavailable_or_uncalibrated")
     if telemetry.tank_level_pct is None:
         pending_contradictions.append("tank_level_unavailable")
+    if telemetry.flow_pulses is None:
+        pending_contradictions.append("flow_sensor_unavailable")
     sensors = {
         "soil_moisture_a_pct": soil_a_pct if soil_a_pct is not None else 0.0,
         "soil_moisture_b_pct": soil_b_pct if soil_b_pct is not None else (soil_a_pct if soil_a_pct is not None else 0.0),
@@ -757,6 +819,7 @@ class RhizomeSteward:
         }
         if executed and execution is not None:
             duration = float(action_params.get("duration_s", 0))
+            flow_sensor_present = "flow_sensor_unavailable" not in receipt["contradictions"]
             receipt["execution_details"] = {
                 "sent_to_esp32_at": execution.sent_at,
                 "esp32_ack_at": execution.received_at,
@@ -764,6 +827,7 @@ class RhizomeSteward:
                 "actual_duration_s": duration,
                 "flow_observed_lpm": 0.0,
                 "estimated_liters_actual": action_params.get("expected_liters", 0.0),
+                "flow_sensor_present": flow_sensor_present,
                 "esp32_lines": execution.lines,
             }
         return receipt
@@ -798,7 +862,7 @@ def build_client(args: argparse.Namespace) -> ESP32Client:
         return FakeESP32Client(telemetry=telemetry, reject_water_reason=args.fake_reject_water)
     if not args.serial_port:
         raise SystemExit("--serial-port es obligatorio con --esp32 serial")
-    return SerialESP32Client(args.serial_port, baud=args.baud)
+    return SerialESP32Client(args.serial_port, baud=args.baud, water_command_mode=args.serial_water_command_mode)
 
 
 def build_config(args: argparse.Namespace) -> StewardConfig:
@@ -818,6 +882,8 @@ def build_config(args: argparse.Namespace) -> StewardConfig:
         tank_minimum_pct=args.tank_minimum_pct,
         max_water_seconds=args.max_water_seconds,
         max_autonomous_waters_per_day=args.max_autonomous_waters_per_day,
+        allow_missing_tank_sensor=args.allow_missing_tank_sensor,
+        allow_missing_flow_sensor=not args.require_flow_sensor_for_water,
         execute_water=args.execute_water,
         shadow_skeptic_enabled=not args.disable_shadow_skeptic,
         gemma_rationale_url=args.gemma_rationale_url,
@@ -835,6 +901,7 @@ def add_common_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--esp32", choices=["fake", "serial"], default="fake")
     parser.add_argument("--serial-port")
     parser.add_argument("--baud", type=int, default=115200)
+    parser.add_argument("--serial-water-command-mode", choices=["water-duration", "pump-toggle"], default="water-duration")
     parser.add_argument("--execute-water", action="store_true", help="Permite enviar WATER al ESP32. Sin esto, WATER queda bloqueado como observe mode.")
     parser.add_argument("--decision-interval-s", type=int, default=900)
     parser.add_argument("--heartbeat-interval-s", type=int, default=2)
@@ -847,6 +914,8 @@ def add_common_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--tank-minimum-pct", type=float, default=FIRMWARE_TANK_MINIMUM_PCT)
     parser.add_argument("--max-water-seconds", type=int, default=FIRMWARE_MAX_WATER_SECONDS_MVP)
     parser.add_argument("--max-autonomous-waters-per-day", type=int, default=2)
+    parser.add_argument("--allow-missing-tank-sensor", action="store_true", help="Perfil minimo: permite WATER con deposito no sensorizado, registrando tank_level_unavailable.")
+    parser.add_argument("--require-flow-sensor-for-water", action="store_true", help="Bloquea/promociona futuro modo estricto cuando caudalimetro exista.")
     parser.add_argument("--retention-days", type=int, default=DEFAULT_RETENTION_DAYS)
     parser.add_argument("--max-total-bytes", type=int, default=DEFAULT_MAX_TOTAL_BYTES)
     parser.add_argument("--disable-shadow-skeptic", action="store_true")
