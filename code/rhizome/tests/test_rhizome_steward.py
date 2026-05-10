@@ -1,0 +1,184 @@
+from __future__ import annotations
+
+import tempfile
+import unittest
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "shared"))
+
+from schemas.decision_receipt import DecisionReceipt
+from schemas.rhizome_snapshot import RhizomeSnapshot
+
+from src.rhizome_steward import (
+    BoundedJsonlStore,
+    FakeESP32Client,
+    RhizomeSteward,
+    StewardConfig,
+    Telemetry,
+    zulu,
+)
+
+
+def _config(tmp: str, **overrides):
+    values = {
+        "state_dir": Path(tmp),
+        "sync_facade_state_dir": Path(tmp) / "sync_facade",
+        "decision_interval_s": 60,
+        "cooldown_s": 3600,
+        "requested_water_seconds": 8,
+        "max_total_bytes": 64 * 1024,
+        "retention_days": 30,
+    }
+    values.update(overrides)
+    return StewardConfig(**values)
+
+
+def _telemetry(*, soil_a_raw=30, tank_level_pct=70.0):
+    return Telemetry(
+        collected_at=zulu(datetime.now(timezone.utc)),
+        soil_a_raw=soil_a_raw,
+        soil_b_raw=soil_a_raw,
+        tank_level_pct=tank_level_pct,
+        flow_pulses=0,
+        host_link="FRESH",
+        host_age_ms=0,
+    )
+
+
+class RhizomeStewardTest(unittest.TestCase):
+    def test_dry_soil_executes_water_when_explicitly_enabled(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(tmp, execute_water=True),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=30)),
+            )
+            result = steward.run_once()
+
+            receipts = steward.store.iter_jsonl("decision_receipts")
+            facade_snapshot_exists = (Path(tmp) / "facade_data" / "rhizome_snapshot.json").exists()
+            facade_receipt_exists = (Path(tmp) / "facade_data" / "decision_receipt.json").exists()
+
+        self.assertEqual(result["action"], "WATER_A")
+        self.assertTrue(result["executed"])
+        self.assertIsNone(result["blocked_reason"])
+        self.assertEqual(receipts[-1]["execution_details"]["esp32_ack_status"], "OK")
+        self.assertTrue(facade_snapshot_exists)
+        self.assertTrue(facade_receipt_exists)
+
+    def test_dry_soil_does_not_water_without_execute_flag(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(tmp, execute_water=False),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=30)),
+            )
+            result = steward.run_once()
+
+        self.assertEqual(result["action"], "WATER_A")
+        self.assertFalse(result["executed"])
+        self.assertEqual(result["blocked_reason"], "OBSERVE_MODE_EXECUTE_WATER_FALSE")
+
+    def test_wet_soil_skips(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(tmp, execute_water=True),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=70)),
+            )
+            result = steward.run_once()
+
+        self.assertEqual(result["action"], "SKIP")
+        self.assertFalse(result["executed"])
+        self.assertEqual(result["blocked_reason"], "NO_ACTION_NEEDED")
+
+    def test_tank_low_alerts_without_water(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(tmp, execute_water=True),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=20, tank_level_pct=10.0)),
+            )
+            result = steward.run_once()
+
+        self.assertEqual(result["action"], "ALERT")
+        self.assertFalse(result["executed"])
+        self.assertEqual(result["blocked_reason"], "TANK_LOW")
+
+    def test_cooldown_defers_second_water(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(tmp, execute_water=True),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=20)),
+            )
+            first = steward.run_once()
+            second = steward.run_once()
+
+        self.assertEqual(first["action"], "WATER_A")
+        self.assertTrue(first["executed"])
+        self.assertEqual(second["action"], "DEFER")
+        self.assertEqual(second["blocked_reason"], "COOLDOWN_NOT_MET")
+
+    def test_shadow_skeptic_records_observation_without_changing_action(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(tmp, execute_water=False),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=30)),
+            )
+            result = steward.run_once()
+            shadow = steward.store.iter_jsonl("shadow_skeptic")
+
+        self.assertEqual(result["action"], "WATER_A")
+        self.assertFalse(shadow[-1]["affects_decision"])
+        self.assertIn("reviewed_action", shadow[-1])
+
+    def test_unknown_soil_defers(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(tmp, execute_water=True),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=1234)),
+            )
+            result = steward.run_once()
+
+        self.assertEqual(result["action"], "DEFER")
+        self.assertEqual(result["blocked_reason"], "SOIL_UNKNOWN")
+
+    def test_unknown_soil_snapshot_remains_shared_schema_compatible(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(tmp, execute_water=True),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=1234)),
+            )
+            steward.run_once()
+            snapshot = steward.store.load_json("current_snapshot.json")
+            receipt = steward.store.load_json("last_decision_receipt.json")
+
+        self.assertIsNotNone(snapshot)
+        self.assertIsNotNone(receipt)
+        RhizomeSnapshot.model_validate(snapshot)
+        DecisionReceipt.model_validate(receipt)
+        self.assertIn("soil_a_unavailable_or_uncalibrated", snapshot["pending_contradictions"])
+
+    def test_raw_thresholds_allow_autonomy_with_uncalibrated_sensor_units(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(tmp, execute_water=True, soil_dry_below_raw=1500, soil_wet_above_raw=2600),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=1200)),
+            )
+            result = steward.run_once()
+
+        self.assertEqual(result["action"], "WATER_A")
+        self.assertTrue(result["executed"])
+
+    def test_store_enforces_byte_budget(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            store = BoundedJsonlStore(Path(tmp), retention_days=30, max_total_bytes=900)
+            now = datetime.now(timezone.utc) - timedelta(days=10)
+            for index in range(50):
+                store.append("telemetry_samples", {"index": index, "payload": "x" * 80}, now + timedelta(days=index))
+
+            total = sum(path.stat().st_size for path in Path(tmp).glob("*/*.jsonl"))
+
+        self.assertLessEqual(total, 900)
+
+
+if __name__ == "__main__":
+    unittest.main()

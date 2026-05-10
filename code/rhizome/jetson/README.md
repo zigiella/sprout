@@ -263,3 +263,78 @@ quede alineado con el contrato.
 
 Si `gpu-experimental` falla durante el arranque, no depurar en caliente durante
 un rehearsal. Restaurar `safe-cpu` y documentar el log.
+
+## Steward autonomo minimo
+
+Para el piloto de maceta, `rhizome_steward.py` ejecuta el bucle minimo:
+
+```text
+heartbeat -> telemetry -> decision -> optional WATER -> receipt -> logs rotados
+```
+
+Smoke sin hardware real:
+
+```bash
+./run_steward_once.sh
+```
+
+Una pasada contra ESP32 real sin permitir agua:
+
+```bash
+ESP32_MODE=serial ESP32_PORT=/dev/ttyACM0 ./run_steward_once.sh
+```
+
+Una pasada contra ESP32 real permitiendo agua. Usar solo con Xilema/Bea en la
+frontera fisica y con duraciones pequenas:
+
+```bash
+ESP32_MODE=serial \
+ESP32_PORT=/dev/ttyACM0 \
+EXECUTE_WATER=1 \
+WATER_SECONDS=8 \
+./run_steward_once.sh
+```
+
+Si la humedad llega como raw no calibrado, declarar umbrales raw:
+
+```bash
+ESP32_MODE=serial \
+ESP32_PORT=/dev/ttyACM0 \
+SOIL_DRY_BELOW_RAW=1500 \
+SOIL_WET_ABOVE_RAW=2600 \
+./run_steward_once.sh
+```
+
+Loop autonomo:
+
+```bash
+ESP32_MODE=serial ESP32_PORT=/dev/ttyACM0 ./start_steward_loop.sh
+```
+
+Por defecto el loop decide cada 15 minutos, mantiene heartbeat entre
+decisiones, rota logs y escribe en:
+
+```text
+$HOME/.local/share/sprout/rhizome_steward/
+```
+
+El wrapper deriva `SYNC_FACADE_STATE_DIR` de `NODE_ID`, de modo que
+`NODE_ID=rhizome_02` buscara politica activa en
+`/tmp/sprout_rhizome_sync_facade/rhizome_02` salvo override explicito.
+
+Para que Pollen lea el estado real del steward:
+
+```bash
+FACADE_DATA_DIR=$HOME/.local/share/sprout/rhizome_steward/facade_data \
+./start_sync_facade.sh
+```
+
+Gemma 4 E2B puede mejorar la explicacion sin cambiar accion:
+
+```bash
+GEMMA_RATIONALE_URL=http://127.0.0.1:12000 ./run_steward_once.sh
+```
+
+El `ShadowSkeptic` se ejecuta por defecto como experimento de doble agente
+no vinculante. Sus observaciones se guardan en `shadow_skeptic/YYYY-MM-DD.jsonl`
+y siempre llevan `affects_decision=false`.

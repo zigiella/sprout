@@ -153,3 +153,95 @@ rhizome_02 -> http://192.168.1.60:13020/
 
 `rhizome_02` usa `code/rhizome/demo_data/rhizome_02`. Debe documentarse como
 simulacion de interoperabilidad multi-Rhizome, no como segundo nodo fisico.
+
+## Rhizome Steward v0
+
+`src/rhizome_steward.py` cierra el bucle autonomo minimo para piloto de
+maceta supervisado:
+
+```text
+ESP32 TELEMETRY -> snapshot -> safety/need gate -> optional Gemma rationale
+-> optional WATER -> DecisionReceipt -> logs rotados -> facade_data
+```
+
+Propiedades de seguridad:
+
+- no envia `WATER` salvo que se pase `--execute-water`;
+- nunca supera `30s` por evento (`FIRMWARE_MAX_WATER_SECONDS_MVP`);
+- aplica cooldown local antes de volver a regar;
+- limita eventos autonomos por dia;
+- si no entiende la humedad, aplaza;
+- si deposito baja de minimo, emite `ALERT`;
+- si una lectura falta, el snapshot conserva schema valido y marca
+  `pending_contradictions`;
+- el `ShadowSkeptic` es experimental y no afecta la decision.
+
+Ejecucion sin hardware:
+
+```bash
+cd code/rhizome
+python -m src.rhizome_steward run-once --esp32 fake
+```
+
+Ejecucion con ESP32 real, una sola pasada, aun sin abrir agua:
+
+```bash
+python -m src.rhizome_steward run-once \
+  --esp32 serial \
+  --serial-port /dev/ttyACM0
+```
+
+Ejecucion con permiso explicito para mandar `WATER A <seconds>` al ESP32:
+
+```bash
+python -m src.rhizome_steward run-once \
+  --esp32 serial \
+  --serial-port /dev/ttyACM0 \
+  --execute-water \
+  --water-seconds 8
+```
+
+Si la sonda de humedad aun no esta calibrada a porcentaje, usar umbrales raw:
+
+```bash
+python -m src.rhizome_steward run-once \
+  --esp32 serial \
+  --serial-port /dev/ttyACM0 \
+  --soil-dry-below-raw 1500 \
+  --soil-wet-above-raw 2600
+```
+
+Persistencia por defecto:
+
+```text
+~/.local/share/sprout/rhizome_steward/
+├── telemetry_samples/YYYY-MM-DD.jsonl
+├── decision_receipts/YYYY-MM-DD.jsonl
+├── shadow_skeptic/YYYY-MM-DD.jsonl
+├── current_snapshot.json
+├── last_decision_receipt.json
+└── facade_data/
+```
+
+El store aplica retencion por dias y presupuesto total de bytes
+(`--retention-days`, `--max-total-bytes`) para poder correr semanas/meses sin
+rebosar la microSD. Para que Pollen vea el bucle real, arranca la fachada con:
+
+```bash
+python -m src.rhizome_sync_facade \
+  --host 0.0.0.0 \
+  --port 13010 \
+  --data-dir ~/.local/share/sprout/rhizome_steward/facade_data
+```
+
+Gemma 4 E2B puede entrar como redactor contractual de rationale con el adapter:
+
+```bash
+python -m src.rhizome_steward run-once \
+  --esp32 serial \
+  --serial-port /dev/ttyACM0 \
+  --gemma-rationale-url http://127.0.0.1:12000
+```
+
+Gemma no cambia la accion ni autoriza agua; solo mejora la explicacion sobre
+facts ya decididos.
