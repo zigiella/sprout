@@ -44,7 +44,12 @@ class LLMUnavailableError(Exception):
 
 
 DEFAULT_NUM_CTX = 4096
-DEFAULT_NUM_PREDICT = 1024
+# num_predict reducido de 1024 -> 256 tras mini-experimento dia 24
+# (linea C). Reduce latencia ~53% sin perder validez del rationale: la
+# regla de brevedad de Xilema limita rationale_para_operador a 240
+# chars de todos modos. Override puntual via header X-Meristem-Num-Predict
+# si una alerta especifica necesita mas detalle.
+DEFAULT_NUM_PREDICT = 256
 
 
 def _post_chat(

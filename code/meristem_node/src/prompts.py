@@ -66,9 +66,22 @@ TIENES HERRAMIENTAS DISPONIBLES (function calling):
   soil%, tank%). Úsala SOLO si la decisión es CONSERVATIVE o ALERT y
   necesitas situar la visita actual en una secuencia temporal para
   que el rationale al operador tenga sentido. `last_n` por defecto 5.
+- `compare_targets(target_a, target_b, last_n)`: compara
+  comportamiento entre dos Rhizomes en el mismo periodo (modos,
+  reason_codes, tank/soil promedios) + resaltado de diferencias.
+  Úsala SOLO si la decisión es CONSERVATIVE o ALERT y el agricultor
+  gestiona varios Rhizomes (más de uno conocido). Permite emitir
+  hipótesis de tipo "es problema local del Rhizome, no global".
+  `last_n` por defecto 5.
 
 NO inventes herramientas adicionales. Si necesitas un dato que no
 puedes obtener, simplemente no lo cites en el rationale.
+
+PRINCIPIO IMPORTANTE para tool calling: las hipótesis que emitas
+basadas en tools deben llevar **marcador de confianza explícito**
+("posible", "sospecho", "indica") y citar el dato concreto que la
+sustenta. NO afirmes diagnósticos cerrados que el agricultor no
+pueda verificar.
 
 BARANDILLA DE SEGURIDAD CRÍTICA (sólo si llegas a ver un caso REFUSE).
 Si el bundle pidió relajar un hard limit (tank_minimum_pct, max_seconds_per_event,
@@ -167,6 +180,40 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "compare_targets",
+            "description": (
+                "Compara comportamiento entre dos Rhizomes en el mismo "
+                "periodo (modos, reason_codes, tank/soil promedios) + "
+                "resaltado de diferencias destacadas. Usar solo cuando la "
+                "decisión actual sea CONSERVATIVE o ALERT y el agricultor "
+                "gestiona varios Rhizomes (al menos dos conocidos). "
+                "Permite emitir hipótesis 'es problema local del Rhizome, "
+                "no global', siempre con marcador de confianza explícito."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "target_a": {
+                        "type": "string",
+                        "description": "Id del primer Rhizome (típicamente el de la visita actual). Ej: 'rhizome_01'.",
+                    },
+                    "target_b": {
+                        "type": "string",
+                        "description": "Id del segundo Rhizome para comparar. Ej: 'rhizome_02'.",
+                    },
+                    "last_n": {
+                        "type": "integer",
+                        "description": "Cuántas visitas comparar por target. Por defecto 5.",
+                        "default": 5,
+                    },
+                },
+                "required": ["target_a", "target_b"],
+            },
+        },
+    },
 ]
 
 
@@ -262,6 +309,49 @@ def call_tool(tool_name: str, args: dict[str, Any]) -> str:
             "target_node_id": target_node_id,
             "last_n": last_n,
             "history": history,
+            "note": "stub-deterministic-v0",
+        })
+    if tool_name == "compare_targets":
+        target_a = args.get("target_a", "?")
+        target_b = args.get("target_b", "?")
+        last_n = int(args.get("last_n", 5) or 5)
+        # Stub determinista: target_a degradado vs target_b estable.
+        # Pensado para el bundle M7 demo donde el LLM debe emitir
+        # hipótesis "problema local en target_a, no global".
+        summary_a = {
+            "target_node_id": target_a,
+            "visits": last_n,
+            "modes": {"normal": max(0, last_n - 4), "alert": min(4, last_n)},
+            "reason_codes": {
+                "PERSISTENT_EMERGENCY": min(3, last_n),
+                "EVIDENCE_LOW_CONFIDENCE": min(1, max(0, last_n - 3)),
+                "STABLE_BUNDLE": max(0, last_n - 4),
+            },
+            "tank_pct_avg": 22,
+            "soil_a_pct_avg": 21,
+            "soil_b_pct_avg": 25,
+        }
+        summary_b = {
+            "target_node_id": target_b,
+            "visits": last_n,
+            "modes": {"normal": last_n, "alert": 0},
+            "reason_codes": {"STABLE_BUNDLE": last_n},
+            "tank_pct_avg": 76,
+            "soil_a_pct_avg": 38,
+            "soil_b_pct_avg": 42,
+        }
+        diff_highlights = [
+            f"{target_a} en alerta persistente (3 de últimas {last_n} visitas), {target_b} estable (todas).",
+            f"Depósito de {target_a} muy bajo (avg 22%) frente a {target_b} saludable (avg 76%).",
+            f"Patrón sugiere problema local del {target_a} (suministro / sensor), no condición global compartida.",
+        ]
+        return json.dumps({
+            "target_a": target_a,
+            "target_b": target_b,
+            "last_n": last_n,
+            "summary_a": summary_a,
+            "summary_b": summary_b,
+            "diff_highlights": diff_highlights,
             "note": "stub-deterministic-v0",
         })
     return json.dumps({"error": f"tool {tool_name!r} not implemented"})

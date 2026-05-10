@@ -1,0 +1,22 @@
+{
+  "source_pollen_id": "pollen_demo_01",
+  "target_rhizome_id": "rhizome_01",
+  "active_policy_id": "pkt_rhizome_01_baseline",
+  "rhizome_snapshot": {
+    "snapshot_id": "snap_20260510T120000_compare_demo",
+    "mode": "alert",
+    "alert_latched": true,
+    "pending_contradictions": [],
+    "soil_a_pct": 19,
+    "soil_b_pct": 24,
+    "tank_pct": 14,
+    "_demo_hint": "agricultor gestiona rhizome_01 y rhizome_02; este viene degradado, el otro estable"
+  },
+  "decision_receipts": [
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "DEPOSITO_BAJO"},
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "DEPOSITO_BAJO"},
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "ALERTA_LATCHED"}
+  ],
+  "weather_digest": {"isStale": false, "summary": "Soleado moderado, sin lluvia esperada."},
+  "validation_stamps": []
+}
