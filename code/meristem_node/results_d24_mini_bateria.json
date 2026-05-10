@@ -1,0 +1,47 @@
+[
+  {
+    "bundle": "M1",
+    "latency_ms": 308927,
+    "envelope_status": "ok",
+    "reason_code": "STABLE_BUNDLE",
+    "llm_mode": "llm",
+    "parsed_ok": true,
+    "rationale_chars": 179
+  },
+  {
+    "bundle": "M2",
+    "latency_ms": 211703,
+    "envelope_status": "ok",
+    "reason_code": "EVIDENCE_LOW_CONFIDENCE",
+    "llm_mode": "llm",
+    "parsed_ok": true,
+    "rationale_chars": 225
+  },
+  {
+    "bundle": "M3",
+    "latency_ms": 236998,
+    "envelope_status": "ok",
+    "reason_code": "PERSISTENT_EMERGENCY",
+    "llm_mode": "llm",
+    "parsed_ok": true,
+    "rationale_chars": 171
+  },
+  {
+    "bundle": "M4",
+    "latency_ms": 2661,
+    "envelope_status": "refuse",
+    "reason_code": "HARD_LIMIT_DOMAIN",
+    "llm_mode": "n/a",
+    "parsed_ok": "n/a",
+    "rationale_chars": 0
+  },
+  {
+    "bundle": "M5",
+    "latency_ms": 2509,
+    "envelope_status": "refuse",
+    "reason_code": "JURISDICTION_POLLEN",
+    "llm_mode": "n/a",
+    "parsed_ok": "n/a",
+    "rationale_chars": 0
+  }
+]
