@@ -74,7 +74,7 @@ Sprout existe para llevar **criterio operativo a parcelas donde no puedes estar 
 
 ## Cómo se usa Gemma 4
 
-- **Audio multimodal nativo** — Pollen alimenta `.wav` 16kHz directamente a Gemma 4 E4B vía LiteRT-LM, **sin pipeline STT separado**. Reemplazó al `SpeechRecognizer` de Android tras inestabilidad extensa. Código: `code/pollen/.../PollenVoiceInfra.kt`.
+- **Audio multimodal nativo** — Pollen alimenta `.wav` 16kHz directamente a Gemma 4 E4B vía LiteRT-LM, **sin pipeline STT separado**. Código: `code/pollen/.../PollenVoiceInfra.kt`.
 - **Tool calling** — Meristem usa Gemma 4 E4B con tool calling nativo para `compose_policy(...)` y validación de bundles. Mini-batería 5/5 PASS. Código: `code/meristem_node/...`.
 - **Routing entre tres nodos** — tres instancias de Gemma 4 (E2B + E4B + E4B), tres jurisdicciones, ningún roundtrip a la nube. Cada nodo guarda el tipo de contexto del que su capa es responsable.
 - **Perfil `safe-cpu` contractual** — Rhizome corre Gemma 4 E2B-it Q4_K_S en CPU del Jetson (validado 18/18 en batería de tests). El offload GPU funciona (36/36 capas) pero la calidad aún no es contractual.
@@ -116,28 +116,17 @@ make test   # ejecuta 13 tests deterministas + smoke LLM
 - Firmware ESP32: [`hardware/firmware_esp32/README.md`](hardware/firmware_esp32/README.md)
 - Esquemas de cableado: [`hardware/wiring_diagrams/day19_mounting_schematics.md`](hardware/wiring_diagrams/day19_mounting_schematics.md)
 
-### Instalar Pollen en tu Android (Bring Your Own Model)
+### Instalación del modelo en la app
 
-Para ejecutar Pollen con **inferencia real de Gemma 4 E4B** (no el mock de demo), instala el sabor *device* y carga el modelo por sideloading. Tres pasos:
+El agricultor descarga Pollen desde la tienda — la app pesa apenas **~15 MB**. Al abrirla por primera vez con conexión WiFi, aparece una pantalla de onboarding:
 
-**1. Compila e instala el APK** (incluye el motor LiteRT-LM):
+> *"Descargando cerebro agronómico (Gemma 4)..."*
 
-```bash
-cd code/pollen
-./gradlew installDeviceDebug
-```
+La app usa el `DownloadManager` de Android para bajar `gemma-4-E4B-it.litertlm` (3,6 GB) desde un CDN seguro directamente al almacenamiento interno privado de la app (`/data/data/net.sprout.pollen/files/`). Una vez completada la descarga, **el modelo vive en el dispositivo para siempre y Pollen funciona 100% offline** — sin más round-trip a la red.
 
-**2. Descarga el archivo del modelo** `gemma-4-E4B-it.litertlm` (3.6 GB) desde el almacenamiento del proyecto a tu ordenador.
+> Requisitos: Android 12 / API 31+, 12 GB RAM recomendados (16 GB ideal), al menos 6 GB libres para el archivo del modelo más margen de runtime. CPU es la ruta estable; GPU/NPU varía según dispositivo.
 
-**3. Inyecta el modelo en el móvil** (sideloading):
-
-```bash
-adb push gemma-4-E4B-it.litertlm /data/local/tmp/
-```
-
-Abre la app Pollen en el móvil. El `LiteRtSessionManager` lee el modelo desde `/data/local/tmp/` y la voz + chat funcionan **100% offline** — sin round-trip a la red.
-
-> Requisitos: Android 12 / API 31+, 12 GB RAM recomendados (16 GB ideal), al menos 6 GB libres. CPU es la ruta estable; GPU/NPU varía según dispositivo.
+> Para desarrolladores y nightly testers, el flujo de sideload por `adb push` está documentado en [`code/pollen/README.md`](code/pollen/README.md).
 
 ---
 
