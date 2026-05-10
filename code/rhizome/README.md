@@ -342,3 +342,32 @@ determinista.
 Gemma 4 no es fuente de verdad para estos campos. Su papel correcto es redactar
 mejor `rationale_short`/`rationale_full` y, como siguiente paso, sintetizar una
 narrativa de ausencia a partir de snapshots y receipts ya validados.
+
+#### Narrador Gemma 4 opcional
+
+La fachada puede usar Gemma 4 E2B local como narrador del boton de ausencia:
+
+```bash
+GEMMA_VISIT_NARRATOR_URL=http://127.0.0.1:12000 \
+GEMMA_VISIT_NARRATOR_MODEL=gemma4:e2b \
+./start_sync_facade.sh
+```
+
+Cuando esta activo, Gemma solo puede reescribir `headline`, `summary`,
+`highlights` y `recommendation`. No puede cambiar `counts`, `severity`,
+`source`, `simulation`, receipts ni snapshots. Si Gemma falla, tarda demasiado o
+devuelve JSON invalido, la respuesta cae al resumen determinista.
+
+Campos de trazabilidad:
+
+```json
+{
+  "source": "deterministic_visit_summary",
+  "narrative_source": "gemma_visit_narrator",
+  "gemma_narrator": {
+    "enabled": true,
+    "used": true,
+    "model": "gemma4:e2b"
+  }
+}
+```

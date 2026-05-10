@@ -147,6 +147,20 @@ adapter Ollama-compatible (`:12000`). Es una fachada separada en `:13010`:
 ./smoke_sync_facade.sh
 ```
 
+Para activar el narrador Gemma 4 del boton de ausencia, primero debe estar vivo
+el adapter Ollama-compatible en `:12000`:
+
+```bash
+GEMMA_VISIT_NARRATOR_URL=http://127.0.0.1:12000 \
+GEMMA_VISIT_NARRATOR_MODEL=gemma4:e2b \
+./start_sync_facade.sh
+
+./smoke_gemma_visit_narrator.sh
+```
+
+El narrador solo reescribe narrativa humana. Los counts, receipts, flags
+`executed`, `simulation` y codigos de seguridad siguen siendo deterministas.
+
 Endpoints servidos:
 
 ```text
@@ -220,6 +234,30 @@ rhizome_02 -> http://<jetson-host-or-ip>:13020/
 `rhizome_02` usa datos de `code/rhizome/demo_data/rhizome_02`. Es una
 simulacion host-side de interoperabilidad multi-Rhizome: no hay segundo ESP32,
 no hay segunda bomba y no se toca hardware fisico.
+
+## Primer observe mode con ESP32 minimo
+
+Cuando el ESP32 exponga bomba on/off + humedad de tierra, probar primero sin
+ejecucion de agua:
+
+```bash
+./run_steward_serial_observe_minimal.sh
+```
+
+Equivale a:
+
+```bash
+ESP32_MODE=serial \
+ESP32_PORT=/dev/ttyACM0 \
+SERIAL_WATER_COMMAND_MODE=pump-toggle \
+ALLOW_MISSING_TANK_SENSOR=1 \
+REQUIRE_FLOW_SENSOR_FOR_WATER=0 \
+EXECUTE_WATER=0 \
+./run_steward_once.sh
+```
+
+El primer riego real debe ser manual, corto y supervisado por Xilema/Bea,
+cambiando explicitamente `EXECUTE_WATER=1` y un `WATER_SECONDS` bajo.
 
 Baseline operativo:
 

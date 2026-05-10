@@ -190,6 +190,28 @@ Decision linguistica adicional:
   de Pollen para idiomas minoritarios africanos como Pular, sin sobrecargar a
   Rhizome ni tocar la frontera fisica.
 
+## Narrador Gemma 4 para ausencia
+
+Decision posterior: empezar a usar Gemma 4 de forma mas completa en Rhizome sin
+cederle autoridad operacional.
+
+Implementacion:
+
+- `GET /summary/since` puede activar un narrador Gemma 4 mediante
+  `--narrator-url` / `GEMMA_VISIT_NARRATOR_URL`.
+- Gemma solo reescribe `headline`, `summary`, `highlights` y `recommendation`.
+- La fuente de verdad permanece en `DecisionReceipt`, `RhizomeSnapshot`,
+  `counts`, `severity`, `executed`, `blocked_reason`, `simulation` y codigos de
+  seguridad.
+- Si Gemma falla, devuelve texto fuera de schema o tarda demasiado, se conserva
+  el resumen determinista.
+- Trazabilidad nueva: `source="deterministic_visit_summary"`,
+  `narrative_source="gemma_visit_narrator"` cuando se usa, y
+  `gemma_narrator.used=true`.
+
+Esta capa da mas valor demo a Gemma 4: no decide agua, pero convierte eventos
+tecnicos auditables en una explicacion humana de ausencia.
+
 ## Validacion
 
 Comandos:
@@ -203,7 +225,7 @@ bash -n code/rhizome/jetson/start_steward_loop.sh
 
 Resultado:
 
-- 21 tests OK.
+- 27 tests OK.
 - Compilacion OK.
 - Sintaxis shell OK.
 - `RhizomeSnapshot` y `DecisionReceipt` emitidos por el caso de sensor
