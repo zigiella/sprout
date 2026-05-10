@@ -55,4 +55,15 @@
     <string name="visit_connect_sub">BLE / WiFi · 0.4s</string>
     <string name="visit_snapshot_sub">6.2 KB</string>
     <string name="visit_receipts_sub">Ventana 24h</string>
+    
+    <!-- Voice Command Beta -->
+    <string name="voice_command_title">Comando de Voz</string>
+    <string name="voice_beta_disclaimer">Esta feature está en beta — si el sistema no entiende con seguridad, te lo dirá.</string>
+    <string name="status_label">Estado: %1$s</string>
+    <string name="stop_recording">Detener Grabación</string>
+    <string name="chat_with_rhizome">Chat con Rhizome</string>
+    <string name="view_generated_policy">Ver política generada (JSON)</string>
+    <string name="policy_dialog_title">Política Generada por Gemma 4</string>
+    <string name="close_dialog">Cerrar</string>
+    <string name="speech_prompt">Habla a Gemma 4...</string>
 </resources>

@@ -30,6 +30,11 @@ import android.speech.RecognizerIntent
 
 import kotlinx.serialization.json.Json
 
+import androidx.compose.ui.res.stringResource
+import net.sprout.pollen.R
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 @Composable
 fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
     var state by remember { mutableStateOf("Idle") }
@@ -109,7 +114,7 @@ fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
     
     Column(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
         Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-            Text(text = "Voice Command", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.voice_command_title), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.width(8.dp))
             Surface(
                 color = Color(0xFFFF9800), // Amber/Orange
@@ -124,13 +129,13 @@ fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
             }
         }
         Text(
-            text = "Esta feature está en beta — si el sistema no entiende con seguridad, te lo dirá.",
+            text = stringResource(R.string.voice_beta_disclaimer),
             style = MaterialTheme.typography.bodySmall,
             color = Color.Gray
         )
         Spacer(modifier = Modifier.height(8.dp))
         
-        Text("Status: $state", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.status_label, state), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
         if (resultText.isNotEmpty()) {
             Text(text = resultText, style = MaterialTheme.typography.bodyMedium, color = Color.DarkGray)
         }
@@ -138,17 +143,19 @@ fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
         if (policyJsonText.isNotEmpty()) {
             Spacer(modifier = Modifier.height(4.dp))
             TextButton(onClick = { showPolicyDialog = true }) {
-                Text("Ver política generada (JSON)")
+                Text(stringResource(R.string.view_generated_policy))
             }
         }
         
         Spacer(modifier = Modifier.height(8.dp))
+        
+        val speechPrompt = stringResource(R.string.speech_prompt)
         Button(
             onClick = {
                 val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                     putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
                     putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES")
-                    putExtra(RecognizerIntent.EXTRA_PROMPT, "Habla a Gemma 4...")
+                    putExtra(RecognizerIntent.EXTRA_PROMPT, speechPrompt)
                 }
                 isRecording = true
                 speechLauncher.launch(intent)
@@ -160,22 +167,23 @@ fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
                 containerColor = if (isRecording) Color.Red else MaterialTheme.colorScheme.primary
             )
         ) {
-            Text(if (isRecording) "Stop Recording" else "Chat with Rhizome", fontWeight = FontWeight.Bold)
+            Text(if (isRecording) stringResource(R.string.stop_recording) else stringResource(R.string.chat_with_rhizome), fontWeight = FontWeight.Bold)
         }
     }
     
     if (showPolicyDialog) {
         AlertDialog(
             onDismissRequest = { showPolicyDialog = false },
-            title = { Text("Política Generada por Gemma 4") },
+            title = { Text(stringResource(R.string.policy_dialog_title)) },
             text = { 
                 Text(
                     text = policyJsonText, 
-                    style = MaterialTheme.typography.bodySmall.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace)
+                    style = MaterialTheme.typography.bodySmall.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace),
+                    modifier = Modifier.verticalScroll(rememberScrollState())
                 ) 
             },
             confirmButton = {
-                TextButton(onClick = { showPolicyDialog = false }) { Text("Cerrar") }
+                TextButton(onClick = { showPolicyDialog = false }) { Text(stringResource(R.string.close_dialog)) }
             }
         )
     }

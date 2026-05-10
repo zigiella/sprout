@@ -201,6 +201,7 @@ fun VisitarRhizomeScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
             
+            /* Botón temporalmente oculto
             Button(
                 onClick = onChatClicked,
                 modifier = Modifier.fillMaxWidth().height(48.dp),
@@ -210,6 +211,7 @@ fun VisitarRhizomeScreen(
                 Text(stringResource(R.string.chat_pollen), fontWeight = FontWeight.Bold)
             }
             Spacer(modifier = Modifier.height(8.dp))
+            */
             OutlinedButton(
                 onClick = onAuditClicked,
                 modifier = Modifier.fillMaxWidth().height(48.dp),
