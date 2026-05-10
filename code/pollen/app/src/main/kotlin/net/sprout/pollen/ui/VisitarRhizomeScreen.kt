@@ -220,6 +220,14 @@ fun VisitarRhizomeScreen(
                 Text(stringResource(R.string.audit_pollen), fontWeight = FontWeight.Bold)
             }
             
+            Spacer(modifier = Modifier.height(24.dp))
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+                thickness = 2.dp,
+                color = Color(0xFF4CAF50).copy(alpha = 0.5f)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            
             // Temporary Beta Voice feature button
             snapshot?.let { snap ->
                 VoiceBetaPanel(client = client, snapshot = snap)
