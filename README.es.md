@@ -137,6 +137,48 @@ La app usa el `DownloadManager` de Android para bajar `gemma-4-E4B-it.litertlm` 
 
 ---
 
+## Trabajo futuro / Roadmap
+
+Sprout resuelve el caso mínimo. La arquitectura está diseñada para escalar. Esto es lo que ya estamos diseñando para las próximas iteraciones:
+
+### Autonomía hardware
+
+- **Alimentación solar de Rhizome.** Combinar el perfil MAXN_SUPER de la Jetson Orin Nano Super con un panel fotovoltaico pequeño + batería LiFePO4 para eliminar dependencia de red eléctrica. Edge AI sin red eléctrica es el complemento natural a local-first: el campo tampoco necesita enchufe.
+- **Mesh entre parcelas sin WiFi.** LoRa o Meshtastic entre Rhizomes para federación cuando la señal celular es débil y el móvil del agricultor es la única red al alcance. Pollen como portador principal; LoRa como fallback de bajo ancho de banda para propagar `AlertEvent`.
+
+### Gemma 4 multimodal en campo
+
+- **Visión multimodal.** Cámara + Gemma 4 detectando estrés hídrico visible, presión de plagas, fase de crecimiento. La arquitectura ya está preparada — el mismo schema `MissionPatch` puede transportar referencias a imágenes sin cambio de contrato.
+- **Audio bidireccional.** Pollen también le habla al agricultor: pre-aviso conversacional — *"mañana toca riego, pero el depósito está al 30%"*. Full-duplex con salida de audio Gemma 4, mismo modelo de privacidad on-device.
+
+### Localización lingüística
+
+- **Gemma 4 traduce al idioma del usuario.** El sistema razona en contratos (inglés, estructurado, determinista); Pollen adapta el idioma de superficie a lo que hable el agricultor. El usuario nunca ve JSON; ve su idioma. Desacoplar **razonamiento interno** de **superficie externa** mantiene la trazabilidad limpia y la experiencia de usuario nativa.
+- **Fine-tuning de Gemma 4 en lenguas minoritarias.** Los pequeños agricultores del mundo no hablan inglés. Fine-tuning de E4B sobre vocabularios agrícolas locales (swahili, hausa, wolof, quechua, aimara, catalán, euskera…) abre el sistema al **84% de las explotaciones por debajo de 2 hectáreas** que la FAO cuenta como la fuerza agrícola primaria del mundo.
+
+### Sensores y complejidad de parcela
+
+- **Más sensores por parcela.** Conductividad, pH, temperatura de suelo más allá de la humedad. Riego multi-zona con electroválvulas y planificación por zona.
+- **Estaciones meteorológicas locales.** Un sensor meteorológico físico junto a PLOT_01 sustituye al `WeatherDigest` portátil que lleva Pollen para parcelas con visitas frecuentes.
+- **Integración con plataformas climáticas oficiales.** AEMET (España), MeteoCat (Cataluña) o equivalentes regionales — sustituir el `WeatherDigest` portado por datos institucionales verificados cuando hay red disponible.
+
+### Escalado del sistema
+
+- **Meristem de 4 reglas a 8-12.** Hoy el Evaluator determinista corre 4 reglas; post-hackathon ampliación a lógica estacional, cultivos heterogéneos, presupuestos hídricos multi-mes. Plan documentado en 7 fases progresivas.
+- **Fine-tuning de E4B con Unsloth.** Entrenar sobre dataset agrícola sintético + real para especializar la autoría de políticas de Meristem sin degradar razonamiento general.
+- **Federación multi-Rhizome.** Scheduler local coordinando N Rhizomes lógicos en una sola Jetson (explotaciones medianas con múltiples zonas) + federación real entre múltiples Jetsons (explotaciones grandes con parcelas geográficamente separadas).
+- **GPU quality pass.** Cerrar la deriva semántica del offload GPU (casos de test RD04, RH02) para promocionar el perfil `gpu-experimental` a contractual.
+
+### Deuda y pulido
+
+- Tests automatizados de UI (hoy smoke manual).
+- API docs auto-generadas (OpenAPI desde contratos JSON).
+- Identidad visual signal-seed (`#C5F26B`) consistente en todos los frontends.
+
+**Sprout resuelve el caso mínimo. La arquitectura escala.**
+
+---
+
 ## Equipo
 
 **zigiella** — solo developer trabajando con un equipo coordinado de agentes IA especializados (Cambium, Floema, Meristem, Xilema, Corola, Endodermis, Bract, Venation), cada uno con un rol e identidad definidos. La metodología — repo-first, bitácoras escritas como contrato, identidad inline en git, mensajes de coordinación de inicio del día con plantilla `Interrelaciones` explícita — está documentada en [`CONTRIBUTING.md`](CONTRIBUTING.md) y comentada en [writeup §5](writeup/draft.md).
