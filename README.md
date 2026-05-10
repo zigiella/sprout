@@ -125,6 +125,48 @@ make test   # runs 13 deterministic tests + LLM smoke
 
 ---
 
+## Future work / Roadmap
+
+Sprout solves the minimum case. The architecture is designed to scale. Here is what we are already designing for the next iterations:
+
+### Hardware autonomy
+
+- **Solar power for Rhizome.** Combine the Jetson Orin Nano Super's MAXN_SUPER profile with a small PV array + LiFePO4 battery to remove grid dependency. Edge AI without grid is the natural complement to local-first: the field doesn't need power either.
+- **Mesh between plots without WiFi.** LoRa or Meshtastic between Rhizomes for federation when the cell signal is weak and the farmer's phone is the only network in range. Pollen as primary ferry; LoRa as low-bandwidth fallback for `AlertEvent` propagation.
+
+### Multimodal Gemma 4 in the field
+
+- **Vision multimodal.** Camera + Gemma 4 detecting visible water stress, pest pressure, growth phase. The architecture is already set up — the same `MissionPatch` schema can carry image references with no contract change.
+- **Bidirectional audio.** Pollen also speaks to the farmer: conversational pre-warning — *"tomorrow's irrigation is scheduled, but the tank is at 30%"*. Full-duplex with Gemma 4 audio output, same on-device privacy model.
+
+### Language localization
+
+- **Gemma 4 translates to the user's language.** The system reasons in contracts (English, structured, deterministic); Pollen adapts the surface language to whatever the farmer speaks. The user never sees JSON; they see their language. Decoupling **internal reasoning** from **external surface** keeps the audit trail clean and the user experience native.
+- **Fine-tuning Gemma 4 on minority languages.** Small farmers globally don't speak English. Fine-tuning E4B on local agricultural vocabularies (Swahili, Hausa, Wolof, Quechua, Aymara, Catalan, Basque…) opens the system to the **84% of farms under 2 hectares** that FAO counts as the world's primary agricultural force.
+
+### Sensors and field complexity
+
+- **More sensors per plot.** Conductivity, pH, soil temperature beyond moisture. Multi-zone irrigation with electrovalves and per-zone scheduling.
+- **Local weather stations.** A physical weather sensor next to PLOT_01 replaces the portable `WeatherDigest` carried by Pollen for plots with frequent visits.
+- **Integration with official climate platforms.** AEMET (Spain), MeteoCat (Catalonia), or regional equivalents — replace the carried `WeatherDigest` with verified institutional data when network is available.
+
+### System scaling
+
+- **Meristem from 4 rules to 8-12.** Today the deterministic Evaluator runs 4 rules; post-hackathon expansion to seasonal logic, heterogeneous crops, multi-month water budgets. Plan documented in 7 progressive phases.
+- **Fine-tuning E4B with Unsloth.** Train on a synthetic + real agricultural dataset to specialize Meristem's policy authoring without degrading general reasoning.
+- **Multi-Rhizome federation.** Local scheduler coordinating N logical Rhizomes on a single Jetson (medium farms with multiple zones) + real federation across multiple Jetsons (large farms with geographically separate plots).
+- **GPU quality pass.** Close GPU offload semantic drift (test cases RD04, RH02) to promote the `gpu-experimental` profile to contractual.
+
+### Debt and polish
+
+- Automated UI tests (currently manual smoke).
+- Auto-generated API docs (OpenAPI from JSON contracts).
+- Signal-seed visual identity (`#C5F26B`) consistent across all frontends.
+
+**Sprout solves the minimum case. The architecture scales.**
+
+---
+
 ## Team
 
 **zigiella** — solo developer working with a coordinated team of specialized AI agents (Cambium, Floema, Meristem, Xilema, Corola, Endodermis, Bract, Venation), each with a defined role and identity. The methodology — repo-first, written bitácoras as contract, identity inline for git, day-start coordination messages with explicit `Interrelaciones` template — is documented in [`CONTRIBUTING.md`](CONTRIBUTING.md) and discussed in [writeup §5](writeup/draft.md).
