@@ -39,3 +39,9 @@ _(pendiente)_
 ## Trucos y problemas conocidos (Ollama, structured output, caching)
 
 - 🔴 [2026-04-21 · Trucos y problemas conocidos: Ollama + Gemma 4](experiments/2026-04-21_trucos-problemas-ollama-gemma4_estoma.md) — `format` con JSON schema funciona pero con minas: `think=false`+`format` ignora schema (#15260), fences markdown en E4B/31B (#15595), FA en 31B denso cuelga (#15350), GPU→CPU silencioso (#15237). `/api/chat` > `/api/generate` (templating, tool-calling). `keep_alive=-1` + prompt byte-estable = reuso de KV. Tags: @xilema, @cambium, @meristem, @floema, @corola.
+
+---
+
+## Arquitectura y UI (Pollen)
+
+- 🔴 [2026-05-10 · Estrategia de Internacionalización (i18n): El Enfoque C](07_llm_localization_strategy.md) — La capa de Edge (Jetson/Meristem) genera explicaciones técnicas unificadas agnósticas (inglés base). Pollen (Gemma 4 local) actúa como traductor semántico en vivo según el idioma del OS. Desacoplamiento total para futuros despliegues en idiomas minoritarios (Pular, Wolof). Tags: @floema, @xilema, @cambium.
