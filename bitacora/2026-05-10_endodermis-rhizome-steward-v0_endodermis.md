@@ -178,6 +178,18 @@ Regla de producto:
 > `DecisionReceipt`. Gemma 4 puede mejorar el rationale, pero no convierte una
 > propuesta no ejecutada en riego real.
 
+Decision linguistica adicional:
+
+- El sistema puede "pensar" internamente en el idioma que el equipo elija, pero
+  su autoridad vive en contratos JSON, no en frases.
+- Los codigos, acciones, cantidades, timestamps y flags de ejecucion permanecen
+  estables y sin traducir.
+- Pollen, con Gemma 4 local, es responsable de adaptar la experiencia al idioma
+  de la interfaz y de traducir solo lo que no llegue ya localizado.
+- Esto deja abierta una via fuerte de impacto: fine-tuning o adaptacion futura
+  de Pollen para idiomas minoritarios africanos como Pular, sin sobrecargar a
+  Rhizome ni tocar la frontera fisica.
+
 ## Validacion
 
 Comandos:

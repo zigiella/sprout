@@ -284,6 +284,20 @@ facts ya decididos.
 Rhizome devuelve siempre JSON. Pollen puede elegir idioma con `?locale=en` o
 `?locale=es`; si no se indica, el fallback es `es`.
 
+Decision de arquitectura de idioma:
+
+- El sistema razona en contratos, no en el idioma de la interfaz.
+- Los campos operacionales (`action`, `executed`, `blocked_reason`, cantidades,
+  timestamps, codigos de veto) no se traducen.
+- Rhizome puede devolver narrativa localizada para el MVP, pero la fuente de
+  verdad sigue siendo el `DecisionReceipt`.
+- Pollen es la capa responsable de experiencia linguistica. Su Gemma 4 local
+  puede traducir solo la narrativa que no llegue ya localizada, segun el idioma
+  activo de la interfaz.
+- Esta separacion permite que, en el futuro, Pollen pueda usar fine-tuning o
+  adaptacion local para idiomas minoritarios (por ejemplo Pular, Swahili o
+  Wolof) sin pedir a Rhizome que cambie su logica de riego ni sus contratos.
+
 Endpoints principales:
 
 ```text
