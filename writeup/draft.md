@@ -8,11 +8,11 @@
 
 ## 0. Título + subtítulo — ~30 palabras
 
-**Título propuesto:** *Sprout — local-first irrigation decisions for plots the network forgets.*
+**Título propuesto:** *Sprout — local-first water optimization for plots the network forgets.*
 
-**Subtítulo propuesto (frase manifiesto, bookend del video):** *When network is absent — and the human is far — local criteria still irrigate.*
+**Subtítulo propuesto (frase manifiesto, bookend cierre del video):** *When network is absent — and the human is far — local criteria still irrigate.*
 
-<!-- Decisión final tras video rodado (días 24-27). Bea modula. -->
+<!-- Eco hídrico abre/cierra del video: la pregunta inicial superpuesta sobre el plano de Castellar — *"When network is absent — and the human is far — what irrigates the field?"* — se responde en el bookend cierre — *"…local criteria still irrigate."* El verbo `irrigate` abre y cierra el arco narrativo. Decisión Bea día 24 sobre inicio firme (Opción A: 3 cartelas superpuestas sobre el plano abierto de Castellar, sin fullscreen sobre negro; cartela bisagra "Imagine this pot is a whole plot." conservada y reubicada a 0:11-0:14, sincronizada con el dolly-in al macetero PLOT_01). Decisión final del título tras video rodado (días 26-27). Bea modula. -->
 
 ## 1. Problema — ~200 palabras
 

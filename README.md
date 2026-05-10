@@ -6,7 +6,7 @@
 
 # Sprout
 
-> **AI Local-first irrigation decisions.**
+> **AI Local-first water optimization for plots the network forgets.**
 > *Safe · explainable · open-source.*
 
 > *"When network is absent — and the human is far — local criteria still irrigate."*
@@ -18,7 +18,7 @@
 
 ## In 30 seconds
 
-Sprout is a **local-first AI architecture for irrigation decisions in remote plots** — places where the field, the person and the network rarely coincide in time.
+Sprout is a **local-first AI architecture for water optimization in remote plots** — places where the field, the person and the network rarely coincide in time.
 
 Each plot runs **Rhizome**, an autonomous node that decides offline using **Gemma 4 E2B** on a Jetson Orin Nano Super. Rhizome never moves water directly: an **ESP32-S3** with custom firmware enforces hard safety limits and can veto or modulate any action.
 
@@ -74,7 +74,7 @@ Sprout exists to bring **operational criteria to plots where you can't be every 
 
 ## How Gemma 4 is used
 
-- **Multimodal audio native** — Pollen feeds raw 16kHz `.wav` directly to Gemma 4 E4B via LiteRT-LM, **without a separate STT pipeline**. Replaced Android's `SpeechRecognizer` after extensive instability. Code: `code/pollen/.../PollenVoiceInfra.kt`.
+- **Multimodal audio native** — Pollen feeds raw 16kHz `.wav` directly to Gemma 4 E4B via LiteRT-LM, **without a separate STT pipeline**. Code: `code/pollen/.../PollenVoiceInfra.kt`.
 - **Tool calling** — Meristem uses Gemma 4 E4B with native tool calling for `compose_policy(...)` and bundle validation. Mini-battery 5/5 PASS. Code: `code/meristem_node/...`.
 - **Three-node routing** — three Gemma 4 instances (E2B + E4B + E4B), three jurisdictions, no cloud roundtrip. Each node holds the context type its layer is responsible for.
 - **`safe-cpu` profile contractual** — Rhizome runs Gemma 4 E2B-it Q4_K_S on Jetson CPU (validated 18/18 in battery tests). GPU offload works (36/36 layers) but quality is not contractual yet.
@@ -115,6 +115,18 @@ make test   # runs 13 deterministic tests + LLM smoke
 - Rhizome Jetson: [`code/rhizome/jetson/`](code/rhizome/jetson/) (see scripts `run_runtime.sh`, `start_adapter.sh`, `smoke_adapter.sh`)
 - ESP32 firmware: [`hardware/firmware_esp32/README.md`](hardware/firmware_esp32/README.md)
 - Wiring schematics: [`hardware/wiring_diagrams/day19_mounting_schematics.md`](hardware/wiring_diagrams/day19_mounting_schematics.md)
+
+### Installing the model on the phone
+
+The user installs Pollen from the store — the app itself is light (**~15 MB**). On first launch with WiFi, an onboarding screen appears:
+
+> *"Downloading agronomic brain (Gemma 4)..."*
+
+The app uses Android's `DownloadManager` to fetch `gemma-4-E4B-it.litertlm` (3.6 GB) from a secure CDN directly into the app's private internal storage (`/data/data/net.sprout.pollen/files/`). Once the download completes, **the model lives on the device forever and Pollen runs 100% offline** — no further network round-trip.
+
+> Requires: Android 12 / API 31+, 12 GB RAM recommended (16 GB ideal), at least 6 GB free for the model file plus runtime headroom. CPU is the stable runtime path; GPU/NPU varies by device.
+
+> For developers and nightly testers, the `adb push` sideload flow is documented in [`code/pollen/README.md`](code/pollen/README.md).
 
 ---
 
