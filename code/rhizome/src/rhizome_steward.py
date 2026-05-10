@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import select
 import time
 import urllib.error
 import urllib.request
@@ -193,18 +194,75 @@ class FakeESP32Client:
         return
 
 
+class TermiosSerialPort:
+    """Small Linux serial fallback for Jetson when pyserial is unavailable."""
+
+    def __init__(self, port: str, baud: int, timeout_s: float) -> None:
+        if baud != 115200:
+            raise RuntimeError("TermiosSerialPort fallback solo soporta 115200 baud en MVP.")
+        import termios
+
+        self.termios = termios
+        self.timeout = timeout_s
+        self.fd = os.open(port, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+        attrs = termios.tcgetattr(self.fd)
+        attrs[0] = 0
+        attrs[1] = 0
+        attrs[2] = termios.CS8 | termios.CREAD | termios.CLOCAL
+        attrs[3] = 0
+        attrs[4] = termios.B115200
+        attrs[5] = termios.B115200
+        termios.tcsetattr(self.fd, termios.TCSANOW, attrs)
+
+    def write(self, data: bytes) -> int:
+        return os.write(self.fd, data)
+
+    def readline(self) -> bytes:
+        deadline = time.monotonic() + self.timeout
+        chunks: list[bytes] = []
+        while time.monotonic() < deadline:
+            remaining = max(0.0, deadline - time.monotonic())
+            ready, _, _ = select.select([self.fd], [], [], min(remaining, self.timeout))
+            if not ready:
+                break
+            try:
+                chunk = os.read(self.fd, 1)
+            except BlockingIOError:
+                continue
+            if not chunk:
+                break
+            chunks.append(chunk)
+            if chunk == b"\n":
+                break
+        return b"".join(chunks)
+
+    def reset_input_buffer(self) -> None:
+        self.termios.tcflush(self.fd, self.termios.TCIFLUSH)
+
+    def reset_output_buffer(self) -> None:
+        self.termios.tcflush(self.fd, self.termios.TCOFLUSH)
+
+    def close(self) -> None:
+        os.close(self.fd)
+
+
 class SerialESP32Client:
     def __init__(self, port: str, baud: int = 115200, timeout_s: float = 0.1, quiet_s: float = 0.35, max_wait_s: float = 3.0, water_command_mode: str = "water-duration") -> None:
         try:
             import serial  # type: ignore
         except ModuleNotFoundError as exc:
-            raise RuntimeError("pyserial no esta instalado. Instala hardware/host_tools/requirements.txt") from exc
+            if os.name != "posix":
+                raise RuntimeError("pyserial no esta instalado. Instala hardware/host_tools/requirements.txt") from exc
+            self.serial = TermiosSerialPort(port=port, baud=baud, timeout_s=timeout_s)
+        else:
+            self.serial = serial.Serial(port=port, baudrate=baud, timeout=timeout_s)
         if water_command_mode not in {"water-duration", "pump-toggle"}:
             raise ValueError("water_command_mode debe ser water-duration o pump-toggle")
-        self.serial = serial.Serial(port=port, baudrate=baud, timeout=timeout_s)
         self.quiet_s = quiet_s
         self.max_wait_s = max_wait_s
         self.water_command_mode = water_command_mode
+        self.serial.reset_input_buffer()
+        self.serial.reset_output_buffer()
 
     def _collect(self) -> list[str]:
         lines: list[str] = []
