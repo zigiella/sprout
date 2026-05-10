@@ -214,6 +214,39 @@ class RhizomeStewardTest(unittest.TestCase):
         self.assertEqual(result["action"], "WATER_A")
         self.assertTrue(result["executed"])
 
+    def test_low_is_wet_raw_threshold_skips_current_wet_soil(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(
+                    tmp,
+                    execute_water=True,
+                    soil_raw_polarity="low_is_wet",
+                    soil_wet_below_raw=1300,
+                    soil_dry_above_raw=2600,
+                ),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=1265)),
+            )
+            result = steward.run_once()
+
+        self.assertEqual(result["action"], "SKIP")
+        self.assertFalse(result["executed"])
+
+    def test_low_is_wet_raw_without_dry_threshold_defers_outside_wet_band(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(
+                    tmp,
+                    execute_water=True,
+                    soil_raw_polarity="low_is_wet",
+                    soil_wet_below_raw=1300,
+                ),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=1700)),
+            )
+            result = steward.run_once()
+
+        self.assertEqual(result["action"], "DEFER")
+        self.assertFalse(result["executed"])
+
     def test_store_enforces_byte_budget(self):
         with tempfile.TemporaryDirectory() as tmp:
             store = BoundedJsonlStore(Path(tmp), retention_days=30, max_total_bytes=900)

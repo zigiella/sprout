@@ -231,6 +231,12 @@ permite riego con deposito no sensorizado, el receipt conserva
 `flow_sensor_unavailable`. Cuando esos sensores existan, quitar el flag y usar
 modo estricto.
 
+Si la humedad llega como valor raw, la polaridad debe declararse. La sonda real
+del handoff de Xilema reporta `soil_a_raw < 1300` como suelo muy humedo, por lo
+que el primer observe mode usa `--soil-raw-polarity low_is_wet` y
+`--soil-wet-below-raw 1300`. Sin `--soil-dry-above-raw`, Rhizome puede hacer
+`SKIP` por suelo humedo, pero no autoriza `WATER` desde raw.
+
 Si la firmware minima expone solo encender/apagar bomba, no el comando
 temporizado `WATER A <seconds>`, usar:
 

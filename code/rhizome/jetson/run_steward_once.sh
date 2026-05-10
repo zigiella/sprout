@@ -21,6 +21,9 @@ SOIL_DRY_BELOW_PCT="${SOIL_DRY_BELOW_PCT:-35}"
 SOIL_WET_ABOVE_PCT="${SOIL_WET_ABOVE_PCT:-55}"
 SOIL_DRY_BELOW_RAW="${SOIL_DRY_BELOW_RAW:-}"
 SOIL_WET_ABOVE_RAW="${SOIL_WET_ABOVE_RAW:-}"
+SOIL_RAW_POLARITY="${SOIL_RAW_POLARITY:-low_is_dry}"
+SOIL_WET_BELOW_RAW="${SOIL_WET_BELOW_RAW:-}"
+SOIL_DRY_ABOVE_RAW="${SOIL_DRY_ABOVE_RAW:-}"
 GEMMA_RATIONALE_URL="${GEMMA_RATIONALE_URL:-}"
 STEWARD_COMMAND="${STEWARD_COMMAND:-run-once}"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
@@ -39,6 +42,7 @@ ARGS=(
   --retention-days "$RETENTION_DAYS"
   --soil-dry-below-pct "$SOIL_DRY_BELOW_PCT"
   --soil-wet-above-pct "$SOIL_WET_ABOVE_PCT"
+  --soil-raw-polarity "$SOIL_RAW_POLARITY"
 )
 
 if [ "$ESP32_MODE" = "serial" ]; then
@@ -63,6 +67,14 @@ fi
 
 if [ -n "$SOIL_WET_ABOVE_RAW" ]; then
   ARGS+=(--soil-wet-above-raw "$SOIL_WET_ABOVE_RAW")
+fi
+
+if [ -n "$SOIL_WET_BELOW_RAW" ]; then
+  ARGS+=(--soil-wet-below-raw "$SOIL_WET_BELOW_RAW")
+fi
+
+if [ -n "$SOIL_DRY_ABOVE_RAW" ]; then
+  ARGS+=(--soil-dry-above-raw "$SOIL_DRY_ABOVE_RAW")
 fi
 
 if [ -n "$GEMMA_RATIONALE_URL" ]; then

@@ -212,6 +212,20 @@ Implementacion:
 Esta capa da mas valor demo a Gemma 4: no decide agua, pero convierte eventos
 tecnicos auditables en una explicacion humana de ausencia.
 
+## Handoff Xilema: sonda raw humeda
+
+Xilema reporta ESP32 con bomba + humedad de suelo casi listo y lectura actual
+`soil_a_raw=1263-1267`, interpretada como suelo muy humedo (`soil_a_raw < 1300`).
+
+Ajuste de Rhizome:
+
+- se anade polaridad raw explicita: `low_is_dry` o `low_is_wet`;
+- el perfil `run_steward_serial_observe_minimal.sh` usa `low_is_wet` y
+  `SOIL_WET_BELOW_RAW=1300`;
+- sin `SOIL_DRY_ABOVE_RAW`, Rhizome puede hacer `SKIP` por suelo humedo, pero
+  no autoriza `WATER` desde raw; fuera de la banda humeda, aplaza;
+- esto evita interpretar `1265` como porcentaje o como seco por error.
+
 ## Validacion
 
 Comandos:
@@ -225,7 +239,7 @@ bash -n code/rhizome/jetson/start_steward_loop.sh
 
 Resultado:
 
-- 27 tests OK.
+- 29 tests OK.
 - Compilacion OK.
 - Sintaxis shell OK.
 - `RhizomeSnapshot` y `DecisionReceipt` emitidos por el caso de sensor

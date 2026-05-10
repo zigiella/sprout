@@ -253,8 +253,15 @@ SERIAL_WATER_COMMAND_MODE=pump-toggle \
 ALLOW_MISSING_TANK_SENSOR=1 \
 REQUIRE_FLOW_SENSOR_FOR_WATER=0 \
 EXECUTE_WATER=0 \
+SOIL_RAW_POLARITY=low_is_wet \
+SOIL_WET_BELOW_RAW=1300 \
 ./run_steward_once.sh
 ```
+
+La lectura actual documentada por Xilema (`soil_a_raw=1263-1267`) cae por
+debajo de `1300`, asi que Rhizome debe tratarla como suelo humedo y no proponer
+riego. En este perfil no se define `SOIL_DRY_ABOVE_RAW`: fuera de la banda
+humeda, Rhizome aplaza en vez de regar porque aun no hay calibracion seca.
 
 El primer riego real debe ser manual, corto y supervisado por Xilema/Bea,
 cambiando explicitamente `EXECUTE_WATER=1` y un `WATER_SECONDS` bajo.

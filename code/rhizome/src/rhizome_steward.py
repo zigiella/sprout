@@ -290,6 +290,9 @@ class StewardConfig:
     soil_wet_above_pct: float = 55.0
     soil_dry_below_raw: int | None = None
     soil_wet_above_raw: int | None = None
+    soil_raw_polarity: str = "low_is_dry"
+    soil_wet_below_raw: int | None = None
+    soil_dry_above_raw: int | None = None
     tank_minimum_pct: float = FIRMWARE_TANK_MINIMUM_PCT
     max_water_seconds: int = FIRMWARE_MAX_WATER_SECONDS_MVP
     max_autonomous_waters_per_day: int = 2
@@ -400,13 +403,72 @@ def _policy_threshold(policy: dict[str, Any] | None, key: str) -> float | None:
     return _float_or_none(parcel_a.get(key))
 
 
-def _soil_metric(telemetry: Telemetry, config: StewardConfig) -> tuple[str, float | None, float, float, list[str]]:
+def _soil_metric(
+    telemetry: Telemetry,
+    config: StewardConfig,
+) -> tuple[str, float | None, float | None, float | None, list[str]]:
     soil_pct = telemetry.soil_a_pct()
     if soil_pct is not None:
         return "pct", soil_pct, config.soil_dry_below_pct, config.soil_wet_above_pct, ["config.soil_pct_thresholds"]
+    if telemetry.soil_a_raw is not None and config.soil_raw_polarity == "low_is_wet" and config.soil_wet_below_raw is not None:
+        return (
+            "raw_low_is_wet",
+            float(telemetry.soil_a_raw),
+            float(config.soil_dry_above_raw) if config.soil_dry_above_raw is not None else None,
+            float(config.soil_wet_below_raw),
+            ["config.soil_raw_thresholds", "config.soil_raw_polarity"],
+        )
     if telemetry.soil_a_raw is not None and config.soil_dry_below_raw is not None and config.soil_wet_above_raw is not None:
-        return "raw", float(telemetry.soil_a_raw), float(config.soil_dry_below_raw), float(config.soil_wet_above_raw), ["config.soil_raw_thresholds"]
-    return "unknown", None, 0.0, 0.0, []
+        return (
+            "raw_low_is_dry",
+            float(telemetry.soil_a_raw),
+            float(config.soil_dry_below_raw),
+            float(config.soil_wet_above_raw),
+            ["config.soil_raw_thresholds", "config.soil_raw_polarity"],
+        )
+    return "unknown", None, None, None, []
+
+
+def _has_full_raw_soil_calibration(config: StewardConfig) -> bool:
+    if config.soil_raw_polarity == "low_is_wet":
+        return config.soil_wet_below_raw is not None and config.soil_dry_above_raw is not None
+    return config.soil_dry_below_raw is not None and config.soil_wet_above_raw is not None
+
+
+def _soil_unit(metric_kind: str) -> str:
+    return "%" if metric_kind == "pct" else "raw"
+
+
+def _soil_is_wet_enough(metric_kind: str, soil_value: float, wet_threshold: float | None) -> bool:
+    if wet_threshold is None:
+        return False
+    if metric_kind == "raw_low_is_wet":
+        return soil_value <= wet_threshold
+    return soil_value >= wet_threshold
+
+
+def _soil_is_dry(metric_kind: str, soil_value: float, dry_threshold: float | None) -> bool:
+    if dry_threshold is None:
+        return False
+    if metric_kind == "raw_low_is_wet":
+        return soil_value >= dry_threshold
+    return soil_value <= dry_threshold
+
+
+def _wet_threshold_text(metric_kind: str, wet_threshold: float | None) -> str:
+    if wet_threshold is None:
+        return "umbral de suelo suficiente"
+    unit = _soil_unit(metric_kind)
+    relation = "igual o por debajo de" if metric_kind == "raw_low_is_wet" else "igual o por encima de"
+    return f"{relation} {wet_threshold:.0f}{unit}"
+
+
+def _dry_threshold_text(metric_kind: str, dry_threshold: float | None) -> str:
+    if dry_threshold is None:
+        return "umbral de suelo seco"
+    unit = _soil_unit(metric_kind)
+    relation = "por encima de" if metric_kind == "raw_low_is_wet" else "por debajo de"
+    return f"{relation} {dry_threshold:.0f}{unit}"
 
 
 def _todays_water_count(store: BoundedJsonlStore, now: datetime) -> int:
@@ -512,19 +574,19 @@ class DeterministicDecisionEngine:
                 policy_refs=[str(active_policy_id), "config.max_autonomous_waters_per_day"],
             )
 
-        if soil_value >= wet_above:
-            unit = "%" if metric_kind == "pct" else "raw"
+        if _soil_is_wet_enough(metric_kind, soil_value, wet_above):
+            unit = _soil_unit(metric_kind)
             return Decision(
                 action="SKIP",
                 action_params={"next_check_in_s": config.decision_interval_s},
                 mode="fast_path",
                 rationale_short=f"Humedad A {soil_value:.0f}{unit}; suficiente. No se riega.",
-                rationale_full="Gate determinista: la lectura supera el umbral de suelo suficiente.",
+                rationale_full=f"Gate determinista: la lectura esta {_wet_threshold_text(metric_kind, wet_above)}.",
                 confidence=0.88,
                 policy_refs=[str(active_policy_id), *refs],
             )
 
-        if soil_value <= dry_below:
+        if _soil_is_dry(metric_kind, soil_value, dry_below):
             if telemetry.flow_pulses is None and not config.allow_missing_flow_sensor:
                 return Decision(
                     action="DEFER",
@@ -539,7 +601,7 @@ class DeterministicDecisionEngine:
                 )
             duration_s = max(1, min(config.requested_water_seconds, config.max_water_seconds, FIRMWARE_MAX_WATER_SECONDS_MVP))
             expected_liters = round(duration_s * 0.05, 3)
-            unit = "%" if metric_kind == "pct" else "raw"
+            unit = _soil_unit(metric_kind)
             contradictions: list[str] = []
             policy_refs = [str(active_policy_id), *refs, "firmware.max_water_seconds_mvp"]
             confidence = 0.84
@@ -557,7 +619,7 @@ class DeterministicDecisionEngine:
                 action="WATER_A",
                 action_params={"duration_s": duration_s, "expected_liters": expected_liters},
                 mode="fast_path",
-                rationale_short=f"Humedad A {soil_value:.0f}{unit}, por debajo de {dry_below:.0f}{unit}. Riego corto dentro de sobre seguro.",
+                rationale_short=f"Humedad A {soil_value:.0f}{unit}, {_dry_threshold_text(metric_kind, dry_below)}. Riego corto dentro de sobre seguro.",
                 rationale_full=rationale_full,
                 confidence=confidence,
                 policy_refs=policy_refs,
@@ -638,7 +700,7 @@ class ShadowSkeptic:
                 concerns.append("tank_unknown")
             elif telemetry.tank_level_pct < config.tank_minimum_pct:
                 concerns.append("tank_below_minimum")
-            if telemetry.soil_a_pct() is None and config.soil_dry_below_raw is None:
+            if telemetry.soil_a_pct() is None and not _has_full_raw_soil_calibration(config):
                 concerns.append("soil_not_calibrated")
         return {
             "shadow_id": f"shadow_{utc_now().strftime('%Y%m%dT%H%M%SZ')}",
@@ -879,6 +941,9 @@ def build_config(args: argparse.Namespace) -> StewardConfig:
         soil_wet_above_pct=args.soil_wet_above_pct,
         soil_dry_below_raw=args.soil_dry_below_raw,
         soil_wet_above_raw=args.soil_wet_above_raw,
+        soil_raw_polarity=args.soil_raw_polarity,
+        soil_wet_below_raw=args.soil_wet_below_raw,
+        soil_dry_above_raw=args.soil_dry_above_raw,
         tank_minimum_pct=args.tank_minimum_pct,
         max_water_seconds=args.max_water_seconds,
         max_autonomous_waters_per_day=args.max_autonomous_waters_per_day,
@@ -911,6 +976,9 @@ def add_common_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--soil-wet-above-pct", type=float, default=55.0)
     parser.add_argument("--soil-dry-below-raw", type=int)
     parser.add_argument("--soil-wet-above-raw", type=int)
+    parser.add_argument("--soil-raw-polarity", choices=["low_is_dry", "low_is_wet"], default="low_is_dry")
+    parser.add_argument("--soil-wet-below-raw", type=int)
+    parser.add_argument("--soil-dry-above-raw", type=int)
     parser.add_argument("--tank-minimum-pct", type=float, default=FIRMWARE_TANK_MINIMUM_PCT)
     parser.add_argument("--max-water-seconds", type=int, default=FIRMWARE_MAX_WATER_SECONDS_MVP)
     parser.add_argument("--max-autonomous-waters-per-day", type=int, default=2)
