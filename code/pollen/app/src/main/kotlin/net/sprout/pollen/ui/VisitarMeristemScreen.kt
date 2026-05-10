@@ -23,6 +23,7 @@ import net.sprout.pollen.sync.MeristemMockClient
 import android.widget.Toast
 import android.util.Log
 import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
