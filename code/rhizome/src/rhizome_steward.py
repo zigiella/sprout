@@ -868,7 +868,7 @@ class RhizomeSteward:
             "executed": receipt["executed"],
             "blocked_reason": receipt["blocked_reason"],
             "rationale_short": receipt["rationale_short"],
-            "heartbeat_ok": heartbeat.ok,
+            "heartbeat_ok": heartbeat.ok or telemetry.host_link == "FRESH",
             "shadow_skeptic": shadow_record,
             "state_dir": str(self.config.state_dir),
             "facade_data_dir": str(self.facade_data_dir),
