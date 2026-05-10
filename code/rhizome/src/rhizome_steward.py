@@ -877,18 +877,11 @@ class RhizomeSteward:
     def _write_facade_data(self, snapshot: dict[str, Any], receipt: dict[str, Any]) -> None:
         self.facade_data_dir.mkdir(parents=True, exist_ok=True)
         self._write_json_to(self.facade_data_dir / "rhizome_snapshot.json", snapshot)
-        target_name = "decision_receipt_blocked.json" if (
+        self._write_json_to(self.facade_data_dir / "decision_receipt.json", receipt)
+        if (
             receipt["action"] in {"ALERT", "BLOCK"} or receipt["executed"] is not True
-        ) else "decision_receipt.json"
-        self._write_json_to(self.facade_data_dir / target_name, receipt)
-        if target_name == "decision_receipt.json":
-            blocked = self.facade_data_dir / "decision_receipt_blocked.json"
-            if not blocked.exists():
-                self._write_json_to(blocked, receipt)
-        else:
-            normal = self.facade_data_dir / "decision_receipt.json"
-            if not normal.exists():
-                self._write_json_to(normal, receipt)
+        ):
+            self._write_json_to(self.facade_data_dir / "decision_receipt_blocked.json", receipt)
 
     @staticmethod
     def _write_json_to(path: Path, payload: dict[str, Any]) -> None:

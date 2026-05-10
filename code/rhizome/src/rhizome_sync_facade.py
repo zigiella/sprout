@@ -679,6 +679,11 @@ class RhizomeReadStore:
             if path.exists()
             for receipt in [_load_json(path)]
         ]
+        deduped: dict[str, dict[str, Any]] = {}
+        for receipt in receipts:
+            decision_id = str(receipt.get("decision_id") or "")
+            deduped[decision_id or f"anonymous_{len(deduped)}"] = receipt
+        receipts = list(deduped.values())
 
         since_dt = _parse_zulu(since)
         if since_dt is None:
