@@ -20,6 +20,9 @@ import net.sprout.pollen.sync.MeristemClient
 import net.sprout.pollen.sync.MeristemNetworkClient
 import net.sprout.pollen.sync.MeristemMockClient
 
+import android.widget.Toast
+import android.util.Log
+
 @Composable
 fun VisitarMeristemScreen(
     currentSnapshot: RhizomeSnapshot? = null,
@@ -63,10 +66,17 @@ fun VisitarMeristemScreen(
                         if (currentSnapshot != null) {
                             scope.launch {
                                 isUploading = true
-                                val visit = FieldVisit(currentSnapshot, currentReceipts)
-                                client.uploadFieldVisit(visit)
-                                isUploading = false
-                                uploadSuccess = true
+                                try {
+                                    val visit = FieldVisit(currentSnapshot, currentReceipts)
+                                    client.uploadFieldVisit(visit)
+                                    uploadSuccess = true
+                                    Toast.makeText(context, "Upload success!", Toast.LENGTH_SHORT).show()
+                                } catch (e: Exception) {
+                                    Log.e("VisitarMeristem", "Upload failed", e)
+                                    Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                                } finally {
+                                    isUploading = false
+                                }
                             }
                         }
                     },
@@ -109,8 +119,10 @@ fun VisitarMeristemScreen(
                                 val policy = client.getLatestPolicy(targetId)
                                 downloadedPolicy = policy
                                 onPolicyDownloaded(policy)
+                                Toast.makeText(context, "Policy downloaded!", Toast.LENGTH_SHORT).show()
                             } catch (e: Exception) {
-                                // handle error
+                                Log.e("VisitarMeristem", "Download failed", e)
+                                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                             } finally {
                                 isDownloading = false
                             }
