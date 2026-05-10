@@ -27,6 +27,8 @@ import uuid
 from pathlib import Path
 from typing import Any
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -34,6 +36,7 @@ from pydantic import BaseModel
 from . import ingest as ingest_service
 from . import persistence
 from .evaluator import evaluate
+from .mdns import MDNSAnnouncer, get_node_name, is_mdns_enabled
 from .inference import LLMUnavailableError, compose_rationale_via_llm
 from .policy_composer import compose_policy
 from .schemas import (
@@ -157,6 +160,45 @@ def _stub_rationale(rationale_seed: str) -> tuple[str, str]:
 def _build_app() -> FastAPI:
     persistence.init_db()
 
+    # mDNS announcer (lifecycle gestionado por lifespan).
+    # Si MERISTEM_MDNS_ENABLED=false, no se anuncia (útil en tests
+    # o entornos sin multicast).
+    mdns_announcer: MDNSAnnouncer | None = None
+    if is_mdns_enabled():
+        mdns_announcer = MDNSAnnouncer(
+            node_name=get_node_name(),
+            port=PORT,
+            meristem_id=MERISTEM_ID,
+            version="0.1.0",
+        )
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):  # type: ignore[no-redef]
+        # startup
+        if mdns_announcer is not None:
+            # Zeroconf() sync dentro de async lifespan colisiona con
+            # el event loop de uvicorn. Lo ejecutamos en thread executor
+            # para no bloquear ni colisionar.
+            import asyncio
+            try:
+                loop = asyncio.get_event_loop()
+                await loop.run_in_executor(None, mdns_announcer.start)
+            except Exception as e:
+                # No bloquear arranque si mDNS falla (firewall, etc.)
+                logger.warning(
+                    "mDNS start fallo, continuamos sin: %s (%s)",
+                    type(e).__name__, e,
+                )
+        yield
+        # shutdown
+        if mdns_announcer is not None:
+            try:
+                import asyncio
+                loop = asyncio.get_event_loop()
+                await loop.run_in_executor(None, mdns_announcer.stop)
+            except Exception as e:
+                logger.warning("mDNS stop fallo: %s", e)
+
     app = FastAPI(
         title="Meristem-nodo (Sprout)",
         version="0.1.0",
@@ -165,17 +207,24 @@ def _build_app() -> FastAPI:
             "agricultor o cooperativa. Ingiere bundles que Pollen trae de "
             "Rhizome y emite PolicyPacket actualizado. Día 15: lógica "
             "determinística + persistencia SQLite. Día 16: LLM Gemma 4 "
-            "E4B + tool calling integrado."
+            "E4B + tool calling integrado. Día 24: mDNS announce."
         ),
+        lifespan=lifespan,
     )
 
     @app.get("/health")
     async def health() -> dict[str, Any]:
+        mdns_state = (
+            mdns_announcer.state_snapshot()
+            if mdns_announcer is not None
+            else {"enabled": False}
+        )
         return {
             "status": "ok",
             "version": "0.1.0",
             "port": PORT,
             "meristem_id": MERISTEM_ID,
+            "mdns": mdns_state,
             "llm_mode": "real" if USE_LLM else "stub_disabled",
             "adapter_url": ADAPTER_URL if USE_LLM else None,
             "bundles_received_total": persistence.count_bundles(),
