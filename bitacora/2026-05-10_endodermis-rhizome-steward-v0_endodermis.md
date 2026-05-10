@@ -158,6 +158,26 @@ ESP32_MODE=serial ESP32_PORT=/dev/ttyACM0 \
 Decision: por defecto falta de deposito aplaza. El perfil minimo exige flag
 explicito y deja `tank_level_unavailable`/`flow_sensor_unavailable` en trazas.
 
+## Contrato Pollen bilingue
+
+Ajuste posterior a conversacion con Bea: Pollen no debe leer una propuesta
+`WATER_A` como riego real si `executed=false`.
+
+Cambios:
+
+- `/explain/decision/<id>?locale=en|es` distingue riego ejecutado de propuesta
+  no ejecutada.
+- `/summary/since?locale=en|es` cuenta `water` como riegos ejecutados, y anade
+  `water_proposed` + `water_not_executed`.
+- `simulation` ahora depende del origen de datos: demo/examples => `true`;
+  `facade_data` real del steward => `false`.
+
+Regla de producto:
+
+> Pollen muestra narrativa bilingue; Rhizome conserva verdad operacional en
+> `DecisionReceipt`. Gemma 4 puede mejorar el rationale, pero no convierte una
+> propuesta no ejecutada en riego real.
+
 ## Validacion
 
 Comandos:

@@ -278,3 +278,53 @@ python -m src.rhizome_steward run-once \
 
 Gemma no cambia la accion ni autoriza agua; solo mejora la explicacion sobre
 facts ya decididos.
+
+### Datos devueltos a Pollen
+
+Rhizome devuelve siempre JSON. Pollen puede elegir idioma con `?locale=en` o
+`?locale=es`; si no se indica, el fallback es `es`.
+
+Endpoints principales:
+
+```text
+GET /snapshot/latest
+GET /receipts?since=<UTC_ZULU>
+GET /explain/decision/<decision_id>?locale=en|es
+GET /summary/since?since=<UTC_ZULU>&locale=en|es
+```
+
+`/receipts` devuelve `DecisionReceipt` casi canonico: `action`, `executed`,
+`blocked_reason`, `action_params`, `confidence`, `rationale_short`,
+`rationale_full`, `backend_used`, `contradictions`. Pollen debe tratar
+`executed=false` como propuesta no ejecutada, aunque `action` sea `WATER_A`.
+
+`/explain/decision/<id>` devuelve una explicacion localizada construida desde el
+receipt. Si Gemma 4 participo antes en el steward, esa explicacion incorpora el
+`rationale_*` escrito por Gemma en el receipt. Si no, usa rationale
+determinista.
+
+`/summary/since` devuelve el payload del boton principal de ausencia:
+
+```json
+{
+  "headline": "...",
+  "summary": "...",
+  "highlights": ["..."],
+  "recommendation": "...",
+  "counts": {
+    "total": 2,
+    "water": 1,
+    "water_proposed": 2,
+    "water_not_executed": 1,
+    "block": 0,
+    "alert": 0,
+    "executed": 1
+  },
+  "source": "deterministic_visit_summary",
+  "simulation": false
+}
+```
+
+Gemma 4 no es fuente de verdad para estos campos. Su papel correcto es redactar
+mejor `rationale_short`/`rationale_full` y, como siguiente paso, sintetizar una
+narrativa de ausencia a partir de snapshots y receipts ya validados.

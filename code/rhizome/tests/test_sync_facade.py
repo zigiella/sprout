@@ -24,6 +24,10 @@ def _get_json(base_url: str, path: str):
         return json.loads(response.read().decode("utf-8"))
 
 
+def _get_json_from_file(path: Path):
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 def _post_json(base_url: str, path: str, payload):
     body = json.dumps(payload).encode("utf-8")
     request = urllib.request.Request(
@@ -119,6 +123,26 @@ class SyncFacadeTest(unittest.TestCase):
         self.assertEqual(explanation["locale"], "en")
         self.assertIn("Rhizome executed", explanation["explanation"])
 
+    def test_explanation_respects_not_executed_water_candidate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data_dir = Path(tmp)
+            shutil.copy(default_data_dir() / "rhizome_snapshot.json", data_dir / "rhizome_snapshot.json")
+            receipt = _get_json_from_file(default_data_dir() / "decision_receipt.json")
+            receipt["decision_id"] = "rec_observe_mode"
+            receipt["executed"] = False
+            receipt["execution_details"] = None
+            receipt["blocked_reason"] = "OBSERVE_MODE_EXECUTE_WATER_FALSE"
+            (data_dir / "decision_receipt.json").write_text(json.dumps(receipt), encoding="utf-8")
+            server, base_url = _run_server(data_dir)
+            try:
+                explanation = _get_json(base_url, "/explain/decision/rec_observe_mode?locale=en")
+            finally:
+                _stop_server(server)
+
+        self.assertIn("proposed WATER_A", explanation["explanation"])
+        self.assertIn("did not execute", explanation["explanation"])
+        self.assertNotIn("executed WATER_A", explanation["explanation"])
+
     def test_visit_summary_is_smart_button_payload(self):
         server, base_url = _run_server(default_data_dir())
         try:
@@ -131,9 +155,11 @@ class SyncFacadeTest(unittest.TestCase):
             _stop_server(server)
 
         self.assertEqual(summary["node_id"], "rhizome_01")
-        self.assertEqual(summary["source"], "deterministic_demo_summary")
+        self.assertEqual(summary["source"], "deterministic_visit_summary")
         self.assertEqual(summary["severity"], "attention")
         self.assertEqual(summary["counts"]["total"], 2)
+        self.assertEqual(summary["counts"]["water"], 1)
+        self.assertEqual(summary["counts"]["water_proposed"], 1)
         self.assertIn("Durante tu ausencia", summary["summary"])
         self.assertEqual(future_summary["counts"]["total"], 0)
         self.assertEqual(future_summary["locale"], "en")

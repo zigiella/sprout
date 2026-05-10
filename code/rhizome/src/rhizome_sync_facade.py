@@ -85,6 +85,8 @@ def _receipt_window(receipts: list[dict[str, Any]]) -> dict[str, int]:
     counts = {
         "total": len(receipts),
         "water": 0,
+        "water_proposed": 0,
+        "water_not_executed": 0,
         "block": 0,
         "alert": 0,
         "other": 0,
@@ -93,7 +95,11 @@ def _receipt_window(receipts: list[dict[str, Any]]) -> dict[str, int]:
     for receipt in receipts:
         action = str(receipt.get("action", "")).upper()
         if action.startswith("WATER"):
-            counts["water"] += 1
+            counts["water_proposed"] += 1
+            if receipt.get("executed") is True:
+                counts["water"] += 1
+            else:
+                counts["water_not_executed"] += 1
         elif action == "BLOCK":
             counts["block"] += 1
         elif action == "ALERT":
@@ -117,6 +123,11 @@ def _severity(snapshot: dict[str, Any], counts: dict[str, int]) -> str:
     if counts["block"] > 0 or (tank is not None and tank < 30):
         return "attention"
     return "ok"
+
+
+def _is_simulation_data(data_dir: Path) -> bool:
+    normalized = str(data_dir.resolve()).replace("\\", "/")
+    return "/demo_data/" in normalized or "/schemas/examples" in normalized
 
 
 def _plural_es(count: int, singular: str, plural: str) -> str:
@@ -308,15 +319,22 @@ def _explain_receipt(receipt: dict[str, Any], locale: str) -> str:
     params = receipt.get("action_params", {})
     rationale = str(receipt.get("rationale_full") or receipt.get("rationale_short") or "").strip()
     blocked_reason = str(receipt.get("blocked_reason") or "").strip()
+    executed = receipt.get("executed") is True
 
     if locale == "en":
         if action.startswith("WATER"):
             duration = params.get("duration_s")
             liters = params.get("expected_liters")
+            if not executed:
+                return (
+                    f"Rhizome proposed {action} for {duration}s, expecting about {liters} L, "
+                    f"but did not execute it. Reason code: {blocked_reason or 'not specified'}. "
+                    f"Receipt note: {rationale}"
+                )
             return (
                 f"Rhizome executed {action} for {duration}s, expecting about {liters} L. "
                 "The decision was allowed because the snapshot and active policy did not hit "
-                "a safety veto. The detailed DecisionReceipt remains available for audit."
+                f"a safety veto. Receipt note: {rationale}"
             )
         if action == "BLOCK":
             return (
@@ -331,6 +349,12 @@ def _explain_receipt(receipt: dict[str, Any], locale: str) -> str:
     if action.startswith("WATER"):
         duration = params.get("duration_s")
         liters = params.get("expected_liters")
+        if not executed:
+            return (
+                f"Rhizome propuso {action} durante {duration}s, con unos {liters} L esperados, "
+                f"pero no lo ejecutó. Código: {blocked_reason or 'sin especificar'}. "
+                f"Nota del recibo: {rationale}"
+            )
         return (
             f"Rhizome ejecutó {action} durante {duration}s, con unos {liters} L esperados. "
             "La decisión pasó porque el snapshot y la política activa no activaron ningún veto "
@@ -366,7 +390,8 @@ def _summary_text(
             headline = f"{node_id}: attention needed after your absence"
         highlights = [
             (
-                f"{_plural_en(counts['water'], 'watering event', 'watering events')}, "
+                f"{_plural_en(counts['water'], 'watering event executed', 'watering events executed')}, "
+                f"{_plural_en(counts['water_not_executed'], 'water proposal not executed', 'water proposals not executed')}, "
                 f"{_plural_en(counts['block'], 'safety block', 'safety blocks')}, "
                 f"{_plural_en(counts['alert'], 'alert', 'alerts')}."
             ),
@@ -381,8 +406,9 @@ def _summary_text(
             highlights.append(f"Latest recorded decision: {latest_action}.")
         summary = (
             f"While you were away, {node_id} recorded {counts['total']} decisions. "
-            f"It recorded {_plural_en(counts['water'], 'watering event', 'watering events')} "
-            f"and {_plural_en(counts['block'], 'blocked action', 'blocked actions')}. "
+            f"It executed {_plural_en(counts['water'], 'watering event', 'watering events')} "
+            f"and recorded {_plural_en(counts['water_not_executed'], 'water proposal not executed', 'water proposals not executed')}. "
+            f"It also recorded {_plural_en(counts['block'], 'blocked action', 'blocked actions')}. "
             f"Tank is now {tank:.0f}% and soil probes A/B are {soil_a:.0f}% / {soil_b:.0f}%."
             if (
                 tank is not None
@@ -403,7 +429,8 @@ def _summary_text(
         headline = f"{node_id}: conviene revisar lo ocurrido en tu ausencia"
     highlights = [
         (
-            f"{_plural_es(counts['water'], 'riego', 'riegos')}, "
+            f"{_plural_es(counts['water'], 'riego ejecutado', 'riegos ejecutados')}, "
+            f"{_plural_es(counts['water_not_executed'], 'propuesta de riego no ejecutada', 'propuestas de riego no ejecutadas')}, "
             f"{_plural_es(counts['block'], 'bloqueo de seguridad', 'bloqueos de seguridad')}, "
             f"{_plural_es(counts['alert'], 'alerta', 'alertas')}."
         ),
@@ -418,8 +445,9 @@ def _summary_text(
         highlights.append(f"Ultima decision registrada: {latest_action}.")
     summary = (
         f"Durante tu ausencia, {node_id} registro {counts['total']} decisiones. "
-        f"Registro {_plural_es(counts['water'], 'riego', 'riegos')} "
-        f"y {_plural_es(counts['block'], 'accion bloqueada', 'acciones bloqueadas')}. "
+        f"Ejecutó {_plural_es(counts['water'], 'riego', 'riegos')} "
+        f"y registró {_plural_es(counts['water_not_executed'], 'propuesta de riego no ejecutada', 'propuestas de riego no ejecutadas')}. "
+        f"También registró {_plural_es(counts['block'], 'accion bloqueada', 'acciones bloqueadas')}. "
         f"El deposito esta al {tank:.0f}% y las sondas A/B marcan {soil_a:.0f}% / {soil_b:.0f}%."
         if (
             tank is not None
@@ -448,6 +476,7 @@ class RhizomeReadStore:
         self.data_dir = data_dir or default_data_dir()
         self.node_id = node_id
         self.state_dir = state_dir or default_state_dir(node_id)
+        self.simulation = _is_simulation_data(self.data_dir)
 
     @property
     def active_policy_path(self) -> Path:
@@ -540,8 +569,8 @@ class RhizomeReadStore:
             "recommendation": recommendation,
             "counts": counts,
             "latest_snapshot_id": snapshot.get("snapshot_id"),
-            "source": "deterministic_demo_summary",
-            "simulation": True,
+            "source": "deterministic_visit_summary",
+            "simulation": self.simulation,
         }
 
     def active_policy_record(self) -> dict[str, Any] | None:
