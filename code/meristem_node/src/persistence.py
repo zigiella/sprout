@@ -109,6 +109,21 @@ CREATE INDEX IF NOT EXISTS idx_pollen_sync_log_created
 
 CREATE INDEX IF NOT EXISTS idx_pollen_sync_log_trace
     ON pollen_sync_log(trace_id);
+
+CREATE TABLE IF NOT EXISTS conversations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    conversation_id TEXT NOT NULL,
+    operator_id TEXT NOT NULL,
+    role TEXT NOT NULL,           -- 'user' | 'assistant'
+    content TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_conversations_conv_id
+    ON conversations(conversation_id, created_at ASC);
+
+CREATE INDEX IF NOT EXISTS idx_conversations_operator
+    ON conversations(operator_id, created_at DESC);
 """
 
 
@@ -676,3 +691,85 @@ def list_recent_policies(
             "evidence_refs": ev_refs,
         })
     return result
+
+
+# ---------------------------------------------------------------------------
+# Conversaciones (chat read-only, fase 3 plan IA dia 19)
+# ---------------------------------------------------------------------------
+
+
+def insert_conversation_message(
+    conversation_id: str,
+    operator_id: str,
+    role: str,
+    content: str,
+    db_path: Path | str = DEFAULT_DB_PATH,
+) -> int:
+    """Persiste un mensaje de la conversacion (user o assistant).
+
+    Returns: id auto-incrementado de la fila insertada.
+    """
+    if role not in ("user", "assistant"):
+        raise ValueError(f"role debe ser user o assistant, no {role!r}")
+    with _connect(db_path) as con:
+        cur = con.execute(
+            """
+            INSERT INTO conversations
+            (conversation_id, operator_id, role, content, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                conversation_id,
+                operator_id,
+                role,
+                content,
+                datetime.now().isoformat(),
+            ),
+        )
+        return int(cur.lastrowid or 0)
+
+
+def get_conversation_history(
+    conversation_id: str,
+    limit: int = 20,
+    db_path: Path | str = DEFAULT_DB_PATH,
+) -> list[dict[str, Any]]:
+    """Devuelve los ultimos N mensajes de una conversacion en orden ASC.
+
+    Para construir el contexto del LLM en chats con continuidad.
+    """
+    with _connect(db_path) as con:
+        rows = con.execute(
+            """
+            SELECT conversation_id, operator_id, role, content, created_at
+            FROM conversations
+            WHERE conversation_id = ?
+            ORDER BY id ASC
+            LIMIT ?
+            """,
+            (conversation_id, limit),
+        ).fetchall()
+    return [
+        {
+            "conversation_id": r["conversation_id"],
+            "operator_id": r["operator_id"],
+            "role": r["role"],
+            "content": r["content"],
+            "created_at": r["created_at"],
+        }
+        for r in rows
+    ]
+
+
+def count_conversation_messages(
+    db_path: Path | str = DEFAULT_DB_PATH,
+) -> dict[str, int]:
+    """Para /health: contadores totales de mensajes por rol.
+
+    Util para demo/audit: muestra que el chat se ha usado.
+    """
+    with _connect(db_path) as con:
+        rows = con.execute(
+            "SELECT role, COUNT(*) AS c FROM conversations GROUP BY role"
+        ).fetchall()
+    return {r["role"]: int(r["c"]) for r in rows}

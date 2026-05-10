@@ -265,3 +265,88 @@ class StatusResponse(BaseModel):
         default_factory=list,
         description="Resumen por target. Mismo orden que `targets_known`.",
     )
+
+
+# ---------------------------------------------------------------------------
+# Chat conversacional read-only (fase 3 plan IA día 19)
+# ---------------------------------------------------------------------------
+
+
+class ChatRequest(BaseModel):
+    """Pregunta del agricultor al Meristem.
+
+    El operador puede preguntar cosas como:
+      - "¿Por qué bloqueaste el riego ayer en rhizome_01?"
+      - "¿Debería preocuparme por la parcela B?"
+      - "¿Cómo va la tendencia de la última semana?"
+
+    El LLM tiene **acceso de solo lectura** al histórico (vía tools).
+    NO modifica policies, NO emite bundles, NO llama a Pollen. La acción
+    sigue por POST /visit (Pollen) o por el operador presionando un
+    botón concreto en otra UI. El chat es exclusivamente para
+    explicar / contextualizar.
+    """
+
+    operator_id: str = Field(
+        ...,
+        description="Id del operador (agricultor) que pregunta. Para audit.",
+        max_length=64,
+    )
+    message_es: str = Field(
+        ...,
+        description="Pregunta libre en castellano. Máx 1000 chars.",
+        max_length=1000,
+    )
+    conversation_id: str | None = Field(
+        default=None,
+        description=(
+            "Id de la conversación para continuar contexto. Si es None, "
+            "Meristem crea una nueva conversación."
+        ),
+    )
+
+
+class ChatResponse(BaseModel):
+    """Respuesta del Meristem al operador (envelope task=responder_operador).
+
+    `evidence_refs` cita policy_ids o decision_ids específicos que el LLM
+    usó para sustentar la respuesta. Eso permite al operador verificar
+    haciendo `GET /policy/{policy_id}` directamente.
+    """
+
+    task: Literal["responder_operador"] = "responder_operador"
+    status: Literal["ok", "error"] = "ok"
+    conversation_id: str
+    answer_es: str = Field(
+        ...,
+        max_length=2000,
+        description=(
+            "Respuesta del LLM en castellano. Máx 2000 chars. Idealmente "
+            "1-3 párrafos cortos con citas a policy_id."
+        ),
+    )
+    evidence_refs: list[str] = Field(
+        default_factory=list,
+        description=(
+            "policy_ids o decision_ids que sustentan la respuesta. El "
+            "operador puede verificar via GET /policy/{policy_id}."
+        ),
+    )
+    llm_metrics: dict[str, Any] = Field(
+        default_factory=dict,
+        description="Métricas LLM (tool_calls, tokens, finish_reason).",
+    )
+
+
+class ConversationMessage(BaseModel):
+    """Un mensaje de una conversación (operador o asistente).
+
+    Persistido en tabla `conversations` para audit + continuidad de
+    contexto en interacciones siguientes.
+    """
+
+    conversation_id: str
+    operator_id: str
+    role: Literal["user", "assistant"]
+    content: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)

@@ -229,3 +229,142 @@ def compose_rationale_via_llm(
         f"LLM no produjo JSON válido tras {metrics['tool_iterations']} iteraciones. "
         f"Último finish_reason={metrics['finish_reasons'][-1] if metrics['finish_reasons'] else '?'}"
     )
+
+
+# ---------------------------------------------------------------------------
+# Chat conversacional read-only (fase 3 plan IA dia 19, linea B dia 24)
+# ---------------------------------------------------------------------------
+
+
+def compose_chat_response(
+    operator_message: str,
+    conversation_history: list[dict[str, Any]] | None = None,
+    *,
+    adapter_url: str = ADAPTER_URL_DEFAULT,
+    use_tools: bool = True,
+    num_ctx: int = DEFAULT_NUM_CTX,
+    num_predict: int = 512,  # respuestas chat un poco mas largas que rationale
+) -> tuple[str, dict[str, Any]]:
+    """Devuelve (answer_es, llm_metrics) para una pregunta del operador.
+
+    Distinto de `compose_rationale_via_llm`:
+    - Usa MERISTEM_CHAT_SYSTEM_PROMPT_ES (no el de /visit)
+    - El output es texto libre en castellano (no JSON estructurado)
+    - Acepta `conversation_history` (list of {role, content}) para
+      continuidad
+    - Incluye `evidence_refs` extraidos del texto si el modelo cito
+      policy_id o decision_id
+
+    Loop de tool calling hasta MAX_TOOL_ITERATIONS. Si LLM falla,
+    raise para que caller fallback con respuesta generica.
+    """
+    # Import circular evitado con import local (chat usa el mismo
+    # MERISTEM_CHAT_SYSTEM_PROMPT_ES que vive en prompts.py)
+    from .prompts import (
+        MERISTEM_CHAT_SYSTEM_PROMPT_ES,
+        TOOL_DEFINITIONS,
+        call_tool,
+    )
+
+    messages: list[dict[str, Any]] = [
+        {"role": "system", "content": MERISTEM_CHAT_SYSTEM_PROMPT_ES},
+    ]
+    if conversation_history:
+        for msg in conversation_history:
+            role = msg.get("role")
+            content = msg.get("content", "")
+            if role in ("user", "assistant") and content:
+                messages.append({"role": role, "content": content})
+    # Mensaje actual del operador
+    messages.append({"role": "user", "content": operator_message})
+
+    tools = TOOL_DEFINITIONS if use_tools else None
+
+    metrics: dict[str, Any] = {
+        "tool_iterations": 0,
+        "tool_calls_log": [],
+        "finish_reasons": [],
+    }
+
+    for iteration in range(MAX_TOOL_ITERATIONS):
+        response = _post_chat(
+            adapter_url, messages, tools,
+            num_ctx=num_ctx, num_predict=num_predict,
+        )
+        msg = (response.get("message") or {})
+        content = msg.get("content") or ""
+        thinking = msg.get("thinking") or ""
+        tool_calls = msg.get("tool_calls") or []
+        finish_reason = response.get("done_reason", "stop")
+
+        metrics["finish_reasons"].append(finish_reason)
+        metrics["tool_iterations"] = iteration + 1
+        metrics[f"tokens_in_iter_{iteration}"] = response.get("prompt_eval_count")
+        metrics[f"tokens_out_iter_{iteration}"] = response.get("eval_count")
+        metrics[f"thinking_chars_iter_{iteration}"] = len(thinking)
+
+        if tool_calls:
+            assistant_msg: dict[str, Any] = {"role": "assistant"}
+            if content:
+                assistant_msg["content"] = content
+            assistant_msg["tool_calls"] = tool_calls
+            messages.append(assistant_msg)
+
+            for tc in tool_calls:
+                fn = tc.get("function") or {}
+                name = fn.get("name", "")
+                raw_args = fn.get("arguments", "{}")
+                try:
+                    args = json.loads(raw_args) if isinstance(raw_args, str) else raw_args
+                except json.JSONDecodeError:
+                    args = {}
+                tool_result = call_tool(name, args)
+                metrics["tool_calls_log"].append({"name": name, "args": args})
+
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": tc.get("id", ""),
+                    "name": name,
+                    "content": tool_result,
+                })
+            continue  # otra ronda
+
+        # Sin tool_calls -> respuesta del modelo
+        if content:
+            metrics["parsed_ok"] = True
+            metrics["final_content_len"] = len(content)
+            return content.strip(), metrics
+
+        # Si content vacio pero hay thinking, usamos thinking como fallback
+        if not content and thinking:
+            metrics["parsed_from_thinking"] = True
+            return thinking.strip(), metrics
+
+        metrics["parsed_ok"] = False
+        break
+
+    raise LLMUnavailableError(
+        f"LLM no produjo respuesta de chat tras {metrics['tool_iterations']} "
+        f"iteraciones. finish_reason="
+        f"{metrics['finish_reasons'][-1] if metrics['finish_reasons'] else '?'}"
+    )
+
+
+def extract_evidence_refs(answer: str) -> list[str]:
+    """Extrae policy_id / decision_id mencionados en la respuesta del chat.
+
+    Heuristica simple: busca patrones tipo `pkt_meristem_xxx` y
+    `dec_xxx` en el texto. Si no encuentra, devuelve lista vacia.
+    El operador puede verificar haciendo GET /policy/{policy_id}.
+    """
+    import re
+    pattern = r"(pkt_meristem_[a-zA-Z0-9_]+|dec_[a-zA-Z0-9_]+)"
+    matches = re.findall(pattern, answer)
+    # Dedup preservando orden
+    seen = set()
+    out = []
+    for m in matches:
+        if m not in seen:
+            seen.add(m)
+            out.append(m)
+    return out
