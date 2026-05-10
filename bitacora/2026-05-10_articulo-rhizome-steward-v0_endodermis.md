@@ -93,12 +93,17 @@ en Jetson con una configuracion especifica, pero tambien revelo regresiones
 contractuales en casos concretos. La decision fue correcta: rendimiento si, pero
 no a costa de estabilidad semantica.
 
-La capa mas interesante para futuro es `ShadowSkeptic`. Implementa una version
-experimental de doble agente, pero no afecta al resultado. Revisa cada decision,
-registra si habria objetado, que preocupacion detecta y que accion recomendaria,
-siempre con `affects_decision=false`. Esto permite recoger datos reales antes de
-decidir si merece evolucionar hacia un segundo agente LLM. Es una forma madura
-de innovar: abrir la puerta sin meter riesgo en el actuador.
+La capa mas ambiciosa es `ShadowSkeptic`: una primera forma experimental de
+doble agente en Rhizome. La idea no es duplicar complejidad por estetica, sino
+crear una segunda inteligencia local con una jurisdiccion distinta. El steward
+actua como criterio operativo; el skeptic actua como conciencia tecnica: revisa
+cada decision, busca contradicciones fisicas, detecta señales de exceso de
+confianza y propone una alternativa mas prudente cuando ve riesgo. Cada revision
+queda registrada con la accion revisada, sus preocupaciones, su recomendacion y
+la evidencia que la motivo. El objetivo es medir, con datos reales de maceta, si
+un segundo agente mejora seguridad, explicabilidad y estabilidad antes de
+convertirlo en autoridad efectiva. Es una ruta potente hacia agentes locales que
+no solo actuan, sino que se auditan entre si.
 
 Lo que hace fuerte esta implementacion no es una unica pieza brillante, sino la
 composicion de capas:
@@ -106,12 +111,12 @@ composicion de capas:
 - ESP32 como veto fisico independiente.
 - Rhizome Steward como bucle autonomo minimo.
 - Gates deterministas como nucleo de seguridad.
-- Gemma 4 como explicacion local y auditabilidad.
+- Gemma 4 como explicacion local, memoria sintetica y auditabilidad.
 - llama.cpp como camino de paridad con Jetson.
 - DecisionReceipt como memoria verificable.
 - Pollen como interfaz humana de visita.
 - Logs rotados como operacion real, no demo fragil.
-- ShadowSkeptic como investigacion segura de doble agente.
+- ShadowSkeptic como investigacion agencial de segundo criterio local.
 
 ## Mejoras futuras
 
@@ -119,11 +124,22 @@ La siguiente evolucion natural es convertir el steward en servicio supervisado
 con `systemd`, anadir calibracion formal de humedad, usar feedback real del
 caudalimetro en `execution_details`, instalar el SSD para modelo y retencion
 larga, y conectar `WeatherDigest` para aplazar riego si hay lluvia probable.
+Tambien entra aqui la vision: una camara de bajo coste o snapshot periodico que
+no mande sobre el agua, pero aporte señales de marchitez, crecimiento, sombra,
+plagas visibles o contradiccion sensor-planta. La regla seguiria siendo la misma:
+la vision informa; el ESP32 veta; Rhizome deja recibo.
 
-En Gemma 4, las mejoras mas prometedoras son: resumen inteligente de "que paso
-desde mi ausencia", explicaciones multilingues para Pollen, structured output
-mas estricto con llama.cpp, estabilizacion del perfil GPU y un `ShadowSkeptic`
-LLM que siga sin vetar al principio, pero aprenda a detectar inconsistencias.
+En Gemma 4, las mejoras mas prometedoras son mas profundas que "redactar mejor".
+Puede sintetizar "que paso desde mi ausencia" leyendo receipts y snapshots;
+explicar decisiones en el idioma de Pollen; comparar telemetria reciente con
+historico local; detectar patrones anormales como humedad que no sube tras
+riego, caudal erratico o deposito que cae demasiado rapido; convertir
+`WeatherDigest`, `PolicyPacket` y visitas humanas en contexto compacto con TTL;
+producir structured output mas estricto con llama.cpp; ayudar a calibrar
+umbrales raw mediante observaciones repetidas; y alimentar un `ShadowSkeptic`
+LLM experimental que aprenda a encontrar contradicciones antes de que lleguen a
+la capa fisica. La frontera importante no cambia: Gemma 4 aumenta criterio,
+memoria y explicacion; no rebaja hard limits.
 
 La ambicion de Rhizome Steward v0 es pequena en superficie y grande en
 arquitectura: riega poco, bloquea bien, explica corto y deja recibo. Eso es
