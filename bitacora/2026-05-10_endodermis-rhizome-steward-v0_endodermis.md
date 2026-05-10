@@ -226,6 +226,40 @@ Ajuste de Rhizome:
   no autoriza `WATER` desde raw; fuera de la banda humeda, aplaza;
 - esto evita interpretar `1265` como porcentaje o como seco por error.
 
+## Prueba ESP32 real desde Jetson
+
+ESP32 conectado a Jetson en `192.168.1.60`, puerto `/dev/ttyACM0`.
+
+Observaciones:
+
+- `STATUS_REPORT`: firmware `1cfd4f9-dirty`, `pump_relay_gpio=16`,
+  `pump_relay_active_low=true`, `pump_relay_state=OFF`.
+- `TELEMETRY_REPORT`: `soil_a_raw` en torno a `1957-1963`, `soil_a_source=ADC`,
+  `tank_level_pct=-1`, `flow_pulses=0`.
+- `PUMP_STATUS`: `state=OFF`.
+- `Rhizome Steward` en observe mode con `run_steward_serial_observe_minimal.sh`
+  produjo `DEFER`, `executed=false`, `blocked_reason=AMBIGUOUS_MOISTURE_BAND`,
+  `heartbeat_ok=true`.
+- `facade_data/decision_receipt.json` queda actualizado al ultimo receipt real,
+  no a un fake anterior.
+
+Intento de pulso:
+
+- `PUMP_ON` devuelve `REJECT reason=UNKNOWN_COMMAND`.
+- `WATER A 1` devuelve `ACK ... execution=DRY_RUN ... tank_level_pct=-1`.
+- `STOP` y `PUMP_OFF` devuelven `ACK`.
+- `PUMP_STATUS` final: `state=OFF`.
+
+Resultado: ruta serie y semantica `WATER A 1` verificadas, pero sin pulso fisico
+real porque el firmware responde en `DRY_RUN`.
+
+Preguntas para Xilema:
+
+1. Confirmar umbral seco raw para esta sonda (`SOIL_DRY_ABOVE_RAW`) antes de
+   permitir riego autonomo por Rhizome.
+2. Confirmar comando/escenario/firmware exacto para pulso fisico real de 1s,
+   dado que `PUMP_ON` no existe en esta build y `WATER A 1` sigue en `DRY_RUN`.
+
 ## Validacion
 
 Comandos:
