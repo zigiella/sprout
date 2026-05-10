@@ -34,4 +34,9 @@ class MeristemMockClient : MeristemClient {
             notes = "For testing UI"
         )
     }
+
+    override suspend fun checkHealth(): Boolean {
+        delay(500)
+        return true
+    }
 }

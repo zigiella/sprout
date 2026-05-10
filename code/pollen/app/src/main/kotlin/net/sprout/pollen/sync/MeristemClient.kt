@@ -6,4 +6,5 @@ import net.sprout.pollen.schemas.PolicyPacket
 interface MeristemClient {
     suspend fun uploadFieldVisit(visit: FieldVisit)
     suspend fun getLatestPolicy(targetId: String): PolicyPacket
+    suspend fun checkHealth(): Boolean
 }

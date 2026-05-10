@@ -18,6 +18,9 @@ interface MeristemApi {
 
     @GET("/policy/by-target/{id}")
     suspend fun getPolicyByTarget(@retrofit2.http.Path("id") id: String): PolicyPacket
+    
+    @GET("/health")
+    suspend fun getHealth(): retrofit2.Response<Unit>
 }
 
 class MeristemNetworkClient(baseUrl: String) : MeristemClient {
@@ -45,5 +48,14 @@ class MeristemNetworkClient(baseUrl: String) : MeristemClient {
 
     override suspend fun getLatestPolicy(targetId: String): PolicyPacket {
         return api.getPolicyByTarget(targetId)
+    }
+
+    override suspend fun checkHealth(): Boolean {
+        return try {
+            val response = api.getHealth()
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
     }
 }
