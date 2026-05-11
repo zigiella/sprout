@@ -153,3 +153,243 @@ rhizome_02 -> http://192.168.1.60:13020/
 
 `rhizome_02` usa `code/rhizome/demo_data/rhizome_02`. Debe documentarse como
 simulacion de interoperabilidad multi-Rhizome, no como segundo nodo fisico.
+
+## Rhizome Steward v0
+
+`src/rhizome_steward.py` cierra el bucle autonomo minimo para piloto de
+maceta supervisado:
+
+```text
+ESP32 TELEMETRY -> snapshot -> safety/need gate -> optional Gemma rationale
+-> optional WATER -> DecisionReceipt -> logs rotados -> facade_data
+```
+
+Propiedades de seguridad:
+
+- no envia `WATER` salvo que se pase `--execute-water`;
+- nunca supera `30s` por evento (`FIRMWARE_MAX_WATER_SECONDS_MVP`);
+- aplica cooldown local antes de volver a regar;
+- limita eventos autonomos por dia;
+- si no entiende la humedad, aplaza;
+- si deposito baja de minimo, emite `ALERT`;
+- si no hay sensor de deposito, por defecto aplaza salvo permiso explicito de
+  perfil minimo;
+- si una lectura falta, el snapshot conserva schema valido y marca
+  `pending_contradictions`;
+- el `ShadowSkeptic` es experimental y no afecta la decision.
+
+Ejecucion sin hardware:
+
+```bash
+cd code/rhizome
+python -m src.rhizome_steward run-once --esp32 fake
+```
+
+Ejecucion con ESP32 real, una sola pasada, aun sin abrir agua:
+
+```bash
+python -m src.rhizome_steward run-once \
+  --esp32 serial \
+  --serial-port /dev/ttyACM0
+```
+
+Ejecucion con permiso explicito para mandar `WATER A <seconds>` al ESP32:
+
+```bash
+python -m src.rhizome_steward run-once \
+  --esp32 serial \
+  --serial-port /dev/ttyACM0 \
+  --execute-water \
+  --water-seconds 8
+```
+
+Si la sonda de humedad aun no esta calibrada a porcentaje, usar umbrales raw:
+
+```bash
+python -m src.rhizome_steward run-once \
+  --esp32 serial \
+  --serial-port /dev/ttyACM0 \
+  --soil-dry-below-raw 1500 \
+  --soil-wet-above-raw 2600
+```
+
+Perfil hardware minimo de maceta:
+
+```bash
+python -m src.rhizome_steward run-once \
+  --esp32 serial \
+  --serial-port /dev/ttyACM0 \
+  --allow-missing-tank-sensor \
+  --soil-dry-below-raw 1500 \
+  --soil-wet-above-raw 2600
+```
+
+Este perfil existe para una ESP32 minima con bomba y sensor de humedad, mientras
+caudalimetro y nivel de deposito quedan previstos pero aun no instalados. Si se
+permite riego con deposito no sensorizado, el receipt conserva
+`tank_level_unavailable`; si falta caudalimetro, conserva
+`flow_sensor_unavailable`. Cuando esos sensores existan, quitar el flag y usar
+modo estricto.
+
+Si la humedad llega como valor raw, la polaridad debe declararse. La sonda real
+del handoff de Xilema reporta `soil_a_raw < 1300` como suelo muy humedo, por lo
+que el primer observe mode usa `--soil-raw-polarity low_is_wet` y
+`--soil-wet-below-raw 1300`. Xilema fija para el MVP:
+
+```text
+SOIL_RAW_POLARITY=low_is_wet
+SOIL_WET_BELOW_RAW=1300
+SOIL_DRY_ABOVE_RAW=2200
+```
+
+Interpretacion:
+
+- `<1300`: muy humedo, `SKIP`;
+- `1300..2199`: banda ambigua, `DEFER`;
+- `>=2200`: seco para MVP, candidato a `WATER_A` si pasan las demas
+  barandillas.
+
+Si la firmware minima expone el pulso fisico seguro `PUMP_PULSE <ms>`, usar:
+
+```bash
+python -m src.rhizome_steward run-once \
+  --esp32 serial \
+  --serial-port /dev/ttyACM0 \
+  --serial-water-command-mode pump-pulse
+```
+
+No usar `pump-toggle` con el firmware de dia 26: esta build no expone
+`PUMP_ON`, y Xilema autoriza la ruta `PUMP_PULSE`. `water-duration` sigue siendo
+valido para builds que ejecuten `WATER A <seconds>` fisicamente en la frontera
+ESP32; en la build actual `WATER A 1` responde `execution=DRY_RUN`.
+
+Persistencia por defecto:
+
+```text
+~/.local/share/sprout/rhizome_steward/
+├── telemetry_samples/YYYY-MM-DD.jsonl
+├── decision_receipts/YYYY-MM-DD.jsonl
+├── shadow_skeptic/YYYY-MM-DD.jsonl
+├── current_snapshot.json
+├── last_decision_receipt.json
+└── facade_data/
+```
+
+El store aplica retencion por dias y presupuesto total de bytes
+(`--retention-days`, `--max-total-bytes`) para poder correr semanas/meses sin
+rebosar la microSD. Para que Pollen vea el bucle real, arranca la fachada con:
+
+```bash
+python -m src.rhizome_sync_facade \
+  --host 0.0.0.0 \
+  --port 13010 \
+  --data-dir ~/.local/share/sprout/rhizome_steward/facade_data
+```
+
+Gemma 4 E2B puede entrar como redactor contractual de rationale con el adapter:
+
+```bash
+python -m src.rhizome_steward run-once \
+  --esp32 serial \
+  --serial-port /dev/ttyACM0 \
+  --gemma-rationale-url http://127.0.0.1:12000
+```
+
+Gemma no cambia la accion ni autoriza agua; solo mejora la explicacion sobre
+facts ya decididos.
+
+### Datos devueltos a Pollen
+
+Rhizome devuelve siempre JSON. Pollen puede elegir idioma con `?locale=en` o
+`?locale=es`; si no se indica, el fallback es `es`.
+
+Decision de arquitectura de idioma:
+
+- El sistema razona en contratos, no en el idioma de la interfaz.
+- Los campos operacionales (`action`, `executed`, `blocked_reason`, cantidades,
+  timestamps, codigos de veto) no se traducen.
+- Rhizome puede devolver narrativa localizada para el MVP, pero la fuente de
+  verdad sigue siendo el `DecisionReceipt`.
+- Pollen es la capa responsable de experiencia linguistica. Su Gemma 4 local
+  puede traducir solo la narrativa que no llegue ya localizada, segun el idioma
+  activo de la interfaz.
+- Esta separacion permite que, en el futuro, Pollen pueda usar fine-tuning o
+  adaptacion local para idiomas minoritarios (por ejemplo Pular, Swahili o
+  Wolof) sin pedir a Rhizome que cambie su logica de riego ni sus contratos.
+
+Endpoints principales:
+
+```text
+GET /snapshot/latest
+GET /receipts?since=<UTC_ZULU>
+GET /explain/decision/<decision_id>?locale=en|es
+GET /summary/since?since=<UTC_ZULU>&locale=en|es
+```
+
+`/receipts` devuelve `DecisionReceipt` casi canonico: `action`, `executed`,
+`blocked_reason`, `action_params`, `confidence`, `rationale_short`,
+`rationale_full`, `backend_used`, `contradictions`. Pollen debe tratar
+`executed=false` como propuesta no ejecutada, aunque `action` sea `WATER_A`.
+
+`/explain/decision/<id>` devuelve una explicacion localizada construida desde el
+receipt. Si Gemma 4 participo antes en el steward, esa explicacion incorpora el
+`rationale_*` escrito por Gemma en el receipt. Si no, usa rationale
+determinista.
+
+`/summary/since` devuelve el payload del boton principal de ausencia:
+
+```json
+{
+  "headline": "...",
+  "summary": "...",
+  "highlights": ["..."],
+  "recommendation": "...",
+  "counts": {
+    "total": 2,
+    "water": 1,
+    "water_proposed": 2,
+    "water_not_executed": 1,
+    "block": 0,
+    "alert": 0,
+    "executed": 1
+  },
+  "source": "deterministic_visit_summary",
+  "simulation": false
+}
+```
+
+Gemma 4 no es fuente de verdad para estos campos. Su papel correcto es redactar
+mejor `rationale_short`/`rationale_full` y, como siguiente paso, sintetizar una
+narrativa de ausencia a partir de snapshots y receipts ya validados.
+
+#### Narrador Gemma 4 opcional
+
+La fachada puede usar Gemma 4 E2B local como narrador del boton de ausencia:
+
+```bash
+GEMMA_VISIT_NARRATOR_URL=http://127.0.0.1:12000 \
+GEMMA_VISIT_NARRATOR_MODEL=gemma4:e2b \
+./start_sync_facade.sh
+```
+
+Cuando esta activo, Gemma solo puede reescribir `headline`, `summary`,
+`highlights` y `recommendation`. No puede cambiar `counts`, `severity`,
+`source`, `simulation`, receipts ni snapshots. Si Gemma falla, tarda demasiado o
+devuelve JSON invalido, la respuesta cae al resumen determinista.
+
+Configuracion E2B: los usos Gemma de Rhizome usan `num_predict=1024` para evitar
+fallbacks silenciosos por respuestas truncadas en E2B.
+
+Campos de trazabilidad:
+
+```json
+{
+  "source": "deterministic_visit_summary",
+  "narrative_source": "gemma_visit_narrator",
+  "gemma_narrator": {
+    "enabled": true,
+    "used": true,
+    "model": "gemma4:e2b"
+  }
+}
+```
