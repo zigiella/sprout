@@ -41,7 +41,7 @@ fun VisitarMeristemScreen(
         if (net.sprout.pollen.BuildConfig.FLAVOR == "demo") {
             MeristemMockClient()
         } else {
-            MeristemNetworkClient("http://meristem.local:13000/")
+            MeristemNetworkClient("http://192.168.1.42:13000/")
         }
     }
     val scope = rememberCoroutineScope()
