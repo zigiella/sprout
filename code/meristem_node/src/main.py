@@ -34,11 +34,18 @@ from pydantic import BaseModel
 from . import ingest as ingest_service
 from . import persistence
 from .evaluator import evaluate
-from .inference import LLMUnavailableError, compose_rationale_via_llm
+from .inference import (
+    LLMUnavailableError,
+    compose_chat_response,
+    compose_rationale_via_llm,
+    extract_evidence_refs,
+)
 from .policy_composer import compose_policy
 from .schemas import (
     Action,
     Bundle,
+    ChatRequest,
+    ChatResponse,
     DecisionRecord,
     EvaluationResult,
     PolicyPacket,
@@ -191,6 +198,7 @@ def _build_app() -> FastAPI:
             "targets_known": persistence.list_known_targets(),
             "pollen_connection": pollen_manager.state_snapshot(),
             "ws_events_by_type": persistence.count_ws_events_by_event(),
+            "chat_messages": persistence.count_conversation_messages(),
         }
 
     @app.get("/status", response_model=StatusResponse)
@@ -533,6 +541,116 @@ def _build_app() -> FastAPI:
         return {
             "limit": capped,
             "items": persistence.list_recent_policies(limit=capped),
+        }
+
+    # -----------------------------------------------------------------------
+    # Chat conversacional read-only (fase 3 plan IA día 19, línea B día 24)
+    # -----------------------------------------------------------------------
+
+    @app.post("/chat", response_model=ChatResponse)
+    async def chat(req: ChatRequest, request: Request) -> ChatResponse:
+        """Pregunta del operador a Meristem en castellano natural.
+
+        Read-only estricto:
+        - NO modifica policies
+        - NO emite bundles
+        - NO llama a Pollen ni mueve hardware
+
+        El LLM tiene acceso a tools de solo lectura (get_recent_history,
+        compare_targets, compare_with_previous_policy, get_weather_history)
+        para enriquecer la respuesta. Las respuestas citan policy_id /
+        decision_id específicos en `evidence_refs` para que el operador
+        pueda verificar.
+
+        Si `conversation_id` es None, se crea una nueva conversación.
+        Si se pasa, se continúa con el contexto previo (últimos N
+        mensajes).
+
+        Header opcional `X-Meristem-Num-Predict`: override del default
+        (512 para chat).
+        """
+        # Generar conversation_id si no viene
+        conversation_id = req.conversation_id or f"conv_{uuid.uuid4().hex[:12]}"
+
+        # Persistir mensaje del usuario PRIMERO (audit trail incluso si
+        # el LLM falla después)
+        persistence.insert_conversation_message(
+            conversation_id=conversation_id,
+            operator_id=req.operator_id,
+            role="user",
+            content=req.message_es,
+        )
+
+        # Cargar historia (excluyendo mensaje recién insertado para que
+        # el LLM no lo vea duplicado vía contexto + mensaje actual)
+        history = persistence.get_conversation_history(conversation_id, limit=20)
+        # Quitamos el último (que acabamos de insertar) para evitar duplicado
+        prev_history = history[:-1] if history else []
+
+        # Override num_predict via header (chat default 512)
+        num_predict_override: int | None = None
+        try:
+            hdr_p = request.headers.get("X-Meristem-Num-Predict")
+            if hdr_p is not None:
+                num_predict_override = int(hdr_p)
+        except (ValueError, TypeError):
+            num_predict_override = None
+
+        if not USE_LLM:
+            # Stub: respuesta determinista cuando LLM apagado
+            answer_es = (
+                f"[Stub mode] Recibí tu pregunta: «{req.message_es[:80]}». "
+                "El LLM está apagado en este Meristem. "
+                "Levanta el adapter para respuesta real."
+            )
+            llm_metrics = {"mode": "stub_disabled"}
+        else:
+            try:
+                kwargs: dict[str, Any] = {"adapter_url": ADAPTER_URL}
+                if num_predict_override is not None:
+                    kwargs["num_predict"] = num_predict_override
+                answer_es, llm_metrics = compose_chat_response(
+                    operator_message=req.message_es,
+                    conversation_history=prev_history,
+                    **kwargs,
+                )
+                llm_metrics["mode"] = "llm"
+            except LLMUnavailableError as e:
+                logger.warning("LLM chat no disponible (%s). Fallback.", e)
+                answer_es = (
+                    "Disculpa, no he podido procesar tu pregunta en este "
+                    "momento. Inténtalo de nuevo en un rato. (LLM offline)"
+                )
+                llm_metrics = {"mode": "stub_fallback", "reason": str(e)}
+
+        # Persistir respuesta del asistente
+        persistence.insert_conversation_message(
+            conversation_id=conversation_id,
+            operator_id=req.operator_id,
+            role="assistant",
+            content=answer_es,
+        )
+
+        evidence_refs = extract_evidence_refs(answer_es)
+
+        return ChatResponse(
+            status="ok",
+            conversation_id=conversation_id,
+            answer_es=answer_es,
+            evidence_refs=evidence_refs,
+            llm_metrics=llm_metrics,
+        )
+
+    @app.get("/chat/{conversation_id}/history")
+    async def chat_history(conversation_id: str) -> dict[str, Any]:
+        """Historia de una conversación. Útil para UI futura."""
+        history = persistence.get_conversation_history(
+            conversation_id, limit=50,
+        )
+        return {
+            "conversation_id": conversation_id,
+            "messages": history,
+            "count": len(history),
         }
 
     return app
