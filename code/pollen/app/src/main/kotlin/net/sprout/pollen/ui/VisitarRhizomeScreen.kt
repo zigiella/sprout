@@ -78,15 +78,7 @@ fun VisitarRhizomeScreen(
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            // Fallback a mock data si el nodo no está encendido
-            val mockClient = net.sprout.pollen.sync.RhizomeMockClient()
-            status = mockClient.getStatus()
-            snapshot = mockClient.getLatestSnapshot()
-            receipts = mockClient.getReceipts()
-            step = 4
-            if (snapshot != null) {
-                onDataFetched(snapshot!!, receipts)
-            }
+            step = -1 // Error de conexión
         }
     }
 
@@ -97,7 +89,7 @@ fun VisitarRhizomeScreen(
         
         // Checklist Card
         AnimatedVisibility(
-            visible = step < 4,
+            visible = step < 4 && step != -1,
             exit = shrinkVertically() + fadeOut()
         ) {
             Card(
@@ -120,6 +112,33 @@ fun VisitarRhizomeScreen(
                     SyncStepUI(label = stringResource(R.string.visit_snapshot), sub = stringResource(R.string.visit_snapshot_sub), status = if (step >= 3) "done" else if (step == 2) "active" else "pending")
                     Spacer(modifier = Modifier.height(12.dp))
                     SyncStepUI(label = stringResource(R.string.visit_receipts), sub = stringResource(R.string.visit_receipts_sub), status = if (step >= 4) "done" else if (step == 3) "active" else "pending")
+                }
+            }
+        }
+        
+        // Error Card
+        AnimatedVisibility(
+            visible = step == -1,
+            exit = shrinkVertically() + fadeOut()
+        ) {
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        "Error de conexión",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        "No se pudo conectar con el nodo $plotId. Verifica que el hardware esté encendido y en la misma red.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
                 }
             }
         }
