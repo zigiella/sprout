@@ -67,6 +67,15 @@ fun VisitarMeristemScreen(
     LaunchedEffect(Unit) {
         addLog(checkingConnectionStr)
         var first = true
+        
+        // Primero hacemos el health check oficial
+        val isHealthOk = client.checkHealth()
+        if (isHealthOk) {
+            addLog("Health-check: 200 OK (Red disponible)")
+        } else {
+            addLog("Health-check: FAILED (¿IP incorrecta o servidor caído?)")
+        }
+        
         while(true) {
             val pendingCount = if (currentSnapshot != null) 1 else 0
             val isUp = client.sendHello(net.sprout.pollen.sync.PollenHello(
@@ -84,7 +93,7 @@ fun VisitarMeristemScreen(
                 }
             } else {
                 if (first) {
-                    addLog(connectionErrorStr)
+                    addLog("Error en POST /hello (404/500)")
                     first = false
                 }
             }
