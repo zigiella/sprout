@@ -66,13 +66,29 @@ fun VisitarMeristemScreen(
 
     LaunchedEffect(Unit) {
         addLog(checkingConnectionStr)
-        val isUp = client.checkHealth()
-        isConnected = isUp
-        if (isUp) {
-            lastConnectionDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
-            addLog(connectionOkStr)
-        } else {
-            addLog(connectionErrorStr)
+        var first = true
+        while(true) {
+            val pendingCount = if (currentSnapshot != null) 1 else 0
+            val isUp = client.sendHello(net.sprout.pollen.sync.PollenHello(
+                pollen_id = "pollen-dev-01",
+                app_version = "1.0.0",
+                bundles_pending_count = pendingCount
+            ))
+            
+            isConnected = isUp
+            if (isUp) {
+                lastConnectionDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
+                if (first) {
+                    addLog(connectionOkStr)
+                    first = false
+                }
+            } else {
+                if (first) {
+                    addLog(connectionErrorStr)
+                    first = false
+                }
+            }
+            kotlinx.coroutines.delay(5000) // Heartbeat cada 5 segundos
         }
     }
     

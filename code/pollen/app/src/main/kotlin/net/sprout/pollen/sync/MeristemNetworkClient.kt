@@ -21,6 +21,9 @@ interface MeristemApi {
     
     @GET("/health")
     suspend fun getHealth(): retrofit2.Response<Unit>
+    
+    @POST("/hello")
+    suspend fun sendHello(@Body hello: PollenHello): retrofit2.Response<Unit>
 }
 
 class MeristemNetworkClient(baseUrl: String) : MeristemClient {
@@ -53,6 +56,15 @@ class MeristemNetworkClient(baseUrl: String) : MeristemClient {
     override suspend fun checkHealth(): Boolean {
         return try {
             val response = api.getHealth()
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
+    }
+    
+    override suspend fun sendHello(hello: PollenHello): Boolean {
+        return try {
+            val response = api.sendHello(hello)
             response.isSuccessful
         } catch (e: Exception) {
             false
