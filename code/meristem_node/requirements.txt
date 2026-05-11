@@ -2,3 +2,4 @@ fastapi>=0.110
 uvicorn[standard]>=0.27
 pydantic>=2.6
 httpx>=0.27
+zeroconf>=0.130  # mDNS para anunciar meristem.local en LAN local
