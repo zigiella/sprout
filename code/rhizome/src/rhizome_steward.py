@@ -262,6 +262,23 @@ class TermiosSerialPort:
         os.close(self.fd)
 
 
+def _expected_ack_command(command: str) -> str | None:
+    command_name = command.split()[0] if command.split() else ""
+    if command_name in {"STATUS", "TELEMETRY", "PUMP_STATUS"}:
+        return None
+    return command_name or None
+
+
+def _line_is_ack_for_command(line: str, expected_command: str | None) -> bool:
+    if expected_command is None:
+        return line.startswith("ACK ")
+    return f"ACK command={expected_command}" in line
+
+
+def _line_is_terminal_for_command(line: str, expected_command: str) -> bool:
+    return _line_is_ack_for_command(line, expected_command) or "REJECT reason=" in line
+
+
 class SerialESP32Client:
     def __init__(self, port: str, baud: int = 115200, timeout_s: float = 0.1, quiet_s: float = 0.35, max_wait_s: float = 3.0, water_command_mode: str = "water-duration") -> None:
         try:
@@ -280,10 +297,11 @@ class SerialESP32Client:
         self.serial.reset_input_buffer()
         self.serial.reset_output_buffer()
 
-    def _collect(self, max_wait_s: float | None = None) -> list[str]:
+    def _collect(self, max_wait_s: float | None = None, expected_ack_command: str | None = None) -> list[str]:
         lines: list[str] = []
         started_at = time.monotonic()
         last_payload_at: float | None = None
+        terminal_seen = False
         max_wait_s = max_wait_s if max_wait_s is not None else self.max_wait_s
         while True:
             raw = self.serial.readline()
@@ -293,17 +311,22 @@ class SerialESP32Client:
                 if decoded:
                     lines.append(decoded)
                     last_payload_at = current
+                    if expected_ack_command and _line_is_terminal_for_command(decoded, expected_ack_command):
+                        terminal_seen = True
                 continue
             if last_payload_at is not None and current - last_payload_at >= self.quiet_s:
-                break
-            if current - started_at >= self.max_wait_s:
+                if expected_ack_command is None or terminal_seen:
+                    break
+            if current - started_at >= max_wait_s:
                 break
         return lines
 
     def command(self, command: str, max_wait_s: float | None = None) -> ESP32CommandResult:
         sent_at = zulu(utc_now())
+        self.serial.reset_input_buffer()
         self.serial.write(f"{command}\n".encode("utf-8"))
-        lines = self._collect(max_wait_s=max_wait_s)
+        expected_ack_command = _expected_ack_command(command)
+        lines = self._collect(max_wait_s=max_wait_s, expected_ack_command=expected_ack_command)
         received_at = zulu(utc_now())
         combined = "\n".join(lines)
         if "REJECT reason=" in combined:
@@ -314,7 +337,7 @@ class SerialESP32Client:
                     reason = values.get("reason")
                     break
             return ESP32CommandResult(False, command, sent_at, received_at, lines, "REJECT", reason)
-        ok = any(line.startswith("ACK ") for line in lines)
+        ok = any(_line_is_ack_for_command(line, expected_ack_command) for line in lines) if expected_ack_command else any(line.startswith("ACK ") for line in lines)
         return ESP32CommandResult(ok, command, sent_at, received_at, lines, "OK" if ok else "NO_ACK")
 
     def heartbeat(self) -> ESP32CommandResult:

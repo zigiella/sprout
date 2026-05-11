@@ -292,6 +292,44 @@ class RhizomeStewardTest(unittest.TestCase):
         self.assertEqual(client.calls[0][0], "PUMP_PULSE 3000")
         self.assertGreaterEqual(client.calls[0][1], 5.0)
 
+    def test_serial_command_waits_for_expected_ack_after_heartbeat_noise(self):
+        class NoisySerial:
+            def __init__(self):
+                self.writes = []
+                self.lines = [
+                    b"HEARTBEAT state=SAFE_IDLE host_link=FRESH\n",
+                    b"",
+                    b"ACK command=PUMP_PULSE gpio=16 duration_ms=3000 PUMP_REPORT state=OFF\n",
+                    b"",
+                ]
+
+            def write(self, data):
+                self.writes.append(data)
+                return len(data)
+
+            def readline(self):
+                if self.lines:
+                    return self.lines.pop(0)
+                return b""
+
+            def reset_input_buffer(self):
+                return None
+
+            def reset_output_buffer(self):
+                return None
+
+        client = SerialESP32Client.__new__(SerialESP32Client)
+        client.serial = NoisySerial()
+        client.quiet_s = 0.0
+        client.max_wait_s = 0.2
+        client.water_command_mode = "pump-pulse"
+
+        result = client.command("PUMP_PULSE 3000", max_wait_s=0.2)
+
+        self.assertTrue(result.ok)
+        self.assertEqual(result.ack_status, "OK")
+        self.assertIn("ACK command=PUMP_PULSE", "\n".join(result.lines))
+
     def test_store_enforces_byte_budget(self):
         with tempfile.TemporaryDirectory() as tmp:
             store = BoundedJsonlStore(Path(tmp), retention_days=30, max_total_bytes=900)
