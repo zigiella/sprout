@@ -43,7 +43,7 @@ fun VisitarRhizomeScreen(
             RhizomeMockClient()
         } else {
             val port = if (plotId.contains("02")) "13020" else "13010"
-            RhizomeNetworkClient("http://rhizome-01-node.local:$port/")
+            RhizomeNetworkClient("http://192.168.1.60:$port/")
         }
     }
     val scope = rememberCoroutineScope()
