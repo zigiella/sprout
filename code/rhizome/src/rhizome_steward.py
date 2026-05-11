@@ -861,6 +861,12 @@ class ShadowSkeptic:
         }
 
 
+def _execution_is_test_only(execution: ESP32CommandResult | None) -> bool:
+    if execution is None:
+        return False
+    return any("execution=TEST_ONLY" in line for line in execution.lines)
+
+
 def build_snapshot(config: StewardConfig, telemetry: Telemetry, policy: dict[str, Any] | None, now: datetime) -> dict[str, Any]:
     soil_a_pct = telemetry.soil_a_pct()
     soil_b_pct = float(telemetry.soil_b_raw) if telemetry.soil_b_raw is not None and 0 <= telemetry.soil_b_raw <= 100 else soil_a_pct
@@ -948,8 +954,15 @@ class RhizomeSteward:
             if self.config.execute_water:
                 self.client.heartbeat()
                 execution = self.client.water("A", int(decision.action_params["duration_s"]))
-                executed = execution.ok
-                blocked_reason = None if execution.ok else execution.reject_reason or "ESP32_REJECTED"
+                test_only = _execution_is_test_only(execution)
+                executed = execution.ok and not test_only
+                if test_only:
+                    decision.action_params["esp32_execution_mode"] = "TEST_ONLY"
+                    if "esp32_test_only_execution" not in decision.contradictions:
+                        decision.contradictions.append("esp32_test_only_execution")
+                    blocked_reason = "ESP32_TEST_ONLY"
+                else:
+                    blocked_reason = None if execution.ok else execution.reject_reason or "ESP32_REJECTED"
             else:
                 blocked_reason = "OBSERVE_MODE_EXECUTE_WATER_FALSE"
 
