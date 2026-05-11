@@ -28,8 +28,8 @@ calling en directo en demo**. Estado del bundle:
 
 - `mode=alert`, `alert_latched=true`, `tank_pct=15` → Evaluator dispara
   ALERT_POLICY (PERSISTENT_EMERGENCY) sin ambigüedad.
-- 3 `decision_receipts` BLOCK seguidos (2 por DEPOSITO_BAJO + 1 por
-  ALERTA_LATCHED) → emergencia persistente clara.
+- 3 `decision_receipts` BLOCK seguidos (2 por TANK_LOW + 1 por
+  ALERT_LATCHED) → emergencia persistente clara.
 - **`weather_digest: null`** → el modelo no tiene contexto meteorológico
   y para escribir un rationale completo *necesita* llamar
   `get_weather_history(plot_id)`.

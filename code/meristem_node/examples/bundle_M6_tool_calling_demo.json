@@ -12,9 +12,9 @@
     "tank_pct": 15
   },
   "decision_receipts": [
-    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "DEPOSITO_BAJO"},
-    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "DEPOSITO_BAJO"},
-    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "ALERTA_LATCHED"}
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "TANK_LOW"},
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "TANK_LOW"},
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "ALERT_LATCHED"}
   ],
   "weather_digest": null,
   "validation_stamps": []

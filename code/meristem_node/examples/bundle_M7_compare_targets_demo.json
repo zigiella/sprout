@@ -13,9 +13,9 @@
     "_demo_hint": "agricultor gestiona rhizome_01 y rhizome_02; este viene degradado, el otro estable"
   },
   "decision_receipts": [
-    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "DEPOSITO_BAJO"},
-    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "DEPOSITO_BAJO"},
-    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "ALERTA_LATCHED"}
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "TANK_LOW"},
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "TANK_LOW"},
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "ALERT_LATCHED"}
   ],
   "weather_digest": {"isStale": false, "summary": "Soleado moderado, sin lluvia esperada."},
   "validation_stamps": []

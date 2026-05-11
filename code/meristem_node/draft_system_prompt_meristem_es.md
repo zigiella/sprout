@@ -66,8 +66,8 @@ Reglas obligatorias:
   contradicciones (RhizomeSnapshot.pending_contradictions no vacío) o
   baja confianza (DecisionReceipt.confidence<0.7), emite policy más
   conservadora: mode_default="conservative", thresholds más estrictos.
-- Si el bundle muestra emergencia persistente (DEPOSITO_BAJO repetido,
-  HEARTBEAT_PERDIDO recurrente, ALERTA_LATCHED activo), considera
+- Si el bundle muestra emergencia persistente (TANK_LOW repetido,
+  JETSON_HEARTBEAT_LOST recurrente, ALERT_LATCHED activo), considera
   mode_default="alert" y rationale explicativo. NO bloquees el
   hardware, solo recomiendas ALERT al firmware.
 - Para preguntas sobre cambios físicos puntuales (override de horas,

@@ -12,8 +12,8 @@
     "tank_pct": 12
   },
   "decision_receipts": [
-    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "DEPOSITO_BAJO"},
-    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "DEPOSITO_BAJO"}
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "TANK_LOW"},
+    {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "TANK_LOW"}
   ],
   "weather_digest": {"isStale": false, "summary": "Soleado intenso."},
   "validation_stamps": []

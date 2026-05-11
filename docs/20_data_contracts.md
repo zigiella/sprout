@@ -80,6 +80,16 @@ Meristem puede recomendar **más conservador** (umbrales más altos, ventanas m�
 
 Patrón general: *lo físico manda, Rhizome arbitra, Pollen media, Meristem afina.* La autoridad fluye de arriba a abajo cuando se trata de afinar criterio; se invierte cuando se trata de seguridad física.
 
+#### Nomenclatura: `HARD_LIMIT_DOMAIN` ≡ `SAFETY_DOWNGRADE` (equivalentes jurisdiccionales)
+
+Acordado entre Meristem y Xilema día 26. `HARD_LIMIT_DOMAIN` (cómo Meristem nombra el rechazo cuando un bundle intenta relajar un hard limit del firmware, perspectiva del emisor) y `SAFETY_DOWNGRADE` (cómo Rhizome/Pollen nombran el intento de bajar safety al validar, perspectiva del validador) son **la misma realidad vista desde dos lados**: no son códigos duplicados que haya que fusionar, son **equivalentes jurisdiccionales**.
+
+Implicaciones operativas:
+
+- Si un `ValidationStamp` de Rhizome trae `reason: "SAFETY_DOWNGRADE"`, Meristem lo interpreta como sinónimo de su propio `HARD_LIMIT_DOMAIN` al consolidar evidencia y al redactar rationale al operador.
+- Para el writeup/demo, citar cualquiera de los dos términos es válido; ambos apuntan al mismo invariante: lo físico manda.
+- Esta equivalencia no requiere rename en código — coexisten como sinónimos.
+
 ## 3.5 MissionPatch
 Intención humana compilada por Pollen.
 
