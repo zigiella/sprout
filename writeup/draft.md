@@ -1,8 +1,8 @@
-# Sprout — writeup (día 24)
+# Sprout — writeup (día 26)
 
 > **Autores:** Cambium + Bea.
-> **Estado:** primera versión completa de §0 + §1-§9 (día 24). §7 Demo eliminada — la landing demo es autoexplicativa.
-> **Word count target final:** 1500 palabras (Kaggle limit). Versión actual ~1700-1900, recorte final día 28-29.
+> **Estado:** integración día 26 con material del día 25 (Endo Steward v0 + ShadowSkeptic + reflexión Pollen-Rhizome; Floema E2E REST + Approach C i18n oficial; Meristem hallazgo `num_predict` + chat read-only; Xilema riego físico real validado). §7 Demo eliminada — la landing demo es autoexplicativa.
+> **Word count target final:** 1500 palabras (Kaggle limit). Versión actual ~2000-2200 tras integración día 25, recorte final día 28-29.
 
 ---
 
@@ -112,15 +112,21 @@ Cada veto emite motivo legible que se almacena en el `DecisionReceipt` y aparece
 
 **Jerarquia y barandilla.** *Lo fisico manda, Rhizome arbitra, Pollen media, Meristem afina.* Cuanto mas arriba vive una pieza en esa jerarquia, menos autoridad fisica tiene. Ningun `PolicyPacket` emitido por Meristem puede reducir hard limits del firmware ESP32 — solo recomendar criterios mas conservadores. Ningun `MissionPatch` o `VisitAmendment` de Pollen anula reglas duras. La autoridad fluye de arriba a abajo cuando se trata de afinar criterio, y se invierte cuando se trata de seguridad fisica.
 
-## 4. Gemma 4 — ~150 palabras
+**Jurisdiccion natural de cada nodo.** *Rhizome entiende la parcela. Pollen entiende la visita.* Rhizome arbitra agua porque vive donde el agua se decide — junto al sensor, junto al actuador, junto al ESP32 que veta. Pollen media porque vive donde la persona habla — en el bolsillo de quien visita, con micrófono, con voz, con idioma. Entre ambas, Sprout no solo automatiza riego: convierte visitas intermitentes en conocimiento local que viaja.
 
-Sprout usa Gemma 4 en tres formas concretas, cada una explotando una capacidad distinta del modelo:
+## 4. Gemma 4 — ~250 palabras
 
-1. **Audio multimodal nativo en Pollen.** Gemma 4 E4B via LiteRT-LM traga `.wav` 16kHz directamente. Sustituimos el `SpeechRecognizer` de Android tras inestabilidad extensa. La voz humana entra al modelo sin pipeline STT separado, sin red. *"Riega un poco menos, esta planta aguanta mas seca de lo que crees"* se compila a `MissionPatch` estructurado en el bolsillo del agricultor.
+Sprout usa Gemma 4 en cinco formas concretas, cada una explotando una capacidad distinta del modelo y conectada a una decision arquitectural especifica:
+
+1. **Audio multimodal nativo en Pollen.** Gemma 4 E4B via LiteRT-LM traga `.wav` 16kHz directamente. La voz humana entra al modelo sin pipeline STT separado, sin red. *"Riega un poco menos, esta planta aguanta mas seca de lo que crees"* se compila a `MissionPatch` estructurado en el bolsillo del agricultor.
 
 2. **Tool calling nativo en Meristem.** Gemma 4 E4B emite llamadas estructuradas a `compose_policy(...)` y `validate_bundle(...)`. La logica deterministica decide la accion; el LLM solo escribe el `rationale` en castellano natural. Mini-bateria 5/5 PASS.
 
 3. **Routing entre tres nodos.** Tres instancias (E2B + E4B + E4B), tres jurisdicciones, ningun roundtrip a la nube. Cada nodo guarda el tipo de contexto del que su capa es responsable. Bateria de 18 prompts validada en hardware real (Jetson Orin Nano Super CPU): 18/18 envelope_valid + 18/18 status_match.
+
+4. **Narrador bilingue en Rhizome.** Endpoints `GET /summary/since?locale=es|en` y `GET /explain/decision/<id>?locale=es|en` ya operativos. Gemma 4 E2B mejora el `rationale_short` sobre una decision **ya cerrada** por la logica deterministica — no cambia accion, no autoriza agua, no inventa facts. El sistema habla dos idiomas en produccion, no en post-hackathon.
+
+5. **Localizacion via Approach C** (estandar oficial del proyecto, `research/07_llm_localization_strategy.md`). Los nodos edge (Rhizome, ESP32) piensan en Ingles Tecnico estable; Pollen + Gemma 4 E4B local traduce al idioma de la UI antes de pintar. Beneficios: agnosticidad hardware (sin re-flashear nodos por idioma), preparacion para lenguas minoritarias (Pular, Wolof, Swahili, Quechua, Catalan, Euskera) sin replicar explicaciones en N idiomas en almacenamiento central.
 
 **Patron clave**: la decision final NUNCA la firma el LLM. Cuando el offload a GPU causo deriva semantica en un caso de test (`need_clarification` en lugar de `ok`), el sistema no se rompio porque la logica deterministica mantuvo el contrato. Prueba empirica de Safety & Trust.
 
@@ -134,19 +140,31 @@ Sprout usa Gemma 4 en tres formas concretas, cada una explotando una capacidad d
 
 **Decisiones tecnicas con honestidad.** Distincion cristalina entre `FirmwareHardLimits` (los 4 valores que ESP32 enforce hoy) y `PolicyGuardrails` (recomendaciones razonables, no enforcement actual) — drift evitado antes de hardcoding en Pollen. Conservador por defecto en Mini-Evaluator: prefiere `REFUSE_RETRY` con *"no estoy seguro, repite por favor"* antes que aplicar dudoso. Simulaciones rotuladas: `rhizome_02` desde una sola Jetson queda explicito como simulacion host-side en UI, endpoint y bitacora. Trazabilidad como producto, no como debug: `decisions_by_rule` en `/health` muestra al jurado en pantalla que reglas se han ejercitado.
 
-## 6. MVP — qué proyectamos vs qué hacemos — ~120 palabras
+**Hallazgo `num_predict`: la latencia escala con lo que el LLM ESCRIBE, no con lo que LEE.** Bateria experimental con `num_ctx` y `num_predict` independientes mostro que reducir `num_predict` de 1024 a 256 baja la latencia un **53%** sin degradar la utilidad para el operador (regla de brevedad 240 chars). El budget extra se gastaba en *thinking*, no en output util. Demo en directo viable a ~1.5 min/bundle en lugar de ~3 min. Lo contraintuitivo del hallazgo es exactamente lo que justifica testear configuraciones antes de fijarlas.
+
+**Chat read-only por construccion.** Endpoint `POST /chat` de Meristem expone Gemma 4 conversacional al operador, pero **formalmente desacoplado del control plane**: test explicito verifica que el chat NO puede modificar `bundles`, `policies` ni firmware. Cero superficie de prompt injection sobre hardware. La mayoria de chats LLM modifican estado; aqui esta arquitecturalmente prohibido y verificado.
+
+**Validar antes de portar.** Cuando el modulo rele de 12V/1ch no respondia limpio con alimentacion estandar 5V, antes de improvisar adaptaciones el equipo abrio un sketch Arduino minimo para entender el comportamiento real del componente. El sketch revelo que ese rele concreto trabaja estable alimentado desde 3V3, no desde 5V (zona ambigua de saturacion del transistor de la placa). Portado a ESP-IDF con esa configuracion, quedo estable. Caso de oficio: cuando el comportamiento no cuadra con la datasheet, **se valida con el componente mas pequeño posible** antes de seguir.
+
+## 6. MVP — qué proyectamos vs qué hacemos — ~180 palabras
 
 | Proyectamos | Hacemos (validado empiricamente) |
 |-------------|----------------------------------|
 | Tres nodos con jurisdicciones distintas | Tres nodos operativos: cadena Pollen ↔ Rhizome real validada en hardware |
 | Multi-parcela federada | Multi-Rhizome simulado v0 ya funcional sin haberlo planeado (*"cuando la abstraccion esta bien, la extension sale gratis"*) |
-| Voz humana como evento de primera clase | Audio multimodal Gemma 4 E4B nativo en Pollen — sin pipeline STT |
+| Voz humana como evento de primera clase | Audio multimodal Gemma 4 E4B nativo en Pollen — sin pipeline STT. Validado contra microfono real con `REFUSE_RETRY` operando sobre frases sin sentido agricola |
 | Capa fisica que veta | ESP32 vetando ordenes en placa real (5 reglas + SAFETY_DOWNGRADE) |
 | Sistema operando sin red | Sprout escala 1 corriendo en una terraza de Castellar de n'Hug — no proyeccion, sistema vivo |
 | Decision local soberana | Feature beta voz → politica inmediata: Pollen compone PolicyPacket "this-visit" con TTL 12h, conservador por defecto, 3 capas de defensa antes de tocar agua |
-| Trazabilidad como producto | `decisions_by_rule` en `/health` + recibos JSON con motivo legible |
+| Riego real desde decision software | **Bucle fisico cerrado: ESP32 → rele → bomba 12V → agua → sensor capacitivo. Humedad raw bajo de 2278 a 1289 tras pulso. Evidencia empirica.** Comando autonomo sigue en `DRY_RUN`; pulso real solo bajo `TEST_ONLY` supervisado |
+| Autonomia minima Rhizome | **Steward v0 operativo**: heartbeat + telemetria + gates deterministas + cooldown + receipts persistentes. Persistencia rotada disenada para meses (`retention_days=120`, `max_total_bytes=64 MiB`), no para demo |
+| Pollen↔Meristem sincronizado | **Conectividad E2E REST real** en produccion: `GET /health` automatico + `POST /visit` con `RhizomeSnapshot`+`DecisionReceipts` + `GET /policy/by-target/{id}`. Consola de logs en vivo en UI |
+| Sistema bilingue | `?locale=es|en` operativo en endpoints Rhizome (`/summary/since`, `/explain/decision/<id>`). Approach C declarado estandar oficial |
+| Una sola inteligencia decide por nodo | **ShadowSkeptic deterministic_shadow_skeptic_v0** activo: segundo agente local con jurisdiccion explicita, `affects_decision=false`, recoge datos sin autoridad efectiva. Primera version de doble agente auditor en produccion |
+| UI Meristem accesible solo desde el portatil | **UI accesible desde toda la LAN** (mDNS `meristem.local:13000`), validada con click real de Bea desde 192.168.1.36 con `trace_id` correlado |
+| Trazabilidad como producto | `decisions_by_rule` en `/health` + recibos JSON con motivo legible + `shadow_skeptic/YYYY-MM-DD.jsonl` con segunda opinion |
 
-**Honestidad arquitectural**: el patron de jurisdicciones estaba codificado desde el dia 13 — el Evaluator de Meristem (`JURISDICTION_POLLEN`) rechaza explicitamente cambios fisicos puntuales del operador, indicando que esa decision pertenece a Pollen. La feature beta del dia 20 implementa lo que el codigo predijo.
+**Honestidad arquitectural**: el patron de jurisdicciones estaba codificado desde el dia 13 — el Evaluator de Meristem (`JURISDICTION_POLLEN`) rechaza explicitamente cambios fisicos puntuales del operador, indicando que esa decision pertenece a Pollen. La feature beta del dia 20 implementa lo que el codigo predijo. La pieza dia 25 (Steward v0 con ShadowSkeptic) materializa una intuicion arquitectural que llevaba semanas en bitacoras sin codigo.
 
 ## 7. Impacto y escalado — ~120 palabras
 
@@ -170,17 +188,19 @@ Sprout usa Gemma 4 en tres formas concretas, cada una explotando una capacidad d
 - **Tests automatizados de UI estatica**: deuda apuntada desde dia 16 — actualmente smoke manual.
 - **API docs no auto-generadas**: contratos JSON estan documentados en `docs/20_data_contracts.md` pero no hay OpenAPI publicado.
 
-## 9. Trabajo futuro — ~120 palabras
+## 9. Trabajo futuro — ~180 palabras
 
-Sprout deja explicita una hoja de ruta post-hackathon en cuatro ejes:
+Sprout deja explicita una hoja de ruta post-hackathon en cinco ejes, dos de ellos cristalizados el dia 25:
 
-1. **Meristem mas inteligente.** El cerebro lento entra en MVP con Evaluator de 4 reglas + tool calling Gemma 4 E4B. Post-hackathon: ampliacion a 8-12 reglas (estacionalidad, cultivos heterogeneos, presupuesto multi-mes), fine-tuning E4B sobre dataset agricola sintetico+real con Unsloth, modo paralelo de varios LLMs comparando rationale para auditoria de calidad sin tocar produccion. Plan documentado en 7 fases progresivas + 6 principios arquitectonicos transversales (bitacora `2026-05-04_plan-ia-meristem-fases-arquitectura`).
+1. **ShadowSkeptic LLM — auditoria agencial interna.** El doble agente determinista activo hoy (`deterministic_shadow_skeptic_v0`, `affects_decision=false`) recoge en `shadow_skeptic/YYYY-MM-DD.jsonl` cada disension contra la decision principal sin poder vetarla. Post-hackathon: si los registros muestran que la segunda voz tiene razon una fraccion suficiente del tiempo, promocionarla a una version Gemma 4 con autoridad limitada — un agente local cuya jurisdiccion es **cuestionar al primer agente**, no decidir. Patron de doble agente con jurisdiccion no autoritativa como ruta a agentes locales que se auditan entre si.
 
-2. **Mas sensores y complejidad en parcela.** El MVP corre con humedad de suelo + nivel deposito + caudalimetro + un actuador (bomba). Post-hackathon: vision multimodal (camara con Gemma 4 detectando estres hidrico visible, plagas, crecimiento), riego variable por electrovavula multi-zona, conductividad / pH / temperatura suelo, integracion con plataformas climaticas oficiales (AEMET, MeteoCat) sustituyendo `WeatherDigest` portado.
+2. **Idiomas minoritarios via Approach C.** Approach C ya separa razonamiento (Ingles Tecnico estable en edge) de superficie (idioma usuario via Gemma 4 E4B local en Pollen). Post-hackathon: fine-tuning de Gemma 4 E4B sobre corpus agricolas en Pular, Wolof, Swahili, Bambara, Quechua, Aimara, Catalan, Euskera. Cada fine-tuning desbloquea un mercado donde el 84% de las explotaciones (FAO: <2 ha) opera sin acceso a interfaces en sus idiomas. Sin tocar hardware ni replicar explicaciones en N idiomas en almacenamiento central.
 
-3. **Multiagentes en Jetson.** El MVP demuestra dos Rhizomes (uno fisico + uno simulado host-side) desde una sola Jetson. Post-hackathon: scheduler local que coordine N nodos logicos en una sola Jetson para explotaciones medianas con multiples zonas + federacion real entre multiples Jetson para explotaciones grandes con varias parcelas geograficamente separadas.
+3. **Meristem mas inteligente.** El cerebro lento entra en MVP con Evaluator de 4 reglas + tool calling Gemma 4 E4B. Post-hackathon: ampliacion a 8-12 reglas (estacionalidad, cultivos heterogeneos, presupuesto multi-mes), fine-tuning E4B sobre dataset agricola sintetico+real con Unsloth, modo paralelo de varios LLMs comparando rationale para auditoria de calidad. Plan documentado en 7 fases.
 
-4. **GPU quality pass + audio bidireccional + cierre de deuda.** Cerrar deriva GPU RD04/RH02 para promocionar `gpu-experimental` a contractual. Audio bidireccional full-duplex (Pollen tambien le habla al agricultor: pre-aviso conversacional *"manana toca riego, pero el deposito esta al 30%"*). Cierre de deuda apuntada (tests automatizados UI, API docs auto-generadas, branch jumping origen sistemico, signal-seed oficial #C5F26B en todos los frontends).
+4. **Mas sensores y complejidad en parcela.** El MVP corre con humedad + nivel deposito + caudalimetro + un actuador. Post-hackathon: vision multimodal (camara con Gemma 4 detectando estres hidrico visible, plagas, crecimiento), riego variable multi-zona, conductividad / pH / temperatura suelo, integracion con plataformas climaticas oficiales (AEMET, MeteoCat) sustituyendo `WeatherDigest` portado. Alimentacion solar de Rhizome (Jetson MAXN_SUPER + PV + LiFePO4).
+
+5. **Multiagentes en Jetson + audio bidireccional + cierre de deuda.** Scheduler local coordinando N nodos logicos en una sola Jetson; federacion real entre multiples Jetson; audio bidireccional full-duplex (Pollen tambien habla al agricultor); cerrar deriva GPU RD04/RH02 para promocionar `gpu-experimental` a contractual; cierre de deuda apuntada (UI tests, OpenAPI, signal-seed `#C5F26B` consistente).
 
 **Sprout deja resuelto el caso minimo. La arquitectura escala.**
 
@@ -198,11 +218,22 @@ License: Apache 2.0 (see `LICENSE`). Same as Gemma 4.
 <!--
 Notas internas Cambium / Bea:
 
-- Word count actual: ~1500-1700 palabras (objetivo Kaggle: 1500). Recorte final dia 28-29.
-- §0 titulo + subtitulo: definitivos tras rodaje (dia 24-27).
-- §7 placeholder: rellenar tras rodaje con guion consolidado del 90s.
-- §3: el detalle de "transferencia de ingenieria entre nodos" del v1 se removio para reducir palabras — material movido a §5 sin cita literal.
+- Word count actual: ~2000-2200 palabras tras integracion dia 25 (objetivo Kaggle: 1500). Recorte final dia 28-29.
+- §0 titulo + subtitulo: definitivos tras rodaje (dia 26-27).
+- §7 eliminado dia 24 — la landing demo es autoexplicativa.
+
+Material dia 25 integrado dia 26 (PR feat/cambium/writeup-integracion-dia25):
+
+- §3: cita Endo "Rhizome entiende la parcela. Pollen entiende la visita. / Rhizome cuida el agua. Pollen cuida la conversacion." Origen: `bitacora/2026-05-10_reflexion-pollen-rhizome-jurisdiccion_endodermis.md`.
+- §4: pasamos de 3 a 5 formas de uso de Gemma 4 — anadidas (4) narrador bilingue en Rhizome endpoints (Endo, ya operativo `?locale=en|es`) y (5) Approach C localizacion (Floema, `research/07_llm_localization_strategy.md` como estandar oficial).
+- §5: anadidos hallazgo `num_predict` 53% latencia (Meristem), chat read-only por construccion (Meristem linea B), validar-antes-de-portar con sketch Arduino destrabando rele 3V3 vs 5V (Xilema + Bea).
+- §6: anadidas 6 filas a la tabla — riego fisico real (humedad raw 2278→1289), Steward v0 con persistencia operacional para meses (retention 120d + budget 64MB), conectividad E2E REST Pollen↔Meristem, bilingue produccion, ShadowSkeptic, UI Meristem accesible LAN.
+- §9: anadidos como ejes propios ShadowSkeptic LLM (auditoria agencial interna) y idiomas minoritarios via Approach C. Pasamos de 4 ejes a 5.
+
+Pendiente para recorte dia 28-29:
+- Comprimir §6 tabla a 8-10 filas mas representativas (hoy 13).
+- Reducir §5 a 4 parrafos densos (hoy 7).
+- Comprimir §9 a 4 ejes con el quinto fusionado.
 - Sources al final: notas a pie [1]-[4] estan en README.md y en research/metrics/impact_stats.md. Si Kaggle requiere bibliografia formal, se anade aparte.
 - Idioma: primera version en castellano. Traduccion a ingles en review final si Bea decide.
-- Pendiente apuntar microcita "JURISDICTION_POLLEN linea 17 de evaluator.py" en §6 si entra version final con citas de codigo.
 -->
