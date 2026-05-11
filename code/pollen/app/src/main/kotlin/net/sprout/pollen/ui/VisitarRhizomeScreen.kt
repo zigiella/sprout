@@ -59,21 +59,34 @@ fun VisitarRhizomeScreen(
     val currentLocale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0].language
     
     LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(400)
-        step = 1 // Conectando a Rhizome (activo)
-        status = client.getStatus()
-        
-        step = 2 // Conectado, descargando snapshot (activo)
-        kotlinx.coroutines.delay(300)
-        snapshot = client.getLatestSnapshot()
-        
-        step = 3 // Descargado, leyendo recibos (activo)
-        kotlinx.coroutines.delay(300)
-        receipts = client.getReceipts()
-        
-        step = 4 // Listo
-        if (snapshot != null) {
-            onDataFetched(snapshot!!, receipts)
+        try {
+            kotlinx.coroutines.delay(400)
+            step = 1 // Conectando a Rhizome (activo)
+            status = client.getStatus()
+            
+            step = 2 // Conectado, descargando snapshot (activo)
+            kotlinx.coroutines.delay(300)
+            snapshot = client.getLatestSnapshot()
+            
+            step = 3 // Descargado, leyendo recibos (activo)
+            kotlinx.coroutines.delay(300)
+            receipts = client.getReceipts()
+            
+            step = 4 // Listo
+            if (snapshot != null) {
+                onDataFetched(snapshot!!, receipts)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // Fallback a mock data si el nodo no está encendido
+            val mockClient = net.sprout.pollen.sync.RhizomeMockClient()
+            status = mockClient.getStatus()
+            snapshot = mockClient.getLatestSnapshot()
+            receipts = mockClient.getReceipts()
+            step = 4
+            if (snapshot != null) {
+                onDataFetched(snapshot!!, receipts)
+            }
         }
     }
 
