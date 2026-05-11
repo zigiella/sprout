@@ -215,7 +215,23 @@ class TermiosSerialPort:
         termios.tcsetattr(self.fd, termios.TCSANOW, attrs)
 
     def write(self, data: bytes) -> int:
-        return os.write(self.fd, data)
+        deadline = time.monotonic() + self.timeout
+        total_written = 0
+        while total_written < len(data):
+            try:
+                written = os.write(self.fd, data[total_written:])
+            except BlockingIOError:
+                if time.monotonic() >= deadline:
+                    raise TimeoutError("Timeout escribiendo en puerto serie.")
+                time.sleep(0.01)
+                continue
+            if written == 0:
+                if time.monotonic() >= deadline:
+                    raise TimeoutError("Timeout escribiendo en puerto serie.")
+                time.sleep(0.01)
+                continue
+            total_written += written
+        return total_written
 
     def readline(self) -> bytes:
         deadline = time.monotonic() + self.timeout
