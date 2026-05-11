@@ -100,13 +100,19 @@ def kill_port(port: int) -> None:
 
 
 def wait_for_url(url: str, timeout_s: int, name: str) -> bool:
-    """Polling al URL hasta que devuelva 200 o timeout."""
+    """Polling al URL hasta que responda HTTP <500 o timeout.
+
+    Aceptamos cualquier respuesta no-5xx (incluyendo 404) porque
+    indica que el servidor está vivo. Antes esperabamos 200 estricto,
+    pero el adapter Ollama-compatible devuelve 404 a `/` (sus rutas
+    son `/api/chat`, `/api/generate`, no raíz).
+    """
     deadline = time.monotonic() + timeout_s
     while time.monotonic() < deadline:
         try:
             r = httpx.get(url, timeout=2.0)
-            if r.status_code == 200:
-                log(f"{name} READY ({url})")
+            if r.status_code < 500:
+                log(f"{name} READY ({url}) [HTTP {r.status_code}]")
                 return True
         except httpx.HTTPError:
             pass
