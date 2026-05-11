@@ -41,3 +41,26 @@ emitira `PUMP_PULSE <seconds*1000>` si la decision determinista llega a
 Para el sistema estable de maceta, el observe mode permanece como default hasta
 que Bea/Xilema confirmen condiciones fisicas: bomba sumergida, electronica seca,
 manguera colocada, `PUMP_STATUS state=OFF` y `soil_a_raw >= 2200`.
+
+## Verificacion
+
+Local:
+
+```text
+python -m unittest tests.test_rhizome_steward tests.test_sync_facade
+31 tests OK
+```
+
+Jetson:
+
+```text
+git pull --ff-only origin feat/endodermis/rhizome-steward-v0
+HEAD 89a7be0
+ESP32_MODE=fake ... run_steward_once.sh
+```
+
+Resultado esperado en smoke sin hardware: Steward propuso `WATER_A` con
+telemetria fake seca, pero `executed=false` y
+`blocked_reason=OBSERVE_MODE_EXECUTE_WATER_FALSE`. Esto confirma que el modo por
+defecto sigue sin accionar agua; la ruta `PUMP_PULSE` solo queda disponible si
+se activa explicitamente `EXECUTE_WATER=1` y se usa ESP32 serial real.
