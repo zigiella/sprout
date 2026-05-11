@@ -166,7 +166,7 @@ fun VisitarRhizomeScreen(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             
-            receipts.forEach { receipt ->
+            receipts.sortedByDescending { it.createdAt }.take(10).forEach { receipt ->
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
