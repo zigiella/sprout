@@ -256,18 +256,19 @@ class SerialESP32Client:
             self.serial = TermiosSerialPort(port=port, baud=baud, timeout_s=timeout_s)
         else:
             self.serial = serial.Serial(port=port, baudrate=baud, timeout=timeout_s)
-        if water_command_mode not in {"water-duration", "pump-toggle"}:
-            raise ValueError("water_command_mode debe ser water-duration o pump-toggle")
+        if water_command_mode not in {"water-duration", "pump-toggle", "pump-pulse"}:
+            raise ValueError("water_command_mode debe ser water-duration, pump-toggle o pump-pulse")
         self.quiet_s = quiet_s
         self.max_wait_s = max_wait_s
         self.water_command_mode = water_command_mode
         self.serial.reset_input_buffer()
         self.serial.reset_output_buffer()
 
-    def _collect(self) -> list[str]:
+    def _collect(self, max_wait_s: float | None = None) -> list[str]:
         lines: list[str] = []
         started_at = time.monotonic()
         last_payload_at: float | None = None
+        max_wait_s = max_wait_s if max_wait_s is not None else self.max_wait_s
         while True:
             raw = self.serial.readline()
             current = time.monotonic()
@@ -283,10 +284,10 @@ class SerialESP32Client:
                 break
         return lines
 
-    def command(self, command: str) -> ESP32CommandResult:
+    def command(self, command: str, max_wait_s: float | None = None) -> ESP32CommandResult:
         sent_at = zulu(utc_now())
         self.serial.write(f"{command}\n".encode("utf-8"))
-        lines = self._collect()
+        lines = self._collect(max_wait_s=max_wait_s)
         received_at = zulu(utc_now())
         combined = "\n".join(lines)
         if "REJECT reason=" in combined:
@@ -313,6 +314,9 @@ class SerialESP32Client:
     def water(self, plot: str, seconds: int) -> ESP32CommandResult:
         if self.water_command_mode == "water-duration":
             return self.command(f"WATER {plot} {seconds}")
+        if self.water_command_mode == "pump-pulse":
+            pulse_ms = max(1, int(seconds * 1000))
+            return self.command(f"PUMP_PULSE {pulse_ms}", max_wait_s=max(self.max_wait_s, seconds + 2.0))
         started = self.command("PUMP_ON")
         if not started.ok:
             return started
@@ -723,7 +727,7 @@ class GemmaRationaleClient:
             ],
             "stream": False,
             "think": False,
-            "options": {"temperature": 0.1, "num_ctx": 2048, "num_predict": 160},
+            "options": {"temperature": 0.1, "num_ctx": 2048, "num_predict": 1024},
         }
         request = urllib.request.Request(
             f"{self.adapter_url}/api/chat",
@@ -1017,7 +1021,7 @@ def add_common_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--esp32", choices=["fake", "serial"], default="fake")
     parser.add_argument("--serial-port")
     parser.add_argument("--baud", type=int, default=115200)
-    parser.add_argument("--serial-water-command-mode", choices=["water-duration", "pump-toggle"], default="water-duration")
+    parser.add_argument("--serial-water-command-mode", choices=["water-duration", "pump-toggle", "pump-pulse"], default="water-duration")
     parser.add_argument("--execute-water", action="store_true", help="Permite enviar WATER al ESP32. Sin esto, WATER queda bloqueado como observe mode.")
     parser.add_argument("--decision-interval-s", type=int, default=900)
     parser.add_argument("--heartbeat-interval-s", type=int, default=2)

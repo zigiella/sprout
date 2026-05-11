@@ -278,7 +278,7 @@ def _gemma_visit_narrative(
         ],
         "stream": False,
         "think": False,
-        "options": {"temperature": 0.2, "num_ctx": 2048, "num_predict": 320},
+        "options": {"temperature": 0.2, "num_ctx": 2048, "num_predict": 1024},
     }
     request = urllib.request.Request(
         f"{adapter_url}/api/chat",

@@ -234,21 +234,34 @@ modo estricto.
 Si la humedad llega como valor raw, la polaridad debe declararse. La sonda real
 del handoff de Xilema reporta `soil_a_raw < 1300` como suelo muy humedo, por lo
 que el primer observe mode usa `--soil-raw-polarity low_is_wet` y
-`--soil-wet-below-raw 1300`. Sin `--soil-dry-above-raw`, Rhizome puede hacer
-`SKIP` por suelo humedo, pero no autoriza `WATER` desde raw.
+`--soil-wet-below-raw 1300`. Xilema fija para el MVP:
 
-Si la firmware minima expone solo encender/apagar bomba, no el comando
-temporizado `WATER A <seconds>`, usar:
+```text
+SOIL_RAW_POLARITY=low_is_wet
+SOIL_WET_BELOW_RAW=1300
+SOIL_DRY_ABOVE_RAW=2200
+```
+
+Interpretacion:
+
+- `<1300`: muy humedo, `SKIP`;
+- `1300..2199`: banda ambigua, `DEFER`;
+- `>=2200`: seco para MVP, candidato a `WATER_A` si pasan las demas
+  barandillas.
+
+Si la firmware minima expone el pulso fisico seguro `PUMP_PULSE <ms>`, usar:
 
 ```bash
 python -m src.rhizome_steward run-once \
   --esp32 serial \
   --serial-port /dev/ttyACM0 \
-  --serial-water-command-mode pump-toggle
+  --serial-water-command-mode pump-pulse
 ```
 
-El modo preferido sigue siendo `water-duration`, porque mantiene la duracion del
-evento bajo control de la frontera ESP32.
+No usar `pump-toggle` con el firmware de dia 26: esta build no expone
+`PUMP_ON`, y Xilema autoriza la ruta `PUMP_PULSE`. `water-duration` sigue siendo
+valido para builds que ejecuten `WATER A <seconds>` fisicamente en la frontera
+ESP32; en la build actual `WATER A 1` responde `execution=DRY_RUN`.
 
 Persistencia por defecto:
 
@@ -363,6 +376,9 @@ Cuando esta activo, Gemma solo puede reescribir `headline`, `summary`,
 `highlights` y `recommendation`. No puede cambiar `counts`, `severity`,
 `source`, `simulation`, receipts ni snapshots. Si Gemma falla, tarda demasiado o
 devuelve JSON invalido, la respuesta cae al resumen determinista.
+
+Configuracion E2B: los usos Gemma de Rhizome usan `num_predict=1024` para evitar
+fallbacks silenciosos por respuestas truncadas en E2B.
 
 Campos de trazabilidad:
 

@@ -13,8 +13,10 @@ from schemas.rhizome_snapshot import RhizomeSnapshot
 
 from src.rhizome_steward import (
     BoundedJsonlStore,
+    ESP32CommandResult,
     FakeESP32Client,
     RhizomeSteward,
+    SerialESP32Client,
     StewardConfig,
     Telemetry,
     zulu,
@@ -246,6 +248,49 @@ class RhizomeStewardTest(unittest.TestCase):
 
         self.assertEqual(result["action"], "DEFER")
         self.assertFalse(result["executed"])
+
+    def test_low_is_wet_raw_threshold_waters_when_dry_above_xilema_threshold(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(
+                    tmp,
+                    execute_water=True,
+                    allow_missing_tank_sensor=True,
+                    soil_raw_polarity="low_is_wet",
+                    soil_wet_below_raw=1300,
+                    soil_dry_above_raw=2200,
+                ),
+                FakeESP32Client(telemetry=_telemetry(soil_a_raw=2300, tank_level_pct=None)),
+            )
+            result = steward.run_once()
+
+        self.assertEqual(result["action"], "WATER_A")
+        self.assertTrue(result["executed"])
+
+    def test_pump_pulse_mode_maps_water_seconds_to_pump_pulse_ms(self):
+        class DummySerialClient(SerialESP32Client):
+            def __init__(self):
+                self.water_command_mode = "pump-pulse"
+                self.max_wait_s = 3.0
+                self.calls = []
+
+            def command(self, command, max_wait_s=None):
+                self.calls.append((command, max_wait_s))
+                return ESP32CommandResult(
+                    ok=True,
+                    command=command,
+                    sent_at=zulu(datetime.now(timezone.utc)),
+                    received_at=zulu(datetime.now(timezone.utc)),
+                    lines=[f"ACK command={command}"],
+                    ack_status="OK",
+                )
+
+        client = DummySerialClient()
+        result = client.water("A", 3)
+
+        self.assertTrue(result.ok)
+        self.assertEqual(client.calls[0][0], "PUMP_PULSE 3000")
+        self.assertGreaterEqual(client.calls[0][1], 5.0)
 
     def test_store_enforces_byte_budget(self):
         with tempfile.TemporaryDirectory() as tmp:

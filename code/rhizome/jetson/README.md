@@ -263,6 +263,20 @@ debajo de `1300`, asi que Rhizome debe tratarla como suelo humedo y no proponer
 riego. En este perfil no se define `SOIL_DRY_ABOVE_RAW`: fuera de la banda
 humeda, Rhizome aplaza en vez de regar porque aun no hay calibracion seca.
 
+Umbrales autorizados por Xilema para el MVP:
+
+```text
+SOIL_RAW_POLARITY=low_is_wet
+SOIL_WET_BELOW_RAW=1300
+SOIL_DRY_ABOVE_RAW=2200
+```
+
+Interpretacion:
+
+- `<1300`: muy humedo, no regar.
+- `1300..2199`: banda ambigua, `DEFER`/observe.
+- `>=2200`: seco para MVP, candidato a riego si pasan las demas barandillas.
+
 El primer riego real debe ser manual, corto y supervisado por Xilema/Bea,
 cambiando explicitamente `EXECUTE_WATER=1` y un `WATER_SECONDS` bajo.
 
@@ -354,18 +368,23 @@ WATER_SECONDS=8 \
 ./run_steward_once.sh
 ```
 
-Si la firmware minima aun no tiene `WATER A <seconds>` y solo ofrece encender y
-apagar bomba:
+Si la firmware minima expone `PUMP_PULSE <ms>` como ruta segura:
 
 ```bash
 ESP32_MODE=serial \
 ESP32_PORT=/dev/ttyACM0 \
-SERIAL_WATER_COMMAND_MODE=pump-toggle \
+SERIAL_WATER_COMMAND_MODE=pump-pulse \
+SOIL_RAW_POLARITY=low_is_wet \
+SOIL_WET_BELOW_RAW=1300 \
+SOIL_DRY_ABOVE_RAW=2200 \
+EXECUTE_WATER=1 \
+WATER_SECONDS=3 \
 ./run_steward_once.sh
 ```
 
-Usar `pump-toggle` solo como puente de bring-up. El modo preferido para demo
-fisica es `water-duration`, con temporizacion y failsafe en ESP32.
+Esto emite `PUMP_PULSE 3000` solo si Rhizome decide `WATER_A`. No usar
+`pump-toggle` con la build de dia 26: `PUMP_ON` no esta expuesto por seguridad.
+`WATER A 1` sigue siendo `DRY_RUN` en esta build.
 
 Si la humedad llega como raw no calibrado, declarar umbrales raw:
 
