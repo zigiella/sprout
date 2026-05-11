@@ -134,8 +134,25 @@ def _receipt_window(receipts: list[dict[str, Any]]) -> dict[str, int]:
 
 
 def _tank_pct(snapshot: dict[str, Any]) -> float | None:
+    pending = set(snapshot.get("pending_contradictions", []))
+    if "tank_level_unavailable" in pending:
+        return None
     value = snapshot.get("sensors", {}).get("tank_level_pct")
     return float(value) if isinstance(value, int | float) else None
+
+
+def _soil_pct_pair(snapshot: dict[str, Any]) -> tuple[float | None, float | None]:
+    pending = set(snapshot.get("pending_contradictions", []))
+    sensors = snapshot.get("sensors", {})
+    soil_a_raw = sensors.get("soil_moisture_a_pct")
+    soil_b_raw = sensors.get("soil_moisture_b_pct")
+    soil_a = float(soil_a_raw) if isinstance(soil_a_raw, int | float) else None
+    soil_b = float(soil_b_raw) if isinstance(soil_b_raw, int | float) else None
+    if "soil_a_unavailable_or_uncalibrated" in pending:
+        soil_a = None
+    if "soil_b_unavailable_or_uncalibrated" in pending:
+        soil_b = None
+    return soil_a, soil_b
 
 
 def _severity(snapshot: dict[str, Any], counts: dict[str, int]) -> str:
@@ -558,9 +575,7 @@ def _summary_text(
     locale: str,
 ) -> tuple[str, str, list[str], str]:
     tank = _tank_pct(snapshot)
-    sensors = snapshot.get("sensors", {})
-    soil_a = sensors.get("soil_moisture_a_pct")
-    soil_b = sensors.get("soil_moisture_b_pct")
+    soil_a, soil_b = _soil_pct_pair(snapshot)
     latest = sorted(receipts, key=_receipt_sort_key)[-1] if receipts else None
     latest_action = latest.get("action") if latest else None
 
