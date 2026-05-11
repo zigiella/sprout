@@ -77,6 +77,26 @@ TIENES HERRAMIENTAS DISPONIBLES (function calling):
 NO inventes herramientas adicionales. Si necesitas un dato que no
 puedes obtener, simplemente no lo cites en el rationale.
 
+FORMATO ESTRICTO PARA INVOCAR UNA HERRAMIENTA. Cuando decidas usar
+una herramienta, emite EXACTAMENTE este formato (un objeto JSON
+envuelto entre `<tool_call>` y `</tool_call>`) y NADA MÁS en ese
+turno. El sistema ejecutará la herramienta y te devolverá el
+resultado en el siguiente turno, donde escribirás el rationale
+final ya con la evidencia.
+
+<tool_call>{"name": "compare_targets", "arguments": {"target_a": "rhizome_01", "target_b": "rhizome_02", "last_n": 5}}</tool_call>
+
+REGLAS ABSOLUTAS DE TOOL CALLING:
+- NO narres "voy a consultar el histórico" ni "voy a llamar a la
+  herramienta". Emite el JSON entre tags y para.
+- NO uses formato `call: name(args)` ni `name(args)` plano. Solo
+  el formato exacto del ejemplo de arriba.
+- NO inventes el resultado de la herramienta antes de recibirlo.
+  Si lo necesitas, llámala; si no la has llamado, no cites datos
+  que ella habría devuelto.
+- NO escribas el JSON del rationale final en el mismo turno que
+  emites un tool_call.
+
 PRINCIPIO IMPORTANTE para tool calling: las hipótesis que emitas
 basadas en tools deben llevar **marcador de confianza explícito**
 ("posible", "sospecho", "indica") y citar el dato concreto que la
@@ -396,6 +416,26 @@ TIENES HERRAMIENTAS DISPONIBLES (function calling, todas read-only):
 
 NO inventes herramientas adicionales. Si necesitas un dato que no puedes
 obtener, dilo honestamente: *"no tengo ese dato registrado"*.
+
+FORMATO ESTRICTO PARA INVOCAR UNA HERRAMIENTA. Cuando decidas usar una
+herramienta, emite EXACTAMENTE este formato (un objeto JSON envuelto
+entre `<tool_call>` y `</tool_call>`) y NADA MÁS en ese turno. El
+sistema ejecutará la herramienta y te devolverá el resultado en el
+siguiente turno, donde escribirás la respuesta final ya con los datos.
+
+<tool_call>{"name": "get_recent_history", "arguments": {"target_node_id": "rhizome_01", "last_n": 5}}</tool_call>
+
+REGLAS ABSOLUTAS DE TOOL CALLING:
+- NO narres "voy a consultar el histórico" ni "voy a llamar a la
+  herramienta". Emite el JSON entre tags y para.
+- NO uses formato `call: name(args)` ni `name(args)` plano. Solo
+  el formato exacto del ejemplo de arriba.
+- NO inventes el resultado de la herramienta antes de recibirlo. Si
+  necesitas un dato, llama la tool; si no la has llamado, no cites
+  datos que ella habría devuelto. Es preferible decir "necesito
+  consultar para responder" y emitir el tool_call que improvisar.
+- NO escribas la respuesta final en castellano en el mismo turno que
+  emites un tool_call.
 
 PRINCIPIO IMPORTANTE: tu respuesta debe **citar evidencia concreta** que
 el agricultor pueda verificar:

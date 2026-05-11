@@ -1,0 +1,121 @@
+{
+  "config": {
+    "model": "e4b",
+    "model_filename": "gemma-4-E4B-it-Q4_K_M.gguf",
+    "num_predict": 1536,
+    "branch": "feat/meristem-d26-smoke-script",
+    "output_path": "C:\\DATA\\PETS\\TEST\\T6-GEMMA\\code\\meristem_node\\results_d26_smoke.json",
+    "timestamp": "2026-05-11 13:39:10"
+  },
+  "cases": {
+    "seed_rhizome_02": {
+      "latency_ms": 144880,
+      "http_status": 200,
+      "envelope_status": "ok",
+      "reason_code": "STABLE_BUNDLE",
+      "rationale_for_operator": "Las condiciones de la parcela son estables y no hay alertas. La política actual se mantiene activa, ya que los datos de suelo y clima son coherentes con el funcionamiento normal.",
+      "llm_metrics": {
+        "tool_iterations": 1,
+        "tool_calls_log": [],
+        "finish_reasons": [
+          "stop"
+        ],
+        "tokens_in_iter_0": 1939,
+        "tokens_out_iter_0": 890,
+        "thinking_chars_iter_0": 2763,
+        "parsed_ok": true,
+        "final_content_len": 481,
+        "mode": "llm",
+        "num_predict_override": 1536
+      }
+    },
+    "bundle_M7": {
+      "latency_ms": 122308,
+      "http_status": 200,
+      "envelope_status": "ok",
+      "reason_code": "PERSISTENT_EMERGENCY",
+      "rationale_for_operator": "Se mantiene el modo de alerta debido a una emergencia persistente detectada. El sistema indica que el depósito está bajo (14%) y requiere tu revisión para definir la acción inmediata.",
+      "llm_metrics": {
+        "tool_iterations": 1,
+        "tool_calls_log": [],
+        "finish_reasons": [
+          "stop"
+        ],
+        "tokens_in_iter_0": 2042,
+        "tokens_out_iter_0": 949,
+        "thinking_chars_iter_0": 2886,
+        "parsed_ok": true,
+        "final_content_len": 463,
+        "mode": "llm",
+        "num_predict_override": 1536
+      }
+    },
+    "chat_alert": {
+      "latency_ms": 80981,
+      "http_status": 200,
+      "conversation_id": "conv_e82231a69133",
+      "answer_es": "Hola. He revisado el historial de `rhizome_01`. La alerta de hoy se debe a una situación de emergencia persistente. El registro de hace un día (T-1d) muestra que el modo cambió a \"alert\" con el código `PERSISTENT_EMERGENCY`.\n\nEn ese momento, los niveles de humedad del suelo A y B estaban muy bajos (18% y 22%, respectivamente) y el nivel del depósito (tank) era crítico, solo al 12%. Esto indica una desviación significativa de las condiciones normales.\n\nAntes de esta alerta, el sistema había estado en modo \"normal\" y estable, como se ve en los registros de T-5d y T-7d, con niveles de humedad mucho más altos (por ejemplo, 31% y 36% en T-5d). La alerta es una reacción directa a la caída drástica y sostenida de los parámetros medidos.",
+      "evidence_refs": [],
+      "llm_metrics": {
+        "tool_iterations": 2,
+        "tool_calls_log": [
+          {
+            "name": "get_recent_history",
+            "args": {
+              "target_node_id": "rhizome_01",
+              "last_n": 5
+            }
+          }
+        ],
+        "finish_reasons": [
+          "stop",
+          "stop"
+        ],
+        "tokens_in_iter_0": 998,
+        "tokens_out_iter_0": 203,
+        "thinking_chars_iter_0": 480,
+        "tool_calls_recovered_from_text": 1,
+        "tokens_in_iter_1": 1448,
+        "tokens_out_iter_1": 200,
+        "thinking_chars_iter_1": 0,
+        "parsed_ok": true,
+        "final_content_len": 739,
+        "mode": "llm"
+      }
+    }
+  },
+  "final_health": {
+    "status": "ok",
+    "version": "0.1.0",
+    "port": 13000,
+    "meristem_id": "meristem_demo_01",
+    "llm_mode": "real",
+    "adapter_url": "http://localhost:11435",
+    "bundles_received_total": 2,
+    "policies_emitted_total": 2,
+    "decisions_by_rule": {
+      "alert_policy": 1,
+      "confirm_policy": 1
+    },
+    "policies_by_scope": {
+      "durable": 2
+    },
+    "targets_known": [
+      "rhizome_01",
+      "rhizome_02"
+    ],
+    "pollen_connection": {
+      "connected": false,
+      "alive": false,
+      "pollen_id": null,
+      "app_version": null,
+      "connected_at": null,
+      "last_heartbeat": null
+    },
+    "ws_events_by_type": {},
+    "chat_messages": {
+      "assistant": 1,
+      "user": 1
+    }
+  }
+}
