@@ -66,4 +66,33 @@
     <string name="policy_dialog_title">Política Generada por Gemma 4</string>
     <string name="close_dialog">Cerrar</string>
     <string name="speech_prompt">Habla a Gemma 4...</string>
+
+    <!-- Meristem UI -->
+    <string name="meristem_checking_connection">Comprobando conexión con Meristem...</string>
+    <string name="meristem_connection_ok">Conexión establecida OK.</string>
+    <string name="meristem_connection_error">Error: Meristem no accesible.</string>
+    <string name="meristem_connected_home">Conectado a Meristem (Hogar)</string>
+    <string name="meristem_domestic_brain">Cerebro doméstico</string>
+    <string name="meristem_status_connected">Conectado</string>
+    <string name="meristem_status_disconnected">Desconectado</string>
+    <string name="meristem_last_time">Última vez:</string>
+    <string name="meristem_step1_title">1. Descargar Datos de Campo</string>
+    <string name="meristem_step1_desc">Transfiere el estado local de Rhizome a Meristem para su asimilación lenta.</string>
+    <string name="meristem_upload_start">Iniciando subida de snapshot %1$s...</string>
+    <string name="meristem_upload_success">Subida completada con éxito.</string>
+    <string name="meristem_upload_error">Error en subida: %1$s</string>
+    <string name="meristem_upload_btn">Subir Visita de Campo a Meristem</string>
+    <string name="meristem_no_local_data">No hay datos locales</string>
+    <string name="meristem_upload_done_msg">¡Visita subida con éxito!</string>
+    <string name="meristem_step2_title">2. Cargar Nueva Política</string>
+    <string name="meristem_step2_desc">Recoge la política actualizada calculada por Meristem.</string>
+    <string name="meristem_download_start">Solicitando política para nodo: %1$s...</string>
+    <string name="meristem_download_success">Política %1$s descargada y guardada.</string>
+    <string name="meristem_download_error">Error en descarga: %1$s</string>
+    <string name="meristem_download_btn">Descargar Política Actualizada</string>
+    <string name="meristem_received_policy">Política Recibida: %1$s</string>
+    <string name="meristem_water_budget">Presupuesto de riego: %1$sL/día</string>
+    <string name="meristem_window">Ventana: %1$sh - %2$sh</string>
+    <string name="meristem_rationale">Justificación: %1$s</string>
+    <string name="meristem_sync_log">Log de Sincronización</string>
 </resources>

@@ -30,6 +30,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import androidx.compose.ui.res.stringResource
+import net.sprout.pollen.R
 
 @Composable
 fun VisitarMeristemScreen(
@@ -44,7 +46,7 @@ fun VisitarMeristemScreen(
     val context = LocalContext.current
     
     var isConnected by remember { mutableStateOf(false) }
-    var lastConnectionDate by remember { mutableStateOf<String>("Nunca") }
+    var lastConnectionDate by remember { mutableStateOf<String>("-") }
     
     var isUploading by remember { mutableStateOf(false) }
     var uploadSuccess by remember { mutableStateOf(false) }
@@ -58,28 +60,32 @@ fun VisitarMeristemScreen(
         syncLogs = syncLogs + "[$time] $msg"
     }
 
+    val checkingConnectionStr = stringResource(R.string.meristem_checking_connection)
+    val connectionOkStr = stringResource(R.string.meristem_connection_ok)
+    val connectionErrorStr = stringResource(R.string.meristem_connection_error)
+
     LaunchedEffect(Unit) {
-        addLog("Comprobando conexión con Meristem...")
+        addLog(checkingConnectionStr)
         val isUp = client.checkHealth()
         isConnected = isUp
         if (isUp) {
             lastConnectionDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
-            addLog("Conexión establecida OK.")
+            addLog(connectionOkStr)
         } else {
-            addLog("Error: Meristem no accesible.")
+            addLog(connectionErrorStr)
         }
     }
     
     val scrollState = rememberScrollState()
     
     Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(scrollState)) {
-        Text("Conectado a Meristem (Hogar)", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-        Text("Cerebro doméstico", color = MaterialTheme.colorScheme.primary)
+        Text(stringResource(R.string.meristem_connected_home), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.meristem_domestic_brain), color = MaterialTheme.colorScheme.primary)
         
         Spacer(modifier = Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             val statusColor = if (isConnected) Color(0xFF4CAF50) else Color(0xFFF44336)
-            val statusText = if (isConnected) "Conectado" else "Desconectado"
+            val statusText = if (isConnected) stringResource(R.string.meristem_status_connected) else stringResource(R.string.meristem_status_disconnected)
             Surface(shape = RoundedCornerShape(4.dp), color = statusColor.copy(alpha = 0.2f)) {
                 Text(
                     text = "● $statusText",
@@ -90,7 +96,7 @@ fun VisitarMeristemScreen(
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Última vez: $lastConnectionDate", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+            Text("${stringResource(R.string.meristem_last_time)} $lastConnectionDate", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
         }
         
         Spacer(modifier = Modifier.height(24.dp))
@@ -100,27 +106,33 @@ fun VisitarMeristemScreen(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text("1. Descargar Datos de Campo", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.meristem_step1_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Transfiere el estado local de Rhizome a Meristem para su asimilación lenta.")
+                Text(stringResource(R.string.meristem_step1_desc))
                 Spacer(modifier = Modifier.height(16.dp))
+                
+                val uploadStartFormat = stringResource(R.string.meristem_upload_start)
+                val uploadSuccessStr = stringResource(R.string.meristem_upload_success)
+                val uploadErrorFormat = stringResource(R.string.meristem_upload_error)
+                val uploadDoneMsgStr = stringResource(R.string.meristem_upload_done_msg)
                 
                 Button(
                     onClick = {
                         if (currentSnapshot != null) {
                             scope.launch {
                                 isUploading = true
-                                addLog("Iniciando subida de snapshot ${currentSnapshot.snapshotId}...")
+                                addLog(String.format(uploadStartFormat, currentSnapshot.snapshotId))
                                 try {
                                     val visit = FieldVisit(currentSnapshot, currentReceipts)
                                     client.uploadFieldVisit(visit)
                                     uploadSuccess = true
-                                    addLog("Subida completada con éxito.")
-                                    Toast.makeText(context, "Upload success!", Toast.LENGTH_SHORT).show()
+                                    addLog(uploadSuccessStr)
+                                    Toast.makeText(context, uploadDoneMsgStr, Toast.LENGTH_SHORT).show()
                                 } catch (e: Exception) {
                                     Log.e("VisitarMeristem", "Upload failed", e)
-                                    addLog("Error en subida: ${e.message}")
-                                    Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                                    val err = String.format(uploadErrorFormat, e.message)
+                                    addLog(err)
+                                    Toast.makeText(context, err, Toast.LENGTH_LONG).show()
                                 } finally {
                                     isUploading = false
                                 }
@@ -135,12 +147,12 @@ fun VisitarMeristemScreen(
                     } else {
                         Icon(Icons.Default.CloudUpload, contentDescription = "Subir Visita")
                         Spacer(Modifier.width(8.dp))
-                        Text(if (currentSnapshot == null) "No hay datos locales" else "Subir Visita de Campo a Meristem")
+                        Text(if (currentSnapshot == null) stringResource(R.string.meristem_no_local_data) else stringResource(R.string.meristem_upload_btn))
                     }
                 }
                 if (uploadSuccess) {
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("¡Visita subida con éxito!", color = MaterialTheme.colorScheme.secondary)
+                    Text(stringResource(R.string.meristem_upload_done_msg), color = MaterialTheme.colorScheme.secondary)
                 }
             }
         }
@@ -152,27 +164,32 @@ fun VisitarMeristemScreen(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text("2. Cargar Nueva Política", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.meristem_step2_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Recoge la política actualizada calculada por Meristem.")
+                Text(stringResource(R.string.meristem_step2_desc))
                 Spacer(modifier = Modifier.height(16.dp))
+                
+                val downloadStartFormat = stringResource(R.string.meristem_download_start)
+                val downloadSuccessFormat = stringResource(R.string.meristem_download_success)
+                val downloadErrorFormat = stringResource(R.string.meristem_download_error)
                 
                 Button(
                     onClick = {
                         scope.launch {
                             isDownloading = true
                             val targetId = currentSnapshot?.originNodeId ?: "rhizome_01"
-                            addLog("Solicitando política para nodo: $targetId...")
+                            addLog(String.format(downloadStartFormat, targetId))
                             try {
                                 val policy = client.getLatestPolicy(targetId)
                                 downloadedPolicy = policy
                                 onPolicyDownloaded(policy)
-                                addLog("Política ${policy.policyId} descargada y guardada.")
+                                addLog(String.format(downloadSuccessFormat, policy.policyId))
                                 Toast.makeText(context, "Policy downloaded!", Toast.LENGTH_SHORT).show()
                             } catch (e: Exception) {
                                 Log.e("VisitarMeristem", "Download failed", e)
-                                addLog("Error en descarga: ${e.message}")
-                                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                                val err = String.format(downloadErrorFormat, e.message)
+                                addLog(err)
+                                Toast.makeText(context, err, Toast.LENGTH_LONG).show()
                             } finally {
                                 isDownloading = false
                             }
@@ -186,27 +203,32 @@ fun VisitarMeristemScreen(
                     } else {
                         Icon(Icons.Default.Download, contentDescription = "Descargar Política")
                         Spacer(Modifier.width(8.dp))
-                        Text("Descargar Política Actualizada")
+                        Text(stringResource(R.string.meristem_download_btn))
                     }
                 }
+                
+                val receivedPolicyFormat = stringResource(R.string.meristem_received_policy)
+                val waterBudgetFormat = stringResource(R.string.meristem_water_budget)
+                val windowFormat = stringResource(R.string.meristem_window)
+                val rationaleFormat = stringResource(R.string.meristem_rationale)
                 
                 downloadedPolicy?.let { policy ->
                     Spacer(modifier = Modifier.height(16.dp))
                     Divider()
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Política Recibida: ${policy.policyId}", fontWeight = FontWeight.Bold)
-                    Text("Presupuesto de riego: ${policy.rules.dailyWaterBudgetLiters}L/día")
-                    Text("Ventana: ${policy.rules.wateringWindow.startHourLocal}h - ${policy.rules.wateringWindow.endHourLocal}h")
+                    Text(String.format(receivedPolicyFormat, policy.policyId), fontWeight = FontWeight.Bold)
+                    Text(String.format(waterBudgetFormat, policy.rules.dailyWaterBudgetLiters.toString()))
+                    Text(String.format(windowFormat, policy.rules.wateringWindow.startHourLocal.toString(), policy.rules.wateringWindow.endHourLocal.toString()))
                     policy.rationale?.let {
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text("Justificación: $it", style = MaterialTheme.typography.bodySmall)
+                        Text(String.format(rationaleFormat, it), style = MaterialTheme.typography.bodySmall)
                     }
                 }
             }
         }
         
         Spacer(modifier = Modifier.height(24.dp))
-        Text("Log de Sincronización", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.meristem_sync_log), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
         Surface(
             modifier = Modifier.fillMaxWidth().heightIn(min = 100.dp, max = 200.dp),
