@@ -40,7 +40,7 @@ fun VisitarMeristemScreen(
     onPolicyDownloaded: (PolicyPacket) -> Unit = {}
 ) {
     val client: MeristemClient = remember { 
-        MeristemNetworkClient("http://192.168.1.42:13000/")
+        MeristemNetworkClient("http://192.168.1.36:13000/")
     }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
