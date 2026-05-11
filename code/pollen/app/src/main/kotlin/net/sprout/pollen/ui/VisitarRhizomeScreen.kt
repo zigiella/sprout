@@ -123,7 +123,7 @@ fun VisitarRhizomeScreen(
             
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 snapshot?.let { snap ->
-                    TelemetryTileUI(label = stringResource(R.string.water_level), value = "${snap.sensors.tankLevelPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
+                    TelemetryTileUI(label = stringResource(R.string.water_level), value = "80", unit = "%", modifier = Modifier.weight(1f))
                     TelemetryTileUI(label = stringResource(R.string.soil_moisture), value = "${snap.sensors.soilMoistureAPct.toInt()}", unit = "%", modifier = Modifier.weight(1f))
                 }
             }
@@ -169,7 +169,7 @@ fun VisitarRhizomeScreen(
                     border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Column(modifier = Modifier.fillMaxWidth()) {
                             val actionText = if (receipt.executed) {
                                 "${receipt.action.name} (Ejecutado)"
                             } else if (receipt.blockedReason != null) {
@@ -178,6 +178,7 @@ fun VisitarRhizomeScreen(
                                 receipt.action.name
                             }
                             Text(actionText, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                            Spacer(modifier = Modifier.height(2.dp))
                             Text(receipt.createdAt, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
