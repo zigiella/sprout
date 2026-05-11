@@ -132,8 +132,19 @@ The app uses Android's `DownloadManager` to fetch `gemma-4-E4B-it.litertlm` (3.6
 
 ## Project status
 
-- **MVP**: all four nodes operational. Real Pollen ↔ Rhizome chain validated. ESP32 physical veto confirmed on real board. Meristem LLM integration with tool calling closed.
-- **Architecture**: invariants stable. Three-node routing with deterministic logic + Gemma 4 LLMs as rationale authors.
+- **Physical irrigation cycle closed on hardware (day 25)**. The full chain `software decision → relay → 12V pump → water → soil → capacitive sensor` works and leaves measurable trace: raw moisture reading dropped from **2278 → 1289** after a pulse, confirming the cycle in the field. Autonomous `WATER` remains in `DRY_RUN`; real physical pulse only under supervised `TEST_ONLY` until two open questions on the soil-dry threshold and pulse routing are closed.
+
+- **Rhizome Steward v0 (day 25)**. Autonomous host-side loop with deterministic gates, persistent receipts, rotation policy designed for months (`retention_days=120`, `max_total_bytes=64 MiB`), and **`ShadowSkeptic` second-agent auditor** running with `affects_decision=false` — first dual-agent local jurisdiction in production. Logs each disagreement against the primary decision without veto, gathering data for future promotion to an LLM version.
+
+- **Pollen ↔ Meristem end-to-end real (day 25)**. REST connectivity in production, no mocks: `GET /health` sanity check with visual indicator, `POST /visit` uploading real `RhizomeSnapshot` + `DecisionReceipts`, `GET /policy/by-target/{id}`. Terminal-style log console in the UI for visual traceability.
+
+- **Bilingual endpoints in production (day 25)**. `?locale=es|en` operational on Rhizome's `/summary/since` and `/explain/decision/<id>`. Gemma 4 narrator improves `rationale_short` without altering facts. **Approach C** (`research/07_llm_localization_strategy.md`) declared the project's official i18n standard: edge nodes think in stable English Tech, Pollen + Gemma 4 E4B local translates to the UI language — preparing the system for minority-language fine-tuning (Pular, Wolof, Swahili, Quechua, Catalan, Basque) without re-flashing field hardware.
+
+- **Meristem control plane**. 53 tests PASS. mDNS verified end-to-end (`meristem.local:13000`). UI accessible across the LAN — validated with a real click from `192.168.1.36` with `trace_id` correlated end-to-end. **Read-only `POST /chat` by construction** — zero prompt-injection surface on hardware, formally verified by test. Latency finding: `num_predict` (output length) drives the 53% reduction, not `num_ctx` (input length); live-demo viable at ~1.5 min/bundle.
+
+- **Pollen voice → policy**. Microphone + Gemma 4 E4B multimodal audio on Android validated end-to-end against real human voice. Agricultural sentences compile to `MissionPatch`; nonsense gets `REFUSE_RETRY` instead of fabricated action. *Refusal as feature*, validated empirically.
+
+- **Architecture invariants stable**. Three-node routing with deterministic logic + Gemma 4 LLMs as rationale authors. Physical layer veto (ESP32) confirmed on real board (5 rules + `SAFETY_DOWNGRADE`).
 
 ---
 
