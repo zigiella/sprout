@@ -16,4 +16,7 @@ interface MeristemClient {
     suspend fun getLatestPolicy(targetId: String): PolicyPacket
     suspend fun checkHealth(): Boolean
     suspend fun sendHello(hello: PollenHello): Boolean
+    suspend fun sendHeartbeat(hello: PollenHello): Boolean
+    suspend fun sendBundlesPushed(): Boolean
+    suspend fun sendPoliciesPulled(): Boolean
 }

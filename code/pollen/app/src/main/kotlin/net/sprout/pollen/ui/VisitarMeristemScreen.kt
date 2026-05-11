@@ -78,11 +78,17 @@ fun VisitarMeristemScreen(
         
         while(true) {
             val pendingCount = if (currentSnapshot != null) 1 else 0
-            val isUp = client.sendHello(net.sprout.pollen.sync.PollenHello(
+            val hello = net.sprout.pollen.sync.PollenHello(
                 pollen_id = "pollen-dev-01",
                 app_version = "1.0.0",
                 bundles_pending_count = pendingCount
-            ))
+            )
+            
+            val isUp = if (first) {
+                client.sendHello(hello)
+            } else {
+                client.sendHeartbeat(hello)
+            }
             
             isConnected = isUp
             if (isUp) {
@@ -93,7 +99,7 @@ fun VisitarMeristemScreen(
                 }
             } else {
                 if (first) {
-                    addLog("Error en POST /hello (404/500)")
+                    addLog("Error en POST /pollen/hello")
                     first = false
                 }
             }
@@ -150,6 +156,7 @@ fun VisitarMeristemScreen(
                                 try {
                                     val visit = FieldVisit(currentSnapshot, currentReceipts)
                                     client.uploadFieldVisit(visit)
+                                    client.sendBundlesPushed()
                                     uploadSuccess = true
                                     addLog(uploadSuccessStr)
                                     Toast.makeText(context, uploadDoneMsgStr, Toast.LENGTH_SHORT).show()
@@ -208,6 +215,7 @@ fun VisitarMeristemScreen(
                                 val policy = client.getLatestPolicy(targetId)
                                 downloadedPolicy = policy
                                 onPolicyDownloaded(policy)
+                                client.sendPoliciesPulled()
                                 addLog(String.format(downloadSuccessFormat, policy.policyId))
                                 Toast.makeText(context, "Policy downloaded!", Toast.LENGTH_SHORT).show()
                             } catch (e: Exception) {

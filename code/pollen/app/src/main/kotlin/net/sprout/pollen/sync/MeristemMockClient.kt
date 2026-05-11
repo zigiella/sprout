@@ -44,4 +44,19 @@ class MeristemMockClient : MeristemClient {
         delay(100)
         return true
     }
+    
+    override suspend fun sendHeartbeat(hello: PollenHello): Boolean {
+        delay(50)
+        return true
+    }
+    
+    override suspend fun sendBundlesPushed(): Boolean {
+        delay(100)
+        return true
+    }
+    
+    override suspend fun sendPoliciesPulled(): Boolean {
+        delay(100)
+        return true
+    }
 }

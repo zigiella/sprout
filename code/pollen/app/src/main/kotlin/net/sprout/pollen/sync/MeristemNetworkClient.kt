@@ -22,8 +22,17 @@ interface MeristemApi {
     @GET("/health")
     suspend fun getHealth(): retrofit2.Response<Unit>
     
-    @POST("/hello")
+    @POST("/pollen/hello")
     suspend fun sendHello(@Body hello: PollenHello): retrofit2.Response<Unit>
+    
+    @POST("/pollen/heartbeat")
+    suspend fun sendHeartbeat(@Body hello: PollenHello): retrofit2.Response<Unit>
+    
+    @POST("/pollen/bundles-pushed")
+    suspend fun sendBundlesPushed(): retrofit2.Response<Unit>
+    
+    @POST("/pollen/policies-pulled")
+    suspend fun sendPoliciesPulled(): retrofit2.Response<Unit>
 }
 
 class MeristemNetworkClient(baseUrl: String) : MeristemClient {
@@ -65,6 +74,33 @@ class MeristemNetworkClient(baseUrl: String) : MeristemClient {
     override suspend fun sendHello(hello: PollenHello): Boolean {
         return try {
             val response = api.sendHello(hello)
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
+    }
+    
+    override suspend fun sendHeartbeat(hello: PollenHello): Boolean {
+        return try {
+            val response = api.sendHeartbeat(hello)
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
+    }
+    
+    override suspend fun sendBundlesPushed(): Boolean {
+        return try {
+            val response = api.sendBundlesPushed()
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
+    }
+    
+    override suspend fun sendPoliciesPulled(): Boolean {
+        return try {
+            val response = api.sendPoliciesPulled()
             response.isSuccessful
         } catch (e: Exception) {
             false
