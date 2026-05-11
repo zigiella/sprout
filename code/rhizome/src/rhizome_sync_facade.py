@@ -155,6 +155,24 @@ def _soil_pct_pair(snapshot: dict[str, Any]) -> tuple[float | None, float | None
     return soil_a, soil_b
 
 
+def _soil_display_pair(snapshot: dict[str, Any]) -> tuple[float | None, float | None, bool]:
+    soil_a, soil_b = _soil_pct_pair(snapshot)
+    if soil_a is not None and soil_b is not None:
+        return soil_a, soil_b, False
+
+    sensors = snapshot.get("sensors", {})
+    estimated = False
+    if soil_a is None and sensors.get("soil_moisture_a_pct_estimated") is True:
+        value = sensors.get("soil_moisture_a_pct")
+        soil_a = float(value) if isinstance(value, int | float) else None
+        estimated = soil_a is not None
+    if soil_b is None and sensors.get("soil_moisture_b_pct_estimated") is True:
+        value = sensors.get("soil_moisture_b_pct")
+        soil_b = float(value) if isinstance(value, int | float) else None
+        estimated = estimated or soil_b is not None
+    return soil_a, soil_b, estimated
+
+
 def _severity(snapshot: dict[str, Any], counts: dict[str, int]) -> str:
     tank = _tank_pct(snapshot)
     if counts["alert"] > 0:
@@ -575,9 +593,24 @@ def _summary_text(
     locale: str,
 ) -> tuple[str, str, list[str], str]:
     tank = _tank_pct(snapshot)
-    soil_a, soil_b = _soil_pct_pair(snapshot)
+    soil_a, soil_b, soil_estimated = _soil_display_pair(snapshot)
     latest = sorted(receipts, key=_receipt_sort_key)[-1] if receipts else None
     latest_action = latest.get("action") if latest else None
+    soil_pair_known = isinstance(soil_a, int | float) and isinstance(soil_b, int | float)
+    soil_highlight_en = (
+        f"Demo-calibrated soil estimate A/B: {soil_a:.0f}% / {soil_b:.0f}%."
+        if soil_pair_known and soil_estimated
+        else f"Soil probes A/B read {soil_a:.0f}% / {soil_b:.0f}%."
+        if soil_pair_known
+        else "Soil probe readings are incomplete."
+    )
+    soil_highlight_es = (
+        f"Estimacion de suelo calibrada para demo A/B: {soil_a:.0f}% / {soil_b:.0f}%."
+        if soil_pair_known and soil_estimated
+        else f"Las sondas de suelo A/B marcan {soil_a:.0f}% / {soil_b:.0f}%."
+        if soil_pair_known
+        else "Las lecturas de suelo estan incompletas."
+    )
 
     if locale == "en":
         headline = f"{node_id}: {counts['total']} decisions since the last visit"
@@ -591,11 +624,7 @@ def _summary_text(
                 f"{_plural_en(counts['alert'], 'alert', 'alerts')}."
             ),
             f"Current tank level is {tank:.0f}%." if tank is not None else "Current tank level is unavailable.",
-            (
-                f"Soil probes A/B read {soil_a:.0f}% / {soil_b:.0f}%."
-                if isinstance(soil_a, int | float) and isinstance(soil_b, int | float)
-                else "Soil probe readings are incomplete."
-            ),
+            soil_highlight_en,
         ]
         if latest_action:
             highlights.append(f"Latest recorded decision: {latest_action}.")
@@ -630,11 +659,7 @@ def _summary_text(
             f"{_plural_es(counts['alert'], 'alerta', 'alertas')}."
         ),
         f"El deposito esta al {tank:.0f}%." if tank is not None else "No hay lectura de deposito.",
-        (
-            f"Las sondas de suelo A/B marcan {soil_a:.0f}% / {soil_b:.0f}%."
-            if isinstance(soil_a, int | float) and isinstance(soil_b, int | float)
-            else "Las lecturas de suelo estan incompletas."
-        ),
+        soil_highlight_es,
     ]
     if latest_action:
         highlights.append(f"Ultima decision registrada: {latest_action}.")

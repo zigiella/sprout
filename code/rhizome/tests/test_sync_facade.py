@@ -227,6 +227,32 @@ class SyncFacadeTest(unittest.TestCase):
         self.assertIn("Current tank level is unavailable.", summary["highlights"])
         self.assertIn("Soil probe readings are incomplete.", summary["highlights"])
 
+    def test_visit_summary_can_present_demo_calibrated_soil_estimate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data_dir = Path(tmp)
+            snapshot = _get_json_from_file(default_data_dir() / "rhizome_snapshot.json")
+            snapshot["sensors"]["soil_moisture_a_pct"] = 25.0
+            snapshot["sensors"]["soil_moisture_b_pct"] = 25.0
+            snapshot["sensors"]["soil_moisture_a_raw"] = 2063
+            snapshot["sensors"]["soil_moisture_a_pct_estimated"] = True
+            snapshot["sensors"]["soil_moisture_b_pct_estimated"] = True
+            snapshot["sensors"]["soil_moisture_calibration"] = "demo_raw_index"
+            snapshot["pending_contradictions"] = [
+                "soil_a_unavailable_or_uncalibrated",
+                "soil_b_unavailable_or_uncalibrated",
+            ]
+            receipt = _get_json_from_file(default_data_dir() / "decision_receipt.json")
+            (data_dir / "rhizome_snapshot.json").write_text(json.dumps(snapshot), encoding="utf-8")
+            (data_dir / "decision_receipt.json").write_text(json.dumps(receipt), encoding="utf-8")
+
+            server, base_url = _run_server(data_dir)
+            try:
+                summary = _get_json(base_url, "/summary/since?locale=en")
+            finally:
+                _stop_server(server)
+
+        self.assertIn("Demo-calibrated soil estimate A/B: 25% / 25%.", summary["highlights"])
+
     def test_visit_summary_can_use_gemma_narrator_without_changing_counts(self):
         content = json.dumps(
             {

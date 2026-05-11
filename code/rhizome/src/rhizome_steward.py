@@ -536,6 +536,53 @@ def _has_full_raw_soil_calibration(config: StewardConfig) -> bool:
     return config.soil_dry_below_raw is not None and config.soil_wet_above_raw is not None
 
 
+def _clamp_pct(value: float) -> float:
+    return max(0.0, min(100.0, value))
+
+
+def _demo_soil_moisture_pct(raw_value: int | None, config: StewardConfig) -> float | None:
+    """Display-only moisture index for raw probes, not a physical calibration."""
+    if raw_value is None:
+        return None
+
+    if config.soil_raw_polarity == "low_is_wet":
+        if config.soil_wet_below_raw is None or config.soil_dry_above_raw is None:
+            return None
+        wet_raw = float(config.soil_wet_below_raw)
+        dry_raw = float(config.soil_dry_above_raw)
+        if dry_raw <= wet_raw:
+            return None
+        if raw_value <= wet_raw:
+            return 80.0
+        if raw_value >= dry_raw:
+            return 25.0
+        ratio = (float(raw_value) - wet_raw) / (dry_raw - wet_raw)
+        return round(_clamp_pct(80.0 - ratio * 55.0), 1)
+
+    if config.soil_dry_below_raw is None or config.soil_wet_above_raw is None:
+        return None
+    dry_raw = float(config.soil_dry_below_raw)
+    wet_raw = float(config.soil_wet_above_raw)
+    if wet_raw <= dry_raw:
+        return None
+    if raw_value <= dry_raw:
+        return 25.0
+    if raw_value >= wet_raw:
+        return 80.0
+    ratio = (float(raw_value) - dry_raw) / (wet_raw - dry_raw)
+    return round(_clamp_pct(25.0 + ratio * 55.0), 1)
+
+
+def _soil_display_label(value: float | None) -> str | None:
+    if value is None:
+        return None
+    if value >= 60:
+        return "wet"
+    if value <= 35:
+        return "dry"
+    return "watch"
+
+
 def _soil_unit(metric_kind: str) -> str:
     return "%" if metric_kind == "pct" else "raw"
 
@@ -817,6 +864,14 @@ class ShadowSkeptic:
 def build_snapshot(config: StewardConfig, telemetry: Telemetry, policy: dict[str, Any] | None, now: datetime) -> dict[str, Any]:
     soil_a_pct = telemetry.soil_a_pct()
     soil_b_pct = float(telemetry.soil_b_raw) if telemetry.soil_b_raw is not None and 0 <= telemetry.soil_b_raw <= 100 else soil_a_pct
+    soil_a_estimated_pct = _demo_soil_moisture_pct(telemetry.soil_a_raw, config) if soil_a_pct is None else None
+    soil_b_estimated_pct = _demo_soil_moisture_pct(telemetry.soil_b_raw, config) if soil_b_pct is None else None
+    soil_a_display_pct = soil_a_pct if soil_a_pct is not None else soil_a_estimated_pct
+    soil_b_display_pct = soil_b_pct if soil_b_pct is not None else soil_b_estimated_pct
+    if soil_b_display_pct is None:
+        soil_b_display_pct = soil_a_display_pct
+    soil_a_estimated = soil_a_pct is None and soil_a_estimated_pct is not None
+    soil_b_estimated = soil_b_pct is None and (soil_b_estimated_pct is not None or (telemetry.soil_b_raw is None and soil_a_estimated))
     pending_contradictions: list[str] = []
     if soil_a_pct is None:
         pending_contradictions.append("soil_a_unavailable_or_uncalibrated")
@@ -827,8 +882,15 @@ def build_snapshot(config: StewardConfig, telemetry: Telemetry, policy: dict[str
     if telemetry.flow_pulses is None:
         pending_contradictions.append("flow_sensor_unavailable")
     sensors = {
-        "soil_moisture_a_pct": soil_a_pct if soil_a_pct is not None else 0.0,
-        "soil_moisture_b_pct": soil_b_pct if soil_b_pct is not None else (soil_a_pct if soil_a_pct is not None else 0.0),
+        "soil_moisture_a_pct": soil_a_display_pct if soil_a_display_pct is not None else 0.0,
+        "soil_moisture_b_pct": soil_b_display_pct if soil_b_display_pct is not None else (soil_a_display_pct if soil_a_display_pct is not None else 0.0),
+        "soil_moisture_a_raw": telemetry.soil_a_raw,
+        "soil_moisture_b_raw": telemetry.soil_b_raw,
+        "soil_moisture_a_pct_estimated": soil_a_estimated,
+        "soil_moisture_b_pct_estimated": soil_b_estimated,
+        "soil_moisture_a_status": _soil_display_label(soil_a_display_pct),
+        "soil_moisture_b_status": _soil_display_label(soil_b_display_pct),
+        "soil_moisture_calibration": "demo_raw_index" if soil_a_estimated_pct is not None or soil_b_estimated_pct is not None else "physical_pct",
         "tank_level_pct": telemetry.tank_level_pct if telemetry.tank_level_pct is not None else 0.0,
         "flow_rate_lpm": 0.0,
         "last_reading_at": telemetry.collected_at,

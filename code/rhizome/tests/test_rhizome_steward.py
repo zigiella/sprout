@@ -263,9 +263,17 @@ class RhizomeStewardTest(unittest.TestCase):
                 FakeESP32Client(telemetry=_telemetry(soil_a_raw=2300, tank_level_pct=None)),
             )
             result = steward.run_once()
+            snapshot = steward.store.load_json("current_snapshot.json")
 
         self.assertEqual(result["action"], "WATER_A")
         self.assertTrue(result["executed"])
+        self.assertIsNotNone(snapshot)
+        RhizomeSnapshot.model_validate(snapshot)
+        sensors = snapshot["sensors"]
+        self.assertEqual(sensors["soil_moisture_a_raw"], 2300)
+        self.assertTrue(sensors["soil_moisture_a_pct_estimated"])
+        self.assertEqual(sensors["soil_moisture_calibration"], "demo_raw_index")
+        self.assertLessEqual(sensors["soil_moisture_a_pct"], 35.0)
 
     def test_pump_pulse_mode_maps_water_seconds_to_pump_pulse_ms(self):
         class DummySerialClient(SerialESP32Client):
