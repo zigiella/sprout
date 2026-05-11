@@ -82,6 +82,7 @@ def _compose_rationale(
     bundle: Bundle,
     evaluation: EvaluationResult,
     num_ctx: int | None = None,
+    num_predict: int | None = None,
 ) -> tuple[str, str, dict[str, Any]]:
     """Devuelve (rationale_tecnico, rationale_para_operador, llm_metrics).
 
@@ -89,19 +90,24 @@ def _compose_rationale(
     ADAPTER_URL, llama a Gemma 4 E4B con tool calling y obtiene rationale.
     Si falla, fallback al stub determinista (no rompe pipeline).
 
-    `num_ctx`: si se pasa, override del default (4096) para experimentos.
+    `num_ctx` y `num_predict`: si se pasan, override de defaults para
+    experimentos (mini-experimento día 23-24).
     """
     if USE_LLM:
         try:
             kwargs = {"adapter_url": ADAPTER_URL}
             if num_ctx is not None:
                 kwargs["num_ctx"] = num_ctx
+            if num_predict is not None:
+                kwargs["num_predict"] = num_predict
             rt, ro, metrics = compose_rationale_via_llm(
                 bundle, evaluation, **kwargs
             )
             metrics["mode"] = "llm"
             if num_ctx is not None:
                 metrics["num_ctx_override"] = num_ctx
+            if num_predict is not None:
+                metrics["num_predict_override"] = num_predict
             return rt, ro, metrics
         except LLMUnavailableError as e:
             logger.warning(
@@ -218,9 +224,10 @@ def _build_app() -> FastAPI:
         3b. Si OK → componer PolicyPacket + rationale + persistir
         4. Devolver VisitResponse
 
-        Header opcional `X-Meristem-Num-Ctx`: override de num_ctx para
-        experimentos (mini-experimento día 23). Si no se envía, default
-        4096.
+        Headers opcionales:
+        - `X-Meristem-Num-Ctx`: override de num_ctx (default 4096)
+        - `X-Meristem-Num-Predict`: override de num_predict (default 1024)
+        Para experimentos día 23-24.
         """
         # 1. Ingest
         ingest_service.ingest(bundle)
@@ -236,18 +243,27 @@ def _build_app() -> FastAPI:
                 payload=None,
             )
 
-        # Header opcional para override num_ctx (experimentos)
+        # Headers opcionales para override num_ctx + num_predict (experimentos)
         num_ctx_override: int | None = None
+        num_predict_override: int | None = None
         try:
             hdr = request.headers.get("X-Meristem-Num-Ctx")
             if hdr is not None:
                 num_ctx_override = int(hdr)
         except (ValueError, TypeError):
             num_ctx_override = None
+        try:
+            hdr_p = request.headers.get("X-Meristem-Num-Predict")
+            if hdr_p is not None:
+                num_predict_override = int(hdr_p)
+        except (ValueError, TypeError):
+            num_predict_override = None
 
         # 3b: componer rationale (LLM o fallback) + policy
         rationale_tecnico, rationale_operador, llm_metrics = _compose_rationale(
-            bundle, evaluation, num_ctx=num_ctx_override
+            bundle, evaluation,
+            num_ctx=num_ctx_override,
+            num_predict=num_predict_override,
         )
         policy = compose_policy(bundle, evaluation, rationale_tecnico)
 
