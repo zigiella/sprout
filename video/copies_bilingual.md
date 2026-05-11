@@ -1,9 +1,17 @@
 # Copies bilingües del vídeo Sprout — ES / EN
 
-**Versión:** v0.6 (cierre decisión Bea día 21 sobre Asset 9 E6: ruta principal `Context`, `WeatherDigest` plan B reactivable. Apilado completo de las 12 escenas v1.8.3)
-**Fecha:** 2026-05-06 (día 21)
+> **AVISO IMPORTANTE DE LECTURA — día 26**
+>
+> La **fuente viva de verdad** sobre el copy del video día 26 (master 3:08.5, voz pro DbwW activa) es:
+>
+> **`C:\DATA\PETS\CLAUDE\equipo-agentes\video-proyecto\produccion\handoffs\corola-video-snapshot.md`** (regenerable, sección "VOs (ES + EN side-by-side)" + "Cartelas con texto visible" + "Vocabulario controlado" + "Decisiones de copy (orden cronológico)").
+>
+> Este `copies_bilingual.md` v0.7 preserva la trazabilidad histórica y las versiones estables hasta v1.8.3. Las decisiones de copy días 24-26 (vocabulario `policy`/`criteria`, voz humana E5 doblada con DbwW, cenital reescrito, E8 eliminado, refinamientos Z99 y E10) están consolidadas como historial pero NO sustituyen al snapshot vivo. Para edición de copy operativa: ir al snapshot y a los `data/*.json` que lo alimentan.
+
+**Versión:** v0.7 (consolidación post-rodaje día 26 — apuntada al snapshot Bract como fuente viva. Historial preserva versiones estables v1.8.x)
+**Fecha:** 2026-05-11 (día 26)
 **Autora:** Corola
-**Origen:** decisión Bea día 16 — *"Necesitaré tener siempre los copies del video (textos VO, voz en off, cartelas, etc en ES y EN)."* Actualizado al giro estratégico día 18-19 (12 escenas, VO inglés master, frases fuertes reformuladas, Meristem en MVP).
+**Origen:** decisión Bea día 16 — *"Necesitaré tener siempre los copies del video (textos VO, voz en off, cartelas, etc en ES y EN)."* Actualizado al giro estratégico día 18-19 (12 escenas, VO inglés master, frases fuertes reformuladas, Meristem en MVP). **Convención day 26:** doc estable + fuente viva (snapshot Bract).
 
 ---
 
@@ -385,6 +393,17 @@ Gemma is a trademark of Google LLC.
 ---
 
 ## Historial
+
+- **v0.7** (2026-05-11, día 26, Corola) — consolidación post-rodaje día 26. Tras 5 días de ausencia operativa de Corola (días 22-25, Bea tiró millas con rodaje + Bract por presión de timing), retomo en día 26: leo snapshot Bract `corola-video-snapshot.md` (master 3:08.5, 3 bloques, voz pro DbwW), respondo 5 preguntas de copy día 26 con voto razonado, formalizo cambios en docs. Cambios estructurales del periodo días 22-26 + 5 votos día 26 documentados en el aviso de lectura al inicio del documento + en el historial v1.8.7 de `script.md`. **Convención day 26: doc estable + fuente viva.** Este `copies_bilingual.md` v0.7 preserva trazabilidad histórica hasta v1.8.3; el snapshot Bract es el copy vivo del video. Cambios consolidados:
+  1. **VO master EN definitivo con voz pro ElevenLabs DbwW** (21 MP3, settings 0.7/0.9/0.1/0.9 multilingual_v2). Bea confirmó *"BUAH! queda fetén."*
+  2. **Voz humana E5 doblada con DbwW** (no Bea castellano literal). Decisión consciente Bea día 26: *"la mía quedaba fatal."* La excepción narrativa cerrada día 18-19 (voz humana E5 castellano sin traducir) **se retira conscientemente.**
+  3. **E8 Caducidad eliminado** del video. Concepto `expiry` comprimido en VO E4b: *"Pollen brings new policies (with expiry) to each Rhizome."* F4 (*"Every intelligence has jurisdiction. And expiry."*) **se mueve a writeup/landing** — recuperable como argumento Safety & Trust del Gemma Hackathon.
+  4. **Cenital v1.8 Opción B (cadencia escalonada `One plot. Two. Eight. Autonomous.`) eliminada.** Sustituida por discurso lineal explicativo sobre fondo claro (`soil.oat`, texto oscuro `soil.graphite`): *"It also supports two plots. / And many more plots. / Meristem composes policies. Pollen distributes them. / Pollen turns visits into federated intelligence."* La poesía v1.8 (3-2-2-3 sílabas martilleando) queda para writeup/landing — funciona mejor en texto.
+  5. **Vocabulario unificado:** `policy` (regla Meristem, caduca, viaja con Pollen) vs `criteria` (criterio LOCAL del Rhizome). **NO se unifican** — asimetría intencional preservada. Z99 tagline NO se toca.
+  6. **5 votos Corola día 26 aplicados:** Z99 con adverbios potentes recuperados (*"Sprout: When network is absent, and the human is far, local criteria still irrigate."*) + cartelas E10 verbos viscerales (`Holds / Carries between plots / Composes`) + refinamientos VO cenital (*"Sprout starts with one plot."* + *"And many more plots."*) + distinción policy/criteria documentada + bilingüe en cartelas: solo EN.
+  7. **Cartela `Imagine this pot is a whole plot.` (v1.8.2) dividida en 2 cartelas** para mejor cadencia visual (decisión Bract día ~24).
+
+  Detalle vivo en snapshot Bract. Detalle histórico-narrativo aquí.
 
 - **v0.6** (2026-05-06, día 21, Corola) — cierre decisión Bea Asset 9 E6: ruta principal `Context`, `WeatherDigest` plan B reactivable. Cambio sobre v0.5: sección "Cartelas y overlays on-screen E6" reescrita — ruta principal v1.8.3 = sin meteo (`Context`), plan B reactivable = con meteo (`WeatherDigest`, captura ya producida por Venation, sustitución directa en CapCut). Decisión Bea día 21 cerrada en caliente con Venation: *"no da tiempo a hacer la meteo. Si al final da tiempo, ella ya tiene hecha la captura."* Actualizado estado E6 en tabla resumen + cabecera + sección detalle + carteles físicos (sin estación meteo en plano físico). Origen del cambio en docs (no en producción): Venation entregó lote ya con decisión aplicada, yo (Corola) hice review pidiendo inicialmente que añadiese `WeatherDigest`, Bea aclaró, retiré petición y registro decisión aquí.
 - **v0.5** (2026-05-06, día 21, Corola) — recuperación cartela *"Imagine this pot is a whole plot."* al inicio de E2 con misma gráfica que `"Three days later"` (E8). Cambio sobre v0.4: añadida cartela bisagra apertura E2 (Manrope full-screen sobre `soil.graphite`, 0:25–0:28, 3s, sin VO). Función narrativa: bisagra tipográfica entre E1 (datos globales) y E2 (plano técnico) — recupera contrato visual con el espectador (filmamos macetas, hablamos de parcelas) que vivía en E1 v1.6 y se cayó en v1.7. Decisión Bea día 21 tras pregunta retrospectiva sobre v1.6. Actualizada la tabla de Escena 2 + nota explicativa al final de la sección + estado v1.7 → v1.8.2.

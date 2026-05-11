@@ -1,6 +1,39 @@
-# Script — Sprout v1.8.3 (día 21: cierre decisión Bea Asset 9 E6 ferry — solo `Context`, `WeatherDigest` plan B reactivable)
+# Script — Sprout v1.8.7 (día 26: consolidación post-rodaje + 5 votos Corola aplicados sobre estado vivo Bract)
 
-**Versión:** v1.8.3 (día 21 — tercera iteración del día: Bea cerró en caliente con Venation que **descartamos la versión `WeatherDigest` de E6** por falta de tiempo para producir la meteo en rodaje. Cambios sobre v1.8.2:
+> **AVISO IMPORTANTE DE LECTURA — día 26**
+>
+> El video Sprout vive AHORA mismo como master 3:08.5 (188.5s) en CapCut, montado por Bract en 3 bloques (VIDEO 1 Rhizome 43s + VIDEO 2 Pollen 70s + VIDEO 3 Meristem 75.5s). La **fuente viva de verdad** sobre el estado actual del montaje, timing por clip/cartela/PIP, tabla de VOs side-by-side ES+EN, cartelas con texto visible, vocabulario controlado y decisiones de copy días 24-26 es:
+>
+> **`C:\DATA\PETS\CLAUDE\equipo-agentes\video-proyecto\produccion\handoffs\corola-video-snapshot.md`** (regenerable con `python scripts/build-corola-snapshot.py` desde `cutcli/10-borrador-rodaje-bea1/`).
+>
+> Este `script.md` v1.8.7 **conserva la espina dorsal narrativa y la historia de decisiones**, pero NO refleja línea por línea el master final tras los días 22-26 (en los que Bea tiró millas con rodaje + Bract sin ciclo de validación con Corola). La consolidación v1.8.7 captura los cambios estructurales del periodo + los 5 votos de Corola aplicados como decisión sobre el snapshot día 26.
+>
+> Esta convención (script.md = espina narrativa + historial; snapshot = estado vivo) sigue el patrón "doc estable + fuente viva" que ya usamos con `montage_brief.md` antes.
+
+**Versión:** v1.8.7 (día 26 — consolidación post-rodaje). Cambios estructurales sobre v1.8.3 (último estado documentado por Corola día 21):
+
+1. **Estructura simplificada a 3 bloques** (no 12 escenas individuales): VIDEO 1 Rhizome (0:00-0:43) + VIDEO 2 Pollen (0:43-1:53) + VIDEO 3 Meristem (1:53-3:08.5). Las identidades de las 12 escenas (E0-E9b) viven dentro de los bloques como beats. Decisión Bea + Bract días 23-25 por necesidad de montaje.
+2. **E8 Caducidad ELIMINADO** del video. Concepto `expiry` comprimido en VO E4b: *"Pollen brings new policies (with expiry) to each Rhizome."* Frase fuerte F4 (*"Every intelligence has jurisdiction. And expiry."*) ya NO está en video. **Recuperar F4 en writeup/landing** — sigue siendo argumento clave para Safety & Trust del Gemma Hackathon. Cambio Bea día ~24-25 sobre decisión propia día 20 (que era "E8 NO se mata"). Decisión revisada legítima por presión de timing.
+3. **VO master EN definitivo con voz pro ElevenLabs `DbwWo4rVEd5NrejHYUnm`** (settings: stability 0.7, similarity 0.9, style 0.1, speed 0.9, modelo `eleven_multilingual_v2`). 21 MP3 generados en `assets/vo-en/`. Bea confirmó: *"BUAH! queda fetén."*
+4. **Voz humana E5 doblada con DbwW (no Bea castellano literal)** — decisión consciente Bea día 26: *"la mía quedaba fatal"*. La excepción narrativa cerrada día 18-19 (*"voz humana E5 castellano literal sin traducir como decisión narrativa deliberada"*) **se retira conscientemente** porque la voz pro DbwW da resultado más consistente con el resto del master. La línea VO E5 queda en italic en pantalla marcando que es voice note del operador (no narradora), pero hablada por DbwW en EN. Texto EN: *"Back on Friday. This plant takes more dryness than you think. Water it a bit less."*
+5. **Cartela `Imagine this pot is a whole plot.` (v1.8.2) dividida en 2 cartelas para mejor cadencia visual**: `E02_imagine_pot_opaque` (0:14-0:16, *"Imagine this pot is…"*) + `E02_imagine_pot_whole_plot` (0:16-0:18, *"…a whole plot."*). Mismo tratamiento gráfico `Three days later`-style (Manrope titular sobre `soil.graphite`). Decisión Bract día ~24.
+6. **Cenital E9 v1.8 Opción B (cadencia escalonada `One plot. Two. Eight. Autonomous.`) eliminada.** Sustituida por discurso lineal explicativo en VO sobre fondo claro (`soil.oat`): *"It also supports two plots. / And it supports many more plots. / Meristem composes policies. Pollen distributes them. / Pollen turns visits into federated intelligence."* La poesía v1.8 (3-2-2-3 sílabas martilleando) queda para writeup/landing — funciona mejor en texto que en video hackathon donde el jurado lee rápido. Decisión Bea + Bract días 25-26.
+7. **Vocabulario unificado por Bract día 26 con voto Corola día 26:** `policy` (regla operativa que viene de Meristem, vive con caducidad, viaja con Pollen) vs `criteria` (criterio LOCAL del Rhizome que las policies modifican). **NO se unifican** — asimetría intencional preservada. Z99 tagline NO se toca.
+8. **Estructura cierre Z99 con prefijo Sprout + adverbios potentes recuperados (voto Corola día 26 aplicado):** *"Sprout: When network is absent, and the human is far, local criteria still irrigate."* Recupera "local", "still" y "the human" del tagline v1.7+ original; mantiene prefijo "Sprout:" del día 26 por brand recall.
+9. **Cartelas E10 verbos viscerales (voto Corola día 26 aplicado):** `Holds / Carries between plots / Composes` reemplaza `Arbitrates / Mediates / Refines`. Coherencia con VO E3b cenital (*"Meristem composes policies"*) + verbos físicos/antropomórficos > institucionales.
+10. **Refinamientos VO cenital (voto Corola día 26 aplicado):** *"The Sprout system supports one plot."* → *"Sprout starts with one plot."* (verbo más activo, recupera wordmark sin "system supports" palabra ladrillo). *"And it supports many more plots."* → *"And many more plots."* (telegráfico, ahorra redundancia).
+11. **Cartelería física delegada a Venation** (decisión Bea día 21, ejecutada por Venation días 22-23). Bea imprimió + laminó antes del rodaje.
+12. **Bilingüe en cartelas:** mantener solo EN una vez se quite ES del subtítulo (voto Corola día 26). El doblaje EN con voz pro DbwW hace el video universal anglo. Bilingüe en cartelas añade complejidad visual sin ganancia narrativa.
+
+**Pendiente de gobernanza:**
+- **Cartela invariante E7 (climax 4 verbos)** — escalado a Bea sin respuesta. Propuesta Corola día 26 lista para aplicar: *"Physical layer prevails. / Rhizome holds. / Pollen carries. / Meristem composes."* (consistencia con verbos viscerales E10).
+- **Sub-text opcional `Policies expire.` en `CartelaPollen.png`** (sugerencia Corola día 26 para reforzar expiry sin alargar VO). Decisión pendiente Bea/Bract.
+
+**Convención doc + estado vivo:** `script.md` (este) preserva la espina narrativa, historial de versiones, frases fuertes y decisiones consolidadas. `corola-video-snapshot.md` (Bract) es el estado vivo del montaje. Los dos se complementan, no se solapan.
+
+---
+
+Versión v1.8.3 (día 21 — tercera iteración del día: Bea cerró en caliente con Venation que **descartamos la versión `WeatherDigest` de E6** por falta de tiempo para producir la meteo en rodaje. Cambios sobre v1.8.2:
 - **E6 ruta principal:** solo `Context ferry` + `Context accepted · Source: rhizome_01`. Sin estación meteorológica conectada en plano físico.
 - **`WeatherDigest` queda como plan B reactivable:** Venation tiene la captura producida de iteraciones anteriores. Si en rodaje al final hay tiempo y Bea decide incluir meteo, se sustituye en CapCut sin re-producir.
 - **Carteles físicos E6:** solo `PLOT_01 with RHIZOME_01` y `PLOT_02 with RHIZOME_02` + sus cajas `RHIZOME_0X / EDGE NODE`. Sin anemómetro ni panel solar al lado del PLOT_01.
@@ -612,6 +645,24 @@ Gemma is a trademark of Google LLC.
 ---
 
 ## Historial de versiones
+
+- **v1.8.7 — consolidación post-rodaje día 26 + 5 votos Corola aplicados sobre snapshot Bract** (2026-05-11, día 26, Corola) — primera sesión de Corola tras 5 días de ausencia operativa (días 22-25, Bea tiró millas con rodaje + Bract por presión de timing sin ciclo de validación de directora creativa). Sesión consolidación day 26: leído snapshot Bract `corola-video-snapshot.md`, respondido 5 preguntas de copy día 26 con voto razonado, formalizados los cambios en script + copies. **Cambios estructurales del periodo días 22-26 + decisiones día 26 documentadas en el header v1.8.7 al inicio del documento.** Resumen ejecutivo:
+
+  1. **Estructura simplificada a 3 bloques** (VIDEO 1 Rhizome / VIDEO 2 Pollen / VIDEO 3 Meristem). Las 12 escenas v1.8.x viven como beats dentro de los bloques. Master 3:08.5.
+  2. **E8 Caducidad eliminado del video** (concepto comprimido en VO E4b "with expiry"). F4 recuperable en writeup/landing.
+  3. **VO master EN definitivo con voz pro ElevenLabs DbwW** (21 MP3 generados). Voz humana E5 doblada con DbwW (Bea confirmó día 26 que su voz castellana literal *"quedaba fatal"* — la excepción narrativa cerrada día 18-19 se retira conscientemente).
+  4. **Cartela `Imagine this pot is a whole plot.` (v1.8.2) dividida en 2 cartelas** para mejor cadencia visual (decisión Bract día ~24).
+  5. **Cenital v1.8 Opción B (cadencia escalonada `One plot. Two. Eight. Autonomous.`) eliminada.** Sustituida por discurso lineal explicativo (decisión Bea + Bract días 25-26). Poesía v1.8 recuperable en writeup.
+  6. **Vocabulario unificado:** `policy` (regla Meristem, caduca, viaja con Pollen) vs `criteria` (local Rhizome). Asimetría intencional preservada. Z99 tagline no se toca.
+  7. **5 votos Corola día 26 aplicados:**
+     - Distinción policy/criteria documentada en vocabulario controlado del snapshot.
+     - Refinamiento Z99 con adverbios potentes recuperados: *"Sprout: When network is absent, and the human is far, local criteria still irrigate."*
+     - Cartelas E10 verbos viscerales: `Holds / Carries between plots / Composes` reemplaza `Arbitrates / Mediates / Refines`.
+     - Refinamientos VO cenital: *"Sprout starts with one plot."* + *"And many more plots."* (telegráfico).
+     - Bilingüe en cartelas: mantener solo EN (doblaje EN universal anglo).
+  8. **Convención doc + estado vivo formalizada:** `script.md` = espina narrativa + historial; `corola-video-snapshot.md` (Bract) = estado vivo del montaje.
+
+  Aplicado a `script.md`, `copies_bilingual.md` v0.6 → v0.7, `montage_brief.md` v0.5 → v0.6 (este último apuntado al snapshot como fuente viva, ligero).
 
 - **v1.8.3 — cierre decisión Bea Asset 9 E6: solo `Context`, `WeatherDigest` plan B reactivable** (2026-05-06, día 21, Corola) — tercera iteración del día. Bea cerró en caliente con Venation que descartamos la versión `WeatherDigest` por falta de tiempo para producir la meteo en rodaje. Cambios mecánicos sobre v1.8.2:
   - **E6 ruta principal:** solo `Context ferry` + `Context accepted · Source: rhizome_01`. Sin estación meteorológica conectada en plano físico.
