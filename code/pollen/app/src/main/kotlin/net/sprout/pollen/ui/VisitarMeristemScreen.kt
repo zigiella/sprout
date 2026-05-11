@@ -38,11 +38,7 @@ fun VisitarMeristemScreen(
     onPolicyDownloaded: (PolicyPacket) -> Unit = {}
 ) {
     val client: MeristemClient = remember { 
-        if (net.sprout.pollen.BuildConfig.FLAVOR == "demo") {
-            MeristemMockClient()
-        } else {
-            MeristemNetworkClient("http://192.168.1.42:13000/")
-        }
+        MeristemNetworkClient("http://192.168.1.42:13000/")
     }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current

@@ -39,12 +39,8 @@ fun VisitarRhizomeScreen(
     onAuditClicked: () -> Unit = {}
 ) {
     val client: RhizomeClient = remember(plotId) { 
-        if (net.sprout.pollen.BuildConfig.FLAVOR == "demo") {
-            RhizomeMockClient()
-        } else {
-            val port = if (plotId.contains("02")) "13020" else "13010"
-            RhizomeNetworkClient("http://192.168.1.60:$port/")
-        }
+        val port = if (plotId.contains("02")) "13020" else "13010"
+        RhizomeNetworkClient("http://192.168.1.60:$port/")
     }
     val scope = rememberCoroutineScope()
     
