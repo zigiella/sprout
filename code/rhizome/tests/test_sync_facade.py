@@ -266,6 +266,53 @@ class SyncFacadeTest(unittest.TestCase):
         self.assertGreaterEqual(len(all_receipts), 1)
         self.assertEqual(future_receipts, [])
 
+    def test_receipts_include_steward_jsonl_history(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data_dir = root / "facade_data"
+            history_dir = root / "decision_receipts"
+            data_dir.mkdir()
+            history_dir.mkdir()
+            shutil.copy(default_data_dir() / "rhizome_snapshot.json", data_dir / "rhizome_snapshot.json")
+
+            template = _get_json_from_file(default_data_dir() / "decision_receipt.json")
+            first = dict(template)
+            first["decision_id"] = "rec_history_water"
+            first["created_at"] = "2026-05-11T10:00:00Z"
+            first["action"] = "WATER_A"
+            first["executed"] = True
+            first["blocked_reason"] = None
+            second = dict(template)
+            second["decision_id"] = "rec_history_defer"
+            second["created_at"] = "2026-05-11T10:05:00Z"
+            second["action"] = "DEFER"
+            second["executed"] = False
+            second["blocked_reason"] = "COOLDOWN_NOT_MET"
+            current = dict(template)
+            current["decision_id"] = "rec_current"
+            current["created_at"] = "2026-05-11T10:10:00Z"
+            current["action"] = "DEFER"
+            current["executed"] = False
+            current["blocked_reason"] = "COOLDOWN_NOT_MET"
+
+            (history_dir / "2026-05-11.jsonl").write_text(
+                "\n".join(json.dumps(receipt) for receipt in [first, second]) + "\n",
+                encoding="utf-8",
+            )
+            (data_dir / "decision_receipt.json").write_text(json.dumps(current), encoding="utf-8")
+
+            server, base_url = _run_server(data_dir)
+            try:
+                receipts = _get_json(base_url, "/receipts")
+                filtered = _get_json(base_url, "/receipts?since=2026-05-11T10:04:00Z")
+                historical_explanation = _get_json(base_url, "/explain/decision/rec_history_water?locale=en")
+            finally:
+                _stop_server(server)
+
+        self.assertEqual([receipt["decision_id"] for receipt in receipts], ["rec_history_water", "rec_history_defer", "rec_current"])
+        self.assertEqual([receipt["decision_id"] for receipt in filtered], ["rec_history_defer", "rec_current"])
+        self.assertEqual(historical_explanation["decision_id"], "rec_history_water")
+
     def test_explain_missing_decision_returns_structured_404(self):
         server, base_url = _run_server(default_data_dir())
         try:

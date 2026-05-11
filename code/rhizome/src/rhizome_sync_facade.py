@@ -47,6 +47,24 @@ def _load_json(path: Path) -> Any:
         return json.load(f)
 
 
+def _load_jsonl_dicts(path: Path) -> list[dict[str, Any]]:
+    if not path.exists():
+        return []
+    records: list[dict[str, Any]] = []
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            stripped = line.strip()
+            if not stripped:
+                continue
+            try:
+                record = json.loads(stripped)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(record, dict):
+                records.append(record)
+    return records
+
+
 def _write_json_atomic(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp_path = path.with_suffix(path.suffix + ".tmp")
@@ -669,21 +687,27 @@ class RhizomeReadStore:
         return _load_json(self.data_dir / "rhizome_snapshot.json")
 
     def receipts(self, since: str | None = None) -> list[dict[str, Any]]:
+        receipts: list[dict[str, Any]] = []
+        history_dir = self.data_dir.parent / "decision_receipts"
+        if history_dir.exists():
+            for path in sorted(history_dir.glob("*.jsonl")):
+                receipts.extend(_load_jsonl_dicts(path))
+
         candidates = [
             self.data_dir / "decision_receipt.json",
             self.data_dir / "decision_receipt_blocked.json",
         ]
-        receipts = [
+        receipts.extend(
             receipt
             for path in candidates
             if path.exists()
             for receipt in [_load_json(path)]
-        ]
+        )
         deduped: dict[str, dict[str, Any]] = {}
         for receipt in receipts:
             decision_id = str(receipt.get("decision_id") or "")
             deduped[decision_id or f"anonymous_{len(deduped)}"] = receipt
-        receipts = list(deduped.values())
+        receipts = sorted(deduped.values(), key=_receipt_sort_key)
 
         since_dt = _parse_zulu(since)
         if since_dt is None:
