@@ -19,6 +19,7 @@ demo tool calling) ampliando la batería sin sustituirla.
 | `bundle_M5_pollen_jurisdiction.json` | snapshot.operator_request con cambio puntual | REFUSE | JURISDICTION_POLLEN |
 | `bundle_R2_emergency.json` | Igual que M3 pero `target_rhizome_id="rhizome_02"` | ALERT_POLICY | PERSISTENT_EMERGENCY |
 | `bundle_M6_tool_calling_demo.json` | ALERT con `weather_digest=null` → fuerza al modelo a llamar `get_weather_history` y opcionalmente `get_recent_history` para tener material que escribir | ALERT_POLICY | PERSISTENT_EMERGENCY |
+| `bundle_M7_compare_targets_demo.json` | ALERT en `rhizome_01` con hint multi-Rhizome → invita al modelo a llamar `compare_targets(rhizome_01, rhizome_02)` y emitir hipótesis "problema local, no global" con marcador de confianza explícito | ALERT_POLICY | PERSISTENT_EMERGENCY |
 
 ## M6 — propósito específico
 
