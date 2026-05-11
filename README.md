@@ -6,7 +6,7 @@
 
 # Sprout
 
-> **AI Local-first irrigation decisions.**
+> **AI Local-first water optimization for plots the network forgets.**
 > *Safe · explainable · open-source.*
 
 > *"When network is absent — and the human is far — local criteria still irrigate."*
@@ -18,7 +18,7 @@
 
 ## In 30 seconds
 
-Sprout is a **local-first AI architecture for irrigation decisions in remote plots** — places where the field, the person and the network rarely coincide in time.
+Sprout is a **local-first AI architecture for water optimization in remote plots** — places where the field, the person and the network rarely coincide in time.
 
 Each plot runs **Rhizome**, an autonomous node that decides offline using **Gemma 4 E2B** on a Jetson Orin Nano Super. Rhizome never moves water directly: an **ESP32-S3** with custom firmware enforces hard safety limits and can veto or modulate any action.
 
@@ -74,7 +74,7 @@ Sprout exists to bring **operational criteria to plots where you can't be every 
 
 ## How Gemma 4 is used
 
-- **Multimodal audio native** — Pollen feeds raw 16kHz `.wav` directly to Gemma 4 E4B via LiteRT-LM, **without a separate STT pipeline**. Replaced Android's `SpeechRecognizer` after extensive instability. Code: `code/pollen/.../PollenVoiceInfra.kt`.
+- **Multimodal audio native** — Pollen feeds raw 16kHz `.wav` directly to Gemma 4 E4B via LiteRT-LM, **without a separate STT pipeline**. Code: `code/pollen/.../PollenVoiceInfra.kt`.
 - **Tool calling** — Meristem uses Gemma 4 E4B with native tool calling for `compose_policy(...)` and bundle validation. Mini-battery 5/5 PASS. Code: `code/meristem_node/...`.
 - **Three-node routing** — three Gemma 4 instances (E2B + E4B + E4B), three jurisdictions, no cloud roundtrip. Each node holds the context type its layer is responsible for.
 - **`safe-cpu` profile contractual** — Rhizome runs Gemma 4 E2B-it Q4_K_S on Jetson CPU (validated 18/18 in battery tests). GPU offload works (36/36 layers) but quality is not contractual yet.
@@ -116,12 +116,66 @@ make test   # runs 13 deterministic tests + LLM smoke
 - ESP32 firmware: [`hardware/firmware_esp32/README.md`](hardware/firmware_esp32/README.md)
 - Wiring schematics: [`hardware/wiring_diagrams/day19_mounting_schematics.md`](hardware/wiring_diagrams/day19_mounting_schematics.md)
 
+### Installing the model on the phone
+
+The user installs Pollen from the store — the app itself is light (**~15 MB**). On first launch with WiFi, an onboarding screen appears:
+
+> *"Downloading agronomic brain (Gemma 4)..."*
+
+The app uses Android's `DownloadManager` to fetch `gemma-4-E4B-it.litertlm` (3.6 GB) from a secure CDN directly into the app's private internal storage (`/data/data/net.sprout.pollen/files/`). Once the download completes, **the model lives on the device forever and Pollen runs 100% offline** — no further network round-trip.
+
+> Requires: Android 12 / API 31+, 12 GB RAM recommended (16 GB ideal), at least 6 GB free for the model file plus runtime headroom. CPU is the stable runtime path; GPU/NPU varies by device.
+
+> For developers and nightly testers, the `adb push` sideload flow is documented in [`code/pollen/README.md`](code/pollen/README.md).
+
 ---
 
 ## Project status
 
 - **MVP**: all four nodes operational. Real Pollen ↔ Rhizome chain validated. ESP32 physical veto confirmed on real board. Meristem LLM integration with tool calling closed.
 - **Architecture**: invariants stable. Three-node routing with deterministic logic + Gemma 4 LLMs as rationale authors.
+
+---
+
+## Future work / Roadmap
+
+Sprout solves the minimum case. The architecture is designed to scale. Here is what we are already designing for the next iterations:
+
+### Hardware autonomy
+
+- **Solar power for Rhizome.** Combine the Jetson Orin Nano Super's MAXN_SUPER profile with a small PV array + LiFePO4 battery to remove grid dependency. Edge AI without grid is the natural complement to local-first: the field doesn't need power either.
+- **Mesh between plots without WiFi.** LoRa or Meshtastic between Rhizomes for federation when the cell signal is weak and the farmer's phone is the only network in range. Pollen as primary ferry; LoRa as low-bandwidth fallback for `AlertEvent` propagation.
+
+### Multimodal Gemma 4 in the field
+
+- **Vision multimodal.** Camera + Gemma 4 detecting visible water stress, pest pressure, growth phase. The architecture is already set up — the same `MissionPatch` schema can carry image references with no contract change.
+- **Bidirectional audio.** Pollen also speaks to the farmer: conversational pre-warning — *"tomorrow's irrigation is scheduled, but the tank is at 30%"*. Full-duplex with Gemma 4 audio output, same on-device privacy model.
+
+### Language localization
+
+- **Gemma 4 translates to the user's language.** The system reasons in contracts (English, structured, deterministic); Pollen adapts the surface language to whatever the farmer speaks. The user never sees JSON; they see their language. Decoupling **internal reasoning** from **external surface** keeps the audit trail clean and the user experience native.
+- **Fine-tuning Gemma 4 on minority languages.** Small farmers globally don't speak English. Fine-tuning E4B on local agricultural vocabularies (Swahili, Hausa, Wolof, Quechua, Aymara, Catalan, Basque…) opens the system to the **84% of farms under 2 hectares** that FAO counts as the world's primary agricultural force.
+
+### Sensors and field complexity
+
+- **More sensors per plot.** Conductivity, pH, soil temperature beyond moisture. Multi-zone irrigation with electrovalves and per-zone scheduling.
+- **Local weather stations.** A physical weather sensor next to PLOT_01 replaces the portable `WeatherDigest` carried by Pollen for plots with frequent visits.
+- **Integration with official climate platforms.** AEMET (Spain), MeteoCat (Catalonia), or regional equivalents — replace the carried `WeatherDigest` with verified institutional data when network is available.
+
+### System scaling
+
+- **Meristem from 4 rules to 8-12.** Today the deterministic Evaluator runs 4 rules; post-hackathon expansion to seasonal logic, heterogeneous crops, multi-month water budgets. Plan documented in 7 progressive phases.
+- **Fine-tuning E4B with Unsloth.** Train on a synthetic + real agricultural dataset to specialize Meristem's policy authoring without degrading general reasoning.
+- **Multi-Rhizome federation.** Local scheduler coordinating N logical Rhizomes on a single Jetson (medium farms with multiple zones) + real federation across multiple Jetsons (large farms with geographically separate plots).
+- **GPU quality pass.** Close GPU offload semantic drift (test cases RD04, RH02) to promote the `gpu-experimental` profile to contractual.
+
+### Debt and polish
+
+- Automated UI tests (currently manual smoke).
+- Auto-generated API docs (OpenAPI from JSON contracts).
+- Signal-seed visual identity (`#C5F26B`) consistent across all frontends.
+
+**Sprout solves the minimum case. The architecture scales.**
 
 ---
 

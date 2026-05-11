@@ -1,0 +1,29 @@
+[
+  {
+    "bundle": "M1",
+    "num_predict": 256,
+    "latency_ms": 86438,
+    "status": "ok",
+    "reason_code": "STABLE_BUNDLE",
+    "rationale_chars": 82,
+    "rationale": "Tu Rhizome sigue funcionando bien. He extendido la política activa una semana más."
+  },
+  {
+    "bundle": "M1",
+    "num_predict": 512,
+    "latency_ms": 134378,
+    "status": "ok",
+    "reason_code": "STABLE_BUNDLE",
+    "rationale_chars": 82,
+    "rationale": "Tu Rhizome sigue funcionando bien. He extendido la política activa una semana más."
+  },
+  {
+    "bundle": "M1",
+    "num_predict": 1024,
+    "latency_ms": 182164,
+    "status": "ok",
+    "reason_code": "STABLE_BUNDLE",
+    "rationale_chars": 159,
+    "rationale": "Todo está en orden. Los niveles de suelo y agua son estables y no hay alertas. Mantenemos la política actual, que sigue siendo la más adecuada para la parcela."
+  }
+]

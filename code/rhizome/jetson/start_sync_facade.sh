@@ -8,6 +8,8 @@ FACADE_PID_FILE="${FACADE_PID_FILE:-/tmp/sprout_${FACADE_NODE_ID}_sync_facade_${
 FACADE_LOG_FILE="${FACADE_LOG_FILE:-/tmp/sprout_${FACADE_NODE_ID}_sync_facade_${FACADE_PORT}.log}"
 FACADE_DATA_DIR="${FACADE_DATA_DIR:-}"
 FACADE_STATE_DIR="${FACADE_STATE_DIR:-/tmp/sprout_rhizome_sync_facade/${FACADE_NODE_ID}}"
+GEMMA_VISIT_NARRATOR_URL="${GEMMA_VISIT_NARRATOR_URL:-}"
+GEMMA_VISIT_NARRATOR_MODEL="${GEMMA_VISIT_NARRATOR_MODEL:-gemma4:e2b}"
 REPO_DIR="${REPO_DIR:-$HOME/sprout}"
 LEGACY_PID_FILE="/tmp/sprout_rhizome_sync_facade.pid"
 
@@ -39,6 +41,9 @@ echo "Node: $FACADE_NODE_ID"
 echo "Repo: $REPO_DIR"
 echo "Log: $FACADE_LOG_FILE"
 echo "State: $FACADE_STATE_DIR"
+if [ -n "$GEMMA_VISIT_NARRATOR_URL" ]; then
+  echo "Gemma visit narrator: $GEMMA_VISIT_NARRATOR_URL ($GEMMA_VISIT_NARRATOR_MODEL)"
+fi
 
 FACADE_ARGS=(
   --host "$FACADE_HOST"
@@ -49,6 +54,10 @@ FACADE_ARGS=(
 
 if [ -n "$FACADE_DATA_DIR" ]; then
   FACADE_ARGS+=(--data-dir "$FACADE_DATA_DIR")
+fi
+
+if [ -n "$GEMMA_VISIT_NARRATOR_URL" ]; then
+  FACADE_ARGS+=(--narrator-url "$GEMMA_VISIT_NARRATOR_URL" --narrator-model "$GEMMA_VISIT_NARRATOR_MODEL")
 fi
 
 (

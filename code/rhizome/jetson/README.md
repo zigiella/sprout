@@ -147,6 +147,20 @@ adapter Ollama-compatible (`:12000`). Es una fachada separada en `:13010`:
 ./smoke_sync_facade.sh
 ```
 
+Para activar el narrador Gemma 4 del boton de ausencia, primero debe estar vivo
+el adapter Ollama-compatible en `:12000`:
+
+```bash
+GEMMA_VISIT_NARRATOR_URL=http://127.0.0.1:12000 \
+GEMMA_VISIT_NARRATOR_MODEL=gemma4:e2b \
+./start_sync_facade.sh
+
+./smoke_gemma_visit_narrator.sh
+```
+
+El narrador solo reescribe narrativa humana. Los counts, receipts, flags
+`executed`, `simulation` y codigos de seguridad siguen siendo deterministas.
+
 Endpoints servidos:
 
 ```text
@@ -221,6 +235,51 @@ rhizome_02 -> http://<jetson-host-or-ip>:13020/
 simulacion host-side de interoperabilidad multi-Rhizome: no hay segundo ESP32,
 no hay segunda bomba y no se toca hardware fisico.
 
+## Primer observe mode con ESP32 minimo
+
+Cuando el ESP32 exponga bomba on/off + humedad de tierra, probar primero sin
+ejecucion de agua:
+
+```bash
+./run_steward_serial_observe_minimal.sh
+```
+
+Equivale a:
+
+```bash
+ESP32_MODE=serial \
+ESP32_PORT=/dev/ttyACM0 \
+SERIAL_WATER_COMMAND_MODE=pump-toggle \
+ALLOW_MISSING_TANK_SENSOR=1 \
+REQUIRE_FLOW_SENSOR_FOR_WATER=0 \
+EXECUTE_WATER=0 \
+SOIL_RAW_POLARITY=low_is_wet \
+SOIL_WET_BELOW_RAW=1300 \
+./run_steward_once.sh
+```
+
+La lectura actual documentada por Xilema (`soil_a_raw=1263-1267`) cae por
+debajo de `1300`, asi que Rhizome debe tratarla como suelo humedo y no proponer
+riego. En este perfil no se define `SOIL_DRY_ABOVE_RAW`: fuera de la banda
+humeda, Rhizome aplaza en vez de regar porque aun no hay calibracion seca.
+
+Umbrales autorizados por Xilema para el MVP:
+
+```text
+SOIL_RAW_POLARITY=low_is_wet
+SOIL_WET_BELOW_RAW=1300
+SOIL_DRY_ABOVE_RAW=2200
+```
+
+Interpretacion:
+
+- `<1300`: muy humedo, no regar.
+- `1300..2199`: banda ambigua, `DEFER`/observe.
+- `>=2200`: seco para MVP, candidato a riego si pasan las demas barandillas.
+
+El primer riego real debe ser manual, corto y supervisado por Xilema/Bea,
+cambiando explicitamente `EXECUTE_WATER=1` y un `WATER_SECONDS` bajo.
+
 Baseline operativo:
 
 ```bash
@@ -263,3 +322,110 @@ quede alineado con el contrato.
 
 Si `gpu-experimental` falla durante el arranque, no depurar en caliente durante
 un rehearsal. Restaurar `safe-cpu` y documentar el log.
+
+## Steward autonomo minimo
+
+Para el piloto de maceta, `rhizome_steward.py` ejecuta el bucle minimo:
+
+```text
+heartbeat -> telemetry -> decision -> optional WATER -> receipt -> logs rotados
+```
+
+Smoke sin hardware real:
+
+```bash
+./run_steward_once.sh
+```
+
+Una pasada contra ESP32 real sin permitir agua:
+
+```bash
+ESP32_MODE=serial ESP32_PORT=/dev/ttyACM0 ./run_steward_once.sh
+```
+
+Perfil minimo de maceta, previsto para ESP32 con bomba y sensor de humedad pero
+sin caudalimetro ni sensor de nivel todavia:
+
+```bash
+ESP32_MODE=serial \
+ESP32_PORT=/dev/ttyACM0 \
+ALLOW_MISSING_TANK_SENSOR=1 \
+./run_steward_once.sh
+```
+
+En este perfil Rhizome sigue escribiendo `tank_level_unavailable` y
+`flow_sensor_unavailable` cuando corresponda. No se oculta que esos sensores son
+previstos/futuros.
+
+Una pasada contra ESP32 real permitiendo agua. Usar solo con Xilema/Bea en la
+frontera fisica y con duraciones pequenas:
+
+```bash
+ESP32_MODE=serial \
+ESP32_PORT=/dev/ttyACM0 \
+EXECUTE_WATER=1 \
+WATER_SECONDS=8 \
+./run_steward_once.sh
+```
+
+Si la firmware minima expone `PUMP_PULSE <ms>` como ruta segura:
+
+```bash
+ESP32_MODE=serial \
+ESP32_PORT=/dev/ttyACM0 \
+SERIAL_WATER_COMMAND_MODE=pump-pulse \
+SOIL_RAW_POLARITY=low_is_wet \
+SOIL_WET_BELOW_RAW=1300 \
+SOIL_DRY_ABOVE_RAW=2200 \
+EXECUTE_WATER=1 \
+WATER_SECONDS=3 \
+./run_steward_once.sh
+```
+
+Esto emite `PUMP_PULSE 3000` solo si Rhizome decide `WATER_A`. No usar
+`pump-toggle` con la build de dia 26: `PUMP_ON` no esta expuesto por seguridad.
+`WATER A 1` sigue siendo `DRY_RUN` en esta build.
+
+Si la humedad llega como raw no calibrado, declarar umbrales raw:
+
+```bash
+ESP32_MODE=serial \
+ESP32_PORT=/dev/ttyACM0 \
+SOIL_DRY_BELOW_RAW=1500 \
+SOIL_WET_ABOVE_RAW=2600 \
+./run_steward_once.sh
+```
+
+Loop autonomo:
+
+```bash
+ESP32_MODE=serial ESP32_PORT=/dev/ttyACM0 ./start_steward_loop.sh
+```
+
+Por defecto el loop decide cada 15 minutos, mantiene heartbeat entre
+decisiones, rota logs y escribe en:
+
+```text
+$HOME/.local/share/sprout/rhizome_steward/
+```
+
+El wrapper deriva `SYNC_FACADE_STATE_DIR` de `NODE_ID`, de modo que
+`NODE_ID=rhizome_02` buscara politica activa en
+`/tmp/sprout_rhizome_sync_facade/rhizome_02` salvo override explicito.
+
+Para que Pollen lea el estado real del steward:
+
+```bash
+FACADE_DATA_DIR=$HOME/.local/share/sprout/rhizome_steward/facade_data \
+./start_sync_facade.sh
+```
+
+Gemma 4 E2B puede mejorar la explicacion sin cambiar accion:
+
+```bash
+GEMMA_RATIONALE_URL=http://127.0.0.1:12000 ./run_steward_once.sh
+```
+
+El `ShadowSkeptic` se ejecuta por defecto como experimento de doble agente
+no vinculante. Sus observaciones se guardan en `shadow_skeptic/YYYY-MM-DD.jsonl`
+y siempre llevan `affects_decision=false`.

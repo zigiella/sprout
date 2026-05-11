@@ -8,6 +8,7 @@ import unittest
 import urllib.error
 import urllib.request
 from datetime import datetime, timedelta, timezone
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from src.rhizome_sync_facade import default_data_dir, make_server
@@ -24,6 +25,10 @@ def _get_json(base_url: str, path: str):
         return json.loads(response.read().decode("utf-8"))
 
 
+def _get_json_from_file(path: Path):
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 def _post_json(base_url: str, path: str, payload):
     body = json.dumps(payload).encode("utf-8")
     request = urllib.request.Request(
@@ -37,8 +42,44 @@ def _post_json(base_url: str, path: str, payload):
         return json.loads(response.read().decode("utf-8"))
 
 
-def _run_server(data_dir: Path, node_id: str = "rhizome_01", state_dir: Path | None = None):
-    server = make_server("127.0.0.1", 0, data_dir, node_id=node_id, state_dir=state_dir)
+def _run_server(
+    data_dir: Path,
+    node_id: str = "rhizome_01",
+    state_dir: Path | None = None,
+    narrator_url: str | None = None,
+):
+    server = make_server(
+        "127.0.0.1",
+        0,
+        data_dir,
+        node_id=node_id,
+        state_dir=state_dir,
+        narrator_url=narrator_url,
+        narrator_model="fake-gemma",
+    )
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    host, port = server.server_address
+    return server, f"http://{host}:{port}"
+
+
+def _run_fake_adapter(content: str):
+    class Handler(BaseHTTPRequestHandler):
+        def log_message(self, format: str, *args: object) -> None:
+            return
+
+        def do_POST(self) -> None:
+            content_length = int(self.headers.get("Content-Length", "0"))
+            if content_length:
+                self.rfile.read(content_length)
+            body = json.dumps({"message": {"content": content}}).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     host, port = server.server_address
@@ -119,6 +160,26 @@ class SyncFacadeTest(unittest.TestCase):
         self.assertEqual(explanation["locale"], "en")
         self.assertIn("Rhizome executed", explanation["explanation"])
 
+    def test_explanation_respects_not_executed_water_candidate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data_dir = Path(tmp)
+            shutil.copy(default_data_dir() / "rhizome_snapshot.json", data_dir / "rhizome_snapshot.json")
+            receipt = _get_json_from_file(default_data_dir() / "decision_receipt.json")
+            receipt["decision_id"] = "rec_observe_mode"
+            receipt["executed"] = False
+            receipt["execution_details"] = None
+            receipt["blocked_reason"] = "OBSERVE_MODE_EXECUTE_WATER_FALSE"
+            (data_dir / "decision_receipt.json").write_text(json.dumps(receipt), encoding="utf-8")
+            server, base_url = _run_server(data_dir)
+            try:
+                explanation = _get_json(base_url, "/explain/decision/rec_observe_mode?locale=en")
+            finally:
+                _stop_server(server)
+
+        self.assertIn("proposed WATER_A", explanation["explanation"])
+        self.assertIn("did not execute", explanation["explanation"])
+        self.assertNotIn("executed WATER_A", explanation["explanation"])
+
     def test_visit_summary_is_smart_button_payload(self):
         server, base_url = _run_server(default_data_dir())
         try:
@@ -131,12 +192,53 @@ class SyncFacadeTest(unittest.TestCase):
             _stop_server(server)
 
         self.assertEqual(summary["node_id"], "rhizome_01")
-        self.assertEqual(summary["source"], "deterministic_demo_summary")
+        self.assertEqual(summary["source"], "deterministic_visit_summary")
         self.assertEqual(summary["severity"], "attention")
         self.assertEqual(summary["counts"]["total"], 2)
+        self.assertEqual(summary["counts"]["water"], 1)
+        self.assertEqual(summary["counts"]["water_proposed"], 1)
         self.assertIn("Durante tu ausencia", summary["summary"])
         self.assertEqual(future_summary["counts"]["total"], 0)
         self.assertEqual(future_summary["locale"], "en")
+
+    def test_visit_summary_can_use_gemma_narrator_without_changing_counts(self):
+        content = json.dumps(
+            {
+                "headline": "Gemma visit headline",
+                "summary": "Gemma rewrote the operator summary from validated receipts.",
+                "highlights": ["Gemma highlight from receipts."],
+                "recommendation": "Review the receipt trail before changing policy.",
+            }
+        )
+        adapter, adapter_url = _run_fake_adapter(content)
+        server, base_url = _run_server(default_data_dir(), narrator_url=adapter_url)
+        try:
+            summary = _get_json(base_url, "/summary/since?locale=en")
+        finally:
+            _stop_server(server)
+            _stop_server(adapter)
+
+        self.assertEqual(summary["source"], "deterministic_visit_summary")
+        self.assertEqual(summary["narrative_source"], "gemma_visit_narrator")
+        self.assertTrue(summary["gemma_narrator"]["used"])
+        self.assertEqual(summary["counts"]["total"], 2)
+        self.assertEqual(summary["headline"], "Gemma visit headline")
+        self.assertIn("Gemma rewrote", summary["summary"])
+
+    def test_visit_summary_falls_back_when_gemma_narrator_is_invalid(self):
+        adapter, adapter_url = _run_fake_adapter("not-json")
+        server, base_url = _run_server(default_data_dir(), narrator_url=adapter_url)
+        try:
+            summary = _get_json(base_url, "/summary/since?locale=en")
+        finally:
+            _stop_server(server)
+            _stop_server(adapter)
+
+        self.assertEqual(summary["source"], "deterministic_visit_summary")
+        self.assertEqual(summary["narrative_source"], "deterministic_visit_summary")
+        self.assertFalse(summary["gemma_narrator"]["used"])
+        self.assertIn("error", summary["gemma_narrator"])
+        self.assertEqual(summary["counts"]["total"], 2)
 
     def test_second_rhizome_demo_data_can_run_on_another_port(self):
         data_dir = default_data_dir().parents[2] / "rhizome" / "demo_data" / "rhizome_02"
