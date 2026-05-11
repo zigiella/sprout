@@ -174,7 +174,14 @@ fun VisitarRhizomeScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(receipt.action.name, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                            val actionText = if (receipt.executed) {
+                                "${receipt.action.name} (Ejecutado)"
+                            } else if (receipt.blockedReason != null) {
+                                "${receipt.action.name} / ${receipt.blockedReason}"
+                            } else {
+                                receipt.action.name
+                            }
+                            Text(actionText, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                             Text(receipt.createdAt, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
