@@ -154,7 +154,14 @@ fun VisitarMeristemScreen(
                                 isUploading = true
                                 addLog(String.format(uploadStartFormat, currentSnapshot.snapshotId))
                                 try {
-                                    val visit = FieldVisit(currentSnapshot, currentReceipts)
+                                    val activePolicyId = currentReceipts.firstOrNull()?.activePolicyId ?: "unknown_policy"
+                                    val visit = FieldVisit(
+                                        sourcePollenId = "pollen_demo_01",
+                                        targetRhizomeId = currentSnapshot.originNodeId,
+                                        activePolicyId = activePolicyId,
+                                        rhizomeSnapshot = currentSnapshot,
+                                        decisionReceipts = currentReceipts
+                                    )
                                     client.uploadFieldVisit(visit)
                                     client.sendBundlesPushed()
                                     uploadSuccess = true
