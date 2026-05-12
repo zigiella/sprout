@@ -69,7 +69,8 @@ class RhizomeNetworkClient(baseUrl: String) : RhizomeClient {
         return retryWithBackoff {
             val response = api.pushPolicy(packet)
             if (!response.isSuccessful) {
-                throw IOException("Failed to push policy: ${response.code()}")
+                val errorBody = response.errorBody()?.string()
+                throw IOException("Failed to push policy: ${response.code()}, body: $errorBody")
             }
             true
         }

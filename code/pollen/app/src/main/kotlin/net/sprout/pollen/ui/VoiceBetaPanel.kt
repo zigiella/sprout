@@ -95,9 +95,14 @@ fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
                     if (eval.action == net.sprout.pollen.schemas.EvaluationAction.APPLY_AS_IS || eval.action == net.sprout.pollen.schemas.EvaluationAction.APPLY_CONSERVATIVE) {
                         state = "Sending Policy to Rhizome..."
                         delay(500)
-                        client.pushPolicy(eval.policyPacket!!)
-                        state = "Acknowledged"
-                        resultText = "Action: ${eval.action}\nDetail: ${eval.details}"
+                        try {
+                            client.pushPolicy(eval.policyPacket!!)
+                            state = "Acknowledged"
+                            resultText = "Action: ${eval.action}\nDetail: ${eval.details}"
+                        } catch (e: Exception) {
+                            state = "Error: Rhizome rejected policy"
+                            resultText = e.message ?: "Unknown error"
+                        }
                     } else {
                         state = "Refused"
                         resultText = "Action: ${eval.action}\nReason: ${eval.reasonCode}\nDetail: ${eval.details}"
