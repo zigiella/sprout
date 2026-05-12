@@ -6,13 +6,14 @@
   <title>Meristem-nodo · Sprout</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/ui/styles.css" />
 </head>
 <body>
+
   <header class="topbar">
     <div class="topbar-brand">
-      <span class="logo-mark">·</span>
+      <span class="logo-mark" aria-hidden="true"></span>
       <span class="logo-text">Sprout · Meristem-nodo</span>
     </div>
     <div class="topbar-chips">
@@ -20,17 +21,21 @@
       <span class="chip chip-pollen" id="chip-pollen">Pollen: …</span>
       <button class="lang-toggle" id="lang-toggle" type="button" aria-label="Cambiar idioma">
         <span class="lang-opt" data-locale="es" id="lang-es">ES</span>
-        <span class="lang-sep">/</span>
+        <span class="lang-sep" aria-hidden="true">/</span>
         <span class="lang-opt" data-locale="en" id="lang-en">EN</span>
       </button>
     </div>
   </header>
 
   <main class="main-grid">
+
     <!-- Zona 1 — Dashboard agricultor -->
     <section class="zone zone-dashboard">
       <div class="zone-header">
-        <h2 class="zone-title">Tu parcela hoy</h2>
+        <div class="zone-header-inner">
+          <span class="zone-eyebrow">01 · Almanaque</span>
+          <h2 class="zone-title">Tu parcela hoy</h2>
+        </div>
         <span class="zone-meta" id="last-sync">—</span>
       </div>
       <div class="cards-grid" id="cards-grid">
@@ -41,22 +46,28 @@
       </div>
       <div class="trazabilidad" id="trazabilidad">
         <span class="trazabilidad-label">Reglas aplicadas:</span>
-        <span class="pill pill-confirm" data-rule="confirm_policy">confirm: 0</span>
-        <span class="pill pill-conservative" data-rule="conservative_policy">conservative: 0</span>
-        <span class="pill pill-alert" data-rule="alert_policy">alert: 0</span>
-        <span class="pill pill-refuse" data-rule="refuse">refuse: 0</span>
+        <div class="trazabilidad-strip">
+          <span class="pill pill-confirm" data-rule="confirm_policy">confirm: 0</span>
+          <span class="pill pill-conservative" data-rule="conservative_policy">conservative: 0</span>
+          <span class="pill pill-alert" data-rule="alert_policy">alert: 0</span>
+          <span class="pill pill-refuse" data-rule="refuse">refuse: 0</span>
+        </div>
       </div>
     </section>
 
     <!-- Zona 2 — Panel de control bidireccional con Pollen -->
     <section class="zone zone-control">
       <div class="zone-header">
-        <h2 class="zone-title">Sincronización con Pollen</h2>
+        <div class="zone-header-inner">
+          <span class="zone-eyebrow">02 · Enlace</span>
+          <h2 class="zone-title">Sincronización con Pollen</h2>
+        </div>
         <span class="zone-meta" id="pollen-meta">—</span>
       </div>
       <div class="control-panel" id="control-panel">
         <div class="status-line" id="pollen-status">
-          Pollen no detectado
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="status-text">Pollen no detectado</span>
         </div>
         <div class="control-buttons">
           <button class="btn btn-primary" id="btn-recoger" disabled>
@@ -73,7 +84,10 @@
     <!-- Zona 3 — Log de eventos recientes -->
     <section class="zone zone-log">
       <div class="zone-header">
-        <h2 class="zone-title">Operaciones recientes</h2>
+        <div class="zone-header-inner">
+          <span class="zone-eyebrow">03 · Bitácora</span>
+          <h2 class="zone-title">Operaciones recientes</h2>
+        </div>
       </div>
       <ul class="event-log" id="event-log">
         <li class="event-empty">Sin eventos todavía.</li>
@@ -83,49 +97,60 @@
     <!-- Zona 4 — Visitas recibidas (bundles) -->
     <section class="zone zone-bundles">
       <div class="zone-header">
-        <h2 class="zone-title">Visitas recibidas</h2>
+        <div class="zone-header-inner">
+          <span class="zone-eyebrow">04 · Entradas</span>
+          <h2 class="zone-title">Visitas recibidas</h2>
+        </div>
         <span class="zone-meta" id="bundles-meta">—</span>
       </div>
-      <table class="trail-table" id="bundles-table">
-        <thead>
-          <tr>
-            <th class="col-time">Hora</th>
-            <th class="col-target">Rhizome</th>
-            <th class="col-pollen">Pollen</th>
-            <th class="col-reason">Resultado</th>
-          </tr>
-        </thead>
-        <tbody id="bundles-tbody">
-          <tr class="trail-empty">
-            <td colspan="4">Sin visitas todavía.</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="trail-wrap">
+        <table class="trail-table" id="bundles-table">
+          <thead>
+            <tr>
+              <th class="col-time">Hora</th>
+              <th class="col-target">Rhizome</th>
+              <th class="col-pollen">Pollen</th>
+              <th class="col-reason">Resultado</th>
+            </tr>
+          </thead>
+          <tbody id="bundles-tbody">
+            <tr class="trail-empty">
+              <td colspan="4">Sin visitas todavía.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <!-- Zona 5 — Políticas emitidas -->
     <section class="zone zone-policies">
       <div class="zone-header">
-        <h2 class="zone-title">Políticas emitidas</h2>
+        <div class="zone-header-inner">
+          <span class="zone-eyebrow">05 · Salidas</span>
+          <h2 class="zone-title">Políticas emitidas</h2>
+        </div>
         <span class="zone-meta" id="policies-meta">—</span>
       </div>
-      <table class="trail-table" id="policies-table">
-        <thead>
-          <tr>
-            <th class="col-time">Emitida</th>
-            <th class="col-target">Rhizome</th>
-            <th class="col-mode">Modo</th>
-            <th class="col-validity">Válida hasta</th>
-            <th class="col-rationale">Rationale técnico</th>
-          </tr>
-        </thead>
-        <tbody id="policies-tbody">
-          <tr class="trail-empty">
-            <td colspan="5">Sin policies todavía.</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="trail-wrap">
+        <table class="trail-table" id="policies-table">
+          <thead>
+            <tr>
+              <th class="col-time">Emitida</th>
+              <th class="col-target">Rhizome</th>
+              <th class="col-mode">Modo</th>
+              <th class="col-validity">Válida hasta</th>
+              <th class="col-rationale">Rationale técnico</th>
+            </tr>
+          </thead>
+          <tbody id="policies-tbody">
+            <tr class="trail-empty">
+              <td colspan="5">Sin policies todavía.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
+
   </main>
 
   <footer class="footer">
