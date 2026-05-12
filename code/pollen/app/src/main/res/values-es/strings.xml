@@ -92,7 +92,7 @@
     <string name="meristem_download_btn">Descargar Política Actualizada</string>
     <string name="meristem_received_policy">Política Recibida: %1$s</string>
     <string name="meristem_water_budget">Presupuesto de riego: %1$sL/día</string>
-    <string name="meristem_window">Ventana: %1$sh - %2$sh</string>
+    <string name="meristem_window">Ventana: %1$s</string>
     <string name="meristem_rationale">Justificación: %1$s</string>
     <string name="meristem_sync_log">Log de Sincronización</string>
 </resources>

@@ -96,7 +96,7 @@
     <string name="meristem_download_btn">Download Updated Policy</string>
     <string name="meristem_received_policy">Received Policy: %1$s</string>
     <string name="meristem_water_budget">Water budget: %1$sL/day</string>
-    <string name="meristem_window">Window: %1$sh - %2$sh</string>
+    <string name="meristem_window">Window: %1$s</string>
     <string name="meristem_rationale">Rationale: %1$s</string>
     <string name="meristem_sync_log">Synchronization Log</string>
 </resources>

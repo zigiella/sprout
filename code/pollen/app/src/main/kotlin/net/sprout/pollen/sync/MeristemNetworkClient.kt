@@ -32,7 +32,7 @@ interface MeristemApi {
     suspend fun sendBundlesPushed(): retrofit2.Response<Unit>
     
     @POST("/pollen/policies-pulled")
-    suspend fun sendPoliciesPulled(): retrofit2.Response<Unit>
+    suspend fun sendPoliciesPulled(@Body payload: PoliciesPulledPayload): retrofit2.Response<Unit>
 }
 
 class MeristemNetworkClient(baseUrl: String) : MeristemClient {
@@ -98,9 +98,9 @@ class MeristemNetworkClient(baseUrl: String) : MeristemClient {
         }
     }
     
-    override suspend fun sendPoliciesPulled(): Boolean {
+    override suspend fun sendPoliciesPulled(payload: PoliciesPulledPayload): Boolean {
         return try {
-            val response = api.sendPoliciesPulled()
+            val response = api.sendPoliciesPulled(payload)
             response.isSuccessful
         } catch (e: Exception) {
             false

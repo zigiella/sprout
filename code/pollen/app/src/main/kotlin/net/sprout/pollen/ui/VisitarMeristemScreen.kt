@@ -215,7 +215,7 @@ fun VisitarMeristemScreen(
                                 val policy = client.getLatestPolicy(targetId)
                                 downloadedPolicy = policy
                                 onPolicyDownloaded(policy)
-                                client.sendPoliciesPulled()
+                                client.sendPoliciesPulled(net.sprout.pollen.sync.PoliciesPulledPayload(count = 1, policy_ids = listOf(policy.policyId)))
                                 addLog(String.format(downloadSuccessFormat, policy.policyId))
                                 Toast.makeText(context, "Policy downloaded!", Toast.LENGTH_SHORT).show()
                             } catch (e: Exception) {
@@ -250,8 +250,12 @@ fun VisitarMeristemScreen(
                     Divider()
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(String.format(receivedPolicyFormat, policy.policyId), fontWeight = FontWeight.Bold)
-                    Text(String.format(waterBudgetFormat, policy.rules.dailyWaterBudgetLiters.toString()))
-                    Text(String.format(windowFormat, policy.rules.wateringWindow.startHourLocal.toString(), policy.rules.wateringWindow.endHourLocal.toString()))
+                    
+                    val budget = policy.rules.dailyBudgetMl?.let { (it / 1000f).toString() } ?: policy.rules.dailyWaterBudgetLiters?.toString() ?: "?"
+                    Text(String.format(waterBudgetFormat, budget))
+                    
+                    val windowStr = policy.rules.wateringWindows?.joinToString(", ") ?: policy.rules.wateringWindow?.let { "${it.startHourLocal}h - ${it.endHourLocal}h" } ?: "?"
+                    Text(String.format(windowFormat, windowStr))
                     policy.rationale?.let {
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(String.format(rationaleFormat, it), style = MaterialTheme.typography.bodySmall)

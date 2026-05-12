@@ -55,7 +55,7 @@ class MeristemMockClient : MeristemClient {
         return true
     }
     
-    override suspend fun sendPoliciesPulled(): Boolean {
+    override suspend fun sendPoliciesPulled(payload: PoliciesPulledPayload): Boolean {
         delay(100)
         return true
     }
