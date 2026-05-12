@@ -1,14 +1,14 @@
 # Sprout — writeup
 
 > **Autores:** Cambium + Bea.
-> **Estado:** pasada con feedback aplicado — §4 y §5 unificados en "Gemma 4 en práctica", doble agente integrado en §3, "Universal Presentation Layer" sustituye nomenclatura interna, párrafos de runtime reescritos a alto nivel, electrónica granular fuera del documento, referencias internas (fechas, IPs) saneadas, negaciones convertidas a afirmaciones cuando aplica.
-> **Word count target final:** 1500 palabras (Kaggle limit). Versión actual ~2300, recorte final pendiente.
+> **Estado:** pasada con feedback aplicado — §3 Arquitectura ahora engloba todas las subsecciones técnicas (Stack, reglas, contratos, jerarquía, jurisdicción natural, caducidad F4, Doble agente local en Rhizome, Gemma 4 aplicado, Dos runtimes, Hallazgo `num_predict`, Chat read-only por diseño, Tuning); §4-§7 son MVP, Impacto, Limitaciones, Próximas extensiones. "Universal Presentation Layer" sustituye nomenclatura interna. Negaciones convertidas a afirmaciones; referencias internas saneadas.
+> **Word count target final:** 1500 palabras (Kaggle limit). Versión actual ~2200, recorte final pendiente.
 
 ---
 
 ## 0. Título + subtítulo — ~30 palabras
 
-**Título propuesto:** *Sprout — local-first water optimization for plots the network forgets.*
+**Título propuesto:** *Sprout — local-first AI water optimization for plots the network forgets.*
 
 **Subtítulo propuesto (frase manifiesto, bookend cierre del video):** *When network is absent — and the human is far — local criteria still irrigate.*
 
@@ -16,11 +16,11 @@
 
 ## 1. Problema — ~200 palabras
 
-Una parcela de almendros a cuarenta kilometros del pueblo mas cercano. El
-agricultor la visita una vez por semana, a veces menos. Entre visita y
-visita, el suelo decide solo: o recibe agua a tiempo, o no la recibe.
-Cuando el agricultor vuelve, el problema ya ha pasado — solo queda medir
-cuanto se perdio.
+Una pequeña parcela de olivar de regadio y horticolas a cuarenta
+kilometros del pueblo mas cercano. El agricultor la visita una vez por
+semana, a veces menos. Entre visita y visita, el suelo decide solo: o
+recibe agua a tiempo, o no la recibe. Cuando el agricultor vuelve, el
+problema ya ha pasado — solo queda medir cuanto se perdio.
 
 La escena no es anecdota. La ITU mide en 2025 una brecha de 27 puntos
 entre cobertura movil urbana (85%) y rural (58%) en paises desarrollados;
@@ -116,9 +116,13 @@ Cada veto emite motivo legible que se almacena en el `DecisionReceipt`. Una sext
 
 **Toda inteligencia tiene jurisdiccion. Y caducidad.** *Every intelligence has jurisdiction. And expiry.* Cada `MissionPatch` lleva TTL corto — la voluntad del agricultor caduca con la visita. Cada `PolicyPacket` lleva fecha de validez. Cada `WeatherDigest` caduca antes de envejecer. Cuando un objeto expirado intenta aplicarse, el sistema lo rechaza con motivo legible (`EXPIRED → REJECTED`) y deja huella. **Toda inteligencia tiene autoridad acotada en tiempo y en alcance.** Esta regla evita la falla mas comun de sistemas autonomos: aceptar ordenes viejas como si fueran nuevas.
 
-**Doble agente local: criterio y conciencia.** Rhizome no decide con una sola voz. Junto al agente operativo que arbitra agua corre un **agente auditor secundario** (`deterministic_shadow_skeptic_v0`) con jurisdiccion asimetrica: revisa cada decision, declara si objetaria, lista preocupaciones, propone una alternativa mas prudente — y deja registro en `shadow_skeptic/YYYY-MM-DD.jsonl`. Su campo `affects_decision=false` es parte del diseño: introduce telemetria de desacuerdo sin añadir una segunda autoridad fisica. Es la pieza que permite **medir si una segunda voz mejoraria la seguridad antes de darle autoridad efectiva**. Patron de doble agente local con autoridad explicitamente acotada.
+### Doble agente local en Rhizome: criterio y conciencia
 
-## 4. Gemma 4 en practica — ~400 palabras
+Rhizome no decide con una sola voz. Junto al agente operativo que arbitra agua corre un **agente auditor secundario** (`deterministic_shadow_skeptic_v0`) con jurisdiccion asimetrica: revisa cada decision, declara si objetaria, lista preocupaciones, propone una alternativa mas prudente — y deja registro en `shadow_skeptic/YYYY-MM-DD.jsonl`. Su campo `affects_decision=false` es parte del diseño: introduce **telemetria de desacuerdo** sin añadir una segunda autoridad fisica.
+
+Es la pieza que permite **medir si una segunda voz mejoraria la seguridad antes de darle autoridad efectiva**. Si los registros muestran que el agente auditor tendria razon una fraccion suficiente del tiempo, se promociona a una version Gemma 4 con autoridad limitada — su jurisdiccion entonces es **cuestionar al primer agente, no decidir**. Si los registros muestran que casi nunca tendria razon, se descarta. Patron de doble agente local con autoridad explicitamente acotada como ruta a agentes locales que se auditan entre si sin saltar la jerarquia fisica.
+
+### Gemma 4 aplicado
 
 Sprout usa Gemma 4 en **cinco formas concretas**, cada una explotando una capacidad distinta del modelo y conectada a una decision arquitectural especifica. La decision final siempre la toma logica deterministica; Gemma 4 escribe el rationale, adapta el idioma o explora hipotesis acotadas.
 
@@ -150,21 +154,15 @@ Bateria experimental con `num_ctx` y `num_predict` independientes mostro que red
 
 Sweet spot modelo-dependiente confirmado: E4B opera bien con `num_predict=256`; E2B necesita `>=1024` porque emplea mas presupuesto en *thinking* interno antes de emitir el JSON util. **La eleccion de hiperparametros es por modelo y por tarea, no global.**
 
-### Chat read-only por construccion
+### Chat read-only por diseño
 
 El endpoint conversacional de Meristem expone Gemma 4 al operador, pero **formalmente desacoplado del control plane**: un test explicito verifica que la conversacion solo puede leer `bundles`, `policies` y telemetria, jamas escribirlos. **Cero superficie de prompt injection sobre hardware.** La mayoria de chats LLM modifican estado; aqui esta arquitecturalmente prohibido y verificado por test.
 
-### Testeo antes de fijar configuraciones
+### Tuning antes de fijar configuraciones
 
 Bateria de 18 prompts con metricas duras (`envelope_valid` + `status_match`), separacion `bench/` performance vs `tuning/` quality. Helper estricto que falla si encuentra `envelope_valid=false`, error HTTP o `status_match` roto: **en demo fisica, un pass silencioso vale menos que un fail trazable**. Smokes pequenos antes de E2E grandes: `/status` → adapter → bateria critica → full battery → cliente Pollen → dos Rhizomes simulados. Esa secuencia evita depurar cinco capas a la vez. Hash de modelo + version del runtime + SHA del repo apuntados en cada bitacora de cierre.
 
-### Honestidad operacional: medir antes de celebrar
-
-La disciplina cultural mas fuerte del proyecto se materializa en dos momentos paralelos. En el banco de potencia, el equipo pausa ante una bomba que se mueve raro hasta tener multimetro; calibra umbrales (`SOIL_WET_BELOW_RAW=1300` / `SOIL_DRY_ABOVE_RAW=2200`) antes de permitir riego autonomo; y mantiene `WATER` como `DRY_RUN` mientras la confirmacion electrica esta pendiente. En el bucle de produccion, Rhizome decide cada 5 min sobre ESP32 real, manda `PUMP_PULSE`, pero como el ACK del firmware reporta `execution=TEST_ONLY`, el sistema registra `executed=false`. **La palabra es la que esta pendiente, no el agua.** La barandilla cultural opera mucho antes que la capa fisica deje de tener ambiguedades.
-
-Y, en otro frente, cuando una decision narrativa cerrada no resiste su ejecucion tecnica — caso voz humana doblada con voz pro en lugar de grabacion original — el equipo **retira la decision con honestidad** en lugar de defender el pasado. **Ejecucion adulta del presente, no traicion al pasado.**
-
-## 5. MVP — qué proyectamos vs qué hacemos — ~180 palabras
+## 4. MVP — qué proyectamos vs qué hacemos — ~180 palabras
 
 | Proyectamos | Hacemos (validado empiricamente) |
 |-------------|----------------------------------|
@@ -188,7 +186,7 @@ Y, en otro frente, cuando una decision narrativa cerrada no resiste su ejecucion
 
 **Honestidad operacional**: el sistema operando autonomamente en bucle real es la diferencia entre **prototipo** (funciona cuando le miras) y **piloto** (funciona cuando no le miras). La disciplina cultural va mas alla del bucle: cuando el ACK del firmware reporta `TEST_ONLY` aunque la bomba se mueva, el sistema espera a precisar la palabra antes de atribuirse el riego. *"La palabra es la que esta pendiente, no el agua."*
 
-## 6. Impacto y escalado — ~120 palabras
+## 5. Impacto y escalado — ~120 palabras
 
 **Coste por nodo**: Jetson Orin Nano Super ~250€, ESP32-S3 ~10€, sensores + bomba 12V ~80€, deposito ~30€ = **~370€ por Rhizome** (mas la capa fisica). Pollen reusa el movil del agricultor (cero hardware adicional). Meristem reusa el portatil casero (cero hardware adicional).
 
@@ -198,7 +196,7 @@ Y, en otro frente, cuando una decision narrativa cerrada no resiste su ejecucion
 
 **Segmento prioritario**: explotaciones pequenas y medianas en zonas de baja poblacion (Aragon, Extremadura, Castilla-La Mancha, islas, Africa subsahariana). **El 84% de las explotaciones mundiales tienen menos de 2 hectareas** (FAO 2024).
 
-## 7. Limitaciones — ~80 palabras
+## 6. Limitaciones — ~80 palabras
 
 Sprout entrega su caso minimo con honestidad sobre las zonas que aun maduran:
 
@@ -209,7 +207,7 @@ Sprout entrega su caso minimo con honestidad sobre las zonas que aun maduran:
 - **Semantica de ejecucion fisica**: el ACK del firmware reporta `TEST_ONLY` hasta cerrar caudalimetro y nomenclatura de produccion; el sistema mantiene la atribucion conservadora hasta entonces.
 - **Tests automatizados de UI estatica**: smoke manual hoy; deuda apuntada.
 
-## 8. Próximas extensiones — ~180 palabras
+## 7. Próximas extensiones — ~180 palabras
 
 Sprout deja resuelto el caso minimo. La arquitectura escala. La hoja de ruta natural se organiza en **cinco ejes** abiertos:
 
@@ -239,40 +237,55 @@ License: Apache 2.0 (see `LICENSE`). Same as Gemma 4.
 <!--
 Notas internas Cambium / Bea:
 
-Estructura tras pasada con feedback aplicado:
-- §0 Titulo + subtitulo (~30 palabras)
-- §1 Problema (~200)
-- §2 Solucion (~300, con Pollen + idea de idiomas minoritarios, Meristem MVP + hoja de ruta)
-- §3 Arquitectura (~450, con doble agente local + F4 explicito)
-- §4 Gemma 4 en practica (~750, fusion de §4 antiguo + §5 antiguo, 5 formas + 5 subsecciones)
-- §5 MVP qué proyectamos vs qué hacemos (~250, tabla expandida con piloto real)
-- §6 Impacto y escalado (~120)
-- §7 Limitaciones (~120, con semantica TEST_ONLY como item)
-- §8 Próximas extensiones (~250, 5 ejes sin "post-hackathon")
+Estructura tras pasada con feedback aplicado (segunda iteracion):
+- §0 Titulo + subtitulo (~30 palabras) — "local-first AI water optimization"
+- §1 Problema (~200) — parcela de olivar de regadio y horticolas (era almendros)
+- §2 Solucion (~300, con Pollen + idea idiomas minoritarios, Meristem MVP + hoja de ruta)
+- §3 Arquitectura (~1500) — ahora contiene TODAS las subsecciones tecnicas:
+    * Stack del MVP
+    * Cinco reglas duras de la capa fisica (tabla)
+    * Contratos versionados
+    * Jerarquia y barandilla
+    * Jurisdiccion natural de cada nodo
+    * F4 (caducidad)
+    * ### Doble agente local en Rhizome: criterio y conciencia (NUEVA subseccion propia)
+    * ### Gemma 4 aplicado (NUEVA — antes §4 "Gemma 4 en practica", ahora subseccion de §3)
+    * ### Dos runtimes, una arquitectura: llama.cpp y LiteRT-LM
+    * ### Hallazgo: la latencia escala con lo que el LLM escribe
+    * ### Chat read-only por diseño (antes "por construccion")
+    * ### Tuning antes de fijar configuraciones (antes "Testeo")
+- §4 MVP qué proyectamos vs qué hacemos (~250, antes era §5)
+- §5 Impacto y escalado (~120, antes era §6)
+- §6 Limitaciones (~120, antes era §7)
+- §7 Próximas extensiones (~250, antes era §8)
 
-Word count actual: ~2300 palabras (objetivo Kaggle: 1500). Recorte final pendiente.
+Word count actual: ~2200 palabras (objetivo Kaggle: 1500). Recorte final pendiente.
 
-Decisiones aplicadas en esta pasada (feedback de Bea):
-- "local-first" -> "local-first AI" donde aplica.
-- Pollen: añadida idea de idiomas minoritarios via fine-tuning explicita en §2.
-- Meristem: añadida hoja de ruta "decision mas avanzada" en §2.
-- Doble agente integrado en §3 como pieza arquitectural propia.
-- §4 y §5 unificados en "Gemma 4 en practica" con 5 formas + 5 subsecciones.
+Decisiones aplicadas en esta iteracion (feedback Bea segunda ronda):
+- §0 titulo: "local-first" -> "local-first AI water optimization"
+- §1 parcela de almendros (cultivo de secano tradicional) -> "olivar de regadio y horticolas" (cultivos sensibles a riego activo)
+- §4 anterior ("Gemma 4 en practica") disuelto como seccion propia: ahora todo su contenido vive dentro de §3 Arquitectura como subseccion "Gemma 4 aplicado" + las 5 subsecciones tecnicas (Dos runtimes, Hallazgo num_predict, Chat read-only, Tuning)
+- Doble agente local: extraido del parrafo final §3 a subseccion propia "### Doble agente local en Rhizome: criterio y conciencia" con desarrollo completo del patron de promocion futura
+- "Chat read-only por construccion" -> "Chat read-only por diseño"
+- "Testeo antes de fijar configuraciones" -> "Tuning antes de fijar configuraciones"
+- Subseccion "Honestidad operacional: medir antes de celebrar" ELIMINADA (peticion explicita Bea)
+- Renumerado: §5 -> §4, §6 -> §5, §7 -> §6, §8 -> §7
+
+Decisiones de iteraciones previas conservadas:
+- Pollen: idea de idiomas minoritarios via fine-tuning en §2.
+- Meristem: hoja de ruta "decision mas avanzada" en §2.
 - "Approach C" renombrado a "Universal Presentation Layer" (lengua de superficie).
-- Parrafo confuso "llama.cpp con criterio" reescrito como "Runtime consistente entre nodos" a alto nivel.
-- Eliminadas referencias a reles, electronica de bajo nivel (jumpers, transistores, 3V3 vs 5V).
-- Eliminadas referencias a fechas dia N en el cuerpo del writeup (mantenidas solo en notas internas).
-- Eliminadas referencias a IPs concretas (192.168.1.36, etc.) y a "click real de Bea".
-- "Safety & Trust" sustituido por "tesis arquitectural" en README EN+ES y en cierre §4.
-- "Post-hackathon" sustituido por "hoja de ruta natural" en §8.
-- Eje 5 antiguo fusionado en §8 con audio bidireccional y federacion entre Jetsons.
-- "Instalar Meteo local" anadido al eje 4 de §8.
-- Negaciones convertidas a afirmaciones donde aplica ("no se vuelve peligroso" -> "permanece seguro", etc.).
+- Sin reles, electronica de bajo nivel, jumpers, transistores.
+- Sin fechas dia N en cuerpo.
+- Sin IPs concretas ni "click real de Bea".
+- Sin "Safety & Trust" — sustituido por "tesis arquitectural".
+- Sin "post-hackathon" — sustituido por "hoja de ruta natural".
+- Llama.cpp y LiteRT-LM nombrados conscientemente con criterio por nodo.
 
 Pendiente para recorte final:
-- Comprimir §5 (MVP tabla) a 8-10 filas mas representativas (hoy 15).
-- Reducir §4 (Gemma 4 en practica) a ~500 palabras (hoy ~750).
-- Comprimir §8 a 4 ejes con el quinto fusionado.
+- Comprimir §4 (MVP tabla) a 8-10 filas mas representativas (hoy 15).
+- Reducir §3 a ~1000 palabras (hoy ~1500, es la seccion mas grande tras la fusion).
+- Comprimir §7 a 4 ejes con el quinto fusionado.
 - Sources al final: notas a pie [1]-[4] estan en README.md y en research/metrics/impact_stats.md.
 - Idioma: primera version en castellano. Traduccion a ingles en review final si Bea decide.
 -->
