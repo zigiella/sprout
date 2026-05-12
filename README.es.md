@@ -66,7 +66,8 @@ Sprout existe para llevar **criterio operativo a parcelas donde no puedes estar 
 **Invariantes:**
 
 1. *"Lo físico manda. Rhizome arbitra. Pollen media. Meristem afina."*
-2. Ningún `PolicyPacket` de Meristem puede reducir los hard limits del firmware. Solo recomendar comportamiento más conservador.
+2. *"Toda inteligencia tiene jurisdicción. Y caducidad."* Cada `MissionPatch` lleva TTL corto. Cada `PolicyPacket` lleva ventana de validez. Cada `WeatherDigest` caduca antes de envejecer. Los objetos expirados reciben `EXPIRED → REJECTED` con motivo legible en el `DecisionReceipt`. **Ningún criterio se queda silenciosamente vigente después de su ventana.**
+3. Ningún `PolicyPacket` de Meristem puede reducir los hard limits del firmware. Solo recomendar comportamiento más conservador.
 
 **Patrón clave (validado empíricamente)**: la lógica determinista decide; el LLM solo escribe el rationale. Cuando el offload a GPU causó deriva semántica en el caso de test RD04 (output: `need_clarification` en lugar de `ok`), el sistema no se rompió — el Evaluator determinista mantuvo el contrato mientras el LLM seguía escribiendo prosa segura-pero-fuera-de-contrato. **Esta es la prueba empírica de la tesis Safety & Trust.**
 
@@ -74,10 +75,15 @@ Sprout existe para llevar **criterio operativo a parcelas donde no puedes estar 
 
 ## Cómo se usa Gemma 4
 
-- **Audio multimodal nativo** — Pollen alimenta `.wav` 16kHz directamente a Gemma 4 E4B vía LiteRT-LM, **sin pipeline STT separado**. Código: `code/pollen/.../PollenVoiceInfra.kt`.
-- **Tool calling** — Meristem usa Gemma 4 E4B con tool calling nativo para `compose_policy(...)` y validación de bundles. Mini-batería 5/5 PASS. Código: `code/meristem_node/...`.
-- **Routing entre tres nodos** — tres instancias de Gemma 4 (E2B + E4B + E4B), tres jurisdicciones, ningún roundtrip a la nube. Cada nodo guarda el tipo de contexto del que su capa es responsable.
-- **Perfil `safe-cpu` contractual** — Rhizome corre Gemma 4 E2B-it Q4_K_S en CPU del Jetson (validado 18/18 en batería de tests). El offload GPU funciona (36/36 capas) pero la calidad aún no es contractual.
+Sprout usa Gemma 4 en cinco formas concretas, cada una explotando una capacidad distinta del modelo:
+
+- **Audio multimodal nativo** — Pollen alimenta `.wav` 16kHz directamente a Gemma 4 E4B vía LiteRT-LM, **sin pipeline STT separado**. Validado end-to-end contra entrada de micrófono real, con `REFUSE_RETRY` operando sobre frases sin sentido agrícola. Código: `code/pollen/.../PollenVoiceInfra.kt`.
+- **Tool calling** — Meristem usa Gemma 4 E4B con tool calling nativo para `compose_policy(...)`, `validate_bundle(...)` y `compare_targets(...)`. Mini-batería 5/5 PASS. Runtime end-to-end validado día 26 con `tool_calls_recovered_from_text=1` desde output real del LLM. Código: `code/meristem_node/...`.
+- **Routing entre tres nodos** — tres instancias de Gemma 4 (E2B + E4B + E4B), tres jurisdicciones, ningún roundtrip a la nube. Cada nodo guarda el tipo de contexto del que su capa es responsable. La elección de modelo es por nodo, no global: E2B para respuestas directas (Rhizome), E4B para razonamiento con tool calling (Pollen + Meristem).
+- **Narrador bilingüe en Rhizome** — endpoints `GET /summary/since?locale=es|en` y `GET /explain/decision/<id>?locale=es|en` operativos en producción. Gemma 4 E2B mejora el `rationale_short` sobre una decisión **ya cerrada** por la lógica determinista — nunca cambia acción, nunca autoriza agua, nunca inventa facts. **El sistema habla dos idiomas en producción, no post-hackathon.**
+- **Localización Approach C** — estándar oficial del proyecto (`research/07_llm_localization_strategy.md`). Los nodos edge (Rhizome, ESP32) piensan en Inglés Técnico estable; Pollen + Gemma 4 E4B local traduce al idioma de la UI en milisegundos antes de pintar. Beneficios: agnosticidad hardware (sin re-flashear nodos por idioma), preparación para fine-tuning de lenguas minoritarias (pular, wolof, swahili, quechua, catalán, euskera) sin replicar explicaciones en N idiomas en almacenamiento central.
+
+**Patrón clave**: la decisión final **nunca** la firma el LLM. El Evaluator determinista decide; Gemma 4 escribe el rationale y adapta el idioma de superficie.
 
 ---
 

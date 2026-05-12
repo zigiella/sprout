@@ -66,7 +66,8 @@ Sprout exists to bring **operational criteria to plots where you can't be every 
 **Invariants:**
 
 1. *"Physical layer prevails. Rhizome arbitrates. Pollen mediates. Meristem refines."*
-2. No `PolicyPacket` from Meristem can reduce the firmware's hard limits. It can only recommend more conservative behavior.
+2. *"Every intelligence has jurisdiction. And expiry."* Every `MissionPatch` carries a short TTL. Every `PolicyPacket` carries a validity window. Every `WeatherDigest` expires before going stale. Expired objects get `EXPIRED → REJECTED` with legible reason in `DecisionReceipt`. **No criterion stays silently valid past its window.**
+3. No `PolicyPacket` from Meristem can reduce the firmware's hard limits. It can only recommend more conservative behavior.
 
 **Key pattern (validated empirically)**: deterministic logic decides; the LLM only writes the rationale. When GPU offload caused semantic drift in test case RD04 (output: `need_clarification` instead of `ok`), the system did not break — the deterministic Evaluator held the contract while the LLM continued to author safe-but-off-contract prose. **This is the empirical proof of the Safety & Trust thesis.**
 
@@ -74,10 +75,15 @@ Sprout exists to bring **operational criteria to plots where you can't be every 
 
 ## How Gemma 4 is used
 
-- **Multimodal audio native** — Pollen feeds raw 16kHz `.wav` directly to Gemma 4 E4B via LiteRT-LM, **without a separate STT pipeline**. Code: `code/pollen/.../PollenVoiceInfra.kt`.
-- **Tool calling** — Meristem uses Gemma 4 E4B with native tool calling for `compose_policy(...)` and bundle validation. Mini-battery 5/5 PASS. Code: `code/meristem_node/...`.
-- **Three-node routing** — three Gemma 4 instances (E2B + E4B + E4B), three jurisdictions, no cloud roundtrip. Each node holds the context type its layer is responsible for.
-- **`safe-cpu` profile contractual** — Rhizome runs Gemma 4 E2B-it Q4_K_S on Jetson CPU (validated 18/18 in battery tests). GPU offload works (36/36 layers) but quality is not contractual yet.
+Sprout uses Gemma 4 in five concrete ways, each exploiting a different capability of the model:
+
+- **Multimodal audio native** — Pollen feeds raw 16kHz `.wav` directly to Gemma 4 E4B via LiteRT-LM, **without a separate STT pipeline**. Validated end-to-end against real microphone input, with `REFUSE_RETRY` operating over agricultural-nonsense sentences. Code: `code/pollen/.../PollenVoiceInfra.kt`.
+- **Tool calling** — Meristem uses Gemma 4 E4B with native tool calling for `compose_policy(...)`, `validate_bundle(...)` and `compare_targets(...)`. Mini-battery 5/5 PASS. End-to-end runtime validated day 26 with `tool_calls_recovered_from_text=1` from real LLM output. Code: `code/meristem_node/...`.
+- **Three-node routing** — three Gemma 4 instances (E2B + E4B + E4B), three jurisdictions, no cloud roundtrip. Each node holds the context type its layer is responsible for. Model choice is per-node, not global: E2B for direct answers (Rhizome), E4B for tool-calling reasoning (Pollen + Meristem).
+- **Bilingual narrator in Rhizome** — endpoints `GET /summary/since?locale=es|en` and `GET /explain/decision/<id>?locale=es|en` operational in production. Gemma 4 E2B improves the `rationale_short` over a decision **already closed** by deterministic logic — never changes action, never authorizes water, never invents facts. **The system speaks two languages in production, not post-hackathon.**
+- **Approach C i18n localization** — official project standard (`research/07_llm_localization_strategy.md`). Edge nodes (Rhizome, ESP32) think in stable English Tech; Pollen + Gemma 4 E4B local translates to the UI language milliseconds before rendering. Benefits: hardware agnosticism (no re-flashing nodes per language), preparation for minority-language fine-tuning (Pular, Wolof, Swahili, Quechua, Catalan, Basque) without replicating explanations in N languages in central storage.
+
+**Key pattern**: the final decision is **never** signed by the LLM. The deterministic Evaluator decides; Gemma 4 writes the rationale and adapts the surface language.
 
 ---
 

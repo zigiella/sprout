@@ -1,8 +1,8 @@
-# Sprout — writeup (día 26)
+# Sprout — writeup (día 27)
 
 > **Autores:** Cambium + Bea.
-> **Estado:** integración día 26 con material del día 25 (Endo Steward v0 + ShadowSkeptic + reflexión Pollen-Rhizome; Floema E2E REST + Approach C i18n oficial; Meristem hallazgo `num_predict` + chat read-only; Xilema riego físico real validado). §7 Demo eliminada — la landing demo es autoexplicativa.
-> **Word count target final:** 1500 palabras (Kaggle limit). Versión actual ~2000-2200 tras integración día 25, recorte final día 28-29.
+> **Estado:** pasada día 27 con material del día 26 integrado — recuperación F4 (*"Every intelligence has jurisdiction. And expiry."*) explícita en §3 tras retirada de E8 Caducidad del video; aprendizajes culturales Corola día 26 + ACK `TEST_ONLY` Endo día 26 + Xilema calibración suelo en §5 y §6; honestidad arquitectural sobre bucle físico cerrado pero ejecución reportada como prueba. §7 Demo eliminada — la landing demo es autoexplicativa.
+> **Word count target final:** 1500 palabras (Kaggle limit). Versión actual ~2200-2400, recorte final día 28-29.
 
 ---
 
@@ -114,6 +114,8 @@ Cada veto emite motivo legible que se almacena en el `DecisionReceipt` y aparece
 
 **Jurisdiccion natural de cada nodo.** *Rhizome entiende la parcela. Pollen entiende la visita.* Rhizome arbitra agua porque vive donde el agua se decide — junto al sensor, junto al actuador, junto al ESP32 que veta. Pollen media porque vive donde la persona habla — en el bolsillo de quien visita, con micrófono, con voz, con idioma. Entre ambas, Sprout no solo automatiza riego: convierte visitas intermitentes en conocimiento local que viaja.
 
+**Toda inteligencia tiene jurisdiccion. Y caducidad.** *Every intelligence has jurisdiction. And expiry.* Es el cuarto invariante del sistema. Cada `MissionPatch` que Pollen entrega lleva TTL corto — la voluntad del agricultor caduca con la visita, no se queda viva indefinidamente. Cada `PolicyPacket` que Meristem emite lleva fecha de validez. Cada `WeatherDigest` portado caduca antes de envejecer. Cuando un objeto expirado intenta aplicarse, el sistema lo rechaza con motivo legible (`EXPIRED → REJECTED`) y deja huella en el `DecisionReceipt`. **Ningun criterio se queda silenciosamente vigente despues de su ventana**. Esta regla es lo que evita la falla mas comun de sistemas autonomos: aceptar ordenes viejas como si fueran nuevas. La inteligencia tiene autoridad acotada en tiempo y en alcance, no autoridad indefinida.
+
 ## 4. Gemma 4 — ~250 palabras
 
 Sprout usa Gemma 4 en cinco formas concretas, cada una explotando una capacidad distinta del modelo y conectada a una decision arquitectural especifica:
@@ -146,6 +148,10 @@ Sprout usa Gemma 4 en cinco formas concretas, cada una explotando una capacidad 
 
 **Validar antes de portar.** Cuando el modulo rele de 12V/1ch no respondia limpio con alimentacion estandar 5V, antes de improvisar adaptaciones el equipo abrio un sketch Arduino minimo para entender el comportamiento real del componente. El sketch revelo que ese rele concreto trabaja estable alimentado desde 3V3, no desde 5V (zona ambigua de saturacion del transistor de la placa). Portado a ESP-IDF con esa configuracion, quedo estable. Caso de oficio: cuando el comportamiento no cuadra con la datasheet, **se valida con el componente mas pequeño posible** antes de seguir.
 
+**Medir antes de celebrar — y no atribuirse lo que el ACK no nombra.** La disciplina cultural mas fuerte del proyecto se materializo el dia 25 en el banco de potencia (Xilema: pausa ante bomba que se mueve raro hasta tener multimetro; calibracion de umbrales `SOIL_WET_BELOW_RAW=1300` / `SOIL_DRY_ABOVE_RAW=2200` antes de permitir riego autonomo) y el dia 26 en el bucle real (Endo: Steward decide cada 5 min sobre ESP32 real, manda `PUMP_PULSE` 20s, pero como el ACK del firmware reporta `execution=TEST_ONLY`, el sistema **no se atribuye el riego como ejecutado** — `executed=false`, `blocked_reason=ESP32_TEST_ONLY` en cada `DecisionReceipt`). **La palabra es la que esta pendiente, no el agua**. La barandilla cultural opera mucho antes que la electronica deje de tener ambiguedades.
+
+**Decisiones de calidad pueden retirar decisiones narrativas previas.** Cuando la ejecucion tecnica no soporta la intencion original — caso voz humana E5 del video: la intencion declarada dia 18 era *"voz humana real autentica como excepcion narrativa"*, pero la grabacion en castellano de Bea no soportaba el resto del master master narrado con voz pro ElevenLabs — el equipo retira la decision narrativa cerrada y la sustituye consciente. **No es traicion al pasado; es ejecucion adulta del presente**. Patron registrado en bitacora `2026-05-11_consolidacion-dia-26-v1.8.7_corola`.
+
 ## 6. MVP — qué proyectamos vs qué hacemos — ~180 palabras
 
 | Proyectamos | Hacemos (validado empiricamente) |
@@ -163,8 +169,12 @@ Sprout usa Gemma 4 en cinco formas concretas, cada una explotando una capacidad 
 | Una sola inteligencia decide por nodo | **ShadowSkeptic deterministic_shadow_skeptic_v0** activo: segundo agente local con jurisdiccion explicita, `affects_decision=false`, recoge datos sin autoridad efectiva. Primera version de doble agente auditor en produccion |
 | UI Meristem accesible solo desde el portatil | **UI accesible desde toda la LAN** (mDNS `meristem.local:13000`), validada con click real de Bea desde 192.168.1.36 con `trace_id` correlado |
 | Trazabilidad como producto | `decisions_by_rule` en `/health` + recibos JSON con motivo legible + `shadow_skeptic/YYYY-MM-DD.jsonl` con segunda opinion |
+| Sistema operando autonomamente en piloto real (no demo) | **Dia 26: Steward queda corriendo en Jetson sobre ESP32 real, decision cada 5 min, cooldown 5 min, pulso `PUMP_PULSE` 20s (Bea observo que la bomba necesita cebarse), guardia programada para detener a las 22:02:54.** Trazabilidad de honestidad: ACK del firmware reporta `execution=TEST_ONLY` en cada pulso; el sistema registra `executed=false` + `blocked_reason=ESP32_TEST_ONLY` y NO se atribuye riego fisico hasta precisar la semantica del firmware. |
+| Calibracion provisional del sensor de suelo | Dia 26 (Xilema): `SOIL_RAW_POLARITY=low_is_wet`, `SOIL_WET_BELOW_RAW=1300`, `SOIL_DRY_ABOVE_RAW=2200`. Banda ambigua `[1300, 2200)` siempre defiere. |
 
 **Honestidad arquitectural**: el patron de jurisdicciones estaba codificado desde el dia 13 — el Evaluator de Meristem (`JURISDICTION_POLLEN`) rechaza explicitamente cambios fisicos puntuales del operador, indicando que esa decision pertenece a Pollen. La feature beta del dia 20 implementa lo que el codigo predijo. La pieza dia 25 (Steward v0 con ShadowSkeptic) materializa una intuicion arquitectural que llevaba semanas en bitacoras sin codigo.
+
+**Honestidad operacional**: el sistema operando autonomamente en bucle real dia 26 es la diferencia entre **prototipo** (funciona cuando le miras) y **piloto** (funciona cuando no le miras). Pero la disciplina cultural del equipo va mas alla del bucle: cuando el ACK del firmware reporta `TEST_ONLY` aunque la bomba se mueva, el sistema NO se atribuye el riego — espera a precisar la palabra antes de promocionarla. *"La palabra es la que esta pendiente, no el agua."*
 
 ## 7. Impacto y escalado — ~120 palabras
 
@@ -218,22 +228,33 @@ License: Apache 2.0 (see `LICENSE`). Same as Gemma 4.
 <!--
 Notas internas Cambium / Bea:
 
-- Word count actual: ~2000-2200 palabras tras integracion dia 25 (objetivo Kaggle: 1500). Recorte final dia 28-29.
-- §0 titulo + subtitulo: definitivos tras rodaje (dia 26-27).
+- Word count actual: ~2200-2400 palabras tras pasada dia 27 (objetivo Kaggle: 1500). Recorte final dia 28-29.
+- §0 titulo + subtitulo: definitivos tras rodaje (dia 26-27, voz pro DbwW cerrada).
 - §7 eliminado dia 24 — la landing demo es autoexplicativa.
 
-Material dia 25 integrado dia 26 (PR feat/cambium/writeup-integracion-dia25):
+Material dia 25 integrado dia 26 (PR feat/cambium/writeup-integracion-dia25, mergeado):
 
-- §3: cita Endo "Rhizome entiende la parcela. Pollen entiende la visita. / Rhizome cuida el agua. Pollen cuida la conversacion." Origen: `bitacora/2026-05-10_reflexion-pollen-rhizome-jurisdiccion_endodermis.md`.
-- §4: pasamos de 3 a 5 formas de uso de Gemma 4 — anadidas (4) narrador bilingue en Rhizome endpoints (Endo, ya operativo `?locale=en|es`) y (5) Approach C localizacion (Floema, `research/07_llm_localization_strategy.md` como estandar oficial).
-- §5: anadidos hallazgo `num_predict` 53% latencia (Meristem), chat read-only por construccion (Meristem linea B), validar-antes-de-portar con sketch Arduino destrabando rele 3V3 vs 5V (Xilema + Bea).
-- §6: anadidas 6 filas a la tabla — riego fisico real (humedad raw 2278→1289), Steward v0 con persistencia operacional para meses (retention 120d + budget 64MB), conectividad E2E REST Pollen↔Meristem, bilingue produccion, ShadowSkeptic, UI Meristem accesible LAN.
-- §9: anadidos como ejes propios ShadowSkeptic LLM (auditoria agencial interna) y idiomas minoritarios via Approach C. Pasamos de 4 ejes a 5.
+- §3: cita Endo "Rhizome entiende la parcela. Pollen entiende la visita. / Rhizome cuida el agua. Pollen cuida la conversacion."
+- §4: pasamos de 3 a 5 formas de uso de Gemma 4 — anadidas (4) narrador bilingue Rhizome y (5) Approach C localizacion.
+- §5: anadidos hallazgo `num_predict` 53%, chat read-only por construccion, validar-antes-de-portar (sketch Arduino 3V3 vs 5V).
+- §6: 6 filas nuevas (riego fisico real, Steward v0 persistencia meses, E2E REST, bilingue, ShadowSkeptic, UI LAN).
+- §9: 5 ejes (ShadowSkeptic LLM, idiomas minoritarios, Meristem+, sensores+, multiagentes+audio bidireccional).
+
+Material dia 26 integrado dia 27 (PR feat/cambium/writeup-readme-pasada-dia27, este):
+
+- §3: recuperacion F4 explicita — *"Toda inteligencia tiene jurisdiccion. Y caducidad."* / *"Every intelligence has jurisdiction. And expiry."* Origen: Corola dia 26 (E8 Caducidad retirado del video por compresion, F4 va al writeup como invariante).
+- §5: dos parrafos nuevos. (1) "Medir antes de celebrar — y no atribuirse lo que el ACK no nombra" — extension cultural del patron a Endo dia 26 (Steward registra `executed=false` aunque la bomba se mueva, porque ACK reporta TEST_ONLY). (2) "Decisiones de calidad pueden retirar decisiones narrativas previas" — caso voz humana E5 retirada conscientemente por Bea / Corola dia 26.
+- §6: 2 filas nuevas. (1) Sistema operando autonomamente en piloto real (Steward bucle dia 26, guardia 22:02:54, ACK TEST_ONLY como pieza de honestidad). (2) Calibracion provisional del sensor de suelo (Xilema dia 26: umbrales 1300 / 2200).
+- §6 cierre: nuevo parrafo "Honestidad operacional" sobre prototipo vs piloto.
 
 Pendiente para recorte dia 28-29:
-- Comprimir §6 tabla a 8-10 filas mas representativas (hoy 13).
-- Reducir §5 a 4 parrafos densos (hoy 7).
+- Comprimir §6 tabla a 8-10 filas mas representativas (hoy 15).
+- Reducir §5 a 4 parrafos densos (hoy 9).
 - Comprimir §9 a 4 ejes con el quinto fusionado.
 - Sources al final: notas a pie [1]-[4] estan en README.md y en research/metrics/impact_stats.md. Si Kaggle requiere bibliografia formal, se anade aparte.
 - Idioma: primera version en castellano. Traduccion a ingles en review final si Bea decide.
+
+Pendiente coordinacion con frontes:
+- Si Xilema precisa la semantica de `TEST_ONLY` dia 27, actualizar §6 fila correspondiente (probable: combinacion falta caudalimetro + nomenclatura provisional).
+- Si Meristem cierra demo en vivo con Floema + Endo dia 27, §6 puede pasar fila E2E REST de "real en local" a "demostrada end-to-end con bundle fisico".
 -->
