@@ -30,7 +30,7 @@ interface RhizomeApi {
     suspend fun getLatestSnapshot(): RhizomeSnapshot
 
     @GET("/receipts")
-    suspend fun getReceipts(@Query("since") since: String? = null): List<DecisionReceipt>
+    suspend fun getReceipts(@Query("since") since: String? = null, @Query("locale") locale: String? = null): List<DecisionReceipt>
 
     @GET("/explain/decision/{id}")
     suspend fun explainDecision(@Path("id") id: String, @Query("locale") locale: String): ExplanationResponse
@@ -63,7 +63,7 @@ class RhizomeNetworkClient(baseUrl: String) : RhizomeClient {
 
     override suspend fun getSnapshot(): RhizomeSnapshot = api.getLatestSnapshot()
     
-    override suspend fun getDecisionReceipt(): DecisionReceipt = api.getReceipts(null).first()
+    override suspend fun getDecisionReceipt(): DecisionReceipt = api.getReceipts(null, "en").first()
 
     override suspend fun pushPolicy(packet: PolicyPacket): Boolean {
         return retryWithBackoff {
@@ -80,7 +80,7 @@ class RhizomeNetworkClient(baseUrl: String) : RhizomeClient {
     
     override suspend fun getLatestSnapshot(): RhizomeSnapshot = api.getLatestSnapshot()
     
-    override suspend fun getReceipts(since: String?): List<DecisionReceipt> = api.getReceipts(since)
+    override suspend fun getReceipts(since: String?, locale: String): List<DecisionReceipt> = api.getReceipts(since, locale)
     
     override suspend fun explainDecision(id: String, locale: String): String {
         return api.explainDecision(id, locale).explanation

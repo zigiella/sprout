@@ -14,10 +14,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun DownloadModelScreen(onContinue: () -> Unit) {
+fun DownloadModelScreen(onContinue: (String) -> Unit) {
     val scope = rememberCoroutineScope()
     var isDownloading by remember { mutableStateOf(false) }
     var progress by remember { mutableStateOf(0f) }
+    var showPathInput by remember { mutableStateOf(false) }
+    var modelPath by remember { mutableStateOf("/data/local/tmp/gemma-4-E4B-it.litertlm") }
 
     Column(
         modifier = Modifier
@@ -52,7 +54,7 @@ fun DownloadModelScreen(onContinue: () -> Unit) {
                             delay(300)
                             progress = i / 10f
                         }
-                        onContinue()
+                        onContinue("/data/local/tmp/gemma-4-E4B-it.litertlm") // default path after download
                     }
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
@@ -64,11 +66,29 @@ fun DownloadModelScreen(onContinue: () -> Unit) {
         
         Spacer(modifier = Modifier.height(16.dp))
         
-        TextButton(
-            onClick = onContinue,
-            enabled = !isDownloading
-        ) {
-            Text("Saltar (Ya tengo el modelo en dispositivo)")
+        if (showPathInput) {
+            OutlinedTextField(
+                value = modelPath,
+                onValueChange = { modelPath = it },
+                label = { Text("Ruta absoluta del modelo") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = { onContinue(modelPath) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+            ) {
+                Text("Confirmar ruta y continuar")
+            }
+        } else {
+            TextButton(
+                onClick = { showPathInput = true },
+                enabled = !isDownloading
+            ) {
+                Text("Saltar (Ya tengo el modelo en dispositivo)")
+            }
         }
     }
 }

@@ -48,7 +48,7 @@ class RhizomeMockClient : RhizomeClient {
         )
     }
 
-    override suspend fun getReceipts(since: String?): List<DecisionReceipt> {
+    override suspend fun getReceipts(since: String?, locale: String): List<DecisionReceipt> {
         return listOf(
             DecisionReceipt(
                 schemaVersion = "1.0",

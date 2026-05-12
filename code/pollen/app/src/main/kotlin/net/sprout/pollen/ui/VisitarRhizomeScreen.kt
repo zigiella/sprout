@@ -70,7 +70,7 @@ fun VisitarRhizomeScreen(
             
             step = 3 // Descargado, leyendo recibos (activo)
             kotlinx.coroutines.delay(300)
-            receipts = client.getReceipts()
+            receipts = client.getReceipts(locale = currentLocale)
             
             step = 4 // Listo
             if (snapshot != null) {

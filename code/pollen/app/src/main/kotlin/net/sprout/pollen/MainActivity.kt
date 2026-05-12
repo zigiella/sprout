@@ -79,7 +79,8 @@ class MainActivity : ComponentActivity() {
         val chatService = LiteRtChatService(sessionManager, metricsCollector)
         val voiceInfra = PollenVoiceInfra(this)
         
-        val viewModel = ChatViewModel(chatService, sessionManager, voiceInfra, "/data/local/tmp/gemma-4-E4B-it.litertlm")
+        val store = PollenStore(this)
+        val viewModel = ChatViewModel(chatService, sessionManager, voiceInfra, store.getModelPath())
 
         setContent {
             net.sprout.pollen.ui.theme.PollenTheme {
@@ -87,7 +88,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val store = remember { PollenStore(this@MainActivity) }
                     var currentScreen by remember { mutableStateOf(if (store.isModelDownloaded()) AppScreen.HOME else AppScreen.DOWNLOAD_MODEL) }
                     var selectedRhizomeId by remember { mutableStateOf("") }
                     
@@ -121,7 +121,8 @@ class MainActivity : ComponentActivity() {
                         when (currentScreen) {
                             AppScreen.DOWNLOAD_MODEL -> {
                                 DownloadModelScreen(
-                                    onContinue = {
+                                    onContinue = { path ->
+                                        store.setModelPath(path)
                                         store.setModelDownloaded(true)
                                         currentScreen = AppScreen.HOME
                                     }

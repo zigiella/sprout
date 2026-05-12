@@ -46,4 +46,12 @@ class PollenStore(context: Context) {
     fun setModelDownloaded(downloaded: Boolean) {
         prefs.edit().putBoolean("model_downloaded", downloaded).apply()
     }
+    
+    fun getModelPath(): String {
+        return prefs.getString("model_path", "/data/local/tmp/gemma-4-E4B-it.litertlm") ?: "/data/local/tmp/gemma-4-E4B-it.litertlm"
+    }
+    
+    fun setModelPath(path: String) {
+        prefs.edit().putString("model_path", path).apply()
+    }
 }
