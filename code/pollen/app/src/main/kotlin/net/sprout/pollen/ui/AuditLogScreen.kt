@@ -28,8 +28,9 @@ fun AuditLogScreen(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Policy ID: ${policy.policyId}", fontWeight = FontWeight.Bold)
-                    Text("Budget: ${policy.rules.dailyWaterBudgetLiters} L")
-                    if (policy.rules.requireVisionConfirmation) {
+                    val budgetText = policy.rules.dailyWaterBudgetLiters?.toString() ?: policy.rules.dailyBudgetMl?.let { (it / 1000f).toString() } ?: "?"
+                    Text("Budget: $budgetText L")
+                    if (policy.rules.requireVisionConfirmation == true) {
                         Text("⚠️ REQUIRE VISION CONFIRMATION", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
                     }
                 }

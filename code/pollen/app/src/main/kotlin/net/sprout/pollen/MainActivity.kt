@@ -162,7 +162,7 @@ class MainActivity : ComponentActivity() {
                                     currentReceipts = globalReceipts,
                                     onPolicyDownloaded = { policy ->
                                         globalPolicy = policy
-                                        if (policy.rules.requireVisionConfirmation) {
+                                        if (policy.rules.requireVisionConfirmation == true) {
                                             showVisionAlert = true
                                         }
                                     }

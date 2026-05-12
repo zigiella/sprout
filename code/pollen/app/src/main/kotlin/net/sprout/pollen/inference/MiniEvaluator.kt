@@ -149,9 +149,14 @@ object MiniEvaluator {
     }
 
     private fun composePolicyPacket(patch: MissionPatch, activePolicy: PolicyPacket, conservativeMargin: Float): PolicyPacket {
-        val duration = (patch.durationS?.toFloat() ?: activePolicy.rules.maxWateringDurationS.toFloat()) * conservativeMargin
-        val tankMin = (patch.tankMinimumPct ?: activePolicy.rules.tankMinimumPct) + if (conservativeMargin < 1.0f) 5f else 0f
-        val budget = (patch.budgetCapMl ?: activePolicy.rules.dailyWaterBudgetLiters * 1000f) * conservativeMargin
+        val defaultDuration = activePolicy.rules.maxWateringDurationS?.toFloat() ?: activePolicy.rules.maxSecondsPerEvent?.toFloat() ?: 60f
+        val duration = (patch.durationS?.toFloat() ?: defaultDuration) * conservativeMargin
+        
+        val defaultTankMin = activePolicy.rules.tankMinimumPct ?: 10f
+        val tankMin = (patch.tankMinimumPct ?: defaultTankMin) + if (conservativeMargin < 1.0f) 5f else 0f
+        
+        val defaultBudget = activePolicy.rules.dailyWaterBudgetLiters?.times(1000f) ?: activePolicy.rules.dailyBudgetMl?.toFloat() ?: 5000f
+        val budget = (patch.budgetCapMl ?: defaultBudget) * conservativeMargin
 
         val newRules = activePolicy.rules.copy(
             maxWateringDurationS = duration.toInt(),
