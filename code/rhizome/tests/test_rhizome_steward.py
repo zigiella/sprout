@@ -305,6 +305,43 @@ class RhizomeStewardTest(unittest.TestCase):
         self.assertEqual(receipt["blocked_reason"], "ESP32_TEST_ONLY")
         self.assertEqual(receipt["action_params"]["esp32_execution_mode"], "TEST_ONLY")
 
+    def test_test_only_ack_can_be_accepted_after_operator_validation(self):
+        class TestOnlyClient(FakeESP32Client):
+            def water(self, plot: str, seconds: int) -> ESP32CommandResult:
+                return ESP32CommandResult(
+                    ok=True,
+                    command=f"PUMP_PULSE {seconds * 1000}",
+                    sent_at=zulu(datetime.now(timezone.utc)),
+                    received_at=zulu(datetime.now(timezone.utc)),
+                    lines=[
+                        f"ACK command=PUMP_PULSE duration_ms={seconds * 1000} final_state=OFF execution=TEST_ONLY",
+                    ],
+                    ack_status="OK",
+                )
+
+        with tempfile.TemporaryDirectory() as tmp:
+            steward = RhizomeSteward(
+                _config(
+                    tmp,
+                    execute_water=True,
+                    accept_esp32_test_only_pulse_as_executed=True,
+                ),
+                TestOnlyClient(telemetry=_telemetry(soil_a_raw=30)),
+            )
+            result = steward.run_once()
+            receipt = steward.store.load_json("last_decision_receipt.json")
+
+        self.assertEqual(result["action"], "WATER_A")
+        self.assertTrue(result["executed"])
+        self.assertIsNone(result["blocked_reason"])
+        self.assertIsNotNone(receipt)
+        DecisionReceipt.model_validate(receipt)
+        self.assertNotIn("esp32_execution_mode", receipt["action_params"])
+        self.assertEqual(
+            receipt["execution_details"]["esp32_execution_interpretation"],
+            "operator_confirmed_physical_pulse",
+        )
+
     def test_pump_pulse_mode_maps_water_seconds_to_pump_pulse_ms(self):
         class DummySerialClient(SerialESP32Client):
             def __init__(self):

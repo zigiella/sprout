@@ -400,6 +400,7 @@ class StewardConfig:
     allow_missing_tank_sensor: bool = False
     allow_missing_flow_sensor: bool = True
     execute_water: bool = False
+    accept_esp32_test_only_pulse_as_executed: bool = False
     shadow_skeptic_enabled: bool = True
     gemma_rationale_url: str | None = None
     gemma_model: str = "gemma4:e2b"
@@ -955,12 +956,16 @@ class RhizomeSteward:
                 self.client.heartbeat()
                 execution = self.client.water("A", int(decision.action_params["duration_s"]))
                 test_only = _execution_is_test_only(execution)
-                executed = execution.ok and not test_only
-                if test_only:
+                accepted_test_only = test_only and self.config.accept_esp32_test_only_pulse_as_executed
+                executed = execution.ok and (not test_only or accepted_test_only)
+                if test_only and not accepted_test_only:
                     decision.action_params["esp32_execution_mode"] = "TEST_ONLY"
                     if "esp32_test_only_execution" not in decision.contradictions:
                         decision.contradictions.append("esp32_test_only_execution")
                     blocked_reason = "ESP32_TEST_ONLY"
+                elif accepted_test_only:
+                    decision.policy_refs.append("config.accept_esp32_test_only_pulse_as_executed")
+                    blocked_reason = None
                 else:
                     blocked_reason = None if execution.ok else execution.reject_reason or "ESP32_REJECTED"
             else:
@@ -1061,6 +1066,8 @@ class RhizomeSteward:
                 "flow_sensor_present": flow_sensor_present,
                 "esp32_lines": execution.lines,
             }
+            if _execution_is_test_only(execution) and self.config.accept_esp32_test_only_pulse_as_executed:
+                receipt["execution_details"]["esp32_execution_interpretation"] = "operator_confirmed_physical_pulse"
         return receipt
 
     def run_loop(self) -> None:
@@ -1119,6 +1126,7 @@ def build_config(args: argparse.Namespace) -> StewardConfig:
         allow_missing_tank_sensor=args.allow_missing_tank_sensor,
         allow_missing_flow_sensor=not args.require_flow_sensor_for_water,
         execute_water=args.execute_water,
+        accept_esp32_test_only_pulse_as_executed=args.accept_esp32_test_only_pulse_as_executed,
         shadow_skeptic_enabled=not args.disable_shadow_skeptic,
         gemma_rationale_url=args.gemma_rationale_url,
         gemma_model=args.gemma_model,
@@ -1153,6 +1161,11 @@ def add_common_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--max-autonomous-waters-per-day", type=int, default=2)
     parser.add_argument("--allow-missing-tank-sensor", action="store_true", help="Perfil minimo: permite WATER con deposito no sensorizado, registrando tank_level_unavailable.")
     parser.add_argument("--require-flow-sensor-for-water", action="store_true", help="Bloquea/promociona futuro modo estricto cuando caudalimetro exista.")
+    parser.add_argument(
+        "--accept-esp32-test-only-pulse-as-executed",
+        action="store_true",
+        help="Perfil supervisado: cuenta ACK execution=TEST_ONLY como pulso fisico si fue validado por operador.",
+    )
     parser.add_argument("--retention-days", type=int, default=DEFAULT_RETENTION_DAYS)
     parser.add_argument("--max-total-bytes", type=int, default=DEFAULT_MAX_TOTAL_BYTES)
     parser.add_argument("--disable-shadow-skeptic", action="store_true")

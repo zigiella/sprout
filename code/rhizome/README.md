@@ -263,6 +263,18 @@ No usar `pump-toggle` con el firmware de dia 26: esta build no expone
 valido para builds que ejecuten `WATER A <seconds>` fisicamente en la frontera
 ESP32; en la build actual `WATER A 1` responde `execution=DRY_RUN`.
 
+Si una build del ESP32 mueve fisicamente la bomba pero conserva
+`execution=TEST_ONLY` en el ACK de `PUMP_PULSE`, Rhizome no lo cuenta como riego
+real por defecto. Para el perfil supervisado validado en maceta por Bea, activar
+explicitamente:
+
+```bash
+ACCEPT_ESP32_TEST_ONLY_PULSE_AS_EXECUTED=1
+```
+
+Esto mantiene las lineas raw del ESP32 en `execution_details`, pero evita que
+Pollen muestre el evento como bloqueado por `ESP32_TEST_ONLY`.
+
 Persistencia por defecto:
 
 ```text
