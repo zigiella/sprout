@@ -34,6 +34,7 @@ import net.sprout.pollen.schemas.PolicyPacket
 import net.sprout.pollen.ui.VisitarMeristemScreen
 import net.sprout.pollen.ui.VisitarRhizomeScreen
 import net.sprout.pollen.ui.AuditLogScreen
+import net.sprout.pollen.ui.DownloadModelScreen
 import net.sprout.pollen.ui.HomeScreen
 import androidx.compose.ui.res.stringResource
 import net.sprout.pollen.R
@@ -53,7 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 
 enum class AppScreen {
-    HOME, MERISTEM, RHIZOME_DETAIL, CHAT, AUDIT
+    DOWNLOAD_MODEL, HOME, MERISTEM, RHIZOME_DETAIL, CHAT, AUDIT
 }
 
 class MainActivity : ComponentActivity() {
@@ -86,12 +87,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    var currentScreen by remember { mutableStateOf(AppScreen.HOME) }
+                    val store = remember { PollenStore(this@MainActivity) }
+                    var currentScreen by remember { mutableStateOf(if (store.isModelDownloaded()) AppScreen.HOME else AppScreen.DOWNLOAD_MODEL) }
                     var selectedRhizomeId by remember { mutableStateOf("") }
                     
-                    var globalSnapshot by remember { mutableStateOf<RhizomeSnapshot?>(null) }
-                    var globalReceipts by remember { mutableStateOf<List<DecisionReceipt>>(emptyList()) }
-                    var globalPolicy by remember { mutableStateOf<PolicyPacket?>(null) }
+                    var globalSnapshot by remember { mutableStateOf<RhizomeSnapshot?>(store.loadSnapshot()) }
+                    var globalReceipts by remember { mutableStateOf<List<DecisionReceipt>>(store.loadReceipts()) }
+                    var globalPolicy by remember { mutableStateOf<PolicyPacket?>(store.loadPolicy()) }
                     
                     var showVisionAlert by remember { mutableStateOf(false) }
 
@@ -107,7 +109,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     Column(modifier = Modifier.fillMaxSize()) {
-                        if (currentScreen != AppScreen.HOME) {
+                        if (currentScreen != AppScreen.HOME && currentScreen != AppScreen.DOWNLOAD_MODEL) {
                             Row(modifier = Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
                                 IconButton(onClick = { currentScreen = AppScreen.HOME }) {
                                     Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back_to_home))
@@ -117,6 +119,14 @@ class MainActivity : ComponentActivity() {
                         }
 
                         when (currentScreen) {
+                            AppScreen.DOWNLOAD_MODEL -> {
+                                DownloadModelScreen(
+                                    onContinue = {
+                                        store.setModelDownloaded(true)
+                                        currentScreen = AppScreen.HOME
+                                    }
+                                )
+                            }
                             AppScreen.HOME -> {
                                 HomeScreen(
                                     onNavigateToRhizome = { rhId ->
@@ -149,7 +159,9 @@ class MainActivity : ComponentActivity() {
                                         plotId = selectedRhizomeId,
                                         onDataFetched = { snap, rec -> 
                                             globalSnapshot = snap
-                                            globalReceipts = rec 
+                                            globalReceipts = rec
+                                            store.saveSnapshot(snap)
+                                            store.saveReceipts(rec)
                                         },
                                         onChatClicked = { currentScreen = AppScreen.CHAT },
                                         onAuditClicked = { currentScreen = AppScreen.AUDIT }
@@ -162,6 +174,7 @@ class MainActivity : ComponentActivity() {
                                     currentReceipts = globalReceipts,
                                     onPolicyDownloaded = { policy ->
                                         globalPolicy = policy
+                                        store.savePolicy(policy)
                                         if (policy.rules.requireVisionConfirmation == true) {
                                             showVisionAlert = true
                                         }
