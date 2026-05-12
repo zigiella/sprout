@@ -68,12 +68,11 @@ parcela A, maximo 900 ml") a `MissionPatch` estructurado con caducidad;
 audita decisiones pasadas de Rhizome traduciendo `receipts` a lenguaje
 natural; y federa parcelas transportando `WeatherDigest` o contexto util
 entre nodos sin red directa. Gemma 4 E4B sobre Android via LiteRT-LM, con
-**audio multimodal nativo** (la voz humana entra al modelo directamente).
-Pollen ademas **adapta el idioma de la interfaz al idioma del agricultor**
-mediante traduccion local con Gemma 4 — pieza arquitectural que prepara
-fine-tuning futuro para idiomas minoritarios (pular, wolof, swahili,
-quechua, catalan, euskera) sin tocar el hardware de campo. Su jurisdiccion
-es la visita, con TTL corto.
+**audio multimodal nativo**. Pollen ademas **adapta el idioma de la
+interfaz al idioma del agricultor** mediante traduccion local con Gemma 4
+— pieza arquitectural que prepara fine-tuning futuro para idiomas
+minoritarios sin tocar el hardware de campo. Su jurisdiccion es la
+visita, con TTL corto.
 
 **Meristem** es el cerebro lento. Vive en el portatil casero del
 agricultor con Gemma 4 E4B via `llama.cpp`. Cuando hay calma — al cierre
@@ -92,7 +91,7 @@ con criterio, caducidad y trazabilidad.
 
 ## 3. Arquitectura — ~400 palabras
 
-Sprout reparte la decision entre **tres nodos con jurisdicciones distintas y un coprocesador fisico que veta**. Rhizome decide en escala de minutos sobre la parcela; Pollen actua en escala de visita con caducidad corta sobre el movil del agricultor; Meristem opera en escala de dias sobre el ordenador domestico. La **capa fisica** (firmware ESP32), separada del computo de IA, es dueña de sensores y actuadores: nada toca el agua sin pasar por sus reglas. Si Jetson cae, el sistema permanece seguro.
+Sprout reparte la decision entre **tres nodos con jurisdicciones distintas y un coprocesador fisico que veta**. Rhizome decide en escala de minutos sobre la parcela; Pollen actua en escala de visita con caducidad corta sobre el movil del agricultor; Meristem opera en escala de dias sobre el ordenador domestico. La **capa fisica** (firmware ESP32), separada del computo de IA, es dueña de sensores y actuadores: nada toca el agua sin pasar por sus reglas.
 
 **Stack del MVP.** Rhizome corre **Gemma 4 E2B-it Q4_K_S** sobre **Jetson Orin Nano Super** via `llama.cpp` — el motor open-source mas afilado para CPU/GPU heterogeneos, con ecosistema de cuantizaciones que permite ajustar memoria sin tocar el sistema. Pollen corre **Gemma 4 E4B** sobre Android via **LiteRT-LM** — el runtime oficial de Google AI Edge, diseñado para el SoC + NPU del movil y la unica via para audio multimodal nativo en el bolsillo del agricultor. Meristem corre **Gemma 4 E4B** sobre portatil estandar via `llama.cpp`, con tool calling nativo. **Dos runtimes, una arquitectura**: cada nodo usa el que mejor encaja, todos hablan a contratos JSON identicos. Junto al Jetson, un **ESP32-S3** acoplado ejecuta firmware propio como capa fisica de veto.
 
@@ -124,17 +123,17 @@ Es la pieza que permite **medir si una segunda voz mejoraria la seguridad antes 
 
 ### Gemma 4 aplicado
 
-Sprout usa Gemma 4 en **cinco formas concretas**, cada una explotando una capacidad distinta del modelo y conectada a una decision arquitectural especifica. La decision final siempre la toma logica deterministica; Gemma 4 escribe el rationale, adapta el idioma o explora hipotesis acotadas.
+Sprout usa Gemma 4 en **cinco formas concretas**, cada una explotando una capacidad distinta del modelo y conectada a una decision arquitectural especifica. Gemma 4 escribe el rationale, adapta el idioma o explora hipotesis acotadas; la decision final vive siempre en logica deterministica (ver *Patron clave* mas abajo).
 
 1. **Audio multimodal nativo en Pollen.** Gemma 4 E4B via LiteRT-LM consume `.wav` 16kHz directamente, sin pipeline STT separado. La voz *"riega un poco menos, esta planta aguanta mas seca de lo que crees"* se compila a `MissionPatch` estructurado en el bolsillo del agricultor — sin red, sin servicio externo. Validado contra microfono real: cuando la frase carece de sentido agricola, Pollen responde con `REFUSE_RETRY` en lugar de inventar una accion.
 
-2. **Tool calling nativo en Meristem.** Gemma 4 E4B emite llamadas estructuradas a `compose_policy(...)`, `validate_bundle(...)` y `compare_targets(...)`. La logica deterministica decide la accion; el LLM escribe el rationale en castellano natural y consulta tools cuando hay hipotesis a explorar (degradacion local de un Rhizome vs problema global, por ejemplo). Mini-bateria 5/5 PASS + runtime validado end-to-end con `tool_calls_recovered_from_text=1`.
+2. **Tool calling nativo en Meristem.** Gemma 4 E4B emite llamadas estructuradas a `compose_policy(...)`, `validate_bundle(...)` y `compare_targets(...)`. El LLM consulta tools cuando hay hipotesis a explorar (degradacion local de un Rhizome vs problema global, por ejemplo) y escribe el rationale en castellano natural. Mini-bateria 5/5 PASS + runtime validado end-to-end con `tool_calls_recovered_from_text=1`.
 
-3. **Routing entre tres nodos.** Tres instancias (E2B + E4B + E4B), tres jurisdicciones, ningun roundtrip a la nube. La eleccion es consciente por nodo, no global: **E2B sobre `llama.cpp` para respuesta directa** (Rhizome, donde la conviccion vive en logica deterministica y el modelo solo explica); **E4B sobre LiteRT-LM para razonamiento multimodal en el bolsillo del agricultor** (Pollen, donde el audio entra al modelo sin pipeline STT); **E4B sobre `llama.cpp` para tool calling en cocina** (Meristem, donde el modelo orquesta `compose_policy(...)` con presupuesto generoso de tiempo). Bateria de 18 prompts validada en hardware real: 18/18 envelope_valid + 18/18 status_match.
+3. **Routing entre tres nodos.** Tres instancias (E2B + E4B + E4B), tres jurisdicciones, ningun roundtrip a la nube. La eleccion es consciente por nodo, no global: **E2B sobre `llama.cpp` para respuesta directa** (Rhizome); **E4B sobre LiteRT-LM en el bolsillo del agricultor** (Pollen, audio multimodal); **E4B sobre `llama.cpp` para tool calling en cocina** (Meristem, con presupuesto generoso de tiempo para orquestar `compose_policy(...)`). Bateria de 18 prompts validada en hardware real: 18/18 envelope_valid + 18/18 status_match.
 
 4. **Narrador en Rhizome con localizacion en endpoint.** Los endpoints `GET /summary/since?locale=es|en` y `GET /explain/decision/<id>?locale=es|en` ya operativos. Gemma 4 E2B mejora el `rationale_short` sobre una decision **ya cerrada** por la logica deterministica — manteniendo accion, datos y trazabilidad inalterados, adaptando solo la prosa.
 
-5. **Universal Presentation Layer (lengua de superficie).** Estandar oficial del proyecto para internacionalizacion: los nodos edge (Rhizome, ESP32) razonan siempre en **ingles tecnico estable**; Pollen + Gemma 4 E4B local traduce al idioma de la UI en milisegundos antes de pintar. Asi, **la lengua del usuario vive en su bolsillo, el criterio del sistema vive en el nodo**. Esta pieza prepara fine-tuning futuro de Pollen para idiomas minoritarios — pular, wolof, swahili, quechua, catalan, euskera — sin tocar el hardware de campo ni replicar explicaciones en multiples idiomas en almacenamiento central. Documentada como decision oficial en `research/07_llm_localization_strategy.md`.
+5. **Universal Presentation Layer (lengua de superficie).** Estandar oficial del proyecto para internacionalizacion: los nodos edge (Rhizome, ESP32) razonan siempre en **ingles tecnico estable**; Pollen + Gemma 4 E4B local traduce al idioma de la UI en milisegundos antes de pintar. Asi, **la lengua del usuario vive en su bolsillo, el criterio del sistema vive en el nodo**. Esta pieza prepara fine-tuning futuro de Pollen para idiomas minoritarios — pular, wolof, swahili, quechua, catalan, euskera — sin tocar el hardware de campo. Documentada como decision oficial en `research/07_llm_localization_strategy.md`.
 
 **Patron clave**: el LLM nunca firma la decision final. Cuando el offload a GPU causo deriva semantica en un caso de test (`need_clarification` en lugar de `ok`), el sistema mantuvo el contrato porque la logica deterministica decidia y el LLM solo escribia. **Es prueba empirica de la tesis arquitectural**: deriva semantica del modelo + barandilla deterministica = comportamiento contractual aun bajo fallo del LLM.
 
@@ -144,7 +143,7 @@ La eleccion de runtime es consciente por nodo, no accidental. **Rhizome y Merist
 
 `llama.cpp` es el motor de inferencia open-source mas afilado del ecosistema Gemma para CPU/GPU heterogeneos. En Rhizome (Jetson Orin Nano Super) lo usamos con dos perfiles distinguidos honestamente: `safe-cpu`, validado al 100% en bateria contractual (perfil estable de produccion); y `gpu-experimental`, con las 36/36 capas cargadas en GPU (perfil rapido cuya calidad aun no es contractual). En Meristem, sobre portatil estandar, `llama.cpp` ejecuta E4B con tool calling nativo. Misma libreria, dos hardware distintos, mismos contratos. El ecosistema de cuantizaciones (Q4_K_S/M) permite ajustar memoria sin tocar el sistema.
 
-**LiteRT-LM** es el runtime oficial de Google AI Edge para Android — la pieza que hace viable Gemma 4 E4B con **audio multimodal nativo** en el bolsillo del agricultor (consume `.wav` 16kHz directamente, sin pipeline STT). En Pollen es la eleccion correcta no porque podriamos forzar `llama.cpp` con esfuerzo, sino porque LiteRT-LM esta diseñado para el SoC, la NPU y el ciclo de vida de la app Android. La consistencia con el ecosistema oficial significa rendimiento + cobertura multimodal sin reinventar adaptadores.
+**LiteRT-LM** es el runtime oficial de Google AI Edge para Android — la pieza que hace viable Gemma 4 E4B con audio multimodal nativo en el bolsillo del agricultor (ver forma 1 arriba). En Pollen es la eleccion correcta no porque podriamos forzar `llama.cpp` con esfuerzo, sino porque LiteRT-LM esta diseñado para el SoC, la NPU y el ciclo de vida de la app Android. La consistencia con el ecosistema oficial significa rendimiento + cobertura multimodal sin reinventar adaptadores.
 
 Pese a usar dos runtimes distintos, **todos los nodos hablan a un adapter comun** que emite los mismos contratos JSON, las mismas metricas y los mismos receipts. **Cambiar el runtime no cambia el sistema**: el contrato de inferencia es estable, los runtimes son piezas intercambiables alli donde tiene sentido cambiarlas. Esa abstraccion permitio promocionar `llama.cpp` desde Ollama (origen de prototipo) sin tocar el resto del codigo, y mantener LiteRT-LM como pieza oficial Android sin forzarlo donde no encaja.
 
@@ -168,7 +167,7 @@ Bateria de 18 prompts con metricas duras (`envelope_valid` + `status_match`), se
 |-------------|----------------------------------|
 | Tres nodos con jurisdicciones distintas | Tres nodos operativos: cadena Pollen ↔ Rhizome real validada en hardware |
 | Multi-parcela federada | Multi-Rhizome simulado v0 funcional (*"cuando la abstraccion esta bien, la extension sale gratis"*) |
-| Voz humana como evento de primera clase | Audio multimodal Gemma 4 E4B nativo en Pollen — sin pipeline STT. Validado contra microfono real con `REFUSE_RETRY` operando sobre frases sin sentido agricola |
+| Voz humana como evento de primera clase | Audio multimodal Gemma 4 E4B nativo en Pollen, validado contra microfono real |
 | Capa fisica que veta | Firmware ESP32 vetando ordenes en placa real (5 reglas + `SAFETY_DOWNGRADE`) |
 | Sistema operando sin red | Sprout escala 1 corriendo en una terraza de Castellar de n'Hug — sistema vivo, no proyeccion |
 | Decision local soberana | Voz → politica inmediata: Pollen compone `PolicyPacket` "this-visit" con TTL 12h, conservador por defecto, 3 capas de defensa antes de tocar agua |
@@ -213,7 +212,7 @@ Sprout deja resuelto el caso minimo. La arquitectura escala. La hoja de ruta nat
 
 1. **Doble agente con autoridad evolutiva.** El agente auditor activo hoy recoge telemetria de desacuerdo sin poder vetar (`affects_decision=false`). Cuando los registros muestren que su segunda voz tiene razon una fraccion suficiente del tiempo, se promociona a una version Gemma 4 con autoridad limitada — jurisdiccion **cuestionar al primer agente**, no decidir. Ruta hacia agentes locales que se auditan entre si sin saltar la jerarquia fisica.
 
-2. **Lengua del usuario.** El Universal Presentation Layer separa razonamiento del edge (ingles tecnico estable) de superficie (idioma del agricultor via Gemma 4 E4B local en Pollen). Siguiente paso: fine-tuning de Gemma 4 E4B sobre corpus agricolas en pular, wolof, swahili, bambara, quechua, aimara, catalan, euskera. Cada fine-tuning desbloquea un mercado donde el 84% de las explotaciones opera sin acceso a interfaces en sus idiomas, sin tocar el hardware de campo.
+2. **Lengua del usuario.** El Universal Presentation Layer separa razonamiento del edge (ingles tecnico estable) de superficie (idioma del agricultor via Gemma 4 E4B local en Pollen). Siguiente paso: fine-tuning de Gemma 4 E4B sobre corpus agricolas locales. Cada fine-tuning desbloquea un mercado donde ese 84% de las explotaciones opera sin acceso a interfaces en sus idiomas, sin tocar el hardware de campo.
 
 3. **Meristem mas inteligente.** El cerebro lento opera con Evaluator de 4 reglas + tool calling. La hoja de ruta lo extiende a 8-12 reglas (estacionalidad, cultivos heterogeneos, presupuesto multi-mes), fine-tuning E4B sobre dataset agricola sintetico+real, y modo paralelo de varios LLMs comparando rationale para auditoria de calidad. Plan documentado en 7 fases.
 
