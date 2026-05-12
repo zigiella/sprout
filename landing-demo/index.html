@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sprout — local-first irrigation decisions</title>
-  <meta name="description" content="AI Local-first irrigation decisions for plots the network and the human can't always reach. Three nodes (Rhizome, Pollen, Meristem) + an ESP32 safety coprocessor.">
+  <title>Sprout — local-first water optimization for plots the network forgets</title>
+  <meta name="description" content="AI Local-first water optimization for plots the network and the human can't always reach. Three nodes (Rhizome, Pollen, Meristem) + an ESP32 safety coprocessor. Every intelligence has jurisdiction and expiry.">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -16,10 +16,10 @@
     <p class="tagline-en">When network is absent — and the human is far — local criteria still irrigate.</p>
     <p class="tagline-es" lang="es"><em>Cuando la red no llega y nadie está cerca, el criterio sigue regando.</em></p>
     <p class="lede">
-      Sprout is a local-first AI architecture for irrigation decisions in remote plots —
+      Sprout is a local-first AI architecture for <strong>water optimization</strong> in remote plots —
       places where the field, the person and the network rarely coincide in time.
       Three nodes with distinct jurisdictions, an ESP32 safety coprocessor that vetoes physically,
-      and Gemma 4 doing what it does best on each layer.
+      and Gemma 4 doing what it does best on each layer. <em>Every intelligence has jurisdiction. And expiry.</em>
     </p>
     <div class="cta-row">
       <a class="btn btn-primary" href="#try-it">Try the system</a>
@@ -86,26 +86,73 @@
 
 <section class="container section">
   <h2>How Gemma 4 is used</h2>
+  <p>Sprout uses Gemma 4 in <strong>five concrete ways</strong>, each exploiting a different capability of the model:</p>
   <ul class="howlist">
     <li>
-      <strong>Multimodal audio nativo</strong> — Pollen feeds raw 16 kHz <code>.wav</code> to
+      <strong>Multimodal audio native</strong> — Pollen feeds raw 16 kHz <code>.wav</code> to
       Gemma 4 E4B via LiteRT-LM <em>without a separate STT pipeline</em>. The voice
       <em>"riega un poco menos, esta planta aguanta más seca de lo que crees"</em> compiles
       into a structured <code>MissionPatch</code> — in the farmer's pocket, no network.
+      Validated end-to-end against real microphone input.
     </li>
     <li>
       <strong>Native tool calling</strong> — Meristem uses Gemma 4 E4B with native tool calling
-      for <code>compose_policy(...)</code> and bundle validation. The deterministic logic
-      decides; the LLM only writes the rationale.
+      for <code>compose_policy(...)</code>, <code>validate_bundle(...)</code> and <code>compare_targets(...)</code>.
+      The deterministic logic decides; the LLM only writes the rationale.
+      Runtime end-to-end validated with <code>tool_calls_recovered_from_text=1</code>.
     </li>
     <li>
       <strong>Three-node routing</strong> — three Gemma 4 instances (E2B + E4B + E4B), three
-      jurisdictions, no cloud roundtrip. Each node holds the type of context its layer is
-      responsible for.
+      jurisdictions, no cloud roundtrip. Model choice is per-node, not global:
+      <strong>E2B for direct answers (Rhizome), E4B for tool-calling reasoning (Pollen + Meristem)</strong>.
+    </li>
+    <li>
+      <strong>Bilingual narrator in Rhizome</strong> — endpoints
+      <code>GET /summary/since?locale=es|en</code> and <code>GET /explain/decision/&lt;id&gt;?locale=es|en</code>
+      operational in production. Gemma 4 E2B improves the <code>rationale_short</code> over a decision
+      <strong>already closed</strong> by deterministic logic — never changes action, never authorizes water,
+      never invents facts. The system speaks two languages in production.
+    </li>
+    <li>
+      <strong>Approach C i18n localization</strong> — official project standard.
+      Edge nodes (Rhizome, ESP32) think in stable English Tech; Pollen + Gemma 4 E4B local translates to
+      the UI language before rendering. Hardware-agnostic, ready for minority-language fine-tuning
+      (Pular, Wolof, Swahili, Quechua, Catalan, Basque).
     </li>
   </ul>
+  <p><strong>The final decision is never signed by the LLM.</strong> The deterministic Evaluator decides; Gemma 4 writes the rationale and adapts the surface language.</p>
   <p>
     <a class="btn btn-ghost" href="https://github.com/zigiella/sprout/blob/main/writeup/draft.md">Read the full technical writeup →</a>
+  </p>
+</section>
+
+<section class="container section bg-soft">
+  <h2>Safety &amp; Trust — the three invariants</h2>
+  <p>Sprout is built around three non-negotiable invariants. Any change to the system has to preserve them:</p>
+  <ol class="invariants">
+    <li>
+      <strong>"Physical layer prevails. Rhizome arbitrates. Pollen mediates. Meristem refines."</strong>
+      The ESP32 firmware owns critical sensors and actuators; nothing touches water without its veto.
+      The higher a piece sits in the hierarchy, the less physical authority it has.
+    </li>
+    <li>
+      <strong>"Every intelligence has jurisdiction. And expiry."</strong>
+      Every <code>MissionPatch</code> carries a short TTL. Every <code>PolicyPacket</code> carries a validity window.
+      Every <code>WeatherDigest</code> expires before going stale. Expired objects get
+      <code>EXPIRED → REJECTED</code> with legible reason in the <code>DecisionReceipt</code>.
+      <strong>No criterion stays silently valid past its window.</strong> This rule is what avoids the most
+      common failure of autonomous systems: accepting old orders as if they were new.
+    </li>
+    <li>
+      <strong>No <code>PolicyPacket</code> from Meristem can reduce the firmware's hard limits</strong>
+      — it can only recommend more conservative behavior. Authority over physical safety inverts the
+      hierarchy.
+    </li>
+  </ol>
+  <p>
+    <strong>Refusal is a feature, not a failure.</strong> When the system isn't confident, it says so and
+    asks the human to rephrase or step in. Validated empirically: Pollen rejects agricultural-nonsense
+    sentences with <code>REFUSE_RETRY</code> instead of fabricating an action.
   </p>
 </section>
 
