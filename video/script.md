@@ -10,7 +10,7 @@
 
 2. **Z99 tagline cierre con adverbios potentes recuperados** (alineación cross-canal con README línea 12 + writeup §0 subtítulo): `Sprout: When network is absent, and the human is far, local criteria still irrigate.` Recupera `local` + `still` + `the human` que se habían perdido en versión simplificada día 26 (*"there is no network, no one is near, the criteria keep irrigating"*). Mantiene prefijo `Sprout:` (decisión Bea día 26). La pregunta inicial `what irrigates the field?` no se mete: consolidamos eco hídrico en el cierre Sprout (decisión Bea día 27).
 
-3. **VO E07b manifesto: recuperar "local"** — *"Rhizome understands the **local** plot, Pollen the visit."* (sumar una palabra al VO, mantiene tiempo, ancla edge-first del proyecto en el momento manifesto del video).
+3. **VO E07b manifesto: RETIRADA propuesta de añadir "local"** (decisión Bea día 27, corrección segundo voto): *"local plot"* es pleonasmo — un `plot` agrícola es local por definición. VO E07b queda como está: *"Rhizome understands the plot, Pollen the visit."* El concepto "local" ya respira en el video con: cartela E00 apertura (`Local-first AI water optimization...`), sub-claim Z99 tarjeta logo (`Local-first AI`), VO E4 (`the local criteria`), Z99 cierre (`local criteria still irrigate`). 4 ocurrencias suficientes sin caer en redundancia.
 
 4. **Sub-text `Mobile node · policies expire` en CartelaPollen** (0:43-0:46) — micro-anclaje del concepto `expiry` que respira sin alargar VO. Compensa la eliminación de E8 + F4 del video día ~24-25 (F4 se recupera en writeup/landing por Cambium).
 
@@ -690,7 +690,7 @@ Gemma is a trademark of Google LLC.
 - **v1.8.8 — refinamientos copy día 27 + tagline `Local-first AI` + voz humana E5 castellano rescatada** (2026-05-12, día 27, Corola) — segundo día activo tras la pausa de 5 días. Bea retoma con feedback puntual sobre los 5 votos del día 26 + me da contexto cross-canal (README + writeup) que cambia 2 de mis votos. Cambios consolidados sobre v1.8.7 (resumen — detalle en header v1.8.8 al inicio del documento):
   1. **Tagline oficial:** `Local-first AI water optimization for plots the network forgets.` (corrección gramatical orden modificadores). Cascada README + writeup + E00 + Z99.
   2. **Z99 tagline cierre:** recupera adverbios potentes (`local` + `still` + `the human`) manteniendo prefijo `Sprout:`. Alinea video ↔ README ↔ writeup.
-  3. **VO E07b manifesto:** recupera `local` (`Rhizome understands the local plot, Pollen the visit`).
+  3. **VO E07b manifesto:** RETIRADO el cambio (pleonasmo `local plot` — decisión Bea día 27 corrigiendo segundo voto). Queda: `Rhizome understands the plot, Pollen the visit.`
   4. **Sub-text `Mobile node · policies expire`** en CartelaPollen — anclaje `expiry` que respira.
   5. **Refinamientos VO cenital:** `Sprout starts with one plot.` + `And many more plots.`
   6. **Voz humana E5 castellano vuelve.** Reversión consciente día 27 sobre día 26: la intención narrativa (excepción día 18-19) gana otra vez.

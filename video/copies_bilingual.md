@@ -397,7 +397,7 @@ Gemma is a trademark of Google LLC.
 - **v0.8** (2026-05-12, día 27, Corola) — refinamientos copy día 27 tras Bea retomar con feedback puntual sobre los 5 votos del día 26 + lectura cruzada README + writeup que me da contexto cross-canal. Cambios consolidados sobre v0.7:
   1. **Tagline oficial:** `AI Local-first` → **`Local-first AI water optimization for plots the network forgets.`** (corrección gramatical orden modificadores en inglés). Cascada en README + writeup + E00 + Z99 sub-claim.
   2. **Z99 tagline cierre con adverbios potentes recuperados:** *"Sprout: When there is no network, and no one is near, the criteria keep irrigating"* → ***"Sprout: When network is absent, and the human is far, local criteria still irrigate."*** Alinea video ↔ README línea 12 ↔ writeup §0 subtítulo.
-  3. **VO E07b manifesto recupera `local`:** *"Rhizome understands the plot, Pollen the visit"* → ***"Rhizome understands the local plot, Pollen the visit."***
+  3. **VO E07b manifesto: RETIRADO el cambio "local"** (decisión Bea día 27 corrigiendo segundo voto Corola). *"local plot"* es pleonasmo — un `plot` agrícola es local por definición. VO queda como estaba: *"Rhizome understands the plot, Pollen the visit."* El concepto "local" respira suficientemente en: cartela E00 apertura (`Local-first AI`), sub-claim Z99 (`Local-first AI`), VO E4 (`the local criteria`), Z99 cierre (`local criteria still irrigate`).
   4. **Sub-text `Mobile node · policies expire`** en CartelaPollen (0:43-0:46) — anclaje `expiry` que respira sin alargar VO.
   5. **Refinamientos VO cenital aplicados:**
      - 2:06-2:09 E3b: *"The Sprout system supports one plot."* → ***"Sprout starts with one plot."***

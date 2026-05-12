@@ -62,12 +62,25 @@ Decisión Bea día 27: *"ok Local-first AI."*
 
 La pregunta inicial `what irrigates the field?` (eco hídrico del writeup §0) NO se mete al principio ni al final del video. Decisión Bea día 27: *"Esto lo he quitado... ok a la frase de cierre."* Consolidamos eco hídrico solo en Z99.
 
-### 3. VO E07b manifesto recupera `local`
+### 3. VO E07b manifesto — RETIRADO el cambio "local" (corrección segundo voto Bea día 27)
 
-**Antes:** *"Rhizome understands the plot, Pollen the visit."*
-**Después:** *"Rhizome understands the **local** plot, Pollen the visit."*
+**Propuesta inicial Corola:** *"Rhizome understands the plot, Pollen the visit."* → *"Rhizome understands the **local** plot, Pollen the visit."*
 
-Suma una palabra al VO, mantiene el ritmo, ancla edge-first en el momento manifesto del video (1:48-1:53). Da una segunda respiración a `local` además del Z99 final.
+**Voto Bea día 27 (corrección sobre primer voto):** *"no pongamos local plot (es redundante, plot ya es local)"*.
+
+**Decisión final:** **NO CAMBIAR.** El VO E07b queda como estaba: *"Rhizome understands the plot, Pollen the visit."*
+
+**Razón:** `plot` en este contexto agrícola es físicamente un terreno con plantas en un lugar concreto — siempre es local por definición. Decir *"local plot"* es pleonasmo (similar a *"ATM machine"* o *"PIN number"*).
+
+**El concepto "local" respira suficientemente en el video en 4 sitios:**
+1. Cartela E00 apertura: `Local-first AI water optimization for plots the network forgets.`
+2. Sub-claim Z99 tarjeta logo final: `Local-first AI`
+3. VO E4 0:39-0:42: *"Each visit can change the **local** criteria."*
+4. Z99 cierre: *"Sprout: When network is absent, and the human is far, **local** criteria still irrigate."*
+
+Las 4 ocurrencias son las que la palabra "local" necesita para anclar el concepto edge-first sin caer en redundancia.
+
+**Aprendizaje cultural día 27 (registrado):** *"Cuando una pieza es local por naturaleza (plot = parcela física en un lugar), añadir 'local' delante es pleonasmo. El criterio de copywriter es: añadir adjetivo solo cuando agrega información que el sustantivo no contiene por defecto. Si el sustantivo ya lo lleva implícito, el adjetivo molesta."*
 
 ### 4. Sub-text `Mobile node · policies expire` en CartelaPollen
 
@@ -218,14 +231,15 @@ Bract aplica en próxima regeneración del snapshot.
 >
 > Bump v1.8.8 día 27. Cambios para que apliques al snapshot vivo + regeneres MP3 de los VOs que cambian:
 >
-> **VOs nuevos a regenerar con voz DbwW** (los 5 cambios de copy):
+> **VOs nuevos a regenerar con voz DbwW** (3 cambios de copy):
 > 1. **2:06-2:09 E3b:** *"Sprout starts with one plot."* (era *"The Sprout system supports one plot."*)
 > 2. **2:17-2:19 cenital:** *"And many more plots."* (era *"And it supports many more plots."*)
-> 3. **1:48-1:53 E07b manifesto:** *"Rhizome understands the **local** plot, Pollen the visit."* (era sin "local")
-> 4. **2:40-2:45 Z99 cierre:** *"Sprout: When network is absent, and the human is far, local criteria still irrigate."* (era *"...there is no network, no one is near, the criteria keep irrigating"*)
+> 3. **2:40-2:45 Z99 cierre:** *"Sprout: When network is absent, and the human is far, local criteria still irrigate."* (era *"...there is no network, no one is near, the criteria keep irrigating"*)
+>
+> **VO E07b — SIN CAMBIOS** (corrección Bea día 27 sobre mi segundo voto): *"local plot"* es pleonasmo. VO queda como estaba: *"Rhizome understands the plot, Pollen the visit."* MP3 actual sigue válido.
 >
 > **VO que NO regenero con DbwW — voz humana de Bea castellano vuelve:**
-> 5. **1:16-1:23 E5:** *"Vuelvo el viernes. Esta planta aguanta más seca de lo que crees, riega un poco menos."* Bea graba con su voz. El MP3 DbwW de esta línea se retira. Subtítulo EN entre comillas en master marca que es voz humana.
+> 4. **1:16-1:23 E5:** *"Vuelvo el viernes. Esta planta aguanta más seca de lo que crees, riega un poco menos."* Bea graba con su voz. El MP3 DbwW de esta línea se retira. Subtítulo EN entre comillas en master marca que es voz humana.
 >
 > **Cambios en assets visuales** (Venation regenera, te llegan por PR a main):
 > - E00 apertura: texto cartela con "Local-first AI" en su sitio.
@@ -247,3 +261,4 @@ Bract aplica en próxima regeneración del snapshot.
 ## Historial de versiones del documento
 
 - **v1** (2026-05-12, día 27, Corola) — primera versión. Bump v1.8.8 con 9 decisiones consolidadas día 27. 2 votos del día 26 revisados tras lectura cruzada README + writeup (cartelas E10 + invariante E7 ahora SIN CAMBIOS). 3 mensajes laterales preparados para Cambium / Venation / Bract. Pendientes "para luego": invariante E7 climax + recortes 3:00.
+- **v2** (2026-05-12, día 27, Corola) — segundo voto Bea corrige decisión #3 sobre VO E07b: *"no pongamos local plot (es redundante, plot ya es local)"*. **VO E07b RETIRADO el cambio** — queda como estaba: *"Rhizome understands the plot, Pollen the visit."* El concepto "local" respira en 4 ocurrencias suficientes (E00 cartela + Z99 sub-claim + VO E4 `local criteria` + Z99 cierre). Mensaje a Bract actualizado: 3 VOs a regenerar (no 4) + VO E07b sin cambios. Aprendizaje cultural añadido sobre pleonasmo en copywriting.

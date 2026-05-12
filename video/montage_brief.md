@@ -575,7 +575,7 @@ Bea graba la frase castellana literal (*"Vuelvo el viernes. Esta planta aguanta 
 - **v0.7** (2026-05-12, día 27, Corola) — refinamientos copy día 27 tras Bea retomar con feedback puntual + lectura cruzada README + writeup. Cambios consolidados sobre v0.6:
   1. Tagline oficial proyecto: `Local-first AI water optimization for plots the network forgets.` Aplicar en E00 apertura + Z99 sub-claim.
   2. Z99 tagline cierre con adverbios potentes recuperados: `Sprout: When network is absent, and the human is far, local criteria still irrigate.` Alinea video ↔ README ↔ writeup.
-  3. VO E07b manifesto recupera `local`: `Rhizome understands the local plot, Pollen the visit.`
+  3. VO E07b manifesto: RETIRADO el cambio "local" (decisión Bea día 27 corrigiendo segundo voto Corola — `local plot` es pleonasmo). VO queda como estaba: `Rhizome understands the plot, Pollen the visit.`
   4. Sub-text `Mobile node · policies expire` en CartelaPollen (0:43-0:46).
   5. Refinamientos VO cenital: `Sprout starts with one plot.` + `And many more plots.`
   6. Voz humana E5 castellano literal rescatada (reactiva excepción narrativa día 18-19, reversión consciente de decisión día 26).
