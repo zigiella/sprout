@@ -59,8 +59,11 @@ from .schemas import (
 )
 from .ws_manager import manager as pollen_manager
 from .ws_schemas import (
+    BundlesPushedPayload,
     CommandPayload,
     MeristemReadyPayload,
+    PoliciesPulledPayload,
+    PollenHelloPayload,
     WSEvent,
 )
 
@@ -533,6 +536,161 @@ def _build_app() -> FastAPI:
             "command": req.command,
             "expected_count": req.expected_count,
         }
+
+    # -----------------------------------------------------------------------
+    # Endpoints HTTP fallback para Pollen (Variante D-bis, día 26)
+    #
+    # Pensados para Floema Android sin WebSocket persistente. Cada endpoint
+    # es el equivalente HTTP del evento WS homónimo. Coexisten con el WS
+    # (Floema usa el que tenga implementado).
+    #
+    # Sesión HTTP: se mantiene viva con POST /pollen/hello + heartbeats
+    # periódicos (POST /pollen/heartbeat). Auto-expira tras
+    # HEARTBEAT_TIMEOUT_S=30s sin heartbeat. Todos los endpoints /pollen/*
+    # refrescan el last_heartbeat automáticamente.
+    # -----------------------------------------------------------------------
+
+    @app.post("/pollen/hello")
+    async def pollen_hello_http(payload: PollenHelloPayload) -> dict[str, Any]:
+        """Equivalente HTTP del evento WS `pollen_hello`.
+
+        Devuelve el payload `meristem_ready` con la lista de policies listas
+        para retirar para los targets que Pollen indica.
+
+        Idempotente: si Floema reenvía hello (ej. reinicio app), refresca
+        la sesión sin error.
+        """
+        # Si hay WS activo, rechazamos para no mezclar modalidades.
+        if pollen_manager.is_http_session is False and pollen_manager.is_connected:
+            raise HTTPException(
+                status_code=409,
+                detail="Ya hay un Pollen conectado vía WebSocket en este Meristem.",
+            )
+        pollen_manager.register_http_hello(payload.pollen_id, payload.app_version)
+        persistence.log_ws_event(
+            direction="in",
+            event=WSEvent.POLLEN_HELLO.value,
+            payload=payload.model_dump(mode="json"),
+        )
+        logger.info(
+            "Pollen %s v%s conectado (HTTP). bundles_pending=%d, policies_pickup=%s",
+            payload.pollen_id, payload.app_version,
+            payload.bundles_pending_count,
+            payload.policies_to_pickup_target_ids,
+        )
+        pickup = []
+        for tid in payload.policies_to_pickup_target_ids:
+            pol = persistence.get_latest_policy_for(tid)
+            if pol:
+                pickup.append({"target_node_id": tid, "policy_id": pol.policy_id})
+        ready_payload = MeristemReadyPayload(
+            meristem_id=MERISTEM_ID,
+            version="0.1.0",
+            policies_ready_for_pickup=pickup,
+        ).model_dump(mode="json")
+        persistence.log_ws_event(
+            direction="out",
+            event=WSEvent.MERISTEM_READY.value,
+            payload=ready_payload,
+        )
+        return ready_payload
+
+    @app.post("/pollen/heartbeat")
+    async def pollen_heartbeat_http() -> dict[str, Any]:
+        """Equivalente HTTP del evento WS `pollen_heartbeat`.
+
+        Refresca el last_heartbeat. Floema debe llamar a este endpoint cada
+        10-20s mientras quiera mantener la sesión "conectada" en la UI
+        Meristem. Si pasa más de 30s sin heartbeat, la sesión auto-expira.
+        """
+        if not pollen_manager.is_connected:
+            raise HTTPException(
+                status_code=409,
+                detail="Pollen no ha hecho hello (o sesión expirada).",
+            )
+        pollen_manager.heartbeat()
+        persistence.log_ws_event(
+            direction="in",
+            event=WSEvent.POLLEN_HEARTBEAT.value,
+            payload={},
+        )
+        ack_payload = {"online": True}
+        persistence.log_ws_event(
+            direction="out",
+            event=WSEvent.MERISTEM_HEARTBEAT_ACK.value,
+            payload=ack_payload,
+        )
+        return ack_payload
+
+    @app.post("/pollen/bundles-pushed")
+    async def pollen_bundles_pushed_http(
+        payload: BundlesPushedPayload,
+    ) -> dict[str, str]:
+        """Equivalente HTTP del evento WS `bundles_pushed`.
+
+        Pollen llama a este endpoint cuando termina de empujar bundles
+        vía POST /visit, para señalizar a la UI Meristem que la tanda
+        está completa. Refresca heartbeat automáticamente.
+        """
+        if not pollen_manager.is_connected:
+            raise HTTPException(
+                status_code=409,
+                detail="Pollen no conectado (envía /pollen/hello primero).",
+            )
+        pollen_manager.heartbeat()
+        persistence.log_ws_event(
+            direction="in",
+            event=WSEvent.BUNDLES_PUSHED.value,
+            payload=payload.model_dump(mode="json"),
+        )
+        logger.info(
+            "Pollen termino de empujar bundles (HTTP): count=%d ids=%s",
+            payload.count, payload.bundle_ids,
+        )
+        return {"status": "ack"}
+
+    @app.post("/pollen/policies-pulled")
+    async def pollen_policies_pulled_http(
+        payload: PoliciesPulledPayload,
+    ) -> dict[str, str]:
+        """Equivalente HTTP del evento WS `policies_pulled`.
+
+        Pollen llama a este endpoint cuando termina de retirar policies
+        vía GET /policies/recent (o GET /policy/by-target). Refresca
+        heartbeat automáticamente.
+        """
+        if not pollen_manager.is_connected:
+            raise HTTPException(
+                status_code=409,
+                detail="Pollen no conectado (envía /pollen/hello primero).",
+            )
+        pollen_manager.heartbeat()
+        persistence.log_ws_event(
+            direction="in",
+            event=WSEvent.POLICIES_PULLED.value,
+            payload=payload.model_dump(mode="json"),
+        )
+        logger.info(
+            "Pollen termino de retirar policies (HTTP): count=%d ids=%s",
+            payload.count, payload.policy_ids,
+        )
+        return {"status": "ack"}
+
+    @app.post("/pollen/goodbye")
+    async def pollen_goodbye_http() -> dict[str, str]:
+        """Desconexión limpia HTTP (opcional).
+
+        Si Pollen sale de la app, puede llamar a este endpoint para que la
+        UI Meristem refleje desconexión inmediata (en vez de esperar al
+        timeout de 30s del heartbeat).
+        """
+        await pollen_manager.disconnect()
+        persistence.log_ws_event(
+            direction="in",
+            event="pollen_goodbye",  # no es evento WS estándar, solo audit
+            payload={},
+        )
+        return {"status": "disconnected"}
 
     # -----------------------------------------------------------------------
     # UI estática para el agricultor (HTML/CSS/JS vanilla servido por FastAPI)

@@ -50,7 +50,25 @@ class PollenConnectionManager:
 
     @property
     def is_connected(self) -> bool:
-        return self._websocket is not None
+        """True si hay sesión activa.
+
+        Considera dos modalidades:
+        - **WebSocket persistente** (Variante D original): `_websocket is not None`.
+        - **HTTP-only** (Variante D-bis añadida día 26 para Floema Android sin WS):
+          `last_heartbeat` reciente (< HEARTBEAT_TIMEOUT_S). Floema mantiene la
+          sesión con POST /pollen/hello + POST /pollen/heartbeat periódicos.
+        """
+        if self._websocket is not None:
+            return True
+        if self._last_heartbeat is not None:
+            elapsed = datetime.utcnow() - self._last_heartbeat
+            return elapsed < timedelta(seconds=HEARTBEAT_TIMEOUT_S)
+        return False
+
+    @property
+    def is_http_session(self) -> bool:
+        """True si la sesión es HTTP-only (no hay WebSocket activo)."""
+        return self._websocket is None and self._last_heartbeat is not None
 
     @property
     def pollen_id(self) -> str | None:
@@ -66,9 +84,16 @@ class PollenConnectionManager:
 
     def state_snapshot(self) -> dict[str, Any]:
         """Snapshot serializable para `/health` y `/sync-state` endpoints."""
+        if self._websocket is not None:
+            mode = "websocket"
+        elif self.is_http_session and self.is_alive:
+            mode = "http"
+        else:
+            mode = "disconnected"
         return {
             "connected": self.is_connected,
             "alive": self.is_alive,
+            "mode": mode,
             "pollen_id": self._pollen_id,
             "app_version": self._app_version,
             "connected_at": (
@@ -112,6 +137,24 @@ class PollenConnectionManager:
         self._pollen_id = pollen_id
         self._app_version = app_version
         self._last_heartbeat = datetime.utcnow()
+
+    def register_http_hello(self, pollen_id: str, app_version: str) -> None:
+        """Registra una sesión HTTP-only (Variante D-bis, día 26).
+
+        Equivalente a `accept_or_reject` + `register_hello` pero sin WS.
+        Floema Android usa esto cuando no levanta WS persistente. La sesión
+        se mantiene viva via heartbeats HTTP periódicos (POST /pollen/heartbeat).
+        Auto-expira tras HEARTBEAT_TIMEOUT_S sin heartbeat.
+
+        Idempotente: si Floema reenvía hello (ej. reconexión), simplemente
+        refresca el last_heartbeat sin error.
+        """
+        self._pollen_id = pollen_id
+        self._app_version = app_version
+        now = datetime.utcnow()
+        if self._connected_at is None:
+            self._connected_at = now
+        self._last_heartbeat = now
 
     def heartbeat(self) -> None:
         """Refresca el last_heartbeat. Llamado en cada mensaje recibido."""
