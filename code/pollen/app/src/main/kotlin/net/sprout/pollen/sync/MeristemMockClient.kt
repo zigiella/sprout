@@ -2,7 +2,6 @@ package net.sprout.pollen.sync
 
 import kotlinx.coroutines.delay
 import net.sprout.pollen.schemas.FieldVisit
-import net.sprout.pollen.schemas.Mode
 import net.sprout.pollen.schemas.PolicyPacket
 
 class MeristemMockClient : MeristemClient {
@@ -20,7 +19,7 @@ class MeristemMockClient : MeristemClient {
             targetNodeId = targetId,
             validUntil = "2026-05-29T10:00:00Z",
             versionChain = emptyList(),
-            modeDefault = Mode.NORMAL,
+            modeDefault = "normal",
             rules = PolicyPacket.Rules(
                 wateringWindow = PolicyPacket.WateringWindow(8, 18),
                 soilMoistureThresholds = emptyMap(),

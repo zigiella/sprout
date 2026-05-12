@@ -18,7 +18,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.sprout.pollen.inference.GemmaEngine
 import net.sprout.pollen.inference.MiniEvaluator
-import net.sprout.pollen.schemas.Mode
 import net.sprout.pollen.schemas.PolicyPacket
 import net.sprout.pollen.schemas.RhizomeSnapshot
 import net.sprout.pollen.sync.RhizomeClient
@@ -74,7 +73,7 @@ fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
                         createdAt = "2026-05-01T12:00:00Z",
                         validUntil = "2026-05-10T12:00:00Z",
                         versionChain = emptyList(),
-                        modeDefault = Mode.NORMAL,
+                        modeDefault = "normal",
                         rules = PolicyPacket.Rules(
                             wateringWindow = PolicyPacket.WateringWindow(0, 23),
                             soilMoistureThresholds = emptyMap(),
