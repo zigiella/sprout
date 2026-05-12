@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meristem-nodo · Sprout (preview)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="logo-mark" aria-hidden="true"></span>
+      <span class="logo-text">Sprout · Meristem-nodo</span>
+    </div>
+    <div class="topbar-chips">
+      <span class="chip chip-llm active" id="chip-llm">LLM: Real</span>
+      <span class="chip chip-pollen connected" id="chip-pollen">Pollen: pollen_07</span>
+      <button class="lang-toggle" id="lang-toggle" type="button" aria-label="Cambiar idioma">
+        <span class="lang-opt active" data-locale="es" id="lang-es">ES</span>
+        <span class="lang-sep" aria-hidden="true">/</span>
+        <span class="lang-opt" data-locale="en" id="lang-en">EN</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="main-grid">
+
+    <section class="zone zone-dashboard">
+      <div class="zone-header">
+        <div class="zone-header-inner">
+          <span class="zone-eyebrow">01 · Almanaque</span>
+          <h2 class="zone-title">Tu parcela hoy</h2>
+        </div>
+        <span class="zone-meta" id="last-sync">Última sync: hace 12m</span>
+      </div>
+      <div class="cards-grid" id="cards-grid">
+
+        <article class="card" data-mode="normal" data-target="rhizome_01">
+          <div class="card-header">
+            <span class="card-title">rhizome_01</span>
+            <span class="card-mode-tag" data-mode="normal">NORMAL</span>
+          </div>
+          <div class="card-reason">Estable</div>
+          <div class="card-rationale">Tu Rhizome funciona con normalidad.</div>
+          <div class="card-meta">
+            <span class="card-meta-bundles">7 bundles</span>
+            <span class="card-meta-policies">6 policies</span>
+            <span class="card-meta-badge">1 rechazo</span>
+            <span class="card-meta-validity">vál. 11 may</span>
+          </div>
+        </article>
+
+        <article class="card" data-mode="alert" data-target="rhizome_02">
+          <div class="card-header">
+            <span class="card-title">rhizome_02</span>
+            <span class="card-mode-tag" data-mode="alert">ALERT</span>
+          </div>
+          <div class="card-reason">Alerta</div>
+          <div class="card-rationale">Hay alerta persistente. Revisa.</div>
+          <div class="card-meta">
+            <span class="card-meta-bundles">3 bundles</span>
+            <span class="card-meta-policies">3 policies</span>
+            <span class="card-meta-validity">vál. 11 may</span>
+          </div>
+        </article>
+
+        <article class="card" data-mode="conservative" data-target="rhizome_03">
+          <div class="card-header">
+            <span class="card-title">rhizome_03</span>
+            <span class="card-mode-tag" data-mode="conservative">CONSERV.</span>
+          </div>
+          <div class="card-reason">Prudencia</div>
+          <div class="card-rationale">Datos ambiguos en la última visita.</div>
+          <div class="card-meta">
+            <span class="card-meta-bundles">4 bundles</span>
+            <span class="card-meta-policies">4 policies</span>
+            <span class="card-meta-validity">vál. 09 may</span>
+          </div>
+        </article>
+
+      </div>
+      <div class="trazabilidad" id="trazabilidad">
+        <span class="trazabilidad-label">Reglas aplicadas:</span>
+        <div class="trazabilidad-strip">
+          <span class="pill pill-confirm" data-rule="confirm_policy">confirm: 5</span>
+          <span class="pill pill-conservative" data-rule="conservative_policy">conservative: 2</span>
+          <span class="pill pill-alert" data-rule="alert_policy">alert: 2</span>
+          <span class="pill pill-refuse" data-rule="refuse">refuse: 0</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="zone zone-control">
+      <div class="zone-header">
+        <div class="zone-header-inner">
+          <span class="zone-eyebrow">02 · Enlace</span>
+          <h2 class="zone-title">Sincronización con Pollen</h2>
+        </div>
+        <span class="zone-meta" id="pollen-meta">online</span>
+      </div>
+      <div class="control-panel" id="control-panel">
+        <div class="status-line connected" id="pollen-status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="status-text">Pollen pollen_07 conectado · hace 3m</span>
+        </div>
+        <div class="control-buttons">
+          <button class="btn btn-primary" id="btn-recoger">Recoger visitas</button>
+          <button class="btn btn-secondary" id="btn-cargar">Cargar policies</button>
+        </div>
+        <div class="progress-line active" id="progress-line">Recoger visitas en curso…</div>
+      </div>
+    </section>
+
+    <section class="zone zone-log">
+      <div class="zone-header">
+        <div class="zone-header-inner">
+          <span class="zone-eyebrow">03 · Bitácora</span>
+          <h2 class="zone-title">Operaciones recientes</h2>
+        </div>
+      </div>
+      <ul class="event-log" id="event-log">
+        <li class="event-row">
+          <span class="event-time">10:32:14</span>
+          <span class="event-arrow in">←</span>
+          <span class="event-name">bundle_received</span>
+          <span class="event-trace">tr_8af3</span>
+        </li>
+        <li class="event-row">
+          <span class="event-time">10:32:18</span>
+          <span class="event-arrow out">→</span>
+          <span class="event-name">policy_emitted</span>
+          <span class="event-trace">tr_8af3</span>
+        </li>
+        <li class="event-row">
+          <span class="event-time">10:30:02</span>
+          <span class="event-arrow in">←</span>
+          <span class="event-name">bundle_received</span>
+          <span class="event-trace">tr_8ad1</span>
+        </li>
+        <li class="event-row">
+          <span class="event-time">10:30:05</span>
+          <span class="event-arrow out">→</span>
+          <span class="event-name">policy_emitted</span>
+          <span class="event-trace">tr_8ad1</span>
+        </li>
+        <li class="event-row">
+          <span class="event-time">10:28:51</span>
+          <span class="event-arrow in">←</span>
+          <span class="event-name">pollen_connected</span>
+          <span class="event-trace">—</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="zone zone-bundles">
+      <div class="zone-header">
+        <div class="zone-header-inner">
+          <span class="zone-eyebrow">04 · Entradas</span>
+          <h2 class="zone-title">Visitas recibidas</h2>
+        </div>
+        <span class="zone-meta" id="bundles-meta">5 de 14</span>
+      </div>
+      <div class="trail-wrap">
+        <table class="trail-table" id="bundles-table">
+          <thead>
+            <tr>
+              <th class="col-time">Hora</th>
+              <th class="col-target">Rhizome</th>
+              <th class="col-pollen">Pollen</th>
+              <th class="col-reason">Resultado</th>
+            </tr>
+          </thead>
+          <tbody id="bundles-tbody">
+            <tr>
+              <td class="col-time">10:32:14</td>
+              <td class="col-target mono">rhizome_01</td>
+              <td class="col-pollen mono">pollen_07</td>
+              <td class="col-reason"><span class="reason-chip" data-rule="confirm_policy">Estable</span></td>
+            </tr>
+            <tr>
+              <td class="col-time">10:30:02</td>
+              <td class="col-target mono">rhizome_02</td>
+              <td class="col-pollen mono">pollen_07</td>
+              <td class="col-reason"><span class="reason-chip" data-rule="alert_policy">Alerta</span></td>
+            </tr>
+            <tr>
+              <td class="col-time">10:22:48</td>
+              <td class="col-target mono">rhizome_03</td>
+              <td class="col-pollen mono">pollen_07</td>
+              <td class="col-reason"><span class="reason-chip" data-rule="conservative_policy">Prudencia</span></td>
+            </tr>
+            <tr>
+              <td class="col-time">10:18:33</td>
+              <td class="col-target mono">rhizome_01</td>
+              <td class="col-pollen mono">pollen_03</td>
+              <td class="col-reason"><span class="reason-chip" data-rule="refuse">Refuse</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="zone zone-policies">
+      <div class="zone-header">
+        <div class="zone-header-inner">
+          <span class="zone-eyebrow">05 · Salidas</span>
+          <h2 class="zone-title">Políticas emitidas</h2>
+        </div>
+        <span class="zone-meta" id="policies-meta">4 de 9</span>
+      </div>
+      <div class="trail-wrap">
+        <table class="trail-table" id="policies-table">
+          <thead>
+            <tr>
+              <th class="col-time">Emitida</th>
+              <th class="col-target">Rhizome</th>
+              <th class="col-mode">Modo</th>
+              <th class="col-validity">Válida hasta</th>
+              <th class="col-rationale">Rationale técnico</th>
+            </tr>
+          </thead>
+          <tbody id="policies-tbody">
+            <tr>
+              <td class="col-time">10:32:18</td>
+              <td class="col-target mono">rhizome_01<br><span class="policy-id-short">pkt_meristem…_a1f2</span></td>
+              <td class="col-mode"><span class="mode-inline" data-mode="normal">NORMAL</span></td>
+              <td class="col-validity">11 may</td>
+              <td class="col-rationale">Bundle limpio: sin emergencias, sin disputas, evidencia coherente. Confirma policy activa +7 días.</td>
+            </tr>
+            <tr>
+              <td class="col-time">10:30:05</td>
+              <td class="col-target mono">rhizome_02<br><span class="policy-id-short">pkt_meristem…_b3c4</span></td>
+              <td class="col-mode"><span class="mode-inline" data-mode="alert">ALERT</span></td>
+              <td class="col-validity">11 may</td>
+              <td class="col-rationale">Emergencia persistente en bundle. Activa modo ALERTA hasta revisión manual del agricultor.</td>
+            </tr>
+            <tr>
+              <td class="col-time">10:22:50</td>
+              <td class="col-target mono">rhizome_03<br><span class="policy-id-short">pkt_meristem…_c5d6</span></td>
+              <td class="col-mode"><span class="mode-inline" data-mode="conservative">CONSERV.</span></td>
+              <td class="col-validity">09 may</td>
+              <td class="col-rationale">Confianza baja en sensor de humedad. Aplica conservative_policy: ventana 48h.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <span class="footer-meta" id="footer-meta">Meristem mer_01 v0.1 · slow brain doméstico</span>
+  </footer>
+
+</body>
+</html>
