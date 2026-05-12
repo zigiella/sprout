@@ -69,7 +69,7 @@ Sprout existe para llevar **criterio operativo a parcelas donde no puedes estar 
 2. *"Toda inteligencia tiene jurisdicción. Y caducidad."* Cada `MissionPatch` lleva TTL corto. Cada `PolicyPacket` lleva ventana de validez. Cada `WeatherDigest` caduca antes de envejecer. Los objetos expirados reciben `EXPIRED → REJECTED` con motivo legible en el `DecisionReceipt`. **Ningún criterio se queda silenciosamente vigente después de su ventana.**
 3. Ningún `PolicyPacket` de Meristem puede reducir los hard limits del firmware. Solo recomendar comportamiento más conservador.
 
-**Patrón clave (validado empíricamente)**: la lógica determinista decide; el LLM solo escribe el rationale. Cuando el offload a GPU causó deriva semántica en el caso de test RD04 (output: `need_clarification` en lugar de `ok`), el sistema no se rompió — el Evaluator determinista mantuvo el contrato mientras el LLM seguía escribiendo prosa segura-pero-fuera-de-contrato. **Esta es la prueba empírica de la tesis Safety & Trust.**
+**Patrón clave (validado empíricamente)**: la lógica determinista decide; el LLM solo escribe el rationale. Cuando el offload a GPU causó deriva semántica en un caso de test (output: `need_clarification` en lugar de `ok`), el sistema mantuvo su contrato — el Evaluator determinista preservó la acción estable mientras el LLM seguía escribiendo prosa segura-pero-fuera-de-contrato. **Prueba empírica de la tesis arquitectural: deriva semántica del modelo + barandilla determinista = comportamiento contractual incluso bajo fallo del LLM.**
 
 ---
 

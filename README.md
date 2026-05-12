@@ -69,7 +69,7 @@ Sprout exists to bring **operational criteria to plots where you can't be every 
 2. *"Every intelligence has jurisdiction. And expiry."* Every `MissionPatch` carries a short TTL. Every `PolicyPacket` carries a validity window. Every `WeatherDigest` expires before going stale. Expired objects get `EXPIRED → REJECTED` with legible reason in `DecisionReceipt`. **No criterion stays silently valid past its window.**
 3. No `PolicyPacket` from Meristem can reduce the firmware's hard limits. It can only recommend more conservative behavior.
 
-**Key pattern (validated empirically)**: deterministic logic decides; the LLM only writes the rationale. When GPU offload caused semantic drift in test case RD04 (output: `need_clarification` instead of `ok`), the system did not break — the deterministic Evaluator held the contract while the LLM continued to author safe-but-off-contract prose. **This is the empirical proof of the Safety & Trust thesis.**
+**Key pattern (validated empirically)**: deterministic logic decides; the LLM only writes the rationale. When GPU offload caused semantic drift in a test case (output: `need_clarification` instead of `ok`), the system held its contract — the deterministic Evaluator kept the action stable while the LLM continued to author safe-but-off-contract prose. **Empirical proof of the architectural thesis: semantic drift in the model + deterministic guardrail = contractual behavior even under LLM failure.**
 
 ---
 
