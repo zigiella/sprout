@@ -170,7 +170,7 @@ object MiniEvaluator {
             originNodeId = "pollen",
             createdAt = Instant.now().toString(),
             validUntil = Instant.now().plus(12, ChronoUnit.HOURS).toString(),
-            versionChain = activePolicy.versionChain + activePolicy.policyId,
+            versionChain = (activePolicy.versionChain ?: emptyList()) + activePolicy.policyId,
             modeDefault = activePolicy.modeDefault,
             rules = newRules,
             rationale = patch.rationaleEs,
