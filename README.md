@@ -6,7 +6,7 @@
 
 # Sprout
 
-> **AI Local-first water optimization for plots the network forgets.**
+> **Local-first AI water optimization for plots the network forgets.**
 > *Safe · explainable · open-source.*
 
 > *"When network is absent — and the human is far — local criteria still irrigate."*
