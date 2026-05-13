@@ -86,7 +86,7 @@ class RoundTripTest {
         """.trimIndent()
         val missionPatch = format.decodeFromString<MissionPatch>(missionPatchJson)
         assertEquals("apply", missionPatch.patchOp)
-        assertEquals(500, missionPatch.budgetCapMl)
+        assertEquals(500f, missionPatch.budgetCapMl)
 
         val validationStampJson = """
             {
