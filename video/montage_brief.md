@@ -1,4 +1,4 @@
-# Montage brief para Bract (CapCut) — Sprout vídeo v1.8.7
+# Montage brief para Bract (CapCut) — Sprout vídeo v1.8.8
 
 > **AVISO IMPORTANTE DE LECTURA — día 26**
 >
@@ -8,8 +8,8 @@
 >
 > Este `montage_brief.md` v0.6 sirvió como guía plano-por-plano para Bract en CapCut durante los días 17-21. Tras el rodaje (días 26-27) y la sesión activa de montaje (días 22-26) bajo presión de timing, el snapshot Bract es ahora la fuente viva del estado real. Este doc preserva la espina estructural por escena y la coordinación cross-frente histórica.
 
-**Versión:** v0.6 (consolidación post-rodaje día 26 — apuntado al snapshot Bract como fuente viva. Historial preserva guía plano-por-plano hasta v0.5)
-**Fecha:** 2026-05-11 (día 26)
+**Versión:** v0.7 (refinamientos copy día 27 — tagline `Local-first AI` + voz humana E5 castellano + adverbios potentes en Z99 + sub-text `policies expire` en CartelaPollen. Apuntado al snapshot Bract como fuente viva)
+**Fecha:** 2026-05-12 (día 27)
 **Autora:** Corola
 **Para:** Bract (montadora CapCut, lectura repo)
 **Formato:** según mensaje Bract en PR #65 / borrador-mensaje-corola-incoherencias_bract.md (el formato que ella pidió en su día).
@@ -571,6 +571,21 @@ Bea graba la frase castellana literal (*"Vuelvo el viernes. Esta planta aguanta 
 ---
 
 ## Historial
+
+- **v0.7** (2026-05-12, día 27, Corola) — refinamientos copy día 27 tras Bea retomar con feedback puntual + lectura cruzada README + writeup. Cambios consolidados sobre v0.6:
+  1. Tagline oficial proyecto: `Local-first AI water optimization for plots the network forgets.` Aplicar en E00 apertura + Z99 sub-claim.
+  2. Z99 tagline cierre con adverbios potentes recuperados: `Sprout: When network is absent, and the human is far, local criteria still irrigate.` Alinea video ↔ README ↔ writeup.
+  3. VO E07b manifesto: RETIRADO el cambio "local" (decisión Bea día 27 corrigiendo segundo voto Corola — `local plot` es pleonasmo). VO queda como estaba: `Rhizome understands the plot, Pollen the visit.`
+  4. Sub-text `Mobile node · policies expire` en CartelaPollen (0:43-0:46).
+  5. Refinamientos VO cenital: `Sprout starts with one plot.` + `And many more plots.`
+  6. Voz humana E5 castellano literal rescatada (reactiva excepción narrativa día 18-19, reversión consciente de decisión día 26).
+  7. Cartelas E10 y invariante E7 sin cambios (coherencia con README + writeup).
+  8. Cartela `Imagine pot`: recurso gráfico, sin sobre-pensar.
+  9. Policy/criteria: asimetría intencional documentada.
+
+  Pendiente decisión Bea "para luego": invariante E7 climax + recortes 3:00.
+
+- **v0.6** (2026-05-11, día 26, Corola) — consolidación post-rodaje día 26 apuntada al snapshot Bract como fuente viva. Convención `doc estable + fuente viva` formalizada. Sin cambios de copy operativos en este doc, solo header reorientado a apuntar al snapshot.
 
 - **v0.5** (2026-05-06, día 21, Corola) — cierre decisión Bea Asset 9 E6: ruta principal `Context`, `WeatherDigest` plan B reactivable. Cambio sobre v0.4: sección Escena 6 reescrita — ruta principal v1.8.3 = sin meteo (`Context ferry` + `Context accepted`), plan B reactivable = con meteo (`WeatherDigest ferry` + `WeatherDigest accepted`, captura ya producida por Venation). Estado E6 actualizado en tabla resumen + cabecera + planos 6A y 6C (sin estación meteo en plano físico, plan B reactivable documentado para Bract en CapCut). Decisión Bea día 21 cerrada en caliente con Venation antes de producir lote v1.8.1: *"no da tiempo a hacer la meteo. Si al final da tiempo, ella ya tiene hecha la captura."*
 - **v0.4** (2026-05-06, día 21, Corola) — recuperación cartela *"Imagine this pot is a whole plot."* al inicio de E2 con misma gráfica que `"Three days later"` (E8). Cambio sobre v0.3: split del Plano 2A (4s) en Plano 2A-pre (3s, cartela full-screen tipográfica) + Plano 2A (1s, plano del Jetson). E2 mantiene 25s totales. Función narrativa: bisagra tipográfica entre E1 (datos globales) y E2 (plano técnico) — equivalente visual a `"Three days later"` en E8. Recupera contrato visual con el espectador (filmamos macetas, hablamos de parcelas) que vivía en E1 v1.6 y se cayó en v1.7. Decisión Bea día 21 tras pregunta retrospectiva sobre v1.6.

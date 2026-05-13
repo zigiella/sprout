@@ -8,10 +8,10 @@
 >
 > Este `copies_bilingual.md` v0.7 preserva la trazabilidad histórica y las versiones estables hasta v1.8.3. Las decisiones de copy días 24-26 (vocabulario `policy`/`criteria`, voz humana E5 doblada con DbwW, cenital reescrito, E8 eliminado, refinamientos Z99 y E10) están consolidadas como historial pero NO sustituyen al snapshot vivo. Para edición de copy operativa: ir al snapshot y a los `data/*.json` que lo alimentan.
 
-**Versión:** v0.7 (consolidación post-rodaje día 26 — apuntada al snapshot Bract como fuente viva. Historial preserva versiones estables v1.8.x)
-**Fecha:** 2026-05-11 (día 26)
+**Versión:** v0.8 (refinamientos copy día 27 — tagline `Local-first AI` + voz humana E5 castellano rescatada + adverbios potentes en Z99 + sub-text `policies expire` en CartelaPollen. Apuntada al snapshot Bract como fuente viva)
+**Fecha:** 2026-05-12 (día 27)
 **Autora:** Corola
-**Origen:** decisión Bea día 16 — *"Necesitaré tener siempre los copies del video (textos VO, voz en off, cartelas, etc en ES y EN)."* Actualizado al giro estratégico día 18-19 (12 escenas, VO inglés master, frases fuertes reformuladas, Meristem en MVP). **Convención day 26:** doc estable + fuente viva (snapshot Bract).
+**Origen:** decisión Bea día 16 — *"Necesitaré tener siempre los copies del video (textos VO, voz en off, cartelas, etc en ES y EN)."* Actualizado al giro estratégico día 18-19 (12 escenas, VO inglés master, frases fuertes reformuladas, Meristem en MVP). **Convención day 26:** doc estable + fuente viva (snapshot Bract). **Refinamientos día 27:** alineación cross-canal con `README.md` + `writeup/draft.md` (los docs públicos que el jurado lee primero).
 
 ---
 
@@ -393,6 +393,21 @@ Gemma is a trademark of Google LLC.
 ---
 
 ## Historial
+
+- **v0.8** (2026-05-12, día 27, Corola) — refinamientos copy día 27 tras Bea retomar con feedback puntual sobre los 5 votos del día 26 + lectura cruzada README + writeup que me da contexto cross-canal. Cambios consolidados sobre v0.7:
+  1. **Tagline oficial:** `AI Local-first` → **`Local-first AI water optimization for plots the network forgets.`** (corrección gramatical orden modificadores en inglés). Cascada en README + writeup + E00 + Z99 sub-claim.
+  2. **Z99 tagline cierre con adverbios potentes recuperados:** *"Sprout: When there is no network, and no one is near, the criteria keep irrigating"* → ***"Sprout: When network is absent, and the human is far, local criteria still irrigate."*** Alinea video ↔ README línea 12 ↔ writeup §0 subtítulo.
+  3. **VO E07b manifesto: RETIRADO el cambio "local"** (decisión Bea día 27 corrigiendo segundo voto Corola). *"local plot"* es pleonasmo — un `plot` agrícola es local por definición. VO queda como estaba: *"Rhizome understands the plot, Pollen the visit."* El concepto "local" respira suficientemente en: cartela E00 apertura (`Local-first AI`), sub-claim Z99 (`Local-first AI`), VO E4 (`the local criteria`), Z99 cierre (`local criteria still irrigate`).
+  4. **Sub-text `Mobile node · policies expire`** en CartelaPollen (0:43-0:46) — anclaje `expiry` que respira sin alargar VO.
+  5. **Refinamientos VO cenital aplicados:**
+     - 2:06-2:09 E3b: *"The Sprout system supports one plot."* → ***"Sprout starts with one plot."***
+     - 2:17-2:19 cenital: *"And it supports many more plots."* → ***"And many more plots."*** (telegráfico).
+  6. **Voz humana E5 castellano literal rescatada** (decisión Bea día 27): retira dub DbwW de la línea 1:16-1:23, vuelve a regla v1.7 — *"Vuelvo el viernes. Esta planta aguanta más seca de lo que crees, riega un poco menos."* Reactiva excepción narrativa día 18-19. **Reversión consciente de decisión día 26** (que retiró la excepción). Italic + tipografía diferenciada en pantalla, subtítulo EN entre comillas marca voz humana no narradora.
+  7. **Cartelas E10 y invariante E7 SIN CAMBIOS** — revierto mi voto día 26 por coherencia con README línea 68 + writeup §3 línea 113 (verbos `arbitrates / mediates / refines` consolidados oficialmente).
+  8. **Cartela `Imagine pot`:** recurso gráfico, sin sobre-pensar.
+  9. **Policy/criteria:** asimetría intencional documentada (policies = regla Meristem operativa con caducidad; criteria = criterio local Rhizome persistente).
+
+  Pendiente decisión Bea "para luego": invariante E7 climax (propuesta cero cambios lista) + recortes 3:00 (priorizar TF1 + créditos antes que trim cierre).
 
 - **v0.7** (2026-05-11, día 26, Corola) — consolidación post-rodaje día 26. Tras 5 días de ausencia operativa de Corola (días 22-25, Bea tiró millas con rodaje + Bract por presión de timing), retomo en día 26: leo snapshot Bract `corola-video-snapshot.md` (master 3:08.5, 3 bloques, voz pro DbwW), respondo 5 preguntas de copy día 26 con voto razonado, formalizo cambios en docs. Cambios estructurales del periodo días 22-26 + 5 votos día 26 documentados en el aviso de lectura al inicio del documento + en el historial v1.8.7 de `script.md`. **Convención day 26: doc estable + fuente viva.** Este `copies_bilingual.md` v0.7 preserva trazabilidad histórica hasta v1.8.3; el snapshot Bract es el copy vivo del video. Cambios consolidados:
   1. **VO master EN definitivo con voz pro ElevenLabs DbwW** (21 MP3, settings 0.7/0.9/0.1/0.9 multilingual_v2). Bea confirmó *"BUAH! queda fetén."*

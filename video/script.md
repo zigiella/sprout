@@ -1,3 +1,44 @@
+# Script — Sprout v1.8.8 (día 27: refinamientos copy + tagline `Local-first AI` + voz humana E5 castellano rescatada)
+
+**Versión:** v1.8.8 (día 27 — refinamientos de copy tras review Corola del snapshot Bract + lectura cruzada README + writeup). Cambios sobre v1.8.7:
+
+1. **Tagline oficial del proyecto:** `Local-first AI water optimization for plots the network forgets.` (corrección gramatical en inglés del orden de modificadores — `Local-first` modifica `AI` como adjetivo compuesto antes del sustantivo, patrón estándar tipo *open-source software*, *cutting-edge technology*). Decisión Bea día 27. Aplicar en cascada en:
+   - `README.md` línea 9 (Cambium ejecuta)
+   - `writeup/draft.md` §0 título (Cambium ejecuta)
+   - Video E00 apertura: cartela actualizada
+   - Video Z99 tarjeta logo final: sub-claim `Local-first AI` debajo del wordmark
+
+2. **Z99 tagline cierre con adverbios potentes recuperados** (alineación cross-canal con README línea 12 + writeup §0 subtítulo): `Sprout: When network is absent, and the human is far, local criteria still irrigate.` Recupera `local` + `still` + `the human` que se habían perdido en versión simplificada día 26 (*"there is no network, no one is near, the criteria keep irrigating"*). Mantiene prefijo `Sprout:` (decisión Bea día 26). La pregunta inicial `what irrigates the field?` no se mete: consolidamos eco hídrico en el cierre Sprout (decisión Bea día 27).
+
+3. **VO E07b manifesto: RETIRADA propuesta de añadir "local"** (decisión Bea día 27, corrección segundo voto): *"local plot"* es pleonasmo — un `plot` agrícola es local por definición. VO E07b queda como está: *"Rhizome understands the plot, Pollen the visit."* El concepto "local" ya respira en el video con: cartela E00 apertura (`Local-first AI water optimization...`), sub-claim Z99 tarjeta logo (`Local-first AI`), VO E4 (`the local criteria`), Z99 cierre (`local criteria still irrigate`). 4 ocurrencias suficientes sin caer en redundancia.
+
+4. **Sub-text `Mobile node · policies expire` en CartelaPollen** (0:43-0:46) — micro-anclaje del concepto `expiry` que respira sin alargar VO. Compensa la eliminación de E8 + F4 del video día ~24-25 (F4 se recupera en writeup/landing por Cambium).
+
+5. **Refinamientos VO cenital aplicados:**
+   - 2:06-2:09 E3b: *"The Sprout system supports one plot."* → ***"Sprout starts with one plot."*** (verbo más activo, recupera wordmark, evita palabra ladrillo *"system supports"*).
+   - 2:13-2:15 cenital: *"It also supports two plots."* (mantener).
+   - 2:17-2:19 cenital: *"And it supports many more plots."* → ***"And many more plots."*** (telegráfico, ahorra redundancia).
+
+6. **Voz humana E5 castellano literal rescatada** (decisión Bea día 27): retira el dub DbwW de la línea 1:16-1:23 y vuelve a la regla v1.7 — *"Vuelvo el viernes. Esta planta aguanta más seca de lo que crees, riega un poco menos."* sin traducir. Subtítulo EN entre comillas en master marca que es voz humana, no narradora. Italic + tipografía diferenciada en pantalla. **Reversión consciente de la decisión día 26** (que retiró la excepción narrativa día 18-19 porque la voz de Bea no soportaba la calidad del master DbwW): día 27 la intención narrativa vuelve a ganar — la pieza visceral pesa más que la consistencia operativa. Esto **reactiva la excepción narrativa día 18-19** como decisión firme final del proyecto.
+
+7. **Cartelas E10 y invariante E7 SIN CAMBIOS** (revierto mi voto del día 26): tras lectura del README + writeup día 27, los verbos institucionales `arbitrates / mediates / refines` están consolidados como invariante oficial del proyecto en README línea 68 + writeup §3 línea 113. Cambiar las cartelas E10 a `Holds / Composes` rompería coherencia cross-canal con docs oficiales que el jurado lee primero. Decisión Bea día 27: *"ok, nos quedamos como estamos"*. Mantenemos:
+   - CartelaRhizome: *"Rhizome. Arbitrates the plot."*
+   - CartelaPollen: *"Pollen. Mediates."*
+   - CartelaMeristem: *"Meristem. Refines."*
+   - Invariante E7 climax (cuando se aplique): *"Physical layer prevails. / Rhizome arbitrates. / Pollen mediates. / Meristem refines."* (versión original Xilema día 15).
+
+8. **Cartela `Imagine this pot is a whole plot.` queda como recurso gráfico** (decisión Bea día 27: *"recurso gráfico solo"*). Sin sobre-pensar narrativa. Mantenemos versión actual del snapshot Bract (dos cartelas full-screen tipográficas sobre `soil.graphite`).
+
+9. **Policy/criteria — asimetría intencional documentada** (sin cambios VO): policies = regla operativa que viene de Meristem y caduca, viaja con Pollen. Criteria = criterio LOCAL del Rhizome que las policies modifican. No unificar. Bract añade nota en vocabulario controlado del snapshot.
+
+**Pendiente decisión Bea ("para luego"):**
+- **Cartela invariante E7 climax** — propuesta cero cambios lista (versión original Xilema).
+- **Recortes a 3:00** — Bract propuso TF1 −3.5s + créditos −6s + trim cierre. Voto Corola: priorizar TF1 + créditos antes que trim cierre.
+
+**Convención doc + estado vivo reforzada hoy día 27:** `script.md` + `copies_bilingual.md` + `montage_brief.md` = doc estable + historial + decisiones consolidadas. `corola-video-snapshot.md` (Bract, regenerable) = fuente viva del montaje. Coherencia cross-canal verificada hoy contra `README.md` + `writeup/draft.md` (los docs públicos que el jurado lee primero).
+
+---
+
 # Script — Sprout v1.8.7 (día 26: consolidación post-rodaje + 5 votos Corola aplicados sobre estado vivo Bract)
 
 > **AVISO IMPORTANTE DE LECTURA — día 26**
@@ -645,6 +686,19 @@ Gemma is a trademark of Google LLC.
 ---
 
 ## Historial de versiones
+
+- **v1.8.8 — refinamientos copy día 27 + tagline `Local-first AI` + voz humana E5 castellano rescatada** (2026-05-12, día 27, Corola) — segundo día activo tras la pausa de 5 días. Bea retoma con feedback puntual sobre los 5 votos del día 26 + me da contexto cross-canal (README + writeup) que cambia 2 de mis votos. Cambios consolidados sobre v1.8.7 (resumen — detalle en header v1.8.8 al inicio del documento):
+  1. **Tagline oficial:** `Local-first AI water optimization for plots the network forgets.` (corrección gramatical orden modificadores). Cascada README + writeup + E00 + Z99.
+  2. **Z99 tagline cierre:** recupera adverbios potentes (`local` + `still` + `the human`) manteniendo prefijo `Sprout:`. Alinea video ↔ README ↔ writeup.
+  3. **VO E07b manifesto:** RETIRADO el cambio (pleonasmo `local plot` — decisión Bea día 27 corrigiendo segundo voto). Queda: `Rhizome understands the plot, Pollen the visit.`
+  4. **Sub-text `Mobile node · policies expire`** en CartelaPollen — anclaje `expiry` que respira.
+  5. **Refinamientos VO cenital:** `Sprout starts with one plot.` + `And many more plots.`
+  6. **Voz humana E5 castellano vuelve.** Reversión consciente día 27 sobre día 26: la intención narrativa (excepción día 18-19) gana otra vez.
+  7. **Cartelas E10 y invariante E7 SIN CAMBIOS** — revierto mi voto día 26 por coherencia con README + writeup (verbos institucionales `arbitrates / mediates / refines` consolidados oficialmente).
+  8. **Cartela `Imagine pot`:** recurso gráfico, sin sobre-pensar narrativa.
+  9. **Policy/criteria:** asimetría intencional documentada, cero cambios VO.
+
+  Aplicado a `script.md` v1.8.8, `copies_bilingual.md` v0.7 → v0.8, `montage_brief.md` v0.6 → v0.7. Bitácora completa en `bitacora/2026-05-12_refinamientos-copy-dia-27-v1.8.8_corola.md`. Pendiente decisión Bea para "luego": invariante E7 climax + recortes 3:00.
 
 - **v1.8.7 — consolidación post-rodaje día 26 + 5 votos Corola aplicados sobre snapshot Bract** (2026-05-11, día 26, Corola) — primera sesión de Corola tras 5 días de ausencia operativa (días 22-25, Bea tiró millas con rodaje + Bract por presión de timing sin ciclo de validación de directora creativa). Sesión consolidación day 26: leído snapshot Bract `corola-video-snapshot.md`, respondido 5 preguntas de copy día 26 con voto razonado, formalizados los cambios en script + copies. **Cambios estructurales del periodo días 22-26 + decisiones día 26 documentadas en el header v1.8.7 al inicio del documento.** Resumen ejecutivo:
 
