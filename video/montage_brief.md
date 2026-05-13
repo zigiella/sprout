@@ -1,7 +1,15 @@
-# Montage brief para Bract (CapCut) — Sprout vídeo v1.8
+# Montage brief para Bract (CapCut) — Sprout vídeo v1.8.7
 
-**Versión:** v0.5 (cierre decisión Bea día 21 sobre Asset 9 E6: ruta principal `Context`, `WeatherDigest` plan B reactivable. Apilado completo de las 12 escenas v1.8.3)
-**Fecha:** 2026-05-06 (día 21)
+> **AVISO IMPORTANTE DE LECTURA — día 26**
+>
+> La **fuente viva de verdad** sobre el montaje del video (master 3:08.5, 3 bloques, timeline por clip/cartela/PIP, VOs con MP3 generados) es:
+>
+> **`C:\DATA\PETS\CLAUDE\equipo-agentes\video-proyecto\produccion\handoffs\corola-video-snapshot.md`** (regenerable con `python scripts/build-corola-snapshot.py` desde `cutcli/10-borrador-rodaje-bea1/`).
+>
+> Este `montage_brief.md` v0.6 sirvió como guía plano-por-plano para Bract en CapCut durante los días 17-21. Tras el rodaje (días 26-27) y la sesión activa de montaje (días 22-26) bajo presión de timing, el snapshot Bract es ahora la fuente viva del estado real. Este doc preserva la espina estructural por escena y la coordinación cross-frente histórica.
+
+**Versión:** v0.6 (consolidación post-rodaje día 26 — apuntado al snapshot Bract como fuente viva. Historial preserva guía plano-por-plano hasta v0.5)
+**Fecha:** 2026-05-11 (día 26)
 **Autora:** Corola
 **Para:** Bract (montadora CapCut, lectura repo)
 **Formato:** según mensaje Bract en PR #65 / borrador-mensaje-corola-incoherencias_bract.md (el formato que ella pidió en su día).
