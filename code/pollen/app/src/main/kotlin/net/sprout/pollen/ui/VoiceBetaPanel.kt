@@ -23,6 +23,17 @@ import net.sprout.pollen.schemas.RhizomeSnapshot
 import net.sprout.pollen.sync.RhizomeClient
 import net.sprout.pollen.voice.PollenVoiceInfra
 
+import android.app.Activity
+import android.content.Intent
+import android.speech.RecognizerIntent
+
+import kotlinx.serialization.json.Json
+
+import androidx.compose.ui.res.stringResource
+import net.sprout.pollen.R
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 /**
  * BETA placeholder: en el flujo real (device build), la compilacion voz -> MissionPatch
  * la hace LiteRtInfra.sendAudioFile() devolviendo JSON estructurado del modelo Gemma 4 E4B.
@@ -48,17 +59,6 @@ private fun buildPlaceholderMissionPatch(transcript: String, snapshot: RhizomeSn
         patchOp = "apply"
     )
 }
-
-import android.app.Activity
-import android.content.Intent
-import android.speech.RecognizerIntent
-
-import kotlinx.serialization.json.Json
-
-import androidx.compose.ui.res.stringResource
-import net.sprout.pollen.R
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 
 @Composable
 fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
