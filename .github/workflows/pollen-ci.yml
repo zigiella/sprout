@@ -37,14 +37,15 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.6'
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
       - name: Assemble debug
-        run: gradle assembleDebug --stacktrace
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Unit tests
-        run: gradle testDebugUnitTest --stacktrace
+        run: ./gradlew testDebugUnitTest --stacktrace
 
       - name: Publish test results
         if: always()

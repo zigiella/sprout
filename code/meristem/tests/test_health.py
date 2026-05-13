@@ -64,7 +64,15 @@ def test_create_app_shadow_on_without_genai_raises(tmp_path: Path) -> None:
     presente."""
     import importlib.util
 
-    if importlib.util.find_spec("google.genai") is not None:
+    # `find_spec` puede lanzar `ModuleNotFoundError` si el paquete padre
+    # `google` no existe en absoluto (no solo si falta el sub-paquete
+    # `genai`). Envolvemos para tratar ambos casos como "no instalado".
+    try:
+        has_genai = importlib.util.find_spec("google.genai") is not None
+    except ModuleNotFoundError:
+        has_genai = False
+
+    if has_genai:
         pytest.skip("google-genai instalada; test no aplica en este entorno.")
     # `ImportError` es la superclase de `ModuleNotFoundError`. Python 3.13
     # levanta `ImportError: cannot import name 'genai' from 'google'`
