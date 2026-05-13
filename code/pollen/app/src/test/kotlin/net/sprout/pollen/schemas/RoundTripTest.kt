@@ -65,93 +65,10 @@ class RoundTripTest {
         assertEquals(obj, obj2)
     }
 
-    @Test
-    fun testWeatherPacketRoundTrip() {
-        val rawJson = """
-            {
-              "schema_version": "1.0",
-              "created_at": "2026-04-16T12:15:00Z",
-              "origin_node_id": "pollen_01",
-              "signature": null,
-              "packet_id": "pkt_weather_pollen_01_20260416T121500_e7a2",
-              "observed_at": "2026-04-16T11:45:00Z",
-              "observed_by_node_id": "rhizome_02",
-              "provenance": "ferried",
-              "valid_until": "2026-04-16T17:45:00Z",
-              "location": {
-                "lat": 42.1828,
-                "lon": 1.9931,
-                "altitude_m": 1100,
-                "label": "Castellar de n'Hug, parcela A"
-              },
-              "measurements": {
-                "temperature_c": 18.4,
-                "humidity_rel_pct": 62.0,
-                "pressure_hpa": 1013.5,
-                "rain_last_1h_mm": 0.0,
-                "rain_last_24h_mm": 2.4,
-                "wind_speed_kmh": 8.2,
-                "wind_direction_deg": 220,
-                "solar_radiation_wm2": 485,
-                "uv_index": 4.8
-              },
-              "confidence": 0.85,
-              "notes": "Estacion WS90 en rhizome_02. Ultima calibracion hace 3 semanas."
-            }
-        """.trimIndent()
-
-        val obj = format.decodeFromString<WeatherPacket>(rawJson)
-        assertNotNull(obj)
-        assertEquals(WeatherProvenance.FERRIED, obj.provenance)
-        assertEquals(62.0f, obj.measurements.humidityRelPct)
-
-        val encoded = format.encodeToString(obj)
-        val obj2 = format.decodeFromString<WeatherPacket>(encoded)
-        assertEquals(obj, obj2)
-    }
-
-    @Test
-    fun testPolicyDeltaRoundTrip() {
-        val rawJson = """
-            {
-              "schema_version": "1.0",
-              "created_at": "2026-04-16T15:00:00Z",
-              "origin_node_id": "meristem_01",
-              "signature": null,
-              "delta_id": "delta_meristem_01_20260416T150000_c92d",
-              "target_node_id": "rhizome_01",
-              "base_policy_id": "pkt_rhizome_01_20260416T083015_d5e7",
-              "patches": [
-                {
-                  "op": "replace",
-                  "path": "rules.soil_moisture_thresholds.parcel_b.min_pct",
-                  "value": 32.0
-                },
-                {
-                  "op": "replace",
-                  "path": "rules.daily_water_budget_liters",
-                  "value": 10.0
-                },
-                {
-                  "op": "add",
-                  "path": "rules.conservative_triggers",
-                  "value": "humidity_below_25_forecast"
-                }
-              ],
-              "rationale": "Forecast Pollen trae humedad baja esperada en 24h. Subir budget y anadir trigger.",
-              "ttl_seconds": 86400,
-              "priority": "normal"
-            }
-        """.trimIndent()
-
-        val obj = format.decodeFromString<PolicyDelta>(rawJson)
-        assertNotNull(obj)
-        assertEquals("replace", obj.patches[0].op)
-
-        val encoded = format.encodeToString(obj)
-        val obj2 = format.decodeFromString<PolicyDelta>(encoded)
-        assertEquals(obj, obj2)
-    }
+    // Removidos: testWeatherPacketRoundTrip + testPolicyDeltaRoundTrip
+    // Estos schemas (WeatherPacket, PolicyDelta) se eliminaron en commit
+    // 56dafaf como parte de la migracion a contratos V2 (WeatherDigest,
+    // MissionPatch, PolicyPacket). testV2SchemasRoundTrip cubre los nuevos.
 
     @Test
     fun testV2SchemasRoundTrip() {

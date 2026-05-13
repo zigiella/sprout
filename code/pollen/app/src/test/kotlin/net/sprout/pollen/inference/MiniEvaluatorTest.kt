@@ -27,7 +27,7 @@ class MiniEvaluatorTest {
         createdAt = "2026-05-01T12:00:00Z",
         validUntil = "2026-05-10T12:00:00Z",
         versionChain = emptyList(),
-        modeDefault = Mode.NORMAL,
+        modeDefault = "normal",
         rules = PolicyPacket.Rules(
             wateringWindow = PolicyPacket.WateringWindow(0, 23),
             soilMoistureThresholds = emptyMap(),
