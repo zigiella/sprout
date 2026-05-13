@@ -1,57 +1,96 @@
 # pollen/
 
-Aplicacion Android para el Pixel 10 Pro. Es el nodo itinerante.
+Aplicación Android para el Pixel 10 Pro. Es el **nodo itinerante** del sistema Sprout.
 
 ## Rol
 
-- Sync local con Rhizome via BLE + WiFi Direct
-- Inferencia on-device con Gemma 4 E2B via LiteRT (plan A) o llama.cpp (plan B)
-- Audit visual en vivo comparando belief de Rhizome vs observacion directa
-- Generacion de weather_packets, contradiction_alerts y policy_deltas
-- Transporte fisico de contexto hacia Meristem
+- Sync local con Rhizome vía **HTTP polling** sobre WiFi (Rhizome expone fachada HTTP de lectura en el Jetson).
+- Inferencia on-device con **Gemma 4 E4B vía LiteRT-LM** (Google AI Edge), con **audio multimodal nativo**: la app graba `.wav` 16 kHz desde el micrófono y lo inyecta directamente al modelo sin pipeline STT separado.
+- Compilación de la intención humana en un `MissionPatch` estructurado con caducidad.
+- Validación cruzada (`ValidationStamp`) del estado de Rhizome contra la observación directa del operario.
+- Transporte físico de contexto (`WeatherDigest`, `MissionPatch`) hacia Meristem entre visitas.
 
 Detalle completo en [`docs/11_pollen_spec.md`](../../docs/11_pollen_spec.md).
 
 ## Stack
 
-- Kotlin + Jetpack Compose
-- Google AI Edge LiteRT / MediaPipe LLM Inference API
-- Android BLE + WiFi P2P APIs
-- `kotlinx.serialization` para schemas JSON (mismos que `shared/schemas/`)
+- **Kotlin** + Jetpack Compose para UI.
+- **LiteRT-LM Android** (`com.google.ai.edge.litertlm:litertlm-android`) para inferencia Gemma 4 E4B con audio multimodal.
+- **`kotlinx.serialization`** para los schemas JSON (compartidos con `code/shared/schemas/`).
+- **Ktor / OkHttp** para HTTP polling contra Rhizome y Meristem.
 
-## Estructura (a construir)
+## Build flavors
+
+La app se construye en dos flavors distintos:
+
+| Flavor | Para qué | Inferencia | Modelo requerido | APK |
+|--------|----------|------------|------------------|-----|
+| **`demo`** | Emulador, dispositivos sin recursos, walkthrough de la UI sin modelo | Mock LiteRT determinista | Ninguno | [`demo/pollen-demo.apk`](../../demo/pollen-demo.apk) (~39 MB) |
+| **`device`** | Pixel 10 Pro u otro Android 12+ real, con Gemma 4 E4B local | LiteRT-LM real | `gemma-4-E4B-it.litertlm` (3,6 GB) side-loaded vía ADB | Build local |
+
+La separación vive en `app/src/demo/.../llm/LiteRtInfra.kt` (mock) vs `app/src/device/.../llm/LiteRtInfra.kt` (real LiteRT-LM con `sendAudioFile()`).
+
+## Cómo probar el device build con Gemma 4 E4B real
+
+1. **Compilar** el variant `deviceRelease` desde `code/pollen/`:
+   ```bash
+   ./gradlew assembleDeviceRelease
+   ```
+2. **Descargar el modelo** compatible con LiteRT-LM (`gemma-4-E4B-it.litertlm`) desde Kaggle o HuggingFace.
+3. **Side-loadear el modelo** vía ADB:
+   ```bash
+   adb push gemma-4-E4B-it.litertlm /data/local/tmp/gemma-4-E4B-it.litertlm
+   ```
+4. **Instalar el APK** y abrir la app. En el primer arranque, en la pantalla **"Download Manager"**:
+   - Pulsa **"Saltar (ya tengo el modelo en dispositivo)"**.
+   - Confirma la ruta `/data/local/tmp/gemma-4-E4B-it.litertlm` (o cámbiala si lo subiste a otro lado).
+   - Pulsa **"Confirmar"**.
+5. **Permisos**: la app solicitará permiso de micrófono para procesar comandos de voz. Acéptalo para probar el flujo audio → `MissionPatch`.
+
+Requisitos del dispositivo:
+- Android 12 / API 31+
+- 12 GB RAM recomendado, 16 GB ideal
+- Al menos 6 GB libres en almacenamiento
+- CPU runtime es la ruta estable; el rendimiento GPU/NPU varía por dispositivo
+
+## Structure (real, post-day-27)
 
 ```
 pollen/
 ├── README.md
-├── app/
-│   ├── build.gradle.kts
-│   ├── src/main/
-│   │   ├── kotlin/net/sprout/pollen/
-│   │   │   ├── MainActivity.kt
-│   │   │   ├── inference/         # Gemma 4 via LiteRT
-│   │   │   ├── sync/              # BLE + WiFi Direct
-│   │   │   ├── schemas/           # weather_packet, etc
-│   │   │   ├── ui/                # Compose screens
-│   │   │   └── viewmodel/
-│   │   └── res/
-│   └── src/test/
 ├── build.gradle.kts
-└── settings.gradle.kts
+├── settings.gradle.kts
+├── gradlew + gradle/wrapper/   # Gradle 9.3.1 vía wrapper
+└── app/
+    ├── build.gradle.kts        # flavors demo + device
+    └── src/
+        ├── main/kotlin/net/sprout/pollen/
+        │   ├── MainActivity.kt
+        │   ├── voice/          # PollenVoiceInfra.kt + AudioClipRecorder.kt
+        │   ├── llm/            # SystemPrompts (real engines viven en flavors)
+        │   ├── inference/      # MiniEvaluator (deterministic guard rails)
+        │   ├── schemas/        # MissionPatch, WeatherDigest, ValidationStamp, FieldVisit, etc.
+        │   ├── sync/           # RhizomeMockClient + real HTTP clients
+        │   └── ui/             # HomeScreen, VisitarRhizomeScreen, VisitarMeristemScreen, VoiceBetaPanel, ChatFeature
+        ├── demo/kotlin/net/sprout/pollen/llm/LiteRtInfra.kt    # mock determinista
+        ├── device/kotlin/net/sprout/pollen/llm/LiteRtInfra.kt  # real LiteRT-LM
+        └── test/kotlin/net/sprout/pollen/
+            ├── inference/MiniEvaluatorTest.kt   # REFUSE_RETRY, REFUSE_HARD, APPLY_AS_IS, APPLY_CONSERVATIVE
+            └── schemas/RoundTripTest.kt          # validación JSON ↔ Kotlin
 ```
 
 ## Build local
 
-Requisitos: **Android SDK 34**, **JDK 17**, **Gradle 8.6+**.
+Requisitos: **Android SDK 34**, **JDK 17**, **Gradle 9.3.1+** (incluido en el wrapper).
 
 ```bash
 cd code/pollen
-gradle wrapper --gradle-version 8.6   # genera ./gradlew si no existe
-./gradlew assembleDebug                # compila APK debug
-./gradlew testDebugUnitTest            # corre tests unitarios JVM
+./gradlew assembleDebug            # APK debug (flavor demo por defecto)
+./gradlew assembleDeviceRelease    # APK device flavor (LiteRT-LM real)
+./gradlew testDebugUnitTest        # tests unitarios JVM
 ```
 
-Si no tienes Android SDK local (entorno sin soporte para herramientas Android): **usa el CI**. Cada push a rama `feat/pollen-*` dispara [el workflow de CI](../../.github/workflows/pollen-ci.yml) que compila y corre tests en un runner con SDK. Los resultados aparecen en el PR.
+Si no tienes Android SDK local: **usa el CI**. Cada PR contra `main` que toque `code/pollen/**` dispara [el workflow](../../.github/workflows/pollen-ci.yml) que compila y corre tests en un runner Ubuntu con SDK.
 
 ## CI
 
@@ -59,18 +98,31 @@ Workflow: [`.github/workflows/pollen-ci.yml`](../../.github/workflows/pollen-ci.
 
 Se dispara en:
 - `push` a ramas `feat/pollen-**`
-- `pull_request` a `main` cuando toca `code/pollen/**`
+- `pull_request` a `main` cuando toca `code/pollen/**` o el propio workflow
 
-Ejecuta:
-- `gradle assembleDebug` — compila APK debug
-- `gradle testDebugUnitTest` — tests unitarios JVM
+Ejecuta (usando el wrapper local, garantizando Gradle 9.3.1):
+- `./gradlew assembleDebug` — compila APK debug
+- `./gradlew testDebugUnitTest` — tests unitarios JVM
 
-Los reportes de test se suben como artifact (`pollen-test-reports`) para inspeccion post-failure.
+Los reportes de test se suben como artifact (`pollen-test-reports`) para inspección post-failure.
 
 **Regla dura:** PR con CI en rojo no se mergea. Documentado en CONTRIBUTING §9.
 
-## Pendiente
+## Lógica anti-nonsense (Mini Evaluator)
 
-- Validacion temprana: Gemma 4 E2B corre en Pixel 10 Pro via LiteRT
-- Si falla LiteRT, pivotamos a llama.cpp Android en semana 1
-- Screenshot tests / instrumented tests en emulador (issue aparte si llega a hacer falta)
+`MiniEvaluator.kt` aplica cuatro chequeos deterministas antes de aplicar cualquier `MissionPatch` propuesto por el LLM:
+
+1. **Schema validation** — el JSON emitido debe casar con el contrato `MissionPatch`.
+2. **No conflict with hard limits** — la política propuesta no puede violar el sobre de seguridad del firmware.
+3. **Syntactic-semantic match** — al menos un keyword o número del transcript debe aparecer en el rationale o en los campos del patch.
+4. **Explicit model confidence** — si LiteRT-LM expone `logprobs`, el umbral es 0,7.
+
+Si cualquiera falla, Pollen responde con `REFUSE_RETRY` o `REFUSE_HARD` (cuatro casos cubiertos en `MiniEvaluatorTest.kt`). **La negativa es una feature del producto, no un fallo.**
+
+## Bitácora
+
+Material de bitácora relevante:
+- `bitacora/2026-04-27_draft-issue-litertlm-thinking_floema.md` — primer intento LiteRT-LM, problemas iniciales.
+- `bitacora/2026-05-01_litertlm-pixel10pro-compatibility_floema.md` — validación Pixel 10 Pro.
+- `bitacora/2026-05-12_PR-voice-beta-final_floema.md` — descripción consolidada del PR voice-beta-final.
+- `research/04_litertlm_thinking_pt1.md`, `pt2`, `digest` — investigación comparativa LiteRT-LM vs MediaPipe.
