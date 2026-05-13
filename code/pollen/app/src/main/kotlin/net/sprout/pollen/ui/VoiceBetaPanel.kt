@@ -16,12 +16,38 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import net.sprout.pollen.inference.GemmaEngine
 import net.sprout.pollen.inference.MiniEvaluator
+import net.sprout.pollen.schemas.MissionPatch
 import net.sprout.pollen.schemas.PolicyPacket
 import net.sprout.pollen.schemas.RhizomeSnapshot
 import net.sprout.pollen.sync.RhizomeClient
 import net.sprout.pollen.voice.PollenVoiceInfra
+
+/**
+ * BETA placeholder: en el flujo real (device build), la compilacion voz -> MissionPatch
+ * la hace LiteRtInfra.sendAudioFile() devolviendo JSON estructurado del modelo Gemma 4 E4B.
+ * Aqui, sobre el flujo SpeechRecognizer + transcript-text, generamos un MissionPatch placeholder
+ * razonable a partir de heuristicas de keywords para que la UI BETA siga ejercitando
+ * MiniEvaluator (los chequeos deterministas son la pieza contractual; el LLM solo
+ * propone) sin requerir el modelo descargado en device.
+ */
+private fun buildPlaceholderMissionPatch(transcript: String, snapshot: RhizomeSnapshot): MissionPatch {
+    val t = transcript.lowercase()
+    val priorityPlot = if (t.contains("parcela b") || t.contains("plot b")) "B" else "A"
+    val horizonH = Regex("""(\d+)\s*(h(oras)?|hour)""").find(t)?.groupValues?.get(1)?.toIntOrNull() ?: 72
+    val budgetCapMl = if (t.contains("menos") || t.contains("less")) 900f else 1500f
+    val rationale = "Compile placeholder: prioridad ${priorityPlot}, horizonte ${horizonH}h, tope ${budgetCapMl}ml."
+    return MissionPatch(
+        targetNodeId = snapshot.originNodeId,
+        action = "water_extra",
+        priorityPlot = priorityPlot,
+        horizonH = horizonH,
+        budgetCapMl = budgetCapMl,
+        rationaleEs = rationale,
+        operatorNote = transcript,
+        patchOp = "apply"
+    )
+}
 
 import android.app.Activity
 import android.content.Intent
@@ -59,8 +85,7 @@ fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
                 coroutineScope.launch {
                     state = "Listening & Compiling (LiteRT-LM)..."
                     resultText = "Transcribed: \"$recognizedText\""
-                    val engine = GemmaEngine(context)
-                    val patch = engine.parseVoiceToMissionPatch(recognizedText, snapshot)
+                    val patch = buildPlaceholderMissionPatch(recognizedText, snapshot)
                     
                     state = "Validating (Mini-Evaluator)..."
                     delay(800)
