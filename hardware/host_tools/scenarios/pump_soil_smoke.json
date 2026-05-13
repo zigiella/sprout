@@ -1,0 +1,75 @@
+{
+  "id": "pump_soil_smoke",
+  "description": "Smoke test seguro de bomba TEST_ONLY y sensor de humedad real.",
+  "startup_capture_s": 0.8,
+  "steps": [
+    {
+      "type": "command",
+      "name": "estado_inicial_bomba",
+      "send": "PUMP_STATUS",
+      "expect_all": [
+        "PUMP_REPORT gpio=16",
+        "state=OFF",
+        "execution=TEST_ONLY"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "humedad_inicial",
+      "send": "SOIL_READ",
+      "expect_all": [
+        "SOIL_REPORT soil_a_raw=",
+        "soil_a_source=ADC",
+        "soil_a_gpio=4"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "pulso_bomba_3s",
+      "send": "PUMP_PULSE 3000",
+      "timeout_s": 5.0,
+      "expect_all": [
+        "ACK command=PUMP_PULSE",
+        "duration_ms=3000",
+        "final_state=OFF",
+        "execution=TEST_ONLY"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "estado_post_pulso",
+      "send": "PUMP_STATUS",
+      "expect_all": [
+        "PUMP_REPORT gpio=16",
+        "state=OFF"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "humedad_post_pulso",
+      "send": "SOIL_READ",
+      "expect_all": [
+        "SOIL_REPORT soil_a_raw=",
+        "soil_a_source=ADC",
+        "soil_a_gpio=4"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "apagado_final",
+      "send": "PUMP_OFF",
+      "expect_all": [
+        "ACK command=PUMP_OFF"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "estado_final_seguro",
+      "send": "PUMP_STATUS",
+      "expect_all": [
+        "PUMP_REPORT gpio=16",
+        "state=OFF"
+      ]
+    }
+  ]
+}

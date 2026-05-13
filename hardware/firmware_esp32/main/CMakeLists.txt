@@ -9,6 +9,8 @@ idf_component_register(
         "third_party/bme280"
     REQUIRES
         esp_app_format
+        esp_adc
+        esp_driver_gpio
         esp_driver_i2c
         esp_psram
         esp_timer
