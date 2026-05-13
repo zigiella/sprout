@@ -1,4 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sprout · Pollen — color resources (Material 3 mapping)
+  Place in res/values/colors.xml. For night, copy to res/values-night/colors.xml
+  and swap to dark values from m3/Color.kt. Outdoor mode is NOT a standard
+  qualifier — drive it via your ThemeMode and override at the ColorScheme level.
+-->
 <resources>
-    <color name="ic_launcher_background">#2E7D32</color>
+    <!-- Brand -->
+    <color name="soil_oat">#F3EDE4</color>
+    <color name="soil_surface">#FAF6EF</color>
+    <color name="soil_ash">#D8CBBE</color>
+    <color name="soil_kraft">#C9A97E</color>
+    <color name="soil_clay">#8A654B</color>
+    <color name="soil_moss">#667554</color>
+    <color name="soil_humus">#2A221D</color>
+    <color name="soil_graphite">#1A1A18</color>
+
+    <color name="water_blue">#3B82F6</color>
+    <color name="water_deep">#1D4ED8</color>
+    <color name="water_tint">#DCEBFF</color>
+
+    <color name="status_ok">#4F8A5B</color>
+    <color name="status_warn">#F59E0B</color>
+    <color name="status_blocked">#B94A3D</color>
+    <color name="status_blocked_tint">#F6D6D1</color>
+
+    <color name="signal_seed">#C5F26B</color>
+
+    <color name="border_default">#CDBBAA</color>
+    <color name="border_strong">#8A654B</color>
+    <color name="border_subtle">#E0D4C5</color>
+
+    <!-- Outdoor -->
+    <color name="outdoor_bg">#FFF8EA</color>
+    <color name="outdoor_water">#005BBB</color>
+    <color name="outdoor_blocked">#9B1C1C</color>
+    <color name="outdoor_ok">#0F6B2F</color>
+
+    <!-- Material 3 light mapping -->
+    <color name="md_theme_primary">@color/soil_humus</color>
+    <color name="md_theme_onPrimary">@color/soil_oat</color>
+    <color name="md_theme_secondary">@color/water_blue</color>
+    <color name="md_theme_onSecondary">#FFFFFF</color>
+    <color name="md_theme_tertiary">@color/soil_moss</color>
+    <color name="md_theme_background">@color/soil_oat</color>
+    <color name="md_theme_onBackground">@color/soil_humus</color>
+    <color name="md_theme_surface">@color/soil_surface</color>
+    <color name="md_theme_outline">@color/border_default</color>
+    <color name="md_theme_error">@color/status_blocked</color>
 </resources>

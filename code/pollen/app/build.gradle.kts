@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
@@ -21,6 +22,18 @@ android {
         }
     }
 
+    flavorDimensions += "target"
+    productFlavors {
+        create("demo") {
+            dimension = "target"
+            applicationIdSuffix = ".demo"
+            versionNameSuffix = "-demo"
+        }
+        create("device") {
+            dimension = "target"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -36,11 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        // 1.5.13 es el Compose Compiler compatible con Kotlin 1.9.23.
-        // Matriz: https://developer.android.com/jetpack/androidx/releases/compose-kotlin
-        kotlinCompilerExtensionVersion = "1.5.13"
+        buildConfig = true
     }
     packaging {
         resources {
@@ -60,12 +69,23 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
+    implementation("com.airbnb.android:lottie-compose:6.4.0")
 
     // Kotlinx Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
-    // MediaPipe GenAI (Gemma)
-    implementation("com.google.mediapipe:tasks-genai:0.10.14")
+    "deviceImplementation"("com.google.ai.edge.litertlm:litertlm-android:+")
+
+    // Retrofit para conexión con Rhizome (Jetson/ESP32)
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-kotlinx-serialization:2.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // Networking
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

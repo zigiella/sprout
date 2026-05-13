@@ -152,4 +152,49 @@ class RoundTripTest {
         val obj2 = format.decodeFromString<PolicyDelta>(encoded)
         assertEquals(obj, obj2)
     }
+
+    @Test
+    fun testV2SchemasRoundTrip() {
+        val missionPatchJson = """
+            {
+                "schema_version": "2.0",
+                "patch_op": "apply",
+                "horizon_h": 24,
+                "priority_plot": "parcel_a",
+                "budget_cap_ml": 500,
+                "avoid_hours": ["12:00", "13:00"],
+                "goal_mode": "conservative",
+                "operator_note": "Ahorrar agua"
+            }
+        """.trimIndent()
+        val missionPatch = format.decodeFromString<MissionPatch>(missionPatchJson)
+        assertEquals("apply", missionPatch.patchOp)
+        assertEquals(500, missionPatch.budgetCapMl)
+
+        val validationStampJson = """
+            {
+                "status": "caution",
+                "evidence": ["sensor_a is dry"],
+                "visit_amendment": {
+                    "policy_override": "force_water",
+                    "duration_h": 2
+                }
+            }
+        """.trimIndent()
+        val validationStamp = format.decodeFromString<ValidationStamp>(validationStampJson)
+        assertEquals("caution", validationStamp.status)
+        assertEquals(2, validationStamp.visitAmendment?.durationH)
+
+        val weatherDigestJson = """
+            {
+                "is_stale": false,
+                "summary": "Clear skies",
+                "rain_expected_mb": 0.0,
+                "temperature_range_c": "15-25"
+            }
+        """.trimIndent()
+        val weatherDigest = format.decodeFromString<WeatherDigest>(weatherDigestJson)
+        assertEquals("Clear skies", weatherDigest.summary)
+        assertEquals(0.0f, weatherDigest.rainExpectedMb)
+    }
 }
