@@ -15,7 +15,13 @@ El primer hito es:
 - emitir `HEARTBEAT` periódico
 - reportar `flash_bytes` y `psram_bytes`
 
-Todavía **no** controla bomba, válvulas ni sensores.
+`WATER` todavia no activa actuadores reales: sigue siendo la ruta contractual
+con safety en `DRY_RUN`.
+
+Para bring-up fisico de banco, el firmware incluye comandos explicitos
+`TEST_ONLY` para una bomba de MVP y lectura real de humedad de suelo. Estos
+comandos no sustituyen al contrato `WATER`; solo permiten validar cobre,
+rele, bomba y sensor con control manual.
 
 El siguiente hito inmediato añade:
 
@@ -36,6 +42,17 @@ El primer sensor real integrado en esta fase es:
   - `SDA = GPIO8`
   - `SCL = GPIO9`
   - `I2C port = 0`
+
+Actuadores y sensores MVP de banco:
+
+- bomba 12V con rele active-low:
+  - `GPIO16 = rele IN`
+  - `PUMP_OFF`
+  - `PUMP_STATUS`
+  - `PUMP_PULSE <ms>`
+- humedad de suelo capacitiva:
+  - `GPIO4 = ADC soil A`
+  - `SOIL_READ`
 
 ## Stack
 
@@ -67,6 +84,10 @@ Entrada por línea ASCII terminada en `\n`:
   familia de sensor.
 - `BME280_PROBE`
 - `BME280_READ`
+- `SOIL_READ`
+- `PUMP_OFF`
+- `PUMP_STATUS`
+- `PUMP_PULSE <ms>`
 - `SET_SENSOR_STUB SOIL_A <int>`
 - `SET_SENSOR_STUB SOIL_B <int>`
 - `SET_SENSOR_STUB TANK_LEVEL <int>`
@@ -90,6 +111,9 @@ Salida:
 - `I2C_SCAN count=... addrs=...`
 - `BME280_PROBE status=... address=... chip_id=... i2c_bus=...`
 - `BME280_REPORT status=... address=... chip_id=... temp_c_x100=... humidity_pct_x100=... pressure_pa=...`
+- `SOIL_REPORT soil_a_raw=... soil_a_source=ADC soil_a_gpio=4 adc_unit=1 adc_channel=3 source=command`
+- `PUMP_REPORT gpio=16 active_low=true expected_gpio_level=... gpio_level=... state=OFF|ON test_max_ms=... execution=TEST_ONLY source=command`
+- `ACK command=PUMP_PULSE gpio=16 active_low=true duration_ms=... final_expected_gpio_level=1 final_gpio_level=1 final_state=OFF execution=TEST_ONLY`
 - `ACK command=SET_SENSOR_STUB field=... soil_a_raw=... soil_b_raw=... tank_level_raw=... flow_pulses=... bme280=...`
 - `ACK command=WATER plot=... seconds=... execution=DRY_RUN ...`
 - `ALERT code=... latched=true|false state=... uptime_ms=...`
@@ -132,7 +156,10 @@ idf.py -p /dev/ttyACM0 flash monitor
 - `GPIO35 / GPIO36 / GPIO37` no se usan por PSRAM Octal
 - `GPIO45 / GPIO46` se evitan en el primer arranque
 - `GPIO8 / GPIO9` quedan reservados para `I2C` del `BME280` / futuros periféricos `ADS1115`
-- no conectar actuadores en este hito
+- `GPIO4` queda reservado para el sensor capacitivo de humedad `SOIL_A`
+- `GPIO16` queda reservado para el rele active-low de la bomba MVP
+- `WATER` no energiza actuadores reales en este hito; solo `PUMP_PULSE` puede
+  hacerlo y siempre como `TEST_ONLY`
 
 ## Validación esperada
 
@@ -208,6 +235,49 @@ BME280_REPORT status=NOT_FOUND address=NONE chip_id=NONE temp_c_x100=-1 humidity
 
 Este baseline no es un fallo: demuestra que el firmware no inventa sensor ni
 lecturas cuando el bus esta vivo pero no hay periferico conectado.
+
+Ejemplo de bomba MVP y humedad real:
+
+```text
+PUMP_STATUS
+PUMP_REPORT gpio=16 active_low=true expected_gpio_level=1 gpio_level=1 state=OFF test_max_ms=30000 execution=TEST_ONLY source=command
+
+SOIL_READ
+SOIL_REPORT soil_a_raw=2278 soil_a_source=ADC soil_a_gpio=4 adc_unit=1 adc_channel=3 source=command
+
+PUMP_PULSE 3000
+ACK command=PUMP_PULSE gpio=16 active_low=true duration_ms=3000 final_expected_gpio_level=1 final_gpio_level=1 final_state=OFF execution=TEST_ONLY
+
+PUMP_OFF
+ACK command=PUMP_OFF state=SAFE_IDLE host_link=... host_age_ms=...
+```
+
+Calibracion empirica provisional del sensor de humedad:
+
+```text
+aire:              soil_a_raw ~= 3530-3540
+tierra seca:       soil_a_raw ~= 2319-2325
+antes de riego:    soil_a_raw ~= 2278
+humedad buena:     soil_a_raw ~= 1687-1702
+tras difusion:     soil_a_raw ~= 1289-1291
+```
+
+Reglas provisionales de banco para esta sonda y maceta:
+
+- `SOIL_RAW_POLARITY=low_is_wet`
+- `SOIL_WET_BELOW_RAW=1300`
+- `SOIL_DRY_ABOVE_RAW=2200`
+
+Interpretacion:
+
+| Rango `soil_a_raw` | Decision |
+|---|---|
+| `< 1300` | muy humedo; no regar mas |
+| `1300-2199` | zona intermedia; observar/defer, no riego autonomo |
+| `>= 2200` | seco para MVP; candidato a riego si las demas barandillas pasan |
+
+Estos valores son empiricos de demo. Recalibrar si cambia sustrato, maceta,
+profundidad del sensor o posicion de riego.
 
 Ejemplos de seguridad para `WATER`:
 

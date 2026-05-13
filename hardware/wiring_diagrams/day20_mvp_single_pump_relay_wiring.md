@@ -1,80 +1,81 @@
-# Dia 20 - MVP una linea: bomba 12V con rele
+# Dia 20-23 - MVP una linea: bomba 12V, rele y humedad real
 
-**Objetivo:** montar la parte de potencia del MVP reducido: una unica linea de
-riego con una bomba 12V, sin electrovalvulas y sin distribuidor en T.
+**Objetivo:** documentar el montaje fisico validado del MVP reducido: una unica
+linea de riego con bomba 12V, rele, fusible, diodo flyback y un sensor de
+humedad capacitivo.
 
-Alcance fisico del MVP:
+Alcance fisico validado:
 
 ```text
-Deposito -> bomba 12V -> caudalimetro -> tubo -> planta/parcela A
+Deposito -> bomba 12V sumergida -> tubo -> planta/parcela A
 ```
 
-Alcance electrico de este documento:
+Alcance electrico validado:
 
-- fuente 12V
-- fusible
-- modulo rele 5V
-- bomba 12V
-- diodo flyback
-- buck 12V->5V para alimentar el rele
-- frontera de control con ESP32
+- fuente 12V DC exterior,
+- fusible en positivo de 12V,
+- modulo rele de 1 canal, contacto `COM/NO`,
+- bomba 12V,
+- diodo flyback en paralelo con bomba,
+- ESP32-S3 alimentado por USB,
+- rele alimentado desde `3V3` del ESP32 para evitar ambiguedad de nivel logico,
+- sensor capacitivo de humedad en `GPIO4`.
+
+El caudalimetro queda fisicamente disponible, pero no es bloqueante para el MVP
+actual.
 
 ## 0. Barandilla
 
-No energizar 12V hasta completar:
+No manipular el cableado con la fuente 12V enchufada.
+
+Antes de energizar:
 
 - inspeccion visual del cableado,
 - continuidad sin cortos entre `+12V` y `GND`,
-- orientacion del diodo flyback,
-- fuente 12V desconectada mientras se manipulan cables,
+- fusible colocado en el positivo de 12V,
+- contacto del rele en `COM` + `NO`, nunca `NC`,
+- orientacion del diodo flyback confirmada,
+- fuente 12V desconectada mientras se cambian cables,
 - ESP32 en `SAFE_IDLE`,
-- firmware todavia en `DRY_RUN` para cualquier orden `WATER`.
+- `WATER` sigue en `DRY_RUN`; los comandos `PUMP_*` son solo `TEST_ONLY`.
 
-El ESP32 **no alimenta la bomba** y **no alimenta la bobina del rele**. Solo
-manda una senal logica a `IN1` cuando el firmware lo autorice.
+El ESP32 **no alimenta la bomba**. Solo alimenta y controla el modulo rele de
+laboratorio desde `3V3` para esta prueba MVP.
 
 ## 1. Componentes usados
 
-| Pieza | Uso |
-|---|---|
-| Fuente 12V DC | Alimenta bomba y buck 5V. |
-| Fusible 2A inicial | Protege la rama de 12V del MVP. |
-| Portafusible | Debe ir en el positivo de 12V, cerca de la fuente. |
-| Buck 12V->5V | Alimenta el modulo rele. |
-| Modulo rele 5V, canal 1 | Conmuta el positivo de la bomba. |
-| Bomba 12V | Actuador unico del MVP. |
-| Diodo 1N400x | Flyback en paralelo con bomba. |
-| ESP32-S3 | Control logico, no potencia. |
+| Pieza | Uso | Estado |
+|---|---|---|
+| Fuente 12V DC exterior | Alimenta la bomba | Validada |
+| Fusible 1A | Protege la rama de 12V | Validado en prueba MVP |
+| Portafusible | En positivo de 12V, cerca de la fuente | Validado |
+| Modulo rele 1 canal `JQC3F-05VDC-C` | Conmuta el positivo de la bomba | Validado a `3V3` |
+| Bomba 12V sumergible | Actuador unico del MVP | Validada con agua |
+| Diodo 1N400x | Flyback en paralelo con bomba | Validado visualmente |
+| ESP32-S3 N16R8 | Control logico | Validado |
+| DFRobot capacitive soil moisture sensor v2.0 | Humedad de suelo | Validado en `GPIO4` |
 
-Fusible inicial recomendado: **2A**. Si la bomba indica consumo nominal mayor
-que 1A, revisar antes de energizar.
+Nota sobre fusible: `1A` funciono en la prueba real. Si saltara por pico de
+arranque de la bomba, revisar consumo nominal y cableado antes de subir valor.
+No sustituirlo por un valor mayor "a ciegas".
 
 ## 2. Esquema electrico completo
 
 ```text
-                              DOMINIO 12V
+                             DOMINIO 12V
 
           Fuente 12V +
               |
-              |  rojo
+              | rojo
               v
-        [FUSIBLE 2A]
+        [FUSIBLE 1A]
               |
-              |  +12V_PROTEGIDO
-              +----------------------------+
-              |                            |
-              |                            v
-              |                       Buck IN+
-              |                       Buck IN-
-              |                            ^
-              |                            |
-              |                       GND comun
-              |
+              | +12V_PROTEGIDO
               v
         Rele canal 1 COM
         Rele canal 1 NO
               |
-              |  +12V conmutado
+              | +12V conmutado
               v
           Bomba +
           Bomba -
@@ -89,12 +90,23 @@ que 1A, revisar antes de energizar.
                     raya
                     del diodo
                     hacia Bomba +
+
+
+                             DOMINIO ESP32 / LOGICA
+
+          ESP32 3V3  ------------------> Rele VCC
+          ESP32 GND  ------------------> Rele GND
+          ESP32 GPIO16 ----------------> Rele IN
+
+          ESP32 3V3  ------------------> Sensor humedad VCC / rojo
+          ESP32 GND  ------------------> Sensor humedad GND / negro
+          ESP32 GPIO4 -----------------> Sensor humedad AO / amarillo
 ```
 
-Lectura del diodo:
+El modulo de rele probado es **active-low**:
 
-- lado con raya del diodo -> `Bomba +`,
-- lado sin raya del diodo -> `Bomba -`.
+- `GPIO16 = HIGH` -> rele apagado -> `COM/NO` abierto -> bomba OFF.
+- `GPIO16 = LOW` -> rele activado -> `COM/NO` cerrado -> bomba ON.
 
 ## 3. Conexion de potencia, cable a cable
 
@@ -107,103 +119,179 @@ Lectura del diodo:
 | Diodo lado con raya | Bomba `+` | Flyback, catodo. |
 | Diodo lado sin raya | Bomba `-` | Flyback, anodo. |
 
-No usar `NC`. Queremos que la bomba este apagada por defecto.
+No usar `NC`. Queremos que la bomba este apagada por defecto si el rele no esta
+activado.
 
-## 4. Buck 5V para alimentar el modulo rele
+## 4. Conexion ESP32 -> rele
 
-El modulo rele de la foto se trata como modulo de **5V** salvo que su serigrafia
-demuestre otra cosa.
+| Desde | Hasta | Nota |
+|---|---|---|
+| ESP32 `3V3` | Rele `VCC` | Alimentacion MVP validada para este modulo. |
+| ESP32 `GND` | Rele `GND` | Referencia comun logica. |
+| ESP32 `GPIO16` | Rele `IN` | Control active-low. |
+
+Por que no usamos el buck 5V en el MVP actual:
+
+- con rele alimentado a `5V`, el `HIGH` de `3.3V` del ESP32 podia dejar la
+  entrada `IN` en zona ambigua;
+- alimentando el modulo desde `3V3`, `HIGH` apaga limpio y `LOW` enciende;
+- la bobina nominal de 5V del modulo probado conmuto correctamente a `3V3`.
+
+Esta decision es de banco/MVP. Para una version mas robusta se recomienda un
+driver dedicado, MOSFET, rele compatible 3.3V real o modulo con aislamiento
+`JD-VCC/VCC` correctamente documentado.
+
+## 5. Conexion del sensor de humedad
+
+Sensor: `DFRobot Capacitive Soil Moisture Sensor v2.0`.
+
+| Desde | Hasta |
+|---|---|
+| ESP32 `3V3` | Sensor rojo / VCC |
+| ESP32 `GND` | Sensor negro / GND |
+| ESP32 `GPIO4` | Sensor amarillo / AO |
+
+Lectura provisional:
+
+- valor ADC alto -> tierra mas seca,
+- valor ADC bajo -> tierra mas humeda.
+
+Calibracion empirica de banco:
+
+| Situacion | `soil_a_raw` aprox. |
+|---|---:|
+| Aire | 3530-3540 |
+| Tierra seca | 2319-2325 |
+| Tierra antes de riego real | 2278 |
+| Humedad buena tras difusion | 1687-1702 |
+| Muy humedo / no regar | 1208-1291 |
+
+Umbrales provisionales para razonamiento:
+
+| Rango | Lectura |
+|---|---|
+| `>= 2200` | seco; candidato a riego si pasan las demas barandillas |
+| `1300-2199` | zona intermedia; observar/defer, no riego autonomo |
+| `< 1300` | muy humedo, no regar mas |
+
+Estos umbrales son de demo y deben recalibrarse con maceta, sustrato y posicion
+final del sensor.
+
+## 6. Comandos de firmware usados
+
+`WATER` continua siendo la ruta contractual con safety en `DRY_RUN`. Para el
+bring-up fisico de banco se usan comandos explicitos de prueba:
 
 ```text
-Fuente 12V + / despues del fusible -> Buck IN+
-Fuente 12V - / GND comun           -> Buck IN-
-
-Buck OUT+ ajustado a 5V            -> Rele VCC
-Buck OUT-                          -> Rele GND
+PUMP_OFF
+PUMP_STATUS
+PUMP_PULSE <ms>
+SOIL_READ
+TELEMETRY
 ```
 
-Antes de conectar el rele al buck:
+`PUMP_PULSE` es `TEST_ONLY` y esta limitado por firmware con
+`CONFIG_SPROUT_PUMP_TEST_MAX_MS`.
 
-1. Alimentar solo el buck desde 12V.
-2. Medir `OUT+` contra `OUT-`.
-3. Ajustar a **5.0V** con el potenciometro si hace falta.
-4. Apagar fuente.
-5. Conectar buck al rele.
+## 7. Evidencia validada
 
-No conectar el buck a `5V` del ESP32. El buck alimenta el rele; el ESP32 queda
-alimentado por USB.
+### 7.1 Rele y bomba
 
-## 5. Conexion de control ESP32 -> rele
+Secuencias probadas:
 
-Esta parte se conecta **despues** de validar potencia sin cortos.
+```text
+PUMP_PULSE 1000
+PUMP_PULSE 2000
+PUMP_PULSE 3000
+PUMP_PULSE 15000
+descanso 5000 ms
+PUMP_PULSE 10000
+```
 
-| Desde | Hasta | Estado |
-|---|---|---|
-| Buck `OUT+ 5V` | Rele `VCC` | Necesario para bobina/electronica del rele. |
-| Buck `OUT-` | Rele `GND` | Comun con fuente 12V. |
-| ESP32 `GND` | Rele `GND` / GND comun | Necesario para referencia de `IN1`. |
-| ESP32 `GPIO16` candidato | Rele `IN1` | Pendiente firmware real, no usar hasta PR. |
+El firmware devolvio siempre:
 
-Notas:
+```text
+final_gpio_level=1 final_state=OFF execution=TEST_ONLY
+```
 
-- Muchos modulos de rele son `active-low`: `IN1=LOW` enciende el rele y
-  `IN1=HIGH` lo apaga.
-- Por eso el firmware debe arrancar con la salida en estado seguro antes de
-  permitir actuadores reales.
-- Si el modulo tiene jumper `JD-VCC/VCC`, dejarlo en configuracion simple con
-  una sola alimentacion 5V mientras no se documente aislamiento real.
+### 7.2 Riego real y humedad
 
-## 6. Estados esperados del rele
+Con manguera cebada:
 
-Con `COM` y `NO`:
+```text
+SOIL_READ
+SOIL_REPORT soil_a_raw=2278 ...
 
-| Estado rele | Contacto `COM-NO` | Bomba |
-|---|---|---|
-| Rele apagado | Abierto | OFF |
-| Rele activado | Cerrado | ON |
+PUMP_PULSE 15000
+descanso 5s
+PUMP_PULSE 10000
 
-Si la bomba queda encendida con el rele apagado, se ha usado `NC` por error.
-Apagar fuente y mover el cable a `NO`.
+SOIL_READ
+SOIL_REPORT soil_a_raw=2280 ...
+```
 
-## 7. Checklist antes de energizar 12V
+Tras esperar a que el agua alcanzara el sensor:
 
-Con fuente desconectada:
+```text
+SOIL_READ
+SOIL_REPORT soil_a_raw=1291 ...
+SOIL_REPORT soil_a_raw=1289 ...
+SOIL_REPORT soil_a_raw=1289 ...
+```
 
-- `+12V` pasa por fusible antes de llegar al rele.
-- Bomba `+` viene desde `NO`, no desde `NC`.
-- Bomba `-` vuelve al negativo de la fuente.
-- Diodo con raya hacia `Bomba +`.
-- No hay cable de `+12V` tocando protoboard del ESP32.
-- No hay cable de bomba conectado a GPIO del ESP32.
-- No hay agua por encima o cerca de la electronica.
-- Si hay multimetro: continuidad entre `+12V` y `GND` no debe pitar como corto.
+Conclusion: el sistema ya tiene evidencia real de:
 
-## 8. Secuencia de prueba recomendada
+- bomba fisica controlada por ESP32,
+- retorno seguro a OFF,
+- sensor de humedad real respondiendo al riego,
+- descenso coherente de `soil_a_raw` cuando el agua llega a la sonda.
 
-### 8.1 Prueba sin ESP32
+## 8. Reglas para Endodermis / Jetson
 
-1. Fuente 12V apagada.
-2. Revisar cableado.
-3. Encender fuente 12V con la entrada `IN1` del rele sin conectar al ESP32.
-4. La bomba debe seguir **apagada**.
-5. Si la bomba arranca, apagar inmediatamente: contacto mal elegido o rele
-   activado por entrada flotante.
+Endodermis puede probar la ruta desde Jetson **solo si** se cumplen estas
+condiciones:
 
-### 8.2 Prueba de rele sin bomba
+- Bea confirma que hay agua suficiente y la bomba esta sumergida.
+- Bea confirma que no hay electronica en zona de salpicaduras.
+- La primera prueba desde Jetson debe empezar con `PUMP_STATUS` y `SOIL_READ`.
+- No ejecutar pulsos mayores de `3000 ms` sin Bea delante.
+- Entre pulsos, esperar al menos `5 s` y comprobar `PUMP_STATUS`.
+- Tras cualquier prueba, enviar `PUMP_OFF` y verificar `state=OFF`.
+- Si `soil_a_raw < 1300`, no regar mas: el sustrato ya esta muy humedo.
 
-Antes de bomba real con agua, probar el canal del rele sin carga o con una carga
-segura si se dispone de ella. Confirmar que se oye el clic y que `COM-NO` abre
-/ cierra.
+Secuencia segura inicial para Endo sin riego:
 
-### 8.3 Prueba con ESP32
+```text
+PUMP_STATUS
+SOIL_READ
+TELEMETRY
+PUMP_OFF
+PUMP_STATUS
+```
 
-Solo despues de PR de firmware de actuadores reales:
+Escenario equivalente:
 
-1. ESP32 arranca en `SAFE_IDLE`.
-2. `STATUS` muestra actuadores bloqueados o `DRY_RUN`.
-3. `WATER A 3` no debe energizar bomba si falta heartbeat o deposito seguro.
-4. Primer ensayo real: duracion minima, deposito con poca agua y mano en
-   interruptor/fuente.
+```bash
+python hardware/host_tools/esp32_host_harness.py --port /dev/ttyACM0 --scenario pump_soil_observe_only --label endo_observe
+```
+
+Secuencia con pulso minimo, solo si `soil_a_raw >= 1300`:
+
+```text
+PUMP_STATUS
+SOIL_READ
+PUMP_PULSE 1000
+PUMP_STATUS
+SOIL_READ
+PUMP_OFF
+PUMP_STATUS
+```
+
+Escenario equivalente:
+
+```bash
+python hardware/host_tools/esp32_host_harness.py --port /dev/ttyACM0 --scenario pump_soil_smoke --label endo_smoke
+```
 
 ## 9. Decision MVP
 

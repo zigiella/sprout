@@ -61,4 +61,30 @@ config SPROUT_I2C_SCAN_BUFFER_BYTES
         Maximum number of bytes reserved to serialise the output list of
         detected I2C addresses for the `I2C_SCAN` command.
 
+config SPROUT_SOIL_A_ADC_GPIO
+    int "Soil A analog GPIO"
+    range 0 48
+    default 4
+    help
+        ADC-capable GPIO used for the MVP DFRobot capacitive soil moisture
+        sensor. The baseline wiring uses GPIO4, which maps to ADC1 channel 3
+        on ESP32-S3 and does not conflict with BME280 I2C or the pump relay.
+
+config SPROUT_PUMP_RELAY_GPIO
+    int "Pump relay GPIO"
+    range 0 48
+    default 16
+    help
+        GPIO used for the single-line MVP pump relay test output. The relay is
+        powered from ESP32 3V3 and verified active-low in the bench module, so
+        the firmware drives this GPIO high as the safe OFF state.
+
+config SPROUT_PUMP_TEST_MAX_MS
+    int "Maximum pump relay test pulse (ms)"
+    range 50 30000
+    default 30000
+    help
+        Maximum duration accepted by the PUMP_PULSE bench command. WATER
+        remains DRY_RUN; this command is only for controlled relay bring-up.
+
 endmenu

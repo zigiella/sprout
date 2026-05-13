@@ -9,6 +9,8 @@
 #include "bme280_sensor.h"
 #include "board_profile.h"
 #include "sdkconfig.h"
+#include "driver/gpio.h"
+#include "esp_adc/adc_oneshot.h"
 #include "esp_app_desc.h"
 #include "esp_err.h"
 #include "esp_flash.h"
@@ -20,6 +22,12 @@
 #include "nvs_flash.h"
 
 #define SPROUT_FW_VERSION "0.1.0"
+
+#if CONFIG_SPROUT_SOIL_A_ADC_GPIO == 4
+#define SPROUT_SOIL_A_ADC_CHANNEL ADC_CHANNEL_3
+#else
+#error "Only GPIO4 / ADC1 channel 3 is currently supported for SOIL_A in the MVP firmware."
+#endif
 
 typedef enum {
     SPROUT_STATE_SAFE_IDLE = 0,
@@ -81,6 +89,9 @@ static sprout_water_attempt_t s_last_water_attempt = {
 };
 static char s_last_reject_reason[32] = "NONE";
 static char s_last_alert_code[32] = "NONE";
+static bool s_pump_relay_on = false;
+static adc_oneshot_unit_handle_t s_adc1_handle = NULL;
+static bool s_soil_a_adc_ready = false;
 
 static int64_t sprout_uptime_ms(void)
 {
@@ -187,6 +198,95 @@ static void sprout_clear_alert_latch(void)
     }
 }
 
+static void sprout_set_pump_relay(bool on)
+{
+    const int level = on ? 0 : 1;
+    ESP_ERROR_CHECK(gpio_set_level(CONFIG_SPROUT_PUMP_RELAY_GPIO, level));
+    s_pump_relay_on = on;
+}
+
+static int sprout_pump_relay_expected_gpio_level(void)
+{
+    return s_pump_relay_on ? 0 : 1;
+}
+
+static void sprout_init_pump_relay(void)
+{
+    ESP_ERROR_CHECK(gpio_set_level(CONFIG_SPROUT_PUMP_RELAY_GPIO, 1));
+
+    const gpio_config_t config = {
+        .pin_bit_mask = 1ULL << CONFIG_SPROUT_PUMP_RELAY_GPIO,
+        .mode = GPIO_MODE_INPUT_OUTPUT,
+        .pull_up_en = GPIO_PULLUP_ENABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
+    ESP_ERROR_CHECK(gpio_config(&config));
+    ESP_ERROR_CHECK(gpio_set_drive_capability(CONFIG_SPROUT_PUMP_RELAY_GPIO, GPIO_DRIVE_CAP_3));
+    sprout_set_pump_relay(false);
+}
+
+static const char *sprout_pump_relay_state_name(void)
+{
+    return s_pump_relay_on ? "ON" : "OFF";
+}
+
+static int sprout_pump_relay_gpio_level(void)
+{
+    return gpio_get_level(CONFIG_SPROUT_PUMP_RELAY_GPIO);
+}
+
+static void sprout_init_soil_a_adc(void)
+{
+    const adc_oneshot_unit_init_cfg_t unit_config = {
+        .unit_id = ADC_UNIT_1,
+        .ulp_mode = ADC_ULP_MODE_DISABLE,
+    };
+    esp_err_t err = adc_oneshot_new_unit(&unit_config, &s_adc1_handle);
+    if (err != ESP_OK) {
+        ESP_LOGW(TAG, "soil_a adc unit init failed: %s", esp_err_to_name(err));
+        s_adc1_handle = NULL;
+        s_soil_a_adc_ready = false;
+        return;
+    }
+
+    const adc_oneshot_chan_cfg_t channel_config = {
+        .atten = ADC_ATTEN_DB_12,
+        .bitwidth = ADC_BITWIDTH_DEFAULT,
+    };
+    err = adc_oneshot_config_channel(s_adc1_handle, SPROUT_SOIL_A_ADC_CHANNEL, &channel_config);
+    if (err != ESP_OK) {
+        ESP_LOGW(TAG, "soil_a adc channel init failed: %s", esp_err_to_name(err));
+        s_soil_a_adc_ready = false;
+        return;
+    }
+
+    s_soil_a_adc_ready = true;
+}
+
+static void sprout_sample_soil_a_adc(void)
+{
+    if (!s_soil_a_adc_ready || s_adc1_handle == NULL) {
+        s_telemetry.soil_a_raw = -1;
+        return;
+    }
+
+    int raw = -1;
+    const esp_err_t err = adc_oneshot_read(s_adc1_handle, SPROUT_SOIL_A_ADC_CHANNEL, &raw);
+    if (err != ESP_OK) {
+        ESP_LOGW(TAG, "soil_a adc read failed: %s", esp_err_to_name(err));
+        s_telemetry.soil_a_raw = -1;
+        return;
+    }
+
+    s_telemetry.soil_a_raw = raw;
+}
+
+static const char *sprout_soil_a_source_name(void)
+{
+    return s_soil_a_adc_ready ? "ADC" : "UNAVAILABLE";
+}
+
 static void sprout_trim_ascii(char *line)
 {
     size_t len = strlen(line);
@@ -241,6 +341,7 @@ static void sprout_emit_status_report(const char *source)
         " psram_bytes=%u telemetry_mode=HYBRID i2c_bus=%s i2c_sda=%d i2c_scl=%d bme280_addr=%s host_link=%s host_age_ms=%" PRIi64
         " hb_timeout_ms=%d tank_min_pct=%d max_water_s=%d last_reject=%s alert_code=%s alert_age_ms=%" PRIi64
         " last_water_plot=%s last_water_seconds=%d last_water_outcome=%s last_water_age_ms=%" PRIi64
+        " pump_relay_gpio=%d pump_relay_active_low=true pump_relay_expected_gpio_level=%d pump_relay_gpio_level=%d pump_relay_state=%s pump_test_max_ms=%d"
         " source=%s\n",
         sprout_state_name(s_state),
         fw_version,
@@ -264,6 +365,11 @@ static void sprout_emit_status_report(const char *source)
         s_last_water_attempt.seconds,
         s_last_water_attempt.outcome,
         sprout_last_water_age_ms(),
+        CONFIG_SPROUT_PUMP_RELAY_GPIO,
+        sprout_pump_relay_expected_gpio_level(),
+        sprout_pump_relay_gpio_level(),
+        sprout_pump_relay_state_name(),
+        CONFIG_SPROUT_PUMP_TEST_MAX_MS,
         source);
     fflush(stdout);
 }
@@ -340,11 +446,15 @@ static void sprout_emit_ack_water(const char *plot, int seconds)
 
 static void sprout_emit_telemetry_report(const char *source)
 {
+    sprout_sample_soil_a_adc();
+
     printf(
-        "TELEMETRY_REPORT soil_a_raw=%d soil_b_raw=%d tank_level_raw=%d tank_level_pct=%d flow_pulses=%" PRIu32 " "
+        "TELEMETRY_REPORT soil_a_raw=%d soil_a_source=%s soil_a_gpio=%d soil_b_raw=%d tank_level_raw=%d tank_level_pct=%d flow_pulses=%" PRIu32 " "
         "bme280=%s bme280_valid=%s bme280_temp_c_x100=%" PRIi32 " bme280_humidity_pct_x100=%" PRIi32
         " bme280_pressure_pa=%" PRIi32 " host_link=%s host_age_ms=%" PRIi64 " source=%s\n",
         s_telemetry.soil_a_raw,
+        sprout_soil_a_source_name(),
+        CONFIG_SPROUT_SOIL_A_ADC_GPIO,
         s_telemetry.soil_b_raw,
         s_telemetry.tank_level_raw,
         s_telemetry.tank_level_pct,
@@ -571,6 +681,69 @@ static bool sprout_handle_water_command(const char *line)
     return true;
 }
 
+static void sprout_emit_pump_status(const char *source)
+{
+    printf(
+        "PUMP_REPORT gpio=%d active_low=true expected_gpio_level=%d gpio_level=%d state=%s test_max_ms=%d execution=TEST_ONLY source=%s\n",
+        CONFIG_SPROUT_PUMP_RELAY_GPIO,
+        sprout_pump_relay_expected_gpio_level(),
+        sprout_pump_relay_gpio_level(),
+        sprout_pump_relay_state_name(),
+        CONFIG_SPROUT_PUMP_TEST_MAX_MS,
+        source);
+    fflush(stdout);
+}
+
+static void sprout_emit_soil_a_report(const char *source)
+{
+    sprout_sample_soil_a_adc();
+
+    printf(
+        "SOIL_REPORT soil_a_raw=%d soil_a_source=%s soil_a_gpio=%d adc_unit=1 adc_channel=3 source=%s\n",
+        s_telemetry.soil_a_raw,
+        sprout_soil_a_source_name(),
+        CONFIG_SPROUT_SOIL_A_ADC_GPIO,
+        source);
+    fflush(stdout);
+}
+
+static bool sprout_handle_pump_pulse_command(const char *line)
+{
+    const char *prefix = "PUMP_PULSE ";
+    const size_t prefix_len = strlen(prefix);
+    if (strncmp(line, prefix, prefix_len) != 0) {
+        return false;
+    }
+
+    char scratch[CONFIG_SPROUT_COMMAND_MAX_LINE_LENGTH];
+    strncpy(scratch, line + prefix_len, sizeof(scratch) - 1);
+    scratch[sizeof(scratch) - 1] = '\0';
+
+    char *duration_ms_text = strtok(scratch, " ");
+    char *unexpected = strtok(NULL, " ");
+    int duration_ms = 0;
+    if (duration_ms_text == NULL || unexpected != NULL ||
+        !sprout_parse_int(duration_ms_text, &duration_ms) ||
+        duration_ms <= 0 || duration_ms > CONFIG_SPROUT_PUMP_TEST_MAX_MS) {
+        sprout_emit_reject("PUMP_TEST_DURATION_OUT_OF_RANGE", line);
+        return true;
+    }
+
+    sprout_set_pump_relay(true);
+    vTaskDelay(pdMS_TO_TICKS(duration_ms));
+    sprout_set_pump_relay(false);
+
+    printf(
+        "ACK command=PUMP_PULSE gpio=%d active_low=true duration_ms=%d final_expected_gpio_level=%d final_gpio_level=%d final_state=%s execution=TEST_ONLY\n",
+        CONFIG_SPROUT_PUMP_RELAY_GPIO,
+        duration_ms,
+        sprout_pump_relay_expected_gpio_level(),
+        sprout_pump_relay_gpio_level(),
+        sprout_pump_relay_state_name());
+    fflush(stdout);
+    return true;
+}
+
 static void sprout_emit_i2c_scan_report(const char *addresses, uint8_t count)
 {
     printf("I2C_SCAN count=%u addrs=%s\n", count, addresses);
@@ -708,6 +881,11 @@ static void sprout_command_loop(void)
             continue;
         }
 
+        if (strcmp(line, "SOIL_READ") == 0) {
+            sprout_emit_soil_a_report("command");
+            continue;
+        }
+
         if (strcmp(line, "I2C_SCAN") == 0) {
             char addresses[CONFIG_SPROUT_I2C_SCAN_BUFFER_BYTES];
             uint8_t count = 0;
@@ -749,7 +927,22 @@ static void sprout_command_loop(void)
             continue;
         }
 
+        if (strcmp(line, "PUMP_STATUS") == 0) {
+            sprout_emit_pump_status("command");
+            continue;
+        }
+
+        if (strcmp(line, "PUMP_OFF") == 0) {
+            sprout_set_pump_relay(false);
+            sprout_emit_ack("PUMP_OFF");
+            continue;
+        }
+
         if (sprout_handle_set_sensor_stub(line)) {
+            continue;
+        }
+
+        if (sprout_handle_pump_pulse_command(line)) {
             continue;
         }
 
@@ -784,6 +977,8 @@ void app_main(void)
 
     sprout_init_nvs();
     sprout_reset_telemetry_stubs();
+    sprout_init_soil_a_adc();
+    sprout_init_pump_relay();
 
     const sprout_board_profile_t *profile = sprout_board_profile_active();
     ESP_ERROR_CHECK(sprout_bme280_init(profile));
