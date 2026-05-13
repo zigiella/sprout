@@ -157,7 +157,7 @@ def test_M3_alert_latched() -> None:
             "pending_contradictions": [],
         },
         decision_receipts=[
-            {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "DEPOSITO_BAJO"},
+            {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "TANK_LOW"},
         ],
     )
 
@@ -179,9 +179,9 @@ def test_M3_bis_blocks_consecutivos() -> None:
             "pending_contradictions": [],
         },
         decision_receipts=[
-            {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "HEARTBEAT_PERDIDO"},
-            {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "HEARTBEAT_PERDIDO"},
-            {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "DEPOSITO_BAJO"},
+            {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "JETSON_HEARTBEAT_LOST"},
+            {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "JETSON_HEARTBEAT_LOST"},
+            {"action": "BLOCK", "confidence": 1.0, "blocked_reason": "TANK_LOW"},
         ],
     )
 

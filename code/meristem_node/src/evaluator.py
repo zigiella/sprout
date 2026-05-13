@@ -13,13 +13,23 @@ que se cumpla):
    - HARD_LIMIT_DOMAIN: intenta relajar un hard limit del firmware
      (bajar tank_minimum_pct, subir max_seconds_per_event, acortar
      alert_latched_persists_until).
+
+     **Equivalencia jurisdiccional con SAFETY_DOWNGRADE (Xilema día 26)**:
+     `HARD_LIMIT_DOMAIN` (cómo Meristem nombra el rechazo, perspectiva
+     del emisor) y `SAFETY_DOWNGRADE` (cómo Rhizome/Pollen nombran el
+     intento de bajar safety, perspectiva del validador) son la misma
+     realidad vista desde dos lados — no son duplicados, son
+     **equivalentes jurisdiccionales**. Si en futuras visitas un
+     `ValidationStamp` de Rhizome trae `reason: SAFETY_DOWNGRADE`,
+     Meristem lo interpreta como sinónimo de su propio
+     `HARD_LIMIT_DOMAIN` al consolidar evidencia.
    - JURISDICTION_POLLEN: cambio físico puntual reportado por
      operador (ej. "regar 30s extra hoy") → es jurisdicción de Pollen
      vía MissionPatch, no de Meristem vía PolicyPacket.
 
 2. **ALERT_POLICY — PERSISTENT_EMERGENCY**
    El nodo está en emergencia que persiste a través de varios receipts
-   o snapshot.mode == "alert" + ALERTA_LATCHED activa.
+   o snapshot.mode == "alert" + ALERT_LATCHED activa.
    Meristem afina con mode_default="alert", no bloquea hardware.
 
 3. **CONSERVATIVE_POLICY — EVIDENCE_LOW_CONFIDENCE**

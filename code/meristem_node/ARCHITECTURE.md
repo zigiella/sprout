@@ -173,7 +173,7 @@ Validan las 4 reglas del Evaluator + 1 control:
 |---|---|---|---|
 | M1 | Bundle limpio (camino feliz) | snapshot OK + 3 receipts WATER OK + weather fresh | CONFIRM_POLICY |
 | M2 | Bundle con disputa | ValidationStamp(disputed) + receipts mixtos | CONSERVATIVE_POLICY |
-| M3 | Bundle con emergencia | DEPOSITO_BAJO repetido + ALERT_LATCHED | ALERT_POLICY |
+| M3 | Bundle con emergencia | TANK_LOW repetido + ALERT_LATCHED | ALERT_POLICY |
 | M4 | Patch malicioso (hard limit) | bundle pide bajar tank_minimum_pct | REFUSE (HARD_LIMIT_DOMAIN) |
 | M5 | Pregunta puntual (jurisdicción Pollen) | bundle incluye request operador "regar 30s extra hoy" | REFUSE (JURISDICTION_POLLEN) |
 

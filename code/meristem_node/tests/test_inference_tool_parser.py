@@ -301,7 +301,7 @@ def test_compose_chat_response_recovers_inline_tool_call(monkeypatch):
         assert name == "get_recent_history"
         assert args["target_node_id"] == "rhizome_01"
         assert args["last_n"] == 5
-        return "Alerta DEPOSITO_BAJO persistente desde ayer 14:00."
+        return "Alerta TANK_LOW persistente desde ayer 14:00."
 
     monkeypatch.setattr(inference, "_post_chat", fake_post_chat)
     # call_tool se importa dentro de la función vía `from .prompts import call_tool`

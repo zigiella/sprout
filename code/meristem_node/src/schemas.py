@@ -144,10 +144,11 @@ class Action(str, Enum):
     - CONFIRM_POLICY: bundle limpio, extiende valid_until +7d (camino feliz)
     - CONSERVATIVE_POLICY: disputas/baja confianza/contradicciones,
       mode=conservative, thresholds más estrictos
-    - ALERT_POLICY: emergencia persistente (DEPOSITO_BAJO repetido,
-      HEARTBEAT_PERDIDO recurrente, ALERTA_LATCHED activa), mode=alert
+    - ALERT_POLICY: emergencia persistente (TANK_LOW repetido,
+      JETSON_HEARTBEAT_LOST recurrente, ALERT_LATCHED activa), mode=alert
     - REFUSE: el bundle pide algo que viola la jurisdicción de Meristem
-      (HARD_LIMIT_DOMAIN, JURISDICTION_POLLEN)
+      (HARD_LIMIT_DOMAIN ≡ SAFETY_DOWNGRADE jurisdiccionalmente,
+      JURISDICTION_POLLEN)
     """
 
     CONFIRM_POLICY = "confirm_policy"
