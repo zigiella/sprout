@@ -44,8 +44,8 @@ jobs:
       - name: Assemble debug
         run: ./gradlew assembleDebug --stacktrace
 
-      - name: Unit tests
-        run: ./gradlew testDebugUnitTest --stacktrace
+      - name: Unit tests (demo flavor)
+        run: ./gradlew testDemoDebugUnitTest --stacktrace
 
       - name: Publish test results
         if: always()
