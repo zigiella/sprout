@@ -4,6 +4,12 @@
 # Python
 __pycache__/
 *.py[cod]
+.pytest_cache/
+
+# Local databases (runtime only, never commit)
+*.db
+*.sqlite
+*.sqlite3
 *$py.class
 *.so
 .Python

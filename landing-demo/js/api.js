@@ -17,15 +17,17 @@
 
 const SPROUT_API_MODE = "mock"; // "mock" | "live"
 
-// TODO_API_SETUP: cuando arranquemos Modal / HF Inference, rellenar:
+// Optional live mode — point each node at a hosted Gemma 4 inference endpoint
+// (e.g. Modal, HF Inference). The browser demo runs deterministic by design;
+// this hook is only for users who want to wire their own backend.
 const SPROUT_API_ENDPOINTS = {
-  rhizome_e2b: null, // p.ej. "https://zigiella--gemma-4-e2b.modal.run"
-  pollen_e4b: null,  // p.ej. "https://zigiella--gemma-4-e4b-audio.modal.run"
-  meristem_e4b: null // p.ej. "https://zigiella--gemma-4-e4b-tools.modal.run"
+  rhizome_e2b: null, // e.g. "https://your-host/gemma-4-e2b"
+  pollen_e4b: null,  // e.g. "https://your-host/gemma-4-e4b-audio"
+  meristem_e4b: null // e.g. "https://your-host/gemma-4-e4b-tools"
 };
 
 // ----------------------------------------------------------------
-// API real (placeholder — usar cuando SPROUT_API_MODE === "live")
+// Live mode (only active when SPROUT_API_MODE === "live")
 // ----------------------------------------------------------------
 
 async function callGemmaLive(endpoint, payload) {
