@@ -1,0 +1,98 @@
+<resources>
+    <string name="app_name">Pollen</string>
+
+    <string name="every_event_receipt">Federated AI carried by Pollen app</string>
+    <string name="nearby_rhizomes">Rhizomes asociados</string>
+    <string name="meristem_sub">Cerebro lento · handoff semanal</string>
+    <string name="physical_prevails">La capa física prevalece. Rhizome arbitra. Pollen media. Meristem refina.</string>
+
+    <string name="connected">Conectado</string>
+    <string name="offline">Sin conexión</string>
+    <string name="stale">Obsoleto</string>
+    <string name="syncing">Sincronizando</string>
+    <string name="blocked">Bloqueado</string>
+    <string name="expired">Caducado</string>
+    <string name="validated">Validado</string>
+    <string name="ai_evidence_only">solo evidencia</string>
+
+    <string name="visit_connect">Conectar al rhizome</string>
+    <string name="visit_snapshot">Extraer snapshot</string>
+    <string name="visit_receipts">Sincronizar recibos</string>
+    <string name="visit_action">Elegir acción</string>
+    <string name="visit_checklist">visit checklist</string>
+    <string name="telemetry_current">telemetría · actual</string>
+    <string name="chat_pollen">Chatear con Pollen</string>
+    <string name="audit_pollen">Historial</string>
+    <string name="selected_plot">Parcela seleccionada</string>
+    <string name="explain_decision">Explicar Decisión (LLM)</string>
+    <string name="explanation_title">Explicación de Rhizome</string>
+    <string name="close">Cerrar</string>
+    <string name="water_level">AGUA</string>
+    <string name="soil_moisture">Humedad suelo</string>
+    <string name="what_happened">¿Qué ha pasado desde mi ausencia?</string>
+    <string name="mission_voice_note">Nota de voz</string>
+    <string name="mission_compiled_patch">Patch compilado</string>
+    <string name="mission_acknowledged">Misión confirmada.</string>
+    <string name="mission_review_before_send">Revisa antes de enviar al rhizome.</string>
+    <string name="send">Enviar</string>
+    <string name="last_decision">Última decisión</string>
+    <string name="safe_envelope">Dentro del envelope seguro</string>
+    <string name="active_mission">Misión activa</string>
+    <string name="ask_placeholder">¿Qué ha pasado desde mi última visita?</string>
+    <string name="budget_cap">budget_cap_ml</string>
+    <string name="watering_window">watering_window</string>
+
+    <!-- Restored strings -->
+    <string name="home_title">Pollen App (Sprout system)</string>
+    <string name="home_welcome">Bienvenido al campo. Selecciona un nodo para empezar.</string>
+    <string name="home_my_plots">Mis Parcelas (Rhizomes)</string>
+    <string name="home_home_node">Cerebro Doméstico (Meristem)</string>
+    <string name="notif_vision_title">Confirmación Visual Requerida</string>
+    <string name="notif_vision_desc">La política activa exige que el operario confirme visualmente el estado del campo antes de regar.</string>
+    <string name="back_to_home">Volver a inicio</string>
+    <string name="plot_north">Parcela Norte</string>
+    <string name="plot_south">Parcela Sur</string>
+    <string name="visit_connect_sub">BLE / WiFi · 0.4s</string>
+    <string name="visit_snapshot_sub">6.2 KB</string>
+    <string name="visit_receipts_sub">Ventana 24h</string>
+    
+    <!-- Voice Command Beta -->
+    <string name="voice_command_title">Comando de Voz</string>
+    <string name="voice_beta_disclaimer">Esta feature está en beta — si el sistema no entiende con seguridad, te lo dirá.</string>
+    <string name="status_label">Estado: %1$s</string>
+    <string name="stop_recording">Detener Grabación</string>
+    <string name="chat_with_rhizome">Chat con Rhizome</string>
+    <string name="view_generated_policy">Ver política generada (JSON)</string>
+    <string name="policy_dialog_title">Política Generada por Gemma 4</string>
+    <string name="close_dialog">Cerrar</string>
+    <string name="speech_prompt">Habla a Gemma 4...</string>
+
+    <!-- Meristem UI -->
+    <string name="meristem_checking_connection">Comprobando conexión con Meristem...</string>
+    <string name="meristem_connection_ok">Conexión establecida OK.</string>
+    <string name="meristem_connection_error">Error: Meristem no accesible.</string>
+    <string name="meristem_connected_home">Conectado a Meristem (Hogar)</string>
+    <string name="meristem_domestic_brain">Cerebro doméstico</string>
+    <string name="meristem_status_connected">Conectado</string>
+    <string name="meristem_status_disconnected">Desconectado</string>
+    <string name="meristem_last_time">Última vez:</string>
+    <string name="meristem_step1_title">1. Descargar Datos de Campo</string>
+    <string name="meristem_step1_desc">Transfiere el estado local de Rhizome a Meristem para su asimilación lenta.</string>
+    <string name="meristem_upload_start">Iniciando subida de snapshot %1$s...</string>
+    <string name="meristem_upload_success">Subida completada con éxito.</string>
+    <string name="meristem_upload_error">Error en subida: %1$s</string>
+    <string name="meristem_upload_btn">Subir Visita de Campo a Meristem</string>
+    <string name="meristem_no_local_data">No hay datos locales</string>
+    <string name="meristem_upload_done_msg">¡Visita subida con éxito!</string>
+    <string name="meristem_step2_title">2. Cargar Nueva Política</string>
+    <string name="meristem_step2_desc">Recoge la política actualizada calculada por Meristem.</string>
+    <string name="meristem_download_start">Solicitando política para nodo: %1$s...</string>
+    <string name="meristem_download_success">Política %1$s descargada y guardada.</string>
+    <string name="meristem_download_error">Error en descarga: %1$s</string>
+    <string name="meristem_download_btn">Descargar Política Actualizada</string>
+    <string name="meristem_received_policy">Política Recibida: %1$s</string>
+    <string name="meristem_water_budget">Presupuesto de riego: %1$sL/día</string>
+    <string name="meristem_window">Ventana: %1$s</string>
+    <string name="meristem_rationale">Justificación: %1$s</string>
+    <string name="meristem_sync_log">Log de Sincronización</string>
+</resources>
