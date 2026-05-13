@@ -53,13 +53,30 @@ class MiniEvaluatorTest {
 
     @Test
     fun testConservativeNoKeywordMatch() {
-        val patch = MissionPatch("rhizome_01", "water_extra", null, 60, null, null, null, "Aplicar 60 segundos")
+        // El patch propone 20s (dentro de MAX_WATER_SECONDS_MVP=30). El transcript
+        // "agua un poco más" no contiene keywords fuertes ni números que matcheen
+        // con los campos del patch, asi que el evaluator aplica margen conservador
+        // del 75%: 20 * 0.75 = 15s.
+        val patch = MissionPatch("rhizome_01", "water_extra", null, 20, null, null, null, "Aplicar 20 segundos")
         val transcript = "agua un poco más"
         val result = MiniEvaluator.evaluate(transcript, patch, patch.rationaleEs, 0.9, baseSnapshot, basePolicy)
-        
+
         assertEquals(EvaluationAction.APPLY_CONSERVATIVE, result.action)
         assertEquals("MODERATE_CONFIDENCE", result.reasonCode)
-        assertEquals(45, result.policyPacket?.rules?.maxWateringDurationS) // 60 * 0.75
+        assertEquals(15, result.policyPacket?.rules?.maxWateringDurationS) // 20 * 0.75
+    }
+
+    @Test
+    fun testRefuseHardDurationAboveFirmwareLimit() {
+        // Cualquier patch con durationS > MAX_WATER_SECONDS_MVP (30) debe rechazarse
+        // como REFUSE_HARD antes de evaluar match semántico, para proteger el sobre
+        // físico del firmware.
+        val patch = MissionPatch("rhizome_01", "water_extra", null, 60, null, null, null, "Aplicar 60 segundos")
+        val transcript = "riega la parcela A 60 segundos"
+        val result = MiniEvaluator.evaluate(transcript, patch, patch.rationaleEs, 0.9, baseSnapshot, basePolicy)
+
+        assertEquals(EvaluationAction.REFUSE_HARD, result.action)
+        assertEquals("HARD_LIMIT_DOMAIN", result.reasonCode)
     }
 
     @Test

@@ -82,9 +82,19 @@ async function rhizomeDecideMock(state) {
     candidate_seconds = 18;
   }
 
-  // ESP32 SAFE_LIMIT: si la candidate excede max_seconds_per_event = 25, modula
-  const final_seconds = Math.min(candidate_seconds, 25);
-  const modulated = (final_seconds < candidate_seconds);
+  // ESP32 hard limit del firmware MVP: MAX_WATER_SECONDS_MVP = 30. Si la
+  // candidate excede 30, el firmware REAL responde REJECT con motivo
+  // EVENT_DURATION_OUT_OF_RANGE (no modula). Este mock determinista refleja
+  // esa semantica: si esta sobre el limite, queda fuera de envelope.
+  // La "modulacion" que aparecia antes (Math.min) no estaba en el firmware
+  // contractual y se rebajo tras la auditoria dia 28.
+  const FIRMWARE_MAX_SECONDS = 30;
+  const final_seconds = candidate_seconds <= FIRMWARE_MAX_SECONDS ? candidate_seconds : 0;
+  const modulated = false;
+  if (final_seconds === 0 && action === "irrigate") {
+    action = "block";
+    reason = "EVENT_DURATION_OUT_OF_RANGE";
+  }
 
   return {
     decision_id: "dec_" + Date.now().toString(36),
