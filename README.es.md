@@ -6,7 +6,7 @@
 
 # Sprout
 
-> **Optimización hídrica AI Local-first para parcelas que la red olvida.**
+> **Optimización hídrica Local-first AI para parcelas que la red olvida.**
 > *Seguro · explicable · open-source.*
 
 > *"Cuando la red no llega y nadie está cerca, el criterio sigue regando."*
