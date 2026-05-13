@@ -201,6 +201,58 @@ class SyncFacadeTest(unittest.TestCase):
         self.assertEqual(future_summary["counts"]["total"], 0)
         self.assertEqual(future_summary["locale"], "en")
 
+    def test_visit_summary_does_not_present_schema_safe_zero_as_sensor_truth(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data_dir = Path(tmp)
+            snapshot = _get_json_from_file(default_data_dir() / "rhizome_snapshot.json")
+            snapshot["sensors"]["tank_level_pct"] = 0.0
+            snapshot["sensors"]["soil_moisture_a_pct"] = 0.0
+            snapshot["sensors"]["soil_moisture_b_pct"] = 0.0
+            snapshot["pending_contradictions"] = [
+                "tank_level_unavailable",
+                "soil_a_unavailable_or_uncalibrated",
+                "soil_b_unavailable_or_uncalibrated",
+            ]
+            receipt = _get_json_from_file(default_data_dir() / "decision_receipt.json")
+            (data_dir / "rhizome_snapshot.json").write_text(json.dumps(snapshot), encoding="utf-8")
+            (data_dir / "decision_receipt.json").write_text(json.dumps(receipt), encoding="utf-8")
+
+            server, base_url = _run_server(data_dir)
+            try:
+                summary = _get_json(base_url, "/summary/since?locale=en")
+            finally:
+                _stop_server(server)
+
+        self.assertNotIn("Tank is now 0%", summary["summary"])
+        self.assertIn("Current tank level is unavailable.", summary["highlights"])
+        self.assertIn("Soil probe readings are incomplete.", summary["highlights"])
+
+    def test_visit_summary_can_present_demo_calibrated_soil_estimate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data_dir = Path(tmp)
+            snapshot = _get_json_from_file(default_data_dir() / "rhizome_snapshot.json")
+            snapshot["sensors"]["soil_moisture_a_pct"] = 25.0
+            snapshot["sensors"]["soil_moisture_b_pct"] = 25.0
+            snapshot["sensors"]["soil_moisture_a_raw"] = 2063
+            snapshot["sensors"]["soil_moisture_a_pct_estimated"] = True
+            snapshot["sensors"]["soil_moisture_b_pct_estimated"] = True
+            snapshot["sensors"]["soil_moisture_calibration"] = "demo_raw_index"
+            snapshot["pending_contradictions"] = [
+                "soil_a_unavailable_or_uncalibrated",
+                "soil_b_unavailable_or_uncalibrated",
+            ]
+            receipt = _get_json_from_file(default_data_dir() / "decision_receipt.json")
+            (data_dir / "rhizome_snapshot.json").write_text(json.dumps(snapshot), encoding="utf-8")
+            (data_dir / "decision_receipt.json").write_text(json.dumps(receipt), encoding="utf-8")
+
+            server, base_url = _run_server(data_dir)
+            try:
+                summary = _get_json(base_url, "/summary/since?locale=en")
+            finally:
+                _stop_server(server)
+
+        self.assertIn("Demo-calibrated soil estimate A/B: 25% / 25%.", summary["highlights"])
+
     def test_visit_summary_can_use_gemma_narrator_without_changing_counts(self):
         content = json.dumps(
             {
@@ -265,6 +317,53 @@ class SyncFacadeTest(unittest.TestCase):
 
         self.assertGreaterEqual(len(all_receipts), 1)
         self.assertEqual(future_receipts, [])
+
+    def test_receipts_include_steward_jsonl_history(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data_dir = root / "facade_data"
+            history_dir = root / "decision_receipts"
+            data_dir.mkdir()
+            history_dir.mkdir()
+            shutil.copy(default_data_dir() / "rhizome_snapshot.json", data_dir / "rhizome_snapshot.json")
+
+            template = _get_json_from_file(default_data_dir() / "decision_receipt.json")
+            first = dict(template)
+            first["decision_id"] = "rec_history_water"
+            first["created_at"] = "2026-05-11T10:00:00Z"
+            first["action"] = "WATER_A"
+            first["executed"] = True
+            first["blocked_reason"] = None
+            second = dict(template)
+            second["decision_id"] = "rec_history_defer"
+            second["created_at"] = "2026-05-11T10:05:00Z"
+            second["action"] = "DEFER"
+            second["executed"] = False
+            second["blocked_reason"] = "COOLDOWN_NOT_MET"
+            current = dict(template)
+            current["decision_id"] = "rec_current"
+            current["created_at"] = "2026-05-11T10:10:00Z"
+            current["action"] = "DEFER"
+            current["executed"] = False
+            current["blocked_reason"] = "COOLDOWN_NOT_MET"
+
+            (history_dir / "2026-05-11.jsonl").write_text(
+                "\n".join(json.dumps(receipt) for receipt in [first, second]) + "\n",
+                encoding="utf-8",
+            )
+            (data_dir / "decision_receipt.json").write_text(json.dumps(current), encoding="utf-8")
+
+            server, base_url = _run_server(data_dir)
+            try:
+                receipts = _get_json(base_url, "/receipts")
+                filtered = _get_json(base_url, "/receipts?since=2026-05-11T10:04:00Z")
+                historical_explanation = _get_json(base_url, "/explain/decision/rec_history_water?locale=en")
+            finally:
+                _stop_server(server)
+
+        self.assertEqual([receipt["decision_id"] for receipt in receipts], ["rec_history_water", "rec_history_defer", "rec_current"])
+        self.assertEqual([receipt["decision_id"] for receipt in filtered], ["rec_history_defer", "rec_current"])
+        self.assertEqual(historical_explanation["decision_id"], "rec_history_water")
 
     def test_explain_missing_decision_returns_structured_404(self):
         server, base_url = _run_server(default_data_dir())

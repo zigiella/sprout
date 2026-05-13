@@ -386,6 +386,16 @@ Esto emite `PUMP_PULSE 3000` solo si Rhizome decide `WATER_A`. No usar
 `pump-toggle` con la build de dia 26: `PUMP_ON` no esta expuesto por seguridad.
 `WATER A 1` sigue siendo `DRY_RUN` en esta build.
 
+Si la build de firmware responde `execution=TEST_ONLY` aunque Bea haya validado
+que la bomba mueve agua real, usar solo en perfil supervisado:
+
+```bash
+ACCEPT_ESP32_TEST_ONLY_PULSE_AS_EXECUTED=1
+```
+
+Por defecto Rhizome trata `TEST_ONLY` como no ejecutado para no inflar
+receipts. Esta variable lo interpreta como pulso fisico confirmado por operador.
+
 Si la humedad llega como raw no calibrado, declarar umbrales raw:
 
 ```bash

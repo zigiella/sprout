@@ -47,6 +47,24 @@ def _load_json(path: Path) -> Any:
         return json.load(f)
 
 
+def _load_jsonl_dicts(path: Path) -> list[dict[str, Any]]:
+    if not path.exists():
+        return []
+    records: list[dict[str, Any]] = []
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            stripped = line.strip()
+            if not stripped:
+                continue
+            try:
+                record = json.loads(stripped)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(record, dict):
+                records.append(record)
+    return records
+
+
 def _write_json_atomic(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp_path = path.with_suffix(path.suffix + ".tmp")
@@ -116,8 +134,43 @@ def _receipt_window(receipts: list[dict[str, Any]]) -> dict[str, int]:
 
 
 def _tank_pct(snapshot: dict[str, Any]) -> float | None:
+    pending = set(snapshot.get("pending_contradictions", []))
+    if "tank_level_unavailable" in pending:
+        return None
     value = snapshot.get("sensors", {}).get("tank_level_pct")
     return float(value) if isinstance(value, int | float) else None
+
+
+def _soil_pct_pair(snapshot: dict[str, Any]) -> tuple[float | None, float | None]:
+    pending = set(snapshot.get("pending_contradictions", []))
+    sensors = snapshot.get("sensors", {})
+    soil_a_raw = sensors.get("soil_moisture_a_pct")
+    soil_b_raw = sensors.get("soil_moisture_b_pct")
+    soil_a = float(soil_a_raw) if isinstance(soil_a_raw, int | float) else None
+    soil_b = float(soil_b_raw) if isinstance(soil_b_raw, int | float) else None
+    if "soil_a_unavailable_or_uncalibrated" in pending:
+        soil_a = None
+    if "soil_b_unavailable_or_uncalibrated" in pending:
+        soil_b = None
+    return soil_a, soil_b
+
+
+def _soil_display_pair(snapshot: dict[str, Any]) -> tuple[float | None, float | None, bool]:
+    soil_a, soil_b = _soil_pct_pair(snapshot)
+    if soil_a is not None and soil_b is not None:
+        return soil_a, soil_b, False
+
+    sensors = snapshot.get("sensors", {})
+    estimated = False
+    if soil_a is None and sensors.get("soil_moisture_a_pct_estimated") is True:
+        value = sensors.get("soil_moisture_a_pct")
+        soil_a = float(value) if isinstance(value, int | float) else None
+        estimated = soil_a is not None
+    if soil_b is None and sensors.get("soil_moisture_b_pct_estimated") is True:
+        value = sensors.get("soil_moisture_b_pct")
+        soil_b = float(value) if isinstance(value, int | float) else None
+        estimated = estimated or soil_b is not None
+    return soil_a, soil_b, estimated
 
 
 def _severity(snapshot: dict[str, Any], counts: dict[str, int]) -> str:
@@ -540,11 +593,24 @@ def _summary_text(
     locale: str,
 ) -> tuple[str, str, list[str], str]:
     tank = _tank_pct(snapshot)
-    sensors = snapshot.get("sensors", {})
-    soil_a = sensors.get("soil_moisture_a_pct")
-    soil_b = sensors.get("soil_moisture_b_pct")
+    soil_a, soil_b, soil_estimated = _soil_display_pair(snapshot)
     latest = sorted(receipts, key=_receipt_sort_key)[-1] if receipts else None
     latest_action = latest.get("action") if latest else None
+    soil_pair_known = isinstance(soil_a, int | float) and isinstance(soil_b, int | float)
+    soil_highlight_en = (
+        f"Demo-calibrated soil estimate A/B: {soil_a:.0f}% / {soil_b:.0f}%."
+        if soil_pair_known and soil_estimated
+        else f"Soil probes A/B read {soil_a:.0f}% / {soil_b:.0f}%."
+        if soil_pair_known
+        else "Soil probe readings are incomplete."
+    )
+    soil_highlight_es = (
+        f"Estimacion de suelo calibrada para demo A/B: {soil_a:.0f}% / {soil_b:.0f}%."
+        if soil_pair_known and soil_estimated
+        else f"Las sondas de suelo A/B marcan {soil_a:.0f}% / {soil_b:.0f}%."
+        if soil_pair_known
+        else "Las lecturas de suelo estan incompletas."
+    )
 
     if locale == "en":
         headline = f"{node_id}: {counts['total']} decisions since the last visit"
@@ -558,11 +624,7 @@ def _summary_text(
                 f"{_plural_en(counts['alert'], 'alert', 'alerts')}."
             ),
             f"Current tank level is {tank:.0f}%." if tank is not None else "Current tank level is unavailable.",
-            (
-                f"Soil probes A/B read {soil_a:.0f}% / {soil_b:.0f}%."
-                if isinstance(soil_a, int | float) and isinstance(soil_b, int | float)
-                else "Soil probe readings are incomplete."
-            ),
+            soil_highlight_en,
         ]
         if latest_action:
             highlights.append(f"Latest recorded decision: {latest_action}.")
@@ -597,11 +659,7 @@ def _summary_text(
             f"{_plural_es(counts['alert'], 'alerta', 'alertas')}."
         ),
         f"El deposito esta al {tank:.0f}%." if tank is not None else "No hay lectura de deposito.",
-        (
-            f"Las sondas de suelo A/B marcan {soil_a:.0f}% / {soil_b:.0f}%."
-            if isinstance(soil_a, int | float) and isinstance(soil_b, int | float)
-            else "Las lecturas de suelo estan incompletas."
-        ),
+        soil_highlight_es,
     ]
     if latest_action:
         highlights.append(f"Ultima decision registrada: {latest_action}.")
@@ -669,21 +727,27 @@ class RhizomeReadStore:
         return _load_json(self.data_dir / "rhizome_snapshot.json")
 
     def receipts(self, since: str | None = None) -> list[dict[str, Any]]:
+        receipts: list[dict[str, Any]] = []
+        history_dir = self.data_dir.parent / "decision_receipts"
+        if history_dir.exists():
+            for path in sorted(history_dir.glob("*.jsonl")):
+                receipts.extend(_load_jsonl_dicts(path))
+
         candidates = [
             self.data_dir / "decision_receipt.json",
             self.data_dir / "decision_receipt_blocked.json",
         ]
-        receipts = [
+        receipts.extend(
             receipt
             for path in candidates
             if path.exists()
             for receipt in [_load_json(path)]
-        ]
+        )
         deduped: dict[str, dict[str, Any]] = {}
         for receipt in receipts:
             decision_id = str(receipt.get("decision_id") or "")
             deduped[decision_id or f"anonymous_{len(deduped)}"] = receipt
-        receipts = list(deduped.values())
+        receipts = sorted(deduped.values(), key=_receipt_sort_key)
 
         since_dt = _parse_zulu(since)
         if since_dt is None:

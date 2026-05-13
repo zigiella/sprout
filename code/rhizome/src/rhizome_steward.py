@@ -215,7 +215,23 @@ class TermiosSerialPort:
         termios.tcsetattr(self.fd, termios.TCSANOW, attrs)
 
     def write(self, data: bytes) -> int:
-        return os.write(self.fd, data)
+        deadline = time.monotonic() + self.timeout
+        total_written = 0
+        while total_written < len(data):
+            try:
+                written = os.write(self.fd, data[total_written:])
+            except BlockingIOError:
+                if time.monotonic() >= deadline:
+                    raise TimeoutError("Timeout escribiendo en puerto serie.")
+                time.sleep(0.01)
+                continue
+            if written == 0:
+                if time.monotonic() >= deadline:
+                    raise TimeoutError("Timeout escribiendo en puerto serie.")
+                time.sleep(0.01)
+                continue
+            total_written += written
+        return total_written
 
     def readline(self) -> bytes:
         deadline = time.monotonic() + self.timeout
@@ -246,6 +262,23 @@ class TermiosSerialPort:
         os.close(self.fd)
 
 
+def _expected_ack_command(command: str) -> str | None:
+    command_name = command.split()[0] if command.split() else ""
+    if command_name in {"STATUS", "TELEMETRY", "PUMP_STATUS"}:
+        return None
+    return command_name or None
+
+
+def _line_is_ack_for_command(line: str, expected_command: str | None) -> bool:
+    if expected_command is None:
+        return line.startswith("ACK ")
+    return f"ACK command={expected_command}" in line
+
+
+def _line_is_terminal_for_command(line: str, expected_command: str) -> bool:
+    return _line_is_ack_for_command(line, expected_command) or "REJECT reason=" in line
+
+
 class SerialESP32Client:
     def __init__(self, port: str, baud: int = 115200, timeout_s: float = 0.1, quiet_s: float = 0.35, max_wait_s: float = 3.0, water_command_mode: str = "water-duration") -> None:
         try:
@@ -264,10 +297,11 @@ class SerialESP32Client:
         self.serial.reset_input_buffer()
         self.serial.reset_output_buffer()
 
-    def _collect(self, max_wait_s: float | None = None) -> list[str]:
+    def _collect(self, max_wait_s: float | None = None, expected_ack_command: str | None = None) -> list[str]:
         lines: list[str] = []
         started_at = time.monotonic()
         last_payload_at: float | None = None
+        terminal_seen = False
         max_wait_s = max_wait_s if max_wait_s is not None else self.max_wait_s
         while True:
             raw = self.serial.readline()
@@ -277,17 +311,22 @@ class SerialESP32Client:
                 if decoded:
                     lines.append(decoded)
                     last_payload_at = current
+                    if expected_ack_command and _line_is_terminal_for_command(decoded, expected_ack_command):
+                        terminal_seen = True
                 continue
             if last_payload_at is not None and current - last_payload_at >= self.quiet_s:
-                break
-            if current - started_at >= self.max_wait_s:
+                if expected_ack_command is None or terminal_seen:
+                    break
+            if current - started_at >= max_wait_s:
                 break
         return lines
 
     def command(self, command: str, max_wait_s: float | None = None) -> ESP32CommandResult:
         sent_at = zulu(utc_now())
+        self.serial.reset_input_buffer()
         self.serial.write(f"{command}\n".encode("utf-8"))
-        lines = self._collect(max_wait_s=max_wait_s)
+        expected_ack_command = _expected_ack_command(command)
+        lines = self._collect(max_wait_s=max_wait_s, expected_ack_command=expected_ack_command)
         received_at = zulu(utc_now())
         combined = "\n".join(lines)
         if "REJECT reason=" in combined:
@@ -298,7 +337,7 @@ class SerialESP32Client:
                     reason = values.get("reason")
                     break
             return ESP32CommandResult(False, command, sent_at, received_at, lines, "REJECT", reason)
-        ok = any(line.startswith("ACK ") for line in lines)
+        ok = any(_line_is_ack_for_command(line, expected_ack_command) for line in lines) if expected_ack_command else any(line.startswith("ACK ") for line in lines)
         return ESP32CommandResult(ok, command, sent_at, received_at, lines, "OK" if ok else "NO_ACK")
 
     def heartbeat(self) -> ESP32CommandResult:
@@ -361,6 +400,7 @@ class StewardConfig:
     allow_missing_tank_sensor: bool = False
     allow_missing_flow_sensor: bool = True
     execute_water: bool = False
+    accept_esp32_test_only_pulse_as_executed: bool = False
     shadow_skeptic_enabled: bool = True
     gemma_rationale_url: str | None = None
     gemma_model: str = "gemma4:e2b"
@@ -495,6 +535,53 @@ def _has_full_raw_soil_calibration(config: StewardConfig) -> bool:
     if config.soil_raw_polarity == "low_is_wet":
         return config.soil_wet_below_raw is not None and config.soil_dry_above_raw is not None
     return config.soil_dry_below_raw is not None and config.soil_wet_above_raw is not None
+
+
+def _clamp_pct(value: float) -> float:
+    return max(0.0, min(100.0, value))
+
+
+def _demo_soil_moisture_pct(raw_value: int | None, config: StewardConfig) -> float | None:
+    """Display-only moisture index for raw probes, not a physical calibration."""
+    if raw_value is None:
+        return None
+
+    if config.soil_raw_polarity == "low_is_wet":
+        if config.soil_wet_below_raw is None or config.soil_dry_above_raw is None:
+            return None
+        wet_raw = float(config.soil_wet_below_raw)
+        dry_raw = float(config.soil_dry_above_raw)
+        if dry_raw <= wet_raw:
+            return None
+        if raw_value <= wet_raw:
+            return 80.0
+        if raw_value >= dry_raw:
+            return 25.0
+        ratio = (float(raw_value) - wet_raw) / (dry_raw - wet_raw)
+        return round(_clamp_pct(80.0 - ratio * 55.0), 1)
+
+    if config.soil_dry_below_raw is None or config.soil_wet_above_raw is None:
+        return None
+    dry_raw = float(config.soil_dry_below_raw)
+    wet_raw = float(config.soil_wet_above_raw)
+    if wet_raw <= dry_raw:
+        return None
+    if raw_value <= dry_raw:
+        return 25.0
+    if raw_value >= wet_raw:
+        return 80.0
+    ratio = (float(raw_value) - dry_raw) / (wet_raw - dry_raw)
+    return round(_clamp_pct(25.0 + ratio * 55.0), 1)
+
+
+def _soil_display_label(value: float | None) -> str | None:
+    if value is None:
+        return None
+    if value >= 60:
+        return "wet"
+    if value <= 35:
+        return "dry"
+    return "watch"
 
 
 def _soil_unit(metric_kind: str) -> str:
@@ -775,9 +862,23 @@ class ShadowSkeptic:
         }
 
 
+def _execution_is_test_only(execution: ESP32CommandResult | None) -> bool:
+    if execution is None:
+        return False
+    return any("execution=TEST_ONLY" in line for line in execution.lines)
+
+
 def build_snapshot(config: StewardConfig, telemetry: Telemetry, policy: dict[str, Any] | None, now: datetime) -> dict[str, Any]:
     soil_a_pct = telemetry.soil_a_pct()
     soil_b_pct = float(telemetry.soil_b_raw) if telemetry.soil_b_raw is not None and 0 <= telemetry.soil_b_raw <= 100 else soil_a_pct
+    soil_a_estimated_pct = _demo_soil_moisture_pct(telemetry.soil_a_raw, config) if soil_a_pct is None else None
+    soil_b_estimated_pct = _demo_soil_moisture_pct(telemetry.soil_b_raw, config) if soil_b_pct is None else None
+    soil_a_display_pct = soil_a_pct if soil_a_pct is not None else soil_a_estimated_pct
+    soil_b_display_pct = soil_b_pct if soil_b_pct is not None else soil_b_estimated_pct
+    if soil_b_display_pct is None:
+        soil_b_display_pct = soil_a_display_pct
+    soil_a_estimated = soil_a_pct is None and soil_a_estimated_pct is not None
+    soil_b_estimated = soil_b_pct is None and (soil_b_estimated_pct is not None or (telemetry.soil_b_raw is None and soil_a_estimated))
     pending_contradictions: list[str] = []
     if soil_a_pct is None:
         pending_contradictions.append("soil_a_unavailable_or_uncalibrated")
@@ -788,8 +889,15 @@ def build_snapshot(config: StewardConfig, telemetry: Telemetry, policy: dict[str
     if telemetry.flow_pulses is None:
         pending_contradictions.append("flow_sensor_unavailable")
     sensors = {
-        "soil_moisture_a_pct": soil_a_pct if soil_a_pct is not None else 0.0,
-        "soil_moisture_b_pct": soil_b_pct if soil_b_pct is not None else (soil_a_pct if soil_a_pct is not None else 0.0),
+        "soil_moisture_a_pct": soil_a_display_pct if soil_a_display_pct is not None else 0.0,
+        "soil_moisture_b_pct": soil_b_display_pct if soil_b_display_pct is not None else (soil_a_display_pct if soil_a_display_pct is not None else 0.0),
+        "soil_moisture_a_raw": telemetry.soil_a_raw,
+        "soil_moisture_b_raw": telemetry.soil_b_raw,
+        "soil_moisture_a_pct_estimated": soil_a_estimated,
+        "soil_moisture_b_pct_estimated": soil_b_estimated,
+        "soil_moisture_a_status": _soil_display_label(soil_a_display_pct),
+        "soil_moisture_b_status": _soil_display_label(soil_b_display_pct),
+        "soil_moisture_calibration": "demo_raw_index" if soil_a_estimated_pct is not None or soil_b_estimated_pct is not None else "physical_pct",
         "tank_level_pct": telemetry.tank_level_pct if telemetry.tank_level_pct is not None else 0.0,
         "flow_rate_lpm": 0.0,
         "last_reading_at": telemetry.collected_at,
@@ -847,8 +955,19 @@ class RhizomeSteward:
             if self.config.execute_water:
                 self.client.heartbeat()
                 execution = self.client.water("A", int(decision.action_params["duration_s"]))
-                executed = execution.ok
-                blocked_reason = None if execution.ok else execution.reject_reason or "ESP32_REJECTED"
+                test_only = _execution_is_test_only(execution)
+                accepted_test_only = test_only and self.config.accept_esp32_test_only_pulse_as_executed
+                executed = execution.ok and (not test_only or accepted_test_only)
+                if test_only and not accepted_test_only:
+                    decision.action_params["esp32_execution_mode"] = "TEST_ONLY"
+                    if "esp32_test_only_execution" not in decision.contradictions:
+                        decision.contradictions.append("esp32_test_only_execution")
+                    blocked_reason = "ESP32_TEST_ONLY"
+                elif accepted_test_only:
+                    decision.policy_refs.append("config.accept_esp32_test_only_pulse_as_executed")
+                    blocked_reason = None
+                else:
+                    blocked_reason = None if execution.ok else execution.reject_reason or "ESP32_REJECTED"
             else:
                 blocked_reason = "OBSERVE_MODE_EXECUTE_WATER_FALSE"
 
@@ -947,6 +1066,8 @@ class RhizomeSteward:
                 "flow_sensor_present": flow_sensor_present,
                 "esp32_lines": execution.lines,
             }
+            if _execution_is_test_only(execution) and self.config.accept_esp32_test_only_pulse_as_executed:
+                receipt["execution_details"]["esp32_execution_interpretation"] = "operator_confirmed_physical_pulse"
         return receipt
 
     def run_loop(self) -> None:
@@ -1005,6 +1126,7 @@ def build_config(args: argparse.Namespace) -> StewardConfig:
         allow_missing_tank_sensor=args.allow_missing_tank_sensor,
         allow_missing_flow_sensor=not args.require_flow_sensor_for_water,
         execute_water=args.execute_water,
+        accept_esp32_test_only_pulse_as_executed=args.accept_esp32_test_only_pulse_as_executed,
         shadow_skeptic_enabled=not args.disable_shadow_skeptic,
         gemma_rationale_url=args.gemma_rationale_url,
         gemma_model=args.gemma_model,
@@ -1039,6 +1161,11 @@ def add_common_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--max-autonomous-waters-per-day", type=int, default=2)
     parser.add_argument("--allow-missing-tank-sensor", action="store_true", help="Perfil minimo: permite WATER con deposito no sensorizado, registrando tank_level_unavailable.")
     parser.add_argument("--require-flow-sensor-for-water", action="store_true", help="Bloquea/promociona futuro modo estricto cuando caudalimetro exista.")
+    parser.add_argument(
+        "--accept-esp32-test-only-pulse-as-executed",
+        action="store_true",
+        help="Perfil supervisado: cuenta ACK execution=TEST_ONLY como pulso fisico si fue validado por operador.",
+    )
     parser.add_argument("--retention-days", type=int, default=DEFAULT_RETENTION_DAYS)
     parser.add_argument("--max-total-bytes", type=int, default=DEFAULT_MAX_TOTAL_BYTES)
     parser.add_argument("--disable-shadow-skeptic", action="store_true")
