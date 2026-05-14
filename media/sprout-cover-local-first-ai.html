@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Sprout · Kaggle cover · 1920×1080</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --graphite:#1A1A18;
+    --humus:#2A221D;
+    --oat:#F3EDE4;
+    --seed:#C5F26B;
+    --moss:#667554;
+    --kraft:#C9A97E;
+    --dim-1:rgba(243,237,228,0.86);
+    --dim-2:rgba(243,237,228,0.62);
+    --dim-3:rgba(243,237,228,0.40);
+    --rule:rgba(243,237,228,0.22);
+    --hairline:rgba(243,237,228,0.16);
+  }
+  html,body{margin:0;padding:0;background:#0a0a08;font-family:'Manrope',system-ui,sans-serif;color:var(--oat);}
+  body{
+    /* shrink-to-fit so the canvas previews nicely; PNG export bypasses transform */
+    min-height:100vh;
+    display:flex;align-items:flex-start;justify-content:center;
+  }
+  .stage{
+    position:relative;
+    width:1920px;height:1080px;
+    overflow:hidden;
+    background:#0a0a08;
+    transform-origin: top left;
+  }
+  /* auto-fit preview */
+  @media (max-width: 1920px){
+    .stage{ transform: scale(calc(100vw / 1920)); }
+    body{ height: calc(100vw * 1080 / 1920); min-height:0; }
+  }
+
+  /* ── photo background ─────────────────────────────────────────── */
+  .photo{
+    position:absolute;inset:0;
+    background-image:url('terrace_village.png');
+    background-size:cover;
+    background-position:50% 62%;
+    filter:saturate(1.14) contrast(1.06) brightness(1.02) sepia(0.06);
+  }
+  .warmth{
+    position:absolute;inset:0;
+    background:
+      linear-gradient(180deg,
+        rgba(255,210,160,0.08) 0%,
+        rgba(255,190,130,0.14) 55%,
+        rgba(255,170,100,0.20) 100%);
+    mix-blend-mode:soft-light;
+    pointer-events:none;
+  }
+  .veil{
+    position:absolute;inset:0;
+    background:
+      linear-gradient(180deg,
+        rgba(10,10,8,0.30) 0%,
+        rgba(10,10,8,0.04) 28%,
+        rgba(10,10,8,0.10) 56%,
+        rgba(10,10,8,0.72) 100%),
+      linear-gradient(90deg,
+        rgba(10,10,8,0.66) 0%,
+        rgba(10,10,8,0.34) 26%,
+        rgba(10,10,8,0.00) 54%,
+        rgba(10,10,8,0.18) 100%);
+  }
+  .lift{
+    position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse 28% 22% at 56% 64%,
+        rgba(255,245,225,0.16) 0%,
+        rgba(255,245,225,0.06) 50%,
+        rgba(255,245,225,0.00) 78%);
+    mix-blend-mode:soft-light;
+    pointer-events:none;
+  }
+  .grain{
+    position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size:3px 3px;
+    mix-blend-mode:overlay;opacity:.55;
+    pointer-events:none;
+  }
+
+  /* ── content layer ────────────────────────────────────────────── */
+  .content{
+    position:absolute;inset:0;
+    padding:64px 80px;
+    display:grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 1fr auto;
+    gap:0;
+  }
+
+  /* — top-left kicker — */
+  .kicker{
+    grid-row:1;grid-column:1;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:14px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--dim-1);
+    display:inline-flex;align-items:center;gap:14px;
+    align-self:start;
+  }
+  .kicker .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--seed);
+    box-shadow:0 0 0 4px rgba(197,242,107,0.16);
+  }
+  .kicker .sep{color:var(--dim-3);}
+  .kicker .pulse{color:var(--seed);}
+
+  /* — top-right: architecture overlay card — */
+  .arch{
+    grid-row:1 / span 2;grid-column:2;
+    align-self:start;justify-self:end;
+    width:560px;
+    background:rgba(20,20,18,0.72);
+    backdrop-filter:blur(8px);
+    border:1px solid var(--hairline);
+    border-radius:4px;
+    padding:22px 24px 20px;
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--dim-1);
+  }
+  .arch-head{
+    display:flex;align-items:baseline;justify-content:space-between;
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--dim-2);
+    padding-bottom:12px;border-bottom:1px solid var(--hairline);
+  }
+  .arch-head .v{color:var(--dim-3);}
+  .arch-title{
+    margin:14px 0 18px;
+    font-family:'Manrope',sans-serif;
+    font-weight:600;font-size:18px;letter-spacing:-.005em;
+    color:var(--oat);
+  }
+  /* node row */
+  .nodes{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .node{
+    border:1px solid var(--hairline);
+    padding:10px 10px 12px;
+    border-radius:3px;
+    position:relative;
+  }
+  .node .id{
+    font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--dim-3);
+  }
+  .node .name{
+    margin-top:6px;
+    font-family:'Manrope',sans-serif;font-weight:700;
+    font-size:15px;letter-spacing:-.01em;
+    color:var(--oat);
+  }
+  .node .role{
+    margin-top:4px;
+    font-size:10px;line-height:1.35;color:var(--dim-2);
+  }
+  .node.field{ border-color:rgba(197,242,107,0.35); }
+  .node.field .id{ color:var(--seed); }
+  .node.field::before{
+    content:"";position:absolute;top:-3px;right:-3px;
+    width:6px;height:6px;border-radius:50%;
+    background:var(--seed);
+    box-shadow:0 0 0 3px rgba(197,242,107,0.18);
+  }
+  /* esp32 chip line */
+  .esp32{
+    display:grid;grid-template-columns: auto 1fr auto;
+    align-items:center;gap:14px;
+    padding:10px 12px;
+    border:1px dashed var(--hairline);
+    border-radius:3px;
+    font-size:11px;letter-spacing:.04em;
+    color:var(--dim-1);
+  }
+  .esp32 .label{
+    font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--oat);font-size:10.5px;
+  }
+  .esp32 .flow{
+    display:flex;align-items:center;gap:8px;justify-self:center;
+    color:var(--dim-2);
+  }
+  .esp32 .flow .arr{color:var(--dim-3);}
+  .esp32 .stamp{
+    font-size:9.5px;letter-spacing:.20em;text-transform:uppercase;
+    color:var(--seed);
+  }
+
+  /* — bottom-left: wordmark + headline — */
+  .head{
+    grid-row:3;grid-column:1;
+    align-self:end;
+    max-width:1180px;
+  }
+  .wordmark{
+    font-family:'Manrope',sans-serif;
+    font-weight:800;font-size:118px;line-height:.92;
+    letter-spacing:-2.6px;
+    color:var(--oat);
+    display:inline-flex;align-items:baseline;
+    text-shadow:0 2px 24px rgba(0,0,0,0.5);
+  }
+  .wordmark::before{
+    content:"";
+    width:22px;height:22px;border-radius:50%;
+    background:var(--seed);
+    box-shadow:0 0 0 6px rgba(197,242,107,0.16);
+    display:inline-block;
+    margin-right:28px;
+    transform:translateY(-6px);
+  }
+  .h1{
+    margin-top:26px;
+    font-family:'Manrope',sans-serif;
+    font-weight:600;font-size:58px;line-height:1.06;
+    letter-spacing:-1.4px;
+    color:var(--oat);
+    max-width:1240px;
+    text-shadow:0 2px 16px rgba(0,0,0,0.5);
+  }
+  .h1 .em{ color:var(--seed); }
+  .sub{
+    margin-top:22px;
+    font-family:'Manrope',sans-serif;
+    font-weight:500;font-size:24px;line-height:1.35;
+    color:var(--dim-1);
+    max-width:980px;
+    text-shadow:0 1px 12px rgba(0,0,0,0.5);
+  }
+
+  /* — bottom-right: stack micro-row — */
+  .stack{
+    grid-row:3;grid-column:2;
+    align-self:end;justify-self:end;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;letter-spacing:.10em;
+    color:var(--dim-1);
+    text-align:right;
+    display:flex;flex-direction:column;gap:10px;
+    border-left:1px solid var(--hairline);
+    padding-left:22px;
+  }
+  .stack .key{
+    font-size:10px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--dim-3);
+  }
+  .stack .row{ color:var(--dim-1); }
+  .stack .sep{ color:var(--dim-3); margin:0 6px; }
+  .stack .accent{ color:var(--seed); }
+
+  /* — photo annotations (callouts to PLOT_01 and RHIZOME_01) — */
+  .callout{
+    position:absolute;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;letter-spacing:.20em;text-transform:uppercase;
+    color:var(--oat);
+    display:flex;align-items:center;gap:10px;
+    pointer-events:none;
+  }
+  .callout .tag{
+    background:rgba(20,20,18,0.86);
+    border:1px solid var(--hairline);
+    padding:6px 10px;
+    border-radius:2px;
+    white-space:nowrap;
+  }
+  .callout .tag .v{color:var(--dim-3);margin-left:6px;}
+  .callout .line{
+    height:1px;background:var(--oat);
+    box-shadow:0 0 8px rgba(0,0,0,0.4);
+  }
+  .callout .pin{
+    width:8px;height:8px;border-radius:50%;
+    border:1px solid var(--oat);
+    background:transparent;
+  }
+
+  /* RHIZOME_01 callout — pin sits on the white box, line extends RIGHT into open sky/wall */
+  .c-rhizome{
+    top:574px; left:935px;
+  }
+  .c-rhizome .line{ width:170px; }
+
+  /* PLOT_01 callout — pin on the planter, line extends RIGHT along the wall */
+  .c-plot{
+    top:872px; left:898px;
+  }
+  .c-plot .line{ width:150px; }
+
+  /* — site-tag at top-right edge — */
+  .site-tag{
+    position:absolute;
+    top:64px;right:80px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--dim-2);
+    display:none; /* the arch card carries the tag */
+  }
+
+  /* — bottom hairline + footprint — */
+  .footprint{
+    position:absolute;
+    left:80px;right:80px;bottom:40px;
+    display:flex;align-items:center;justify-content:space-between;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--dim-3);
+    padding-top:14px;
+    border-top:1px solid var(--rule);
+    pointer-events:none;
+    display:none; /* handled by .stack instead */
+  }
+</style>
+</head>
+<body>
+
+  <div class="stage" id="stage">
+
+    <div class="photo"></div>
+    <div class="warmth"></div>
+    <div class="veil"></div>
+    <div class="lift"></div>
+    <div class="grain"></div>
+
+    <!-- photo annotations (pin → line → tag, pin sits on the object) -->
+    <div class="callout c-rhizome">
+      <span class="pin"></span>
+      <span class="line"></span>
+      <span class="tag">RHIZOME_01<span class="v">· edge node</span></span>
+    </div>
+    <div class="callout c-plot">
+      <span class="pin"></span>
+      <span class="line"></span>
+      <span class="tag">PLOT_01<span class="v">· with RHIZOME_01</span></span>
+    </div>
+
+    <!-- foreground content grid -->
+    <div class="content">
+
+      <!-- top-left kicker -->
+      <div class="kicker">
+        <span class="dot"></span>
+        <span>FIELD DEPLOYMENT</span>
+        <span class="sep">·</span>
+        <span>CAT · PYRENEES</span>
+        <span class="sep">·</span>
+        <span class="pulse">LOCAL-FIRST AI</span>
+      </div>
+
+      <!-- top-right architecture overlay -->
+      <aside class="arch" aria-label="Sprout architecture overview">
+        <div class="arch-head">
+          <span>ARCHITECTURE · OVERVIEW</span>
+          <span class="v">v1.8</span>
+        </div>
+        <div class="arch-title">Three jurisdictions. One water decision.</div>
+
+        <div class="nodes">
+          <div class="node field">
+            <div class="id">01 · FIELD</div>
+            <div class="name">Rhizome</div>
+            <div class="role">Decides offline. Reads soil &amp; local state.</div>
+          </div>
+          <div class="node field">
+            <div class="id">02 · FIELD</div>
+            <div class="name">ESP32</div>
+            <div class="role">Validates tank, timing &amp; actuation limits.</div>
+          </div>
+          <div class="node">
+            <div class="id">03 · MOBILE</div>
+            <div class="name">Pollen</div>
+            <div class="role">Turns the visit into a MissionPatch.</div>
+          </div>
+          <div class="node">
+            <div class="id">04 · HOME</div>
+            <div class="name">Meristem</div>
+            <div class="role">Slow consolidation when uplink exists.</div>
+          </div>
+        </div>
+
+        <div class="esp32">
+          <span class="label">SAFETY FLOOR</span>
+          <span class="flow">
+            <span>Gemma → candidate_action</span>
+            <span class="arr">→</span>
+            <span>ESP32</span>
+            <span class="arr">→</span>
+            <span>final_action → valve</span>
+          </span>
+          <span class="stamp">ACK</span>
+        </div>
+      </aside>
+
+      <!-- bottom-left wordmark + headline -->
+      <div class="head">
+        <div class="wordmark">Sprout</div>
+        <h1 class="h1">
+          Water decisions for plots<br>
+          the network forgets.
+        </h1>
+        <div class="sub">
+          A local-first architecture for irrigation in disconnected plots.
+          Rhizome decides in the field. Pollen turns the visit into policy.
+          Every water event leaves a receipt.
+        </div>
+      </div>
+
+      <!-- bottom-right stack -->
+      <div class="stack">
+        <div>
+          <div class="key">Stack</div>
+          <div class="row">Gemma 3 · 4B edge<span class="sep">·</span>4B mobile</div>
+        </div>
+        <div>
+          <div class="key">Safety</div>
+          <div class="row">ESP32 physical veto<span class="sep">·</span><span class="accent">AI never touches the valve</span></div>
+        </div>
+        <div>
+          <div class="key">Source</div>
+          <div class="row">Apache 2.0<span class="sep">·</span>github.com/zigiella/sprout</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
