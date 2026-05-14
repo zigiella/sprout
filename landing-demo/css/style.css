@@ -230,9 +230,40 @@ pre {
   font-style: italic;
 }
 
+/* --- Diagrams --- */
+.diagram {
+  margin: 32px 0 0;
+}
+
+.diagram img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  display: block;
+}
+
+.diagram figcaption {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 14px;
+  font-style: italic;
+  text-align: center;
+}
+
 /* --- Safety --- */
 .safety {
   background: var(--soft);
+}
+
+.safety-split {
+  display: grid;
+  grid-template-columns: 1.4fr 0.9fr;
+  gap: 40px;
+  align-items: start;
 }
 
 .safety ol {
@@ -241,6 +272,28 @@ pre {
 
 .safety li {
   margin-bottom: 14px;
+}
+
+.safety-split .diagram {
+  margin-top: 0;
+}
+
+/* --- Inline commands --- */
+pre.cmd {
+  background: #1a1a18;
+  color: var(--seed);
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin: 12px 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+  min-height: auto;
+  margin-top: 12px;
+}
+
+.small {
+  font-size: 13px;
 }
 
 /* --- Footer --- */
@@ -254,7 +307,7 @@ footer {
 
 /* --- Responsive --- */
 @media (max-width: 760px) {
-  .truth-grid, .cards, .split {
+  .truth-grid, .cards, .split, .safety-split {
     grid-template-columns: 1fr;
   }
   .hero-inner { padding-top: 6vh; }
