@@ -25,7 +25,7 @@
 
 <header class="hero">
   <nav class="nav">
-    <span class="brand">Sprout</span>
+    <span class="brand">Sprout · project demo page</span>
     <a href="#truth">What is real</a>
     <a href="#demo">Demo</a>
     <a href="#gemma">Gemma 4</a>
@@ -88,7 +88,15 @@
       <p class="deep"><a href="try/meristem.html">Deep dive →</a></p>
     </article>
   </div>
-  <pre id="output">Click a node to inspect a contract.</pre>
+  <div class="terminal">
+    <div class="terminal-header">
+      <span class="terminal-dot dot-red"></span>
+      <span class="terminal-dot dot-amber"></span>
+      <span class="terminal-dot dot-green"></span>
+      <span class="terminal-label" id="terminal-label">SPROUT · contract simulator</span>
+    </div>
+    <pre id="output">Click a node above to inspect a real contract.</pre>
+  </div>
 </section>
 
 <section id="gemma" class="container split">
@@ -106,19 +114,17 @@
 
 <section id="safety" class="container safety">
   <h2>Safety &amp; Trust</h2>
-  <div class="safety-split">
-    <ol>
-      <li><strong>Physical layer prevails.</strong> The ESP32 firmware enforces five hard rules (<code>JETSON_HEARTBEAT_LOST</code>, <code>TANK_LOW</code>, <code>EVENT_DURATION_OUT_OF_RANGE</code>, <code>NO_FLOW_DETECTED</code>, <code>ALERT_LATCHED</code>). No LLM can weaken them.</li>
-      <li><strong>Every intelligence has jurisdiction.</strong> Rhizome arbitrates in minutes. Pollen mediates within visit TTL. Meristem refines in days.</li>
-      <li><strong>Every criterion expires.</strong> <code>MissionPatch</code>, <code>WeatherDigest</code> and <code>PolicyPacket</code> carry TTL or validity windows. Late objects are rejected, not silently obeyed.</li>
-      <li><strong>Refusal is a feature.</strong> When Pollen does not understand a voice instruction, it asks for rephrasing. When Rhizome sees an expired policy, it rejects. When the ESP32 detects an unsafe condition, it blocks.</li>
-      <li><strong>A second local voice audits without authority.</strong> <code>ShadowSkeptic</code> records objections inside Rhizome with <code>affects_decision=false</code>. Even skepticism has jurisdiction.</li>
-    </ol>
-    <figure class="diagram">
-      <img src="media/authority_stack.svg" alt="Authority stack: ESP32 prevails (physical), Rhizome arbitrates (minutes), Pollen mediates (visit TTL), Meristem refines (days)" loading="lazy">
-      <figcaption>The farther a node is from the water, the less physical authority it has. The ESP32 can always say no.</figcaption>
-    </figure>
-  </div>
+  <ol>
+    <li><strong>Physical layer prevails.</strong> The ESP32 firmware enforces five hard rules (<code>JETSON_HEARTBEAT_LOST</code>, <code>TANK_LOW</code>, <code>EVENT_DURATION_OUT_OF_RANGE</code>, <code>NO_FLOW_DETECTED</code>, <code>ALERT_LATCHED</code>). No LLM can weaken them.</li>
+    <li><strong>Every intelligence has jurisdiction.</strong> Rhizome arbitrates in minutes. Pollen mediates within visit TTL. Meristem refines in days.</li>
+    <li><strong>Every criterion expires.</strong> <code>MissionPatch</code>, <code>WeatherDigest</code> and <code>PolicyPacket</code> carry TTL or validity windows. Late objects are rejected, not silently obeyed.</li>
+    <li><strong>Refusal is a feature.</strong> When Pollen does not understand a voice instruction, it asks for rephrasing. When Rhizome sees an expired policy, it rejects. When the ESP32 detects an unsafe condition, it blocks.</li>
+    <li><strong>A second local voice audits without authority.</strong> <code>ShadowSkeptic</code> records objections inside Rhizome with <code>affects_decision=false</code>. Even skepticism has jurisdiction.</li>
+  </ol>
+  <figure class="diagram">
+    <img src="media/authority_stack.svg" alt="Authority stack: ESP32 prevails (physical), Rhizome arbitrates (minutes), Pollen mediates (visit TTL), Meristem refines (days)" loading="lazy">
+    <figcaption>The farther a node is from the water, the less physical authority it has. The ESP32 can always say no.</figcaption>
+  </figure>
 </section>
 
 <section id="get" class="container">
@@ -130,7 +136,7 @@
       <h3>Install the app, no model needed</h3>
       <p>~39 MB APK. Uses a deterministic mock evaluator. Runs on any Android emulator or device without downloading a 3 GB model. Walk through the UI, the voice path and refusal/retry flow.</p>
       <p>
-        <a class="btn primary" href="https://github.com/zigiella/sprout/raw/main/demo/pollen-demo.apk">Download <code>demo</code> APK</a>
+        <a class="btn primary" href="https://github.com/zigiella/sprout/raw/main/demo/pollen-demo.apk">Download demo APK</a>
       </p>
     </article>
     <article>

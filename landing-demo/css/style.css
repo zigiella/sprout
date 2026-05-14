@@ -207,6 +207,53 @@ pre {
   line-height: 1.5;
 }
 
+/* --- Terminal-style output (Sprout contract simulator) --- */
+.terminal {
+  margin-top: 24px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0e0e0c;
+  border: 1px solid rgba(243, 237, 228, 0.18);
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #1a1a18;
+  border-bottom: 1px solid rgba(243, 237, 228, 0.12);
+}
+
+.terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-red    { background: #ff5f56; }
+.dot-amber  { background: #ffbd2e; }
+.dot-green  { background: #27c93f; }
+
+.terminal-label {
+  margin-left: 12px;
+  font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 12px;
+  color: rgba(243, 237, 228, 0.55);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.terminal pre {
+  margin: 0;
+  border-radius: 0;
+  background: #0e0e0c;
+  padding: 20px 22px;
+  min-height: 200px;
+  border: 0;
+}
+
 /* --- Gemma split --- */
 .split {
   display: grid;

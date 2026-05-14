@@ -5,8 +5,8 @@
 
   <defs>
     <style>
-      .bg { fill: #1a1a18; }
-      .card-graphite { fill: #0e0e0c; stroke: rgba(243,237,228,0.12); stroke-width: 1; }
+      .bg { fill: #0e0e0c; }
+      .card-graphite { fill: #2a2a26; stroke: rgba(243,237,228,0.22); stroke-width: 1; }
       .card { fill: #fffaf2; stroke: #d8cec2; stroke-width: 1; }
       .t-eyebrow { font: 600 11px/1 'IBM Plex Mono', ui-monospace, monospace; fill: #c5f26b; letter-spacing: 0.14em; text-transform: uppercase; }
       .t-title { font: 700 28px/1.1 'Manrope', system-ui, sans-serif; fill: #f3ede4; }
