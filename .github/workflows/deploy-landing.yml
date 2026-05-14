@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'landing-demo/**'
+      - 'media/**'
       - '.github/workflows/deploy-landing.yml'
   workflow_dispatch:
 
@@ -30,13 +31,18 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
-      - name: Upload landing artifact
+      - name: Stage site (landing + media)
+        run: |
+          mkdir -p _site
+          cp -r landing-demo/. _site/
+          mkdir -p _site/media
+          cp -r media/. _site/media/
+
+      - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./landing-demo
+          path: ./_site
 
       - name: Deploy to GitHub Pages
         id: deployment
