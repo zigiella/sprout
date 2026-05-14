@@ -1,5 +1,14 @@
 # pollen/
 
+**Abstract:**
+Pollen is the mobile edge-node of the Sprout agricultural ecosystem, built as an Android application for Pixel 10 Pro. It operates as the "roaming brain" of the farm, acting as an offline bridge between the central Meristem server and the remote Rhizome micro-controllers. Pollen handles synchronous data transport via local HTTP APIs and relies entirely on on-device LLM inference using the cutting-edge Gemma 4 E4B model. By integrating native `16kHz .wav` audio capturing with Google's `LiteRT-LM` framework, Pollen enables multi-modal, natural language interactions with farm operators directly in the field, with zero reliance on cloud connectivity. It validates agricultural policies, records field observations, and evaluates complex voice commands deterministically before syncing back to the base station.
+
+**Build Flavors:**
+- **`demo` flavor:** Uses a deterministic mock evaluator to simulate model decisions instantly. Ideal for UI testing, fast iteration, and simulator deployments without requiring heavy model downloads or specific hardware.
+- **`device` flavor:** The production-ready hardware path. Integrates the real `LiteRT-LM` pipeline bound to an on-device Gemma 4 E4B model. Requires Android 12+ (API 31+) and a device with NPU/GPU capabilities for interactive generation speeds.
+
+---
+
 Aplicación Android para el Pixel 10 Pro. Es el **nodo itinerante** del sistema Sprout.
 
 ## Rol

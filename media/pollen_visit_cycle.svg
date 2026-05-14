@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+<style>.bg{fill:#f3ede4}.txt{font-family:Arial,sans-serif;fill:#1a1a18}.muted{fill:#6e665f}.box{fill:#fffaf2;stroke:#1a1a18;stroke-width:2}.seed{fill:#c5f26b}.arrow{stroke:#1a1a18;stroke-width:3;fill:none;marker-end:url(#m)}</style>
+<defs><marker id="m" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#1a1a18"/></marker></defs>
+<rect class="bg" width="1280" height="720"/>
+<text x="70" y="80" class="txt" font-size="46" font-weight="800">Pollen visit cycle</text>
+<text x="70" y="120" class="muted" font-size="22">The phone arrives before the network; the visit becomes computational.</text>
+<rect x="80" y="230" width="180" height="110" rx="20" class="box"/><text x="120" y="285" class="txt" font-size="26" font-weight="700">Farmer</text><text x="110" y="315" class="muted" font-size="17">voice note</text>
+<rect x="330" y="210" width="210" height="150" rx="20" class="box"/><text x="385" y="265" class="txt" font-size="26" font-weight="700">Pollen</text><text x="360" y="300" class="muted" font-size="17">Gemma 4 E4B</text><text x="360" y="325" class="muted" font-size="17">MissionPatch + TTL</text>
+<rect x="610" y="210" width="210" height="150" rx="20" class="box"/><text x="655" y="265" class="txt" font-size="26" font-weight="700">Rhizome</text><text x="640" y="300" class="muted" font-size="17">local state</text><text x="640" y="325" class="muted" font-size="17">DecisionReceipt</text>
+<rect x="890" y="210" width="210" height="150" rx="20" fill="#1a1a18"/><text x="945" y="265" fill="#f3ede4" font-family="Arial" font-size="26" font-weight="700">ESP32</text><text x="925" y="300" fill="#c5f26b" font-family="Arial" font-size="17">ACK / REJECT</text><text x="925" y="325" fill="#f3ede4" font-family="Arial" font-size="17">physical veto</text>
+<rect x="520" y="500" width="240" height="120" rx="20" class="box"/><text x="575" y="555" class="txt" font-size="26" font-weight="700">Meristem</text><text x="555" y="590" class="muted" font-size="17">policy at home</text>
+<path d="M260 285 L330 285" class="arrow"/><path d="M540 285 L610 285" class="arrow"/><path d="M820 285 L890 285" class="arrow"/>
+<path d="M610 330 C520 410,510 470,560 500" class="arrow"/><text x="420" y="430" class="txt" font-size="17">FieldVisit + SyncBundle</text>
+<path d="M760 540 C920 480,980 400,1000 360" class="arrow"/><text x="850" y="515" class="txt" font-size="17">Policy returns via Pollen</text>
+<circle cx="330" cy="285" r="8" class="seed"/><circle cx="610" cy="285" r="8" class="seed"/><circle cx="890" cy="285" r="8" class="seed"/>
+</svg>

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sprout — local-first water optimization for plots the network forgets</title>
+  <meta name="description" content="Local-first AI water optimization for plots the network and the human can't always reach. Three nodes (Rhizome, Pollen, Meristem) + an ESP32 safety coprocessor. Every intelligence has jurisdiction and expiry.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <p class="kicker">Local-first AI · open-source</p>
+    <h1>Sprout</h1>
+    <p class="tagline-en">When network is absent — and the human is far — local criteria still irrigate.</p>
+    <p class="tagline-es" lang="es"><em>Cuando la red no llega y nadie está cerca, el criterio sigue regando.</em></p>
+    <p class="lede">
+      Sprout is a local-first AI architecture for <strong>water optimization</strong> in remote plots —
+      places where the field, the person and the network rarely coincide in time.
+      Three nodes with distinct jurisdictions, an ESP32 safety coprocessor that vetoes physically,
+      and Gemma 4 doing what it does best on each layer. <em>Every intelligence has jurisdiction. And expiry.</em>
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#try-it">Try the system</a>
+      <a class="btn btn-ghost" href="https://github.com/zigiella/sprout">View source on GitHub</a>
+    </div>
+  </div>
+</header>
+
+<section id="try-it" class="container section">
+  <h2>Try the three nodes hands-on</h2>
+  <p class="muted">
+    Each demo runs against <strong>deterministic mocks</strong> in your browser — no cloud, no API key,
+    no model download. <strong>This is intentional and coherent with the thesis:</strong> the real
+    system runs Gemma 4 fully local on Jetson, Pixel and laptop with no network dependency, and we
+    want you to be able to probe the architecture exactly the same way — from any browser, without
+    network. To see Gemma 4 actually running, watch the video, install the APK
+    (Pollen <code>demo</code> flavor), or run <code>make test</code> on the repo. The mock code is
+    public and easy to read: <a href="https://github.com/zigiella/sprout/blob/main/landing-demo/js/api.js">js/api.js</a>.
+  </p>
+
+  <div class="grid cards-3">
+    <article class="card">
+      <h3>Rhizome</h3>
+      <p class="card-meta">Plot node · Gemma 4 E2B · jurisdiction: minutes</p>
+      <p>The autonomous brain that lives next to the sensors. Decides offline whether to irrigate, defer, skip or block. Never moves water directly: an ESP32 with custom firmware enforces hard safety limits.</p>
+      <a class="btn btn-secondary" href="try/rhizome.html">Try Rhizome →</a>
+    </article>
+    <article class="card">
+      <h3>Pollen</h3>
+      <p class="card-meta">Mobile node · Gemma 4 E4B · jurisdiction: visit TTL</p>
+      <p>The roaming brain on the farmer's Android. Multimodal: feeds raw audio to Gemma 4 directly. Compiles human intent into a <code>MissionPatch</code> that the field can use immediately, federates context between plots without direct network.</p>
+      <a class="btn btn-secondary" href="try/pollen.html">Try Pollen →</a>
+    </article>
+    <article class="card">
+      <h3>Meristem</h3>
+      <p class="card-meta">Slow brain · Gemma 4 E4B · jurisdiction: days</p>
+      <p>The kitchen-table brain. Receives bundles from Pollen, evaluates with deterministic logic, emits durable policies. The LLM only writes the rationale — the decision is always auditable down to a concrete rule.</p>
+      <a class="btn btn-secondary" href="try/meristem.html">Try Meristem →</a>
+    </article>
+  </div>
+</section>
+
+<section class="container section bg-soft">
+  <h2>Why local-first AI matters here</h2>
+  <p>
+    In 2023, <strong>48% of the world's land area suffered at least one month of extreme drought</strong> —
+    the second largest extent since 1951.<sup>[1]</sup>
+    Drought affects 1.8 billion people and costs $300 billion per year.<sup>[1]</sup>
+    But the field for which we design doesn't live in continuous connectivity:
+    only 58% of the rural population worldwide uses internet — in low-income countries, 14%.<sup>[2]</sup>
+  </p>
+  <p>
+    The bottleneck isn't data. It's the <strong>lag</strong> between what happens in the plot and the
+    decision that should correct it. When the network fails or the farmer isn't there, that lag is days.
+    Closing it requires <strong>moving the decision where the water is</strong> — not the other way around.
+  </p>
+
+  <p class="muted small">
+    Sources: [1] UNCCD Global Drought Hotspots 2023-2025 + OECD Global Drought Outlook 2025.
+    [2] ITU Facts and Figures 2025. Full references in
+    <a href="https://github.com/zigiella/sprout/blob/main/research/metrics/impact_stats.md">research/metrics/impact_stats.md</a>.
+  </p>
+</section>
+
+<section class="container section">
+  <h2>How Gemma 4 is used</h2>
+  <p>Sprout uses Gemma 4 in <strong>five concrete ways</strong>, each exploiting a different capability of the model:</p>
+  <ul class="howlist">
+    <li>
+      <strong>Multimodal audio native</strong> — Pollen feeds raw 16 kHz <code>.wav</code> to
+      Gemma 4 E4B via LiteRT-LM <em>without a separate STT pipeline</em>. The voice
+      <em>"riega un poco menos, esta planta aguanta más seca de lo que crees"</em> compiles
+      into a structured <code>MissionPatch</code> — in the farmer's pocket, no network.
+      Validated end-to-end against real microphone input.
+    </li>
+    <li>
+      <strong>Native tool calling</strong> — Meristem uses Gemma 4 E4B with native tool calling
+      for <code>compose_policy(...)</code>, <code>validate_bundle(...)</code> and <code>compare_targets(...)</code>.
+      The deterministic logic decides; the LLM only writes the rationale.
+      Runtime end-to-end validated with <code>tool_calls_recovered_from_text=1</code>.
+    </li>
+    <li>
+      <strong>Three-node routing</strong> — three Gemma 4 instances (E2B + E4B + E4B), three
+      jurisdictions, no cloud roundtrip. Model choice is per-node, not global:
+      <strong>E2B for direct answers (Rhizome), E4B for tool-calling reasoning (Pollen + Meristem)</strong>.
+    </li>
+    <li>
+      <strong>Bilingual narrator in Rhizome</strong> — endpoints
+      <code>GET /summary/since?locale=es|en</code> and <code>GET /explain/decision/&lt;id&gt;?locale=es|en</code>
+      operational in production. Gemma 4 E2B improves the <code>rationale_short</code> over a decision
+      <strong>already closed</strong> by deterministic logic — never changes action, never authorizes water,
+      never invents facts. The system speaks two languages in production.
+    </li>
+    <li>
+      <strong>Approach C i18n localization</strong> — official project standard.
+      Edge nodes (Rhizome, ESP32) think in stable English Tech; Pollen + Gemma 4 E4B local translates to
+      the UI language before rendering. Hardware-agnostic, ready for minority-language fine-tuning
+      (Pular, Wolof, Swahili, Quechua, Catalan, Basque).
+    </li>
+  </ul>
+  <p><strong>The final decision is never signed by the LLM.</strong> The deterministic Evaluator decides; Gemma 4 writes the rationale and adapts the surface language.</p>
+  <p>
+    <a class="btn btn-ghost" href="https://github.com/zigiella/sprout/blob/main/writeup/draft.md">Read the full technical writeup →</a>
+  </p>
+</section>
+
+<section class="container section bg-soft">
+  <h2>Safety &amp; Trust — the three invariants</h2>
+  <p>Sprout is built around three non-negotiable invariants. Any change to the system has to preserve them:</p>
+  <ol class="invariants">
+    <li>
+      <strong>"Physical layer prevails. Rhizome arbitrates. Pollen mediates. Meristem refines."</strong>
+      The ESP32 firmware owns critical sensors and actuators; nothing touches water without its veto.
+      The higher a piece sits in the hierarchy, the less physical authority it has.
+    </li>
+    <li>
+      <strong>"Every intelligence has jurisdiction. And expiry."</strong>
+      Every <code>MissionPatch</code> carries a short TTL. Every <code>PolicyPacket</code> carries a validity window.
+      Every <code>WeatherDigest</code> expires before going stale. Expired objects get
+      <code>EXPIRED → REJECTED</code> with legible reason in the <code>DecisionReceipt</code>.
+      <strong>No criterion stays silently valid past its window.</strong> This rule is what avoids the most
+      common failure of autonomous systems: accepting old orders as if they were new.
+    </li>
+    <li>
+      <strong>No <code>PolicyPacket</code> from Meristem can reduce the firmware's hard limits</strong>
+      — it can only recommend more conservative behavior. Authority over physical safety inverts the
+      hierarchy.
+    </li>
+  </ol>
+  <p>
+    <strong>Refusal is a feature, not a failure.</strong> When the system isn't confident, it says so and
+    asks the human to rephrase or step in. Validated empirically: Pollen rejects agricultural-nonsense
+    sentences with <code>REFUSE_RETRY</code> instead of fabricating an action.
+  </p>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>
+      <strong>Sprout uses Gemma 4 models by Google. Gemma is a trademark of Google LLC.</strong>
+      This project is not affiliated with or endorsed by Google.
+    </p>
+    <p class="muted small">
+      Apache 2.0 · maintained by <a href="https://github.com/zigiella">zigiella</a> ·
+      <a href="https://github.com/zigiella/sprout">github.com/zigiella/sprout</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

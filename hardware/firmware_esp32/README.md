@@ -1,5 +1,11 @@
 # firmware_esp32
 
+**Abstract.** This firmware is Sprout's physical safety coprocessor, written in C with ESP-IDF for ESP32-S3. It owns the relay, the pump, the soil moisture reading on `GPIO4` and the relay control on `GPIO16`. It validates every irrigation command against five hard rules (`JETSON_HEARTBEAT_LOST`, `TANK_LOW`, `EVENT_DURATION_OUT_OF_RANGE`, `NO_FLOW_DETECTED`, `ALERT_LATCHED`) and rejects with a legible reason if any fails. The state machine is `SAFE_IDLE → READY → EXECUTING → DEGRADED → ALERT_LATCHED`. The LLM proposes; this firmware disposes.
+
+> **Submission status:** `WATER` remains the conservative contract path and returns `DRY_RUN`; supervised physical actuation is demonstrated through `PUMP_PULSE <ms>` as `TEST_ONLY`. This distinction is intentional: it keeps the autonomous control path conservative while proving the physical pump/soil loop on real hardware. Day 27 validated 12 supervised pulses with measurable soil moisture drop (raw 2278 → 1289 after pulse).
+
+---
+
 Bootstrap del firmware real de la capa dura de seguridad para `Sprout`.
 
 ## Objetivo del milestone actual

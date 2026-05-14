@@ -1,4 +1,4 @@
-<!-- Project README · English first · Spanish version: README.es.md -->
+<!-- Main public README · English first · Spanish version: README.es.md -->
 
 🇬🇧 **English** · 🇪🇸 **[Español](README.es.md)**
 
@@ -7,220 +7,241 @@
 # Sprout
 
 > **Local-first AI water optimization for plots the network forgets.**
-> *Safe · explainable · open-source.*
+> *Open · local · safe · explainable.*
 
-> *"When network is absent — and the human is far — local criteria still irrigate."*
+> **Sprout is a safety-bounded decision network for water under absence.**
 
-📜 **Read the [technical writeup](writeup/draft.md)** — engineering proof behind the system
-🏗️ **Reproduce locally** — see [setup section](#reproduce-locally) below
+[Watch the 3-minute video](#) · [Try the live contract demo](https://zigiella.com/sprout) · [Read the Kaggle writeup](writeup/draft.md) · [Submission guide](SUBMISSION.md)
 
 ---
 
 ## In 30 seconds
 
-Sprout is a **local-first AI architecture for water optimization in remote plots** — places where the field, the person and the network rarely coincide in time.
+Sprout is a local-first AI architecture for irrigation in remote or weakly connected plots — places where the field, the person and the network rarely coincide in time.
 
-Each plot runs **Rhizome**, an autonomous node that decides offline using **Gemma 4 E2B** on a Jetson Orin Nano Super. Rhizome never moves water directly: an **ESP32-S3** with custom firmware enforces hard safety limits and can veto or modulate any action.
+The demo uses pots, a Jetson, an ESP32, an Android phone, a laptop, a 12V pump and real soil readings. The pattern represents something larger: small farms, community gardens, rural plots and peripheral land where water decisions cannot wait for the cloud or for the next human visit.
 
-When a person visits the plots, **Pollen** runs on Android with **Gemma 4 E4B** (multimodal, audio native via LiteRT-LM). Pollen turns each visit into something more valuable than a sync: it talks with the person, asks Rhizome what happened, validates the local state, compiles human intent, and federates context between plots that have no direct network between them.
+Sprout distributes intelligence across three Gemma 4 nodes and one physical veto layer:
 
-**Meristem** runs on the farmer's home laptop with **Gemma 4 E4B** via `llama.cpp`. When things are calm — at the end of the day, in the kitchen, not in the field — Meristem receives the bundles Pollen has carried back, evaluates with **deterministic logic**, and emits a new durable policy. **The LLM only writes the rationale; the decision is auditable down to a concrete rule.**
+- **Rhizome** lives in the plot. It runs **Gemma 4 E2B** on Jetson via `llama.cpp`, reads local state and decides whether to irrigate, defer, skip or block.
+- **Pollen** lives on the farmer’s Android phone. It runs **Gemma 4 E4B** through **LiteRT-LM**, turns visits and voice into expiring `MissionPatch` objects, and carries context between disconnected plots.
+- **Meristem** lives on the farmer’s home laptop. It runs **Gemma 4 E4B** via `llama.cpp`, evaluates bundles and refines durable `PolicyPacket` objects for the next window.
+- **ESP32-S3** owns physical safety. It runs custom ESP-IDF firmware and can veto commands before anything touches water.
 
-The result: **better irrigation criteria when the field, the person and the network don't coincide in time.**
+**The LLM can propose. The physical layer can say no.**
 
 ---
 
 ## Why Sprout
 
-In 2023, **48% of the world's land area suffered at least one month of extreme drought** — the second largest extent since 1951.<sup>[1]</sup> **1.8 billion people are affected by drought worldwide; the cost is $300 billion per year.**<sup>[1]</sup>
+Irrigation is a timing problem as much as a water problem. A plot can become dry while the farmer is away. A local forecast can change while the network is absent. A human observation can matter more than a sensor, but only when a person actually visits.
 
-In Spain alone, drought cost the agricultural sector **€5.55 billion in 2023**.<sup>[2]</sup> 370,000 hectares of rain-fed cereal in the Mediterranean basin lost between 60% and 90% of their harvest. Two years in a row.<sup>[3]</sup>
+Sprout reduces the latency between local evidence and local action.
 
-But the field for which we design doesn't live in continuous connectivity. Globally, **only 58% of the rural population uses internet — in low-income countries, just 14%.**<sup>[4]</sup>
+Instead of assuming permanent connectivity, Sprout uses three time scales:
 
-Sprout exists to bring **operational criteria to plots where you can't be every day, and where you can't always rely on the network.**
+| Layer | Time scale | Question |
+|---|---:|---|
+| **Rhizome** | minutes | What should this plot do now? |
+| **Pollen** | visit TTL | What human intent and context should enter the plot? |
+| **Meristem** | days | What policy should govern the next window? |
+| **ESP32** | physical instant | Is this command safe enough to execute? |
 
 ---
 
 ## Architecture
 
+```text
+             Pollen · Android · Gemma 4 E4B · LiteRT-LM
+          visit voice → MissionPatch · WeatherDigest · FieldVisit
+                                │
+                                ▼
+        Rhizome · Jetson · Gemma 4 E2B · llama.cpp
+           local telemetry → candidate action → DecisionReceipt
+                                │
+                                ▼
+              ESP32-S3 · ESP-IDF firmware · physical veto
+                    pump · relay · soil sensor · tank/flow
+                                ▲
+                                │
+        Meristem · home laptop · Gemma 4 E4B · llama.cpp
+               bundles → evaluator/tools → PolicyPacket
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  Physical layer (ESP32 firmware) — VETO                         │
-│       ↑                                                          │
-│  Rhizome (Jetson + Gemma 4 E2B) — minutes                       │
-│       ↑                                                          │
-│  Pollen (Android + Gemma 4 E4B + audio multimodal) — visit TTL  │
-│       ↑                                                          │
-│  Meristem (home laptop + Gemma 4 E4B) — days                    │
-└─────────────────────────────────────────────────────────────────┘
-```
 
-| Node | Question it answers | Hardware | Gemma 4 model | Runtime | Jurisdiction |
-|------|---------------------|----------|---------------|---------|--------------|
-| **Rhizome** | Should I irrigate now? | Jetson Orin Nano Super (or Raspberry Pi 5) + ESP32-S3 | E2B (it, Q4_K_S) | `llama.cpp` | Minutes |
-| **Pollen** | What human criteria + context? | Android device | E4B | LiteRT-LM | Visit with short TTL |
-| **Meristem** | What policy for the next window? | Farmer's home laptop (Linux/macOS/Windows) | E4B | `llama.cpp` | Days |
-| **ESP32** | Is this command physically safe? | ESP32-S3 N16R8 (or any ESP32-S3 variant) | None — ESP-IDF firmware | — | Physical veto |
+### Invariants
 
-**Invariants:**
+1. **Physical layer prevails.** No LLM can bypass the ESP32.
+2. **Every intelligence has jurisdiction.** Rhizome arbitrates, Pollen mediates, Meristem refines.
+3. **Every criterion expires.** `MissionPatch`, `WeatherDigest` and `PolicyPacket` objects carry TTL or validity windows.
+4. **Deterministic logic decides; Gemma 4 writes rationale and helps formulate criteria.**
+5. **Refusal is a feature.** When the system is uncertain, stale or unsafe, it refuses with a legible reason.
 
-1. *"Physical layer prevails. Rhizome arbitrates. Pollen mediates. Meristem refines."*
-2. *"Every intelligence has jurisdiction. And expiry."* Every `MissionPatch` carries a short TTL. Every `PolicyPacket` carries a validity window. Every `WeatherDigest` expires before going stale. Expired objects get `EXPIRED → REJECTED` with legible reason in `DecisionReceipt`. **No criterion stays silently valid past its window.**
-3. No `PolicyPacket` from Meristem can reduce the firmware's hard limits. It can only recommend more conservative behavior.
+---
 
-**Key pattern (validated empirically)**: deterministic logic decides; the LLM only writes the rationale. When GPU offload caused semantic drift in a test case (output: `need_clarification` instead of `ok`), the system held its contract — the deterministic Evaluator kept the action stable while the LLM continued to author safe-but-off-contract prose. **Empirical proof of the architectural thesis: semantic drift in the model + deterministic guardrail = contractual behavior even under LLM failure.**
+## What is real vs simulated
+
+Sprout is a hackathon MVP with explicit boundaries.
+
+### Validated paths
+
+- Rhizome local decision loop on Jetson with Gemma 4 E2B via `llama.cpp`.
+- Pollen Android app with `demo` and `device` flavors; device path uses LiteRT-LM and Gemma 4 E4B.
+- Pollen voice path records `.wav` audio and feeds audio content to the LiteRT-LM device backend.
+- Meristem local evaluator and Gemma 4 E4B tool-calling path.
+- ESP32-S3 firmware with serial protocol, heartbeat, safety checks, `WATER` `DRY_RUN`, and supervised `PUMP_PULSE` `TEST_ONLY` hardware proof.
+- Physical bench path with relay, 12V pump, soil moisture readings and supervised pulses.
+
+### Deliberately conservative boundaries
+
+- Autonomous `WATER` remains conservative in `DRY_RUN` while production semantics are closed.
+- Physical actuation is demonstrated through supervised `PUMP_PULSE <ms>` as `TEST_ONLY`.
+- The browser demo is a deterministic contract simulator. Real Gemma 4 execution happens in the Android, Jetson and laptop paths documented in this repo.
+
+This distinction is intentional. Sprout values honest safety boundaries over demo theatre.
 
 ---
 
 ## How Gemma 4 is used
 
-Sprout uses Gemma 4 in five concrete ways, each exploiting a different capability of the model:
+Sprout uses Gemma 4 in concrete, node-specific ways:
 
-- **Multimodal audio native** — Pollen feeds raw 16kHz `.wav` directly to Gemma 4 E4B via LiteRT-LM, **without a separate STT pipeline**. Validated end-to-end against real microphone input, with `REFUSE_RETRY` operating over agricultural-nonsense sentences. Code: `code/pollen/.../PollenVoiceInfra.kt`.
-- **Tool calling** — Meristem uses Gemma 4 E4B with native tool calling for `compose_policy(...)`, `validate_bundle(...)` and `compare_targets(...)`. Mini-battery 5/5 PASS. End-to-end runtime validated day 26 with `tool_calls_recovered_from_text=1` from real LLM output. Code: `code/meristem_node/...`.
-- **Three-node routing — two runtimes, one architecture**: three Gemma 4 instances (E2B + E4B + E4B), three jurisdictions, no cloud roundtrip. Runtime choice is conscious per node: **`llama.cpp`** on Jetson (Rhizome) and home laptop (Meristem) — the open-source engine with the richest quantization ecosystem for heterogeneous CPU/GPU; **LiteRT-LM** on Android (Pollen) — Google AI Edge's official runtime, the path that makes native multimodal audio viable on-device. Each node holds the context type its layer is responsible for.
-- **Bilingual narrator in Rhizome** — endpoints `GET /summary/since?locale=es|en` and `GET /explain/decision/<id>?locale=es|en` operational in production. Gemma 4 E2B (via `llama.cpp`) improves the `rationale_short` over a decision **already closed** by deterministic logic — never changes action, never authorizes water, never invents facts. **The system speaks two languages in production.**
-- **Universal Presentation Layer (surface language)** — official project standard for i18n (`research/07_llm_localization_strategy.md`). Edge nodes (Rhizome, ESP32) reason in stable English Tech; Pollen + Gemma 4 E4B via LiteRT-LM translates to the UI language milliseconds before rendering. **The user's language lives in their pocket; the system's criterion lives in the node.** Benefits: hardware agnosticism (no re-flashing nodes per language), preparation for minority-language fine-tuning (Pular, Wolof, Swahili, Quechua, Catalan, Basque) without replicating explanations in N languages in central storage.
+### Rhizome — Gemma 4 E2B on Jetson
 
-**Key pattern**: the final decision is **never** signed by the LLM. The deterministic Evaluator decides; Gemma 4 writes the rationale and adapts the surface language.
+- Runtime: `llama.cpp`.
+- Role: local rationale and arbitration support for a decision already bounded by deterministic gates.
+- Constraint: Gemma 4 does not authorize water.
+
+### Pollen — Gemma 4 E4B on Android
+
+- Runtime: Google AI Edge LiteRT-LM.
+- Role: multimodal audio input, natural-language mission compilation, refusal/retry for unclear instructions.
+- Output: expiring `MissionPatch` objects validated before application.
+
+### Meristem — Gemma 4 E4B on home laptop
+
+- Runtime: `llama.cpp`.
+- Role: tool-calling-assisted policy review and explanation.
+- Output: durable `PolicyPacket` objects for the next window.
+
+### Configuration work
+
+We tested prompt and runtime configurations before freezing the demo path: context window, output budget, thinking behavior and structured-output stability. One useful finding was that latency often followed what the model wrote, not only what it read. Shorter output budgets improved usability when the contract stayed stable.
+
+---
+
+## Live demo
+
+The public web demo is a **deterministic contract simulator**:
+
+- inspect Rhizome decisions;
+- compile Pollen-style mission patches;
+- evaluate Meristem-style policy changes;
+- see TTLs, receipts and refusal paths.
+
+It does not pretend to run Gemma 4 in the browser. It exists so anyone can experience the architecture without hardware, model downloads, cloud APIs or login.
+
+The real local Gemma 4 paths are documented in:
+
+- `code/pollen/` — Android + LiteRT-LM;
+- `code/rhizome/` — Jetson + `llama.cpp`;
+- `code/meristem_node/` — laptop + `llama.cpp`;
+- `hardware/firmware_esp32/` — physical safety coprocessor.
 
 ---
 
 ## Reproduce locally
 
-### Requirements
-
-- **Laptop** for Meristem. 8GB RAM minimum, 16GB ideal. Linux, macOS or Windows.
-- **Jetson Orin Nano Super 8GB** for Rhizome. **Alternative**: Raspberry Pi 5 (with adapted llama.cpp build).
-- **ESP32-S3 N16R8 board** (or any ESP32-S3 variant) for the safety firmware. Required — the physical veto layer is part of the architecture, not optional.
-- **Android device** for Pollen. Android 12 / API 31+ and 64-bit hardware. For Gemma 4 E4B to run smoothly: **12GB RAM recommended, 16GB ideal, at least 6GB free**. CPU is the stable runtime path; GPU/NPU performance depends heavily on the device.
-
-### Quick start
+### Meristem, no hardware needed
 
 ```bash
-git clone https://github.com/zigiella/sprout.git
-cd sprout
-
-# 1. Run Meristem locally (no hardware needed)
 cd code/meristem_node
-make run    # serves on :8000
-make test   # runs 13 deterministic tests + LLM smoke
-
-# 2. Run Pollen demo flavor (mock, runs in any emulator or Appetize)
-# See code/pollen/README.md for Android Studio setup
-
-# 3. (Optional) Run Rhizome on Jetson
-# See code/rhizome/jetson/README.md and run_runtime.sh
+make run
+make test
 ```
 
-### Detailed setup
+### Pollen Android demo flavor
 
-- Meristem-node: [`code/meristem_node/README.md`](code/meristem_node/README.md)
-- Pollen Android: [`code/pollen/README.md`](code/pollen/README.md)
-- Rhizome Jetson: [`code/rhizome/jetson/`](code/rhizome/jetson/) (see scripts `run_runtime.sh`, `start_adapter.sh`, `smoke_adapter.sh`)
-- ESP32 firmware: [`hardware/firmware_esp32/README.md`](hardware/firmware_esp32/README.md)
-- Wiring schematics: [`hardware/wiring_diagrams/day19_mounting_schematics.md`](hardware/wiring_diagrams/day19_mounting_schematics.md)
+```bash
+cd code/pollen
+./gradlew assembleDemoDebug
+./gradlew testDemoDebugUnitTest
+```
 
-### Installing the model on the phone
+Install the demo APK from `demo/` or build locally. The demo flavor uses deterministic inference so it runs without a 3GB model file.
 
-The user installs Pollen from the store — the app itself is light (**~15 MB**). On first launch with WiFi, an onboarding screen appears:
+### Pollen device flavor with Gemma 4 E4B
 
-> *"Downloading agronomic brain (Gemma 4)..."*
+```bash
+cd code/pollen
+./gradlew assembleDeviceRelease
+adb push gemma-4-E4B-it.litertlm /data/local/tmp/gemma-4-E4B-it.litertlm
+```
 
-The app uses Android's `DownloadManager` to fetch `gemma-4-E4B-it.litertlm` (3.6 GB) from a secure CDN directly into the app's private internal storage (`/data/data/net.sprout.pollen/files/`). Once the download completes, **the model lives on the device forever and Pollen runs 100% offline** — no further network round-trip.
+Then open Pollen on Android and select the local model path.
 
-> Requires: Android 12 / API 31+, 12 GB RAM recommended (16 GB ideal), at least 6 GB free for the model file plus runtime headroom. CPU is the stable runtime path; GPU/NPU varies by device.
+### Rhizome on Jetson
 
-> For developers and nightly testers, the `adb push` sideload flow is documented in [`code/pollen/README.md`](code/pollen/README.md).
+```bash
+cd code/rhizome/jetson
+./run_runtime.sh safe-cpu
+./start_adapter.sh
+./smoke_adapter.sh
+```
 
----
+### ESP32 firmware
 
-## Project status
+```bash
+cd hardware/firmware_esp32
+idf.py set-target esp32s3
+idf.py build
+idf.py -p /dev/ttyACM0 flash monitor
+```
 
-- **Physical irrigation cycle closed on hardware (day 25)**. The full chain `software decision → relay → 12V pump → water → soil → capacitive sensor` works and leaves measurable trace: raw moisture reading dropped from **2278 → 1289** after a pulse, confirming the cycle in the field. Autonomous `WATER` remains in `DRY_RUN`; real physical pulse only under supervised `TEST_ONLY` until two open questions on the soil-dry threshold and pulse routing are closed.
-
-- **Rhizome Steward v0 (day 25)**. Autonomous host-side loop with deterministic gates, persistent receipts, rotation policy designed for months (`retention_days=120`, `max_total_bytes=64 MiB`), and **`ShadowSkeptic` second-agent auditor** running with `affects_decision=false` — first dual-agent local jurisdiction in production. Logs each disagreement against the primary decision without veto, gathering data for future promotion to an LLM version.
-
-- **Pollen ↔ Meristem end-to-end real (day 25)**. REST connectivity in production, no mocks: `GET /health` sanity check with visual indicator, `POST /visit` uploading real `RhizomeSnapshot` + `DecisionReceipts`, `GET /policy/by-target/{id}`. Terminal-style log console in the UI for visual traceability.
-
-- **Bilingual endpoints in production (day 25)**. `?locale=es|en` operational on Rhizome's `/summary/since` and `/explain/decision/<id>`. Gemma 4 narrator improves `rationale_short` without altering facts. **Approach C** (`research/07_llm_localization_strategy.md`) declared the project's official i18n standard: edge nodes think in stable English Tech, Pollen + Gemma 4 E4B local translates to the UI language — preparing the system for minority-language fine-tuning (Pular, Wolof, Swahili, Quechua, Catalan, Basque) without re-flashing field hardware.
-
-- **Meristem control plane**. 53 tests PASS. mDNS verified end-to-end (`meristem.local:13000`). UI accessible across the LAN — validated with a real click from `192.168.1.36` with `trace_id` correlated end-to-end. **Read-only `POST /chat` by construction** — zero prompt-injection surface on hardware, formally verified by test. Latency finding: `num_predict` (output length) drives the 53% reduction, not `num_ctx` (input length); live-demo viable at ~1.5 min/bundle.
-
-- **Pollen voice → policy**. Microphone + Gemma 4 E4B multimodal audio on Android validated end-to-end against real human voice. Agricultural sentences compile to `MissionPatch`; nonsense gets `REFUSE_RETRY` instead of fabricated action. *Refusal as feature*, validated empirically.
-
-- **Architecture invariants stable**. Three-node routing with deterministic logic + Gemma 4 LLMs as rationale authors. Physical layer veto (ESP32) confirmed on real board (5 rules + `SAFETY_DOWNGRADE`).
-
----
-
-## Future work / Roadmap
-
-Sprout solves the minimum case. The architecture is designed to scale. Here is what we are already designing for the next iterations:
-
-### Hardware autonomy
-
-- **Solar power for Rhizome.** Combine the Jetson Orin Nano Super's MAXN_SUPER profile with a small PV array + LiFePO4 battery to remove grid dependency. Edge AI without grid is the natural complement to local-first: the field doesn't need power either.
-- **Mesh between plots without WiFi.** LoRa or Meshtastic between Rhizomes for federation when the cell signal is weak and the farmer's phone is the only network in range. Pollen as primary ferry; LoRa as low-bandwidth fallback for `AlertEvent` propagation.
-
-### Multimodal Gemma 4 in the field
-
-- **Vision multimodal.** Camera + Gemma 4 detecting visible water stress, pest pressure, growth phase. The architecture is already set up — the same `MissionPatch` schema can carry image references with no contract change.
-- **Bidirectional audio.** Pollen also speaks to the farmer: conversational pre-warning — *"tomorrow's irrigation is scheduled, but the tank is at 30%"*. Full-duplex with Gemma 4 audio output, same on-device privacy model.
-
-### Language localization
-
-- **Gemma 4 translates to the user's language.** The system reasons in contracts (English, structured, deterministic); Pollen adapts the surface language to whatever the farmer speaks. The user never sees JSON; they see their language. Decoupling **internal reasoning** from **external surface** keeps the audit trail clean and the user experience native.
-- **Fine-tuning Gemma 4 on minority languages.** Small farmers globally don't speak English. Fine-tuning E4B on local agricultural vocabularies (Swahili, Hausa, Wolof, Quechua, Aymara, Catalan, Basque…) opens the system to the **84% of farms under 2 hectares** that FAO counts as the world's primary agricultural force.
-
-### Sensors and field complexity
-
-- **More sensors per plot.** Conductivity, pH, soil temperature beyond moisture. Multi-zone irrigation with electrovalves and per-zone scheduling.
-- **Local weather stations.** A physical weather sensor next to PLOT_01 replaces the portable `WeatherDigest` carried by Pollen for plots with frequent visits.
-- **Integration with official climate platforms.** AEMET (Spain), MeteoCat (Catalonia), or regional equivalents — replace the carried `WeatherDigest` with verified institutional data when network is available.
-
-### System scaling
-
-- **Meristem from 4 rules to 8-12.** Today the deterministic Evaluator runs 4 rules; post-hackathon expansion to seasonal logic, heterogeneous crops, multi-month water budgets. Plan documented in 7 progressive phases.
-- **Fine-tuning E4B with Unsloth.** Train on a synthetic + real agricultural dataset to specialize Meristem's policy authoring without degrading general reasoning.
-- **Multi-Rhizome federation.** Local scheduler coordinating N logical Rhizomes on a single Jetson (medium farms with multiple zones) + real federation across multiple Jetsons (large farms with geographically separate plots).
-- **GPU quality pass.** Close GPU offload semantic drift (test cases RD04, RH02) to promote the `gpu-experimental` profile to contractual.
-
-### Debt and polish
-
-- Automated UI tests (currently manual smoke).
-- Auto-generated API docs (OpenAPI from JSON contracts).
-- Signal-seed visual identity (`#C5F26B`) consistent across all frontends.
-
-**Sprout solves the minimum case. The architecture scales.**
+See each component README for full setup.
 
 ---
 
-## Team
+## Repository map
 
-**zigiella** — solo developer working with a coordinated team of specialized AI agents (Cambium, Floema, Meristem, Xilema, Corola, Endodermis, Bract, Venation), each with a defined role and identity. The methodology — repo-first, written bitácoras as contract, identity inline for git, day-start coordination messages with explicit `Interrelaciones` template — is documented in [`CONTRIBUTING.md`](CONTRIBUTING.md) and discussed in [writeup §5](writeup/draft.md).
-
----
-
-## License
-
-[Apache 2.0](LICENSE). Same as Gemma 4.
-
-## Attribution
-
-Sprout uses Gemma 4 models by Google. **Gemma is a trademark of Google LLC.** This project is not affiliated with or endorsed by Google.
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+| Path | Purpose |
+|---|---|
+| `SUBMISSION.md` | Fast path for evaluation: links, proof, what is real vs contract |
+| `writeup/` | Kaggle writeup and supporting notes |
+| `landing-demo/` | Public deterministic contract demo |
+| `code/rhizome/` | Jetson plot node, local decision loop, sync facade |
+| `code/pollen/` | Android mobile node, LiteRT-LM path, voice → MissionPatch |
+| `code/meristem_node/` | Home laptop slow brain, evaluator, policy composer |
+| `hardware/firmware_esp32/` | ESP32 safety coprocessor firmware |
+| `docs/` | Architecture, specs, data contracts and safety rules |
+| `bitacora/` | Spanish development journal and decision trail |
+| `research/` | Evaluation notes, model configuration work and sources |
+| `video/` | Video scripts and production notes |
 
 ---
 
-## Sources
+## Language note
 
-[1] UNCCD — *Global Drought Hotspots Report 2023-2025* + OECD — *Global Drought Outlook 2025*.
-[2] COAG / MAPA — Spain agricultural sector losses due to drought 2023.
-[3] COAG Castilla y León — Mediterranean basin rain-fed cereal losses 2023-2024.
-[4] ITU — *Facts and Figures 2025*: Internet use in urban and rural areas.
+Sprout was built by a Spanish-speaking team. Public entry points are English-first or bilingual; internal bitácoras and fast-moving specs remain in Spanish by design. This mirrors the product thesis: local intelligence should meet people in the language and context where work actually happens.
 
-(Full references with URLs in [`research/metrics/impact_stats.md`](research/metrics/impact_stats.md).)
+---
+
+## Status
+
+Sprout is an MVP, not a production irrigation controller. It demonstrates the core architecture:
+
+- local Gemma 4 reasoning by jurisdiction;
+- Android mobile node with LiteRT-LM path;
+- edge node with `llama.cpp`;
+- laptop slow brain with policy refinement;
+- physical ESP32 safety veto;
+- signed receipts, TTLs and refusal paths.
+
+Future work includes production `WATER` semantics with flow metering, multi-zone irrigation, solar power, local weather stations, vision evidence and language tuning for local agricultural vocabularies.
+
+---
+
+## License and attribution
+
+Apache 2.0. See [`LICENSE`](LICENSE).
+
+Sprout uses Gemma 4 models by Google. Gemma is a trademark of Google LLC. This project is not affiliated with or endorsed by Google.

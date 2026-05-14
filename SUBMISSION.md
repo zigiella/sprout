@@ -10,9 +10,9 @@
 | Asset | Where |
 |-------|-------|
 | **Video (≤ 3 min)** | TBD — public YouTube URL once final cut is uploaded |
-| **Landing demo** | TBD — public hosted URL |
+| **Landing demo** | https://zigiella.com/sprout |
 | **Repository** | https://github.com/zigiella/sprout |
-| **Writeup** | [`writeup/draft.md`](writeup/draft.md) |
+| **Writeup** | [`writeup/draft.md`](writeup/draft.md) (1467 words, also submitted as Kaggle draft) |
 | **Pollen demo APK** | [`demo/pollen-demo.apk`](demo/pollen-demo.apk) (~39 MB, mock LiteRT inference, no model needed) |
 | **Pollen Venation UI APK** | [`demo/pollen-venation-ui.apk`](demo/pollen-venation-ui.apk) (~58 MB, polished UI, no device LiteRT model) |
 | **License** | Apache 2.0 |
