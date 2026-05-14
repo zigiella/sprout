@@ -1,7 +1,8 @@
 # meristem_node/
 
-**Estado**: día 14, esqueleto FastAPI funcional stubeado. Construcción
-real día 15-17. Demo-ready día 18.
+**Abstract.** Meristem is Sprout's slow brain. It runs on a home laptop (FastAPI + SQLite), ingests bundles that Pollen carries from Rhizome nodes, applies a deterministic evaluator (four rules: confirm / conservative / alert / refuse) and emits durable `PolicyPacket` objects for the next window. Rationale composition and an operator-facing read-only chat use Gemma 4 E4B via `llama.cpp` with tool calling (recent-history lookup, cross-target comparison, previous-policy diff); **the evaluator itself never depends on the model**. Pollen talks to Meristem either over WebSocket or a parallel HTTP fallback (added after a real field test on day 27), discovered via mDNS as `meristem.local:13000`. **Nothing leaves the home network — no cloud, no accounts, no telemetry.**
+
+---
 
 ## Qué es
 
