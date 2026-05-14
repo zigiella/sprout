@@ -59,29 +59,29 @@
 
   
   <g transform="translate(32,140)">
-    <rect class="card-graphite" width="262" height="170" rx="3"></rect>
-    
-    <circle class="seed" cx="246" cy="16" r="4"></circle>
-    <circle class="seed-stroke" cx="246" cy="16" r="9" opacity="0.35"></circle>
-    <text class="t-cardid" x="20" y="32">01 · Field node</text>
-    <text class="t-cardname" x="20" y="60">Rhizome</text>
-    <text class="t-role" x="20" y="86">Decides offline.</text>
-    <text class="t-role" x="20" y="104">Reads soil and local state.</text>
-    <text class="t-role" x="20" y="122">Issues candidate_action.</text>
-    <line class="hairline" x1="20" y1="138" x2="242" y2="138" stroke="rgba(243,237,228,0.18)"></line>
-    <text class="t-seed" x="20" y="156" fill="#C5F26B">Gemma 4 · E2B edge</text>
-  </g>
-
-  
-  <g transform="translate(310,140)">
     <rect class="card" width="262" height="170" rx="3"></rect>
-    <text class="t-cardid-dark" x="20" y="32">02 · Field safety</text>
+    <text class="t-cardid-dark" x="20" y="32">01 · Field safety</text>
     <text class="t-cardname-dark" x="20" y="60">ESP32</text>
     <text class="t-role-dark" x="20" y="86">Validates tank level.</text>
     <text class="t-role-dark" x="20" y="104">Caps actuation timing.</text>
     <text class="t-role-dark" x="20" y="122">Has physical veto.</text>
     <line class="hairline" x1="20" y1="138" x2="242" y2="138"></line>
     <text class="t-flow-em" x="20" y="156">Final → valve</text>
+  </g>
+
+
+  <g transform="translate(310,140)">
+    <rect class="card-graphite" width="262" height="170" rx="3"></rect>
+
+    <circle class="seed" cx="246" cy="16" r="4"></circle>
+    <circle class="seed-stroke" cx="246" cy="16" r="9" opacity="0.35"></circle>
+    <text class="t-cardid" x="20" y="32">02 · Field node</text>
+    <text class="t-cardname" x="20" y="60">Rhizome</text>
+    <text class="t-role" x="20" y="86">Decides offline.</text>
+    <text class="t-role" x="20" y="104">Reads soil and local state.</text>
+    <text class="t-role" x="20" y="122">Issues candidate_action.</text>
+    <line class="hairline" x1="20" y1="138" x2="242" y2="138" stroke="rgba(243,237,228,0.18)"></line>
+    <text class="t-seed" x="20" y="156" fill="#C5F26B">Gemma 4 · E2B edge</text>
   </g>
 
   
