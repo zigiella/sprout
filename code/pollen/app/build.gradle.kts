@@ -75,7 +75,11 @@ dependencies {
     // Kotlinx Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
-    "deviceImplementation"("com.google.ai.edge.litertlm:litertlm-android:0.10.1")
+    // Pinned to 0.10.0 (latest version published on Google Maven at submission time).
+    // 0.10.1 is a self-built patch documented in github.com/google-ai-edge/LiteRT-LM/issues/1850
+    // that fixes GPU decode for Gemma 4 E2B on Pixel 8, but it is not resolvable from public
+    // Maven repositories. The contractual demo path uses CPU runtime, which 0.10.0 handles.
+    "deviceImplementation"("com.google.ai.edge.litertlm:litertlm-android:0.10.0")
 
     // Retrofit para conexión con Rhizome (Jetson/ESP32)
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
