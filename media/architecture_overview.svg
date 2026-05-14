@@ -4,7 +4,28 @@
   <desc>Sprout architecture: Rhizome and ESP32 in the field, Pollen on mobile, Meristem at home. Visits ferry MissionPatch out and DecisionReceipt back. The valve only opens after ESP32 validates.</desc>
 
   <defs>
-    
+    <style>
+      .bg { fill: #1a1a18; }
+      .card-graphite { fill: #0e0e0c; stroke: rgba(243,237,228,0.12); stroke-width: 1; }
+      .card { fill: #fffaf2; stroke: #d8cec2; stroke-width: 1; }
+      .t-eyebrow { font: 600 11px/1 'IBM Plex Mono', ui-monospace, monospace; fill: #c5f26b; letter-spacing: 0.14em; text-transform: uppercase; }
+      .t-title { font: 700 28px/1.1 'Manrope', system-ui, sans-serif; fill: #f3ede4; }
+      .t-group { font: 600 11px/1 'IBM Plex Mono', ui-monospace, monospace; fill: rgba(243,237,228,0.55); letter-spacing: 0.14em; text-transform: uppercase; }
+      .t-cardid { font: 500 11px/1 'IBM Plex Mono', ui-monospace, monospace; fill: rgba(243,237,228,0.55); letter-spacing: 0.12em; text-transform: uppercase; }
+      .t-cardid-dark { font: 500 11px/1 'IBM Plex Mono', ui-monospace, monospace; fill: rgba(26,26,24,0.6); letter-spacing: 0.12em; text-transform: uppercase; }
+      .t-cardname { font: 700 22px/1 'Manrope', system-ui, sans-serif; fill: #f3ede4; }
+      .t-cardname-dark { font: 700 22px/1 'Manrope', system-ui, sans-serif; fill: #1a1a18; }
+      .t-role { font: 400 13px/1.4 'Manrope', system-ui, sans-serif; fill: rgba(243,237,228,0.78); }
+      .t-role-dark { font: 400 13px/1.4 'Manrope', system-ui, sans-serif; fill: rgba(26,26,24,0.72); }
+      .t-seed { font: 600 12px/1 'IBM Plex Mono', ui-monospace, monospace; fill: #c5f26b; }
+      .t-flow { font: 400 12px/1.4 'IBM Plex Mono', ui-monospace, monospace; fill: rgba(243,237,228,0.72); }
+      .t-flow-em { font: 600 12px/1 'IBM Plex Mono', ui-monospace, monospace; fill: #c5f26b; }
+      .hairline { stroke: rgba(243,237,228,0.18); stroke-width: 1; fill: none; }
+      .seed { fill: #c5f26b; }
+      .seed-stroke { stroke: #c5f26b; fill: none; stroke-width: 1; }
+      .arrow { stroke: rgba(243,237,228,0.42); stroke-width: 1.5; fill: none; }
+      .arrow-tip { fill: rgba(243,237,228,0.6); }
+    </style>
     <marker id="arrtip" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
       <path d="M0,0 L6,4 L0,8 z" class="arrow-tip"></path>
     </marker>
@@ -47,7 +68,7 @@
     <text class="t-role" x="20" y="104">Reads soil and local state.</text>
     <text class="t-role" x="20" y="122">Issues candidate_action.</text>
     <line class="hairline" x1="20" y1="138" x2="242" y2="138" stroke="rgba(243,237,228,0.18)"></line>
-    <text class="t-seed" x="20" y="156" fill="#C5F26B">Gemma 3 · 4B edge</text>
+    <text class="t-seed" x="20" y="156" fill="#C5F26B">Gemma 4 · E2B edge</text>
   </g>
 
   
@@ -73,7 +94,7 @@
     <text class="t-role" x="20" y="104">Turns the visit into</text>
     <text class="t-role" x="20" y="122">a MissionPatch.</text>
     <line class="hairline" x1="20" y1="138" x2="242" y2="138" stroke="rgba(243,237,228,0.18)"></line>
-    <text class="t-seed" x="20" y="156" fill="#C5F26B">Gemma 3 · 4B mobile</text>
+    <text class="t-seed" x="20" y="156" fill="#C5F26B">Gemma 4 · E4B mobile</text>
   </g>
 
   
