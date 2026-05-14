@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+<style>.bg{fill:#fffaf2}.txt{font-family:Arial,sans-serif;fill:#1a1a18}.muted{fill:#6e665f}.box{fill:#f3ede4;stroke:#1a1a18;stroke-width:2}.seed{fill:#c5f26b}.danger{fill:#b94a3d}.arrow{stroke:#1a1a18;stroke-width:3;fill:none;marker-end:url(#m)}</style>
+<defs><marker id="m" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#1a1a18"/></marker></defs>
+<rect class="bg" width="1280" height="720"/>
+<text x="70" y="80" class="txt" font-size="46" font-weight="800">Contract flow</text>
+<text x="70" y="120" class="muted" font-size="22">Authority and expiry travel with every object.</text>
+<rect x="70" y="190" width="250" height="90" rx="18" class="box"/><text x="100" y="245" class="txt" font-size="24" font-weight="700">MissionPatch</text><text x="100" y="270" class="muted" font-size="16">Pollen · short TTL</text>
+<rect x="70" y="310" width="250" height="90" rx="18" class="box"/><text x="100" y="365" class="txt" font-size="24" font-weight="700">WeatherDigest</text><text x="100" y="390" class="muted" font-size="16">carried context · expires</text>
+<rect x="70" y="430" width="250" height="90" rx="18" class="box"/><text x="100" y="485" class="txt" font-size="24" font-weight="700">PolicyPacket</text><text x="100" y="510" class="muted" font-size="16">Meristem · valid window</text>
+<rect x="500" y="280" width="260" height="150" rx="24" fill="#1a1a18"/><text x="545" y="340" fill="#f3ede4" font-family="Arial" font-size="30" font-weight="800">Rhizome</text><text x="540" y="375" fill="#c5f26b" font-family="Arial" font-size="18">admission gate</text><text x="540" y="405" fill="#f3ede4" font-family="Arial" font-size="17">expiry · authority · safety</text>
+<rect x="950" y="220" width="250" height="90" rx="18" class="box"/><text x="980" y="275" class="txt" font-size="24" font-weight="700">DecisionReceipt</text><text x="980" y="300" class="muted" font-size="16">accepted action / rationale</text>
+<rect x="950" y="410" width="250" height="90" rx="18" fill="#b94a3d"/><text x="980" y="465" fill="#fffaf2" font-family="Arial" font-size="24" font-weight="700">Rejected</text><text x="980" y="490" fill="#fffaf2" font-family="Arial" font-size="16">expired · unsafe · wrong authority</text>
+<path d="M320 235 C400 250,440 300,500 330" class="arrow"/><path d="M320 355 L500 355" class="arrow"/><path d="M320 475 C400 460,440 410,500 385" class="arrow"/>
+<path d="M760 330 C835 300,875 270,950 265" class="arrow"/><path d="M760 395 C840 420,890 445,950 455" class="arrow"/>
+<text x="70" y="620" class="txt" font-size="28" font-weight="800">No old criterion silently governs water.</text>
+</svg>

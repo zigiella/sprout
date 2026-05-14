@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+<style>.bg{fill:#1a1a18}.layer{stroke:#f3ede4;stroke-width:2}.txt{font-family:Arial,sans-serif;fill:#f3ede4}.seed{fill:#c5f26b}.muted{fill:#c9beb2}</style>
+<rect class="bg" width="1280" height="720"/>
+<text x="80" y="82" class="txt" font-size="46" font-weight="800">Authority stack</text>
+<text x="80" y="125" class="muted" font-size="23">The farther a node is from water, the less physical authority it has.</text>
+<rect x="180" y="160" width="920" height="90" rx="18" fill="#3b3b36" class="layer"/>
+<text x="220" y="215" class="txt" font-size="30" font-weight="700">Meristem refines</text><text x="590" y="215" class="muted" font-size="23">days · durable policy · no direct actuation</text>
+<rect x="180" y="270" width="920" height="90" rx="18" fill="#4b4a43" class="layer"/>
+<text x="220" y="325" class="txt" font-size="30" font-weight="700">Pollen mediates</text><text x="590" y="325" class="muted" font-size="23">visit TTL · MissionPatch · context ferry</text>
+<rect x="180" y="380" width="920" height="90" rx="18" fill="#605d55" class="layer"/>
+<text x="220" y="435" class="txt" font-size="30" font-weight="700">Rhizome arbitrates</text><text x="590" y="435" class="muted" font-size="23">minutes · local state · signed receipts</text>
+<rect x="180" y="490" width="920" height="110" rx="18" fill="#c5f26b"/>
+<text x="220" y="555" fill="#1a1a18" font-family="Arial,sans-serif" font-size="34" font-weight="800">Physical layer prevails</text><text x="670" y="555" fill="#1a1a18" font-family="Arial,sans-serif" font-size="23">ESP32 firmware · hard veto · pump/sensors</text>
+<text x="180" y="650" class="seed" font-size="26" font-weight="700">Every intelligence has jurisdiction. And expiry.</text>
+</svg>
