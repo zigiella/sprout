@@ -1,26 +1,26 @@
 # rhizome/
 
-Nodo edge de parcela. Corre en Jetson Orin Nano Super con Gemma 4 E2B (fine-tuned cuando tengamos v1).
+**Abstract.** Rhizome is the plot node. In the current MVP it runs on Jetson Orin Nano Super and operates offline-first: it reads local telemetry from the ESP32-S3 over serial, builds `RhizomeSnapshot` objects, applies deterministic safety and irrigation-need gates, and writes every outcome as a `DecisionReceipt`. When configured, Gemma 4 E2B via `llama.cpp` is used only to produce short human-readable rationales and visit summaries for Pollen; **it does not authorize water**. The deterministic gate decides whether an action is eligible, and the ESP32 owns the physical veto and pump execution boundary. Pollen consumes Rhizome through the local HTTP sync facade. Camera/vision, multi-zone control, and learning are outside the critical MVP path.
 
 ## Rol
 
-- Lee sensores (humedad suelo x2, caudalimetro, nivel deposito)
-- Captura imagen de camara periodicamente
-- Toma decisiones locales con Gemma 4 E2B
-- Ejecuta o bloquea accion con validacion dura del ESP32
-- Persiste snapshots, eventos, recibos
-- Sirve endpoint local para Pollen (sync via WiFi Direct)
+- Lee telemetría local del ESP32-S3 vía serial (humedad de suelo, nivel de depósito, heartbeat, estado de bomba).
+- Construye `RhizomeSnapshot` y aplica gates deterministas de seguridad y necesidad.
+- Persiste `DecisionReceipt` con evidencia, política activa, candidato, salida del ESP32, acción final y rationale.
+- Cuando hay configuración, pide a Gemma 4 E2B vía `llama.cpp` un rationale corto en lenguaje natural (no autoriza agua).
+- Sirve la fachada HTTP local para Pollen (`GET /summary/since?locale=es|en`, `GET /explain/decision/<id>`, `POST /visit`).
+- `ShadowSkeptic` registra objeciones de un segundo agente con `affects_decision=false`.
 
-## Stack
+## Stack actual (MVP)
 
-- Python 3.11
-- Ollama (`gemma4:e2b` o `sprout-rhizome-e2b-v1` cuantizado)
-- `pydantic` para schemas
-- `smbus2` / `adafruit-circuitpython-ads1x15` para ADC I2C
-- `opencv-python` + `picamera2` para camara
-- Comunicacion con ESP32 via UART o I2C
+- Python 3.11.
+- **`llama.cpp`** con Gemma 4 E2B-it Q4_K_S (perfil `safe-cpu` contractual; perfil `gpu-experimental` con 36/36 capas a GPU para iteración).
+- `pydantic` para schemas.
+- Comunicación con ESP32-S3 via USB-CDC serial.
+- Persistencia rotada (`retention_days=120`, `max_total_bytes=64 MiB`).
+- `decisions_by_rule` en `/health` para trazabilidad ejercitada.
 
-## Estructura (a construir)
+## Estructura real (post-day-28)
 
 ```
 rhizome/

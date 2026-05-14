@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use or reference Sprout, please cite as below."
+title: "Sprout — local-first AI water optimization for plots the network forgets"
+abstract: "Sprout is a safety-bounded decision network for water under absence. It combines three Gemma 4 nodes (Rhizome on Jetson, Pollen on Android via LiteRT-LM, Meristem on a home laptop) with an ESP32-S3 physical veto coprocessor. Every intelligence has jurisdiction. And expiry."
+authors:
+  - name: "zigiella"
+    affiliation: "Sprout project · Castellar de n'Hug, Catalonia, Spain"
+keywords:
+  - "local-first AI"
+  - "Gemma 4"
+  - "edge AI"
+  - "irrigation"
+  - "agriculture"
+  - "safety-bounded AI"
+  - "physical veto"
+  - "Android LiteRT-LM"
+  - "Jetson llama.cpp"
+  - "ESP32 firmware"
+  - "dual-agent pattern"
+version: "1.0.0"
+date-released: 2026-05-15
+license: Apache-2.0
+repository-code: "https://github.com/zigiella/sprout"
+url: "https://zigiella.com/sprout"
