@@ -275,12 +275,12 @@ Escenario equivalente:
 python hardware/host_tools/esp32_host_harness.py --port /dev/ttyACM0 --scenario pump_soil_observe_only --label endo_observe
 ```
 
-Secuencia con pulso minimo, solo si `soil_a_raw >= 1300`:
+Secuencia con pulso supervisado perceptible, solo si `soil_a_raw >= 1300`:
 
 ```text
 PUMP_STATUS
 SOIL_READ
-PUMP_PULSE 1000
+PUMP_PULSE 3000
 PUMP_STATUS
 SOIL_READ
 PUMP_OFF
@@ -299,8 +299,8 @@ Las electrovalvulas quedan fuera de MVP. La semantica visible del sistema se
 mantiene como `WATER A`, pero fisicamente solo existe una linea de riego:
 
 ```text
-PUMP_ON -> agua hacia parcela A
-PUMP_OFF -> sin riego
+PUMP_PULSE <ms> -> agua hacia parcela A durante una ventana acotada
+PUMP_OFF        -> parada segura explicita
 ```
 
 `WATER B` y `WATER BOTH` pueden seguir rechazandose o mantenerse como rutas no
