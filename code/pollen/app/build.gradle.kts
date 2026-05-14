@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "net.sprout.pollen"
-        minSdk = 29
+        minSdk = 31
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -75,7 +75,7 @@ dependencies {
     // Kotlinx Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
-    "deviceImplementation"("com.google.ai.edge.litertlm:litertlm-android:+")
+    "deviceImplementation"("com.google.ai.edge.litertlm:litertlm-android:0.10.1")
 
     // Retrofit para conexión con Rhizome (Jetson/ESP32)
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
