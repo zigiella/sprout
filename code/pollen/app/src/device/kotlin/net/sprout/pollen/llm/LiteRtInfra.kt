@@ -129,14 +129,15 @@ class LiteRtChatService(
 
     fun sendPrompt(userText: String, isThinkingEnabled: Boolean = false, temperature: Float? = null): Flow<Pair<String, GenerationMetrics?>> = flow {
         val engine = requireNotNull(sessionManager.currentEngine()) { "Engine no inicializado" }
-        
+
+        // TODO: isThinkingEnabled is a no-op on litertlm-android:0.10.0 (the published Maven
+        // version). The `extraContext` parameter that exposes "enable_thinking" + the
+        // "filter_channel_content_from_kv_cache" tweak lives in a self-built 0.10.1 patch
+        // documented in github.com/google-ai-edge/LiteRT-LM/issues/1850. Re-enable when
+        // the runtime patch lands in a public release. The MVP path uses standard
+        // ConversationConfig() and lets the model run without thinking-mode shaping.
         if (activeConversation == null) {
-            val config = com.google.ai.edge.litertlm.ConversationConfig(
-                extraContext = if (isThinkingEnabled) mapOf(
-                    "enable_thinking" to true,
-                    "filter_channel_content_from_kv_cache" to true
-                ) else emptyMap()
-            )
+            val config = com.google.ai.edge.litertlm.ConversationConfig()
             activeConversation = engine.createConversation(config)
         }
         val conversation = activeConversation!!
@@ -182,14 +183,11 @@ class LiteRtChatService(
 
     fun sendAudioFile(audioPath: String, instruction: String, isThinkingEnabled: Boolean = false): Flow<Pair<String, GenerationMetrics?>> = flow {
         val engine = requireNotNull(sessionManager.currentEngine()) { "Engine no inicializado" }
-        
+
+        // See note in sendPrompt(): isThinkingEnabled is a no-op on the published
+        // litertlm-android:0.10.0 runtime. Re-enable when the 0.10.1 patch ships publicly.
         if (activeConversation == null) {
-            val config = com.google.ai.edge.litertlm.ConversationConfig(
-                extraContext = if (isThinkingEnabled) mapOf(
-                    "enable_thinking" to true,
-                    "filter_channel_content_from_kv_cache" to true
-                ) else emptyMap()
-            )
+            val config = com.google.ai.edge.litertlm.ConversationConfig()
             activeConversation = engine.createConversation(config)
         }
         val conversation = activeConversation!!
