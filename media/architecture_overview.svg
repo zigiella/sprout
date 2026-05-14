@@ -23,8 +23,9 @@
       .hairline { stroke: rgba(243,237,228,0.18); stroke-width: 1; fill: none; }
       .seed { fill: #c5f26b; }
       .seed-stroke { stroke: #c5f26b; fill: none; stroke-width: 1; }
-      .arrow { stroke: rgba(243,237,228,0.42); stroke-width: 1.5; fill: none; }
-      .arrow-tip { fill: rgba(243,237,228,0.6); }
+      .arrow { stroke: rgba(243,237,228,0.55); stroke-width: 1.5; fill: none; }
+      .arrow.dashed { stroke-dasharray: 4 3; }
+      .arrow-tip { fill: rgba(243,237,228,0.65); }
     </style>
     <marker id="arrtip" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
       <path d="M0,0 L6,4 L0,8 z" class="arrow-tip"></path>
@@ -113,22 +114,22 @@
 
   
   <g transform="translate(572,140)">
-    
+
     <path class="arrow" d="M 24 50 L 0 50" marker-end="url(#arrtip)"></path>
-    <text class="t-flow" x="12" y="40" text-anchor="middle">MissionPatch</text>
-    
+    <text class="t-flow" x="12" y="-6" text-anchor="middle">MissionPatch</text>
+
     <path class="arrow" d="M 0 110 L 24 110" marker-end="url(#arrtip)"></path>
-    <text class="t-flow" x="12" y="132" text-anchor="middle">DecisionReceipt</text>
+    <text class="t-flow" x="12" y="190" text-anchor="middle">DecisionReceipt</text>
   </g>
 
-  
+
   <g transform="translate(860,140)">
-    
+
     <path class="arrow dashed" d="M 0 50 L 24 50" marker-end="url(#arrtip)"></path>
-    <text class="t-flow" x="12" y="40" text-anchor="middle">Bundle</text>
-    
+    <text class="t-flow" x="12" y="-6" text-anchor="middle">Bundle</text>
+
     <path class="arrow dashed" d="M 24 110 L 0 110" marker-end="url(#arrtip)"></path>
-    <text class="t-flow" x="12" y="132" text-anchor="middle">PolicyDiff</text>
+    <text class="t-flow" x="12" y="190" text-anchor="middle">PolicyDiff</text>
   </g>
 
   
