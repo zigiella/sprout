@@ -1,37 +1,147 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
-<style>.bg{fill:#f3ede4}.box{fill:#fffaf2;stroke:#1a1a18;stroke-width:2}.dark{fill:#1a1a18}.txt{font-family:Arial,sans-serif;fill:#1a1a18}.white{fill:#f3ede4}.seed{fill:#c5f26b}.muted{fill:#6e665f}.arrow{stroke:#1a1a18;stroke-width:3;fill:none;marker-end:url(#m)}</style>
-<defs><marker id="m" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#1a1a18"/></marker></defs>
-<rect class="bg" width="1280" height="720"/>
-<text x="60" y="70" class="txt" font-size="42" font-weight="800">Sprout architecture</text>
-<text x="60" y="110" class="muted" font-size="22">A safety-bounded Gemma 4 decision network for water under absence</text>
-<rect x="60" y="190" width="240" height="150" rx="22" class="box"/>
-<text x="90" y="235" class="txt" font-size="30" font-weight="700">Pollen</text>
-<text x="90" y="270" class="txt" font-size="18">Android · Gemma 4 E4B</text>
-<text x="90" y="300" class="muted" font-size="18">visit TTL · MissionPatch</text>
-<rect x="520" y="160" width="250" height="190" rx="22" class="box"/>
-<text x="550" y="210" class="txt" font-size="30" font-weight="700">Rhizome</text>
-<text x="550" y="245" class="txt" font-size="18">Jetson · Gemma 4 E2B</text>
-<text x="550" y="275" class="muted" font-size="18">minutes · local decision</text>
-<text x="550" y="310" class="muted" font-size="18">writes DecisionReceipt</text>
-<rect x="970" y="160" width="250" height="190" rx="22" class="dark"/>
-<text x="1000" y="210" class="white" font-size="30" font-weight="700">ESP32</text>
-<text x="1000" y="245" class="white" font-size="18">firmware hard rules</text>
-<text x="1000" y="275" class="seed" font-size="18">physical veto</text>
-<text x="1000" y="310" class="white" font-size="18">pump · relay · sensors</text>
-<rect x="520" y="490" width="250" height="150" rx="22" class="box"/>
-<text x="550" y="535" class="txt" font-size="30" font-weight="700">Meristem</text>
-<text x="550" y="570" class="txt" font-size="18">home laptop · Gemma 4 E4B</text>
-<text x="550" y="600" class="muted" font-size="18">days · durable policy</text>
-<path d="M300 260 C390 250,430 245,520 245" class="arrow"/>
-<text x="345" y="225" class="txt" font-size="17">MissionPatch + context</text>
-<path d="M770 245 C850 245,890 245,970 245" class="arrow"/>
-<text x="805" y="220" class="txt" font-size="17">candidate command</text>
-<path d="M970 295 C890 330,850 335,770 305" class="arrow"/>
-<text x="805" y="360" class="txt" font-size="17">ACK / REJECT</text>
-<path d="M300 305 C390 410,425 520,520 565" class="arrow"/>
-<text x="315" y="465" class="txt" font-size="17">SyncBundle carried home</text>
-<path d="M645 490 L645 350" class="arrow"/>
-<text x="665" y="430" class="txt" font-size="17">PolicyPacket via Pollen</text>
-<rect x="60" y="650" width="1160" height="44" rx="20" class="dark"/>
-<text x="90" y="680" class="seed" font-size="20" font-weight="700">Physical layer prevails · Rhizome arbitrates · Pollen mediates · Meristem refines</text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 520" role="img" aria-label="Sprout architecture overview · three jurisdictions, one water decision">
+  <title>Three jurisdictions. One water decision.</title>
+  <desc>Sprout architecture: Rhizome and ESP32 in the field, Pollen on mobile, Meristem at home. Visits ferry MissionPatch out and DecisionReceipt back. The valve only opens after ESP32 validates.</desc>
+
+  <defs>
+    
+    <marker id="arrtip" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L6,4 L0,8 z" class="arrow-tip"></path>
+    </marker>
+  </defs>
+
+  
+  <rect class="bg" width="1180" height="520"></rect>
+
+  
+  <text class="t-eyebrow" x="32" y="46">Architecture · overview</text>
+  <text class="t-title" x="32" y="80">Three jurisdictions. One water decision.</text>
+
+  
+  
+  <g transform="translate(32,118)">
+    <line class="hairline" x1="0" y1="0" x2="540" y2="0"></line>
+    <text class="t-group" x="0" y="-8">Field · plot</text>
+    <text class="t-group" x="540" y="-8" text-anchor="end">offline by design</text>
+  </g>
+  
+  <g transform="translate(596,118)">
+    <line class="hairline" x1="0" y1="0" x2="262" y2="0"></line>
+    <text class="t-group" x="0" y="-8">Mobile · visit</text>
+  </g>
+  
+  <g transform="translate(884,118)">
+    <line class="hairline" x1="0" y1="0" x2="262" y2="0"></line>
+    <text class="t-group" x="0" y="-8">Home · slow</text>
+  </g>
+
+  
+  <g transform="translate(32,140)">
+    <rect class="card-graphite" width="262" height="170" rx="3"></rect>
+    
+    <circle class="seed" cx="246" cy="16" r="4"></circle>
+    <circle class="seed-stroke" cx="246" cy="16" r="9" opacity="0.35"></circle>
+    <text class="t-cardid" x="20" y="32">01 · Field node</text>
+    <text class="t-cardname" x="20" y="60">Rhizome</text>
+    <text class="t-role" x="20" y="86">Decides offline.</text>
+    <text class="t-role" x="20" y="104">Reads soil and local state.</text>
+    <text class="t-role" x="20" y="122">Issues candidate_action.</text>
+    <line class="hairline" x1="20" y1="138" x2="242" y2="138" stroke="rgba(243,237,228,0.18)"></line>
+    <text class="t-seed" x="20" y="156" fill="#C5F26B">Gemma 3 · 4B edge</text>
+  </g>
+
+  
+  <g transform="translate(310,140)">
+    <rect class="card" width="262" height="170" rx="3"></rect>
+    <text class="t-cardid-dark" x="20" y="32">02 · Field safety</text>
+    <text class="t-cardname-dark" x="20" y="60">ESP32</text>
+    <text class="t-role-dark" x="20" y="86">Validates tank level.</text>
+    <text class="t-role-dark" x="20" y="104">Caps actuation timing.</text>
+    <text class="t-role-dark" x="20" y="122">Has physical veto.</text>
+    <line class="hairline" x1="20" y1="138" x2="242" y2="138"></line>
+    <text class="t-flow-em" x="20" y="156">Final → valve</text>
+  </g>
+
+  
+  <g transform="translate(596,140)">
+    <rect class="card-graphite" width="262" height="170" rx="3"></rect>
+    <circle class="seed" cx="246" cy="16" r="4"></circle>
+    <circle class="seed-stroke" cx="246" cy="16" r="9" opacity="0.35"></circle>
+    <text class="t-cardid" x="20" y="32">03 · Mobile</text>
+    <text class="t-cardname" x="20" y="60">Pollen</text>
+    <text class="t-role" x="20" y="86">Lives on Android.</text>
+    <text class="t-role" x="20" y="104">Turns the visit into</text>
+    <text class="t-role" x="20" y="122">a MissionPatch.</text>
+    <line class="hairline" x1="20" y1="138" x2="242" y2="138" stroke="rgba(243,237,228,0.18)"></line>
+    <text class="t-seed" x="20" y="156" fill="#C5F26B">Gemma 3 · 4B mobile</text>
+  </g>
+
+  
+  <g transform="translate(884,140)">
+    <rect class="card" width="262" height="170" rx="3"></rect>
+    <text class="t-cardid-dark" x="20" y="32">04 · Home</text>
+    <text class="t-cardname-dark" x="20" y="60">Meristem</text>
+    <text class="t-role-dark" x="20" y="86">Slow consolidation.</text>
+    <text class="t-role-dark" x="20" y="104">Refines policy when</text>
+    <text class="t-role-dark" x="20" y="122">an uplink exists.</text>
+    <line class="hairline" x1="20" y1="138" x2="242" y2="138"></line>
+    <text class="t-flow-em" x="20" y="156">Eventual · best-effort</text>
+  </g>
+
+  
+
+  
+  <g transform="translate(572,140)">
+    
+    <path class="arrow" d="M 24 50 L 0 50" marker-end="url(#arrtip)"></path>
+    <text class="t-flow" x="12" y="40" text-anchor="middle">MissionPatch</text>
+    
+    <path class="arrow" d="M 0 110 L 24 110" marker-end="url(#arrtip)"></path>
+    <text class="t-flow" x="12" y="132" text-anchor="middle">DecisionReceipt</text>
+  </g>
+
+  
+  <g transform="translate(860,140)">
+    
+    <path class="arrow dashed" d="M 0 50 L 24 50" marker-end="url(#arrtip)"></path>
+    <text class="t-flow" x="12" y="40" text-anchor="middle">Bundle</text>
+    
+    <path class="arrow dashed" d="M 24 110 L 0 110" marker-end="url(#arrtip)"></path>
+    <text class="t-flow" x="12" y="132" text-anchor="middle">PolicyDiff</text>
+  </g>
+
+  
+  <g transform="translate(32,360)">
+    <line class="hairline" x1="0" y1="0" x2="1116" y2="0"></line>
+    <text class="t-eyebrow" x="0" y="22">Authority</text>
+    <text class="t-flow" x="0" y="46">
+      <tspan>Rhizome proposes</tspan>
+      <tspan class="t-flow-em">  ·  </tspan>
+      <tspan>ESP32 validates</tspan>
+      <tspan class="t-flow-em">  ·  </tspan>
+      <tspan>the valve only opens after ACK</tspan>
+    </text>
+    <text class="t-flow" x="0" y="66">
+      <tspan>Pollen ferries context between Rhizomes</tspan>
+      <tspan class="t-flow-em">  ·  </tspan>
+      <tspan>Meristem refines policies offline-eventual, never authoritative in the field</tspan>
+    </text>
+
+    
+    <g transform="translate(820,18)">
+      <rect x="0" y="0" width="10" height="10" class="card-graphite"></rect>
+      <text class="t-flow" x="18" y="9">AI present</text>
+      <circle class="seed" cx="98" cy="5" r="3"></circle>
+      <text class="t-flow" x="108" y="9">signal.seed</text>
+      <rect x="200" y="0" width="10" height="10" fill="#FAF6EF" stroke="#CDBBAA"></rect>
+      <text class="t-flow" x="218" y="9">deterministic</text>
+    </g>
+    <g transform="translate(820,46)">
+      <line class="arrow" x1="0" y1="5" x2="22" y2="5" marker-end="url(#arrtip)"></line>
+      <text class="t-flow" x="32" y="9">synchronous handoff</text>
+      <line class="arrow dashed" x1="200" y1="5" x2="222" y2="5" marker-end="url(#arrtip)"></line>
+      <text class="t-flow" x="232" y="9">eventual sync</text>
+    </g>
+  </g>
+
 </svg>
