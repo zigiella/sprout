@@ -9,8 +9,8 @@
 
 | Asset | Where |
 |-------|-------|
-| **Video (≤ 3 min)** | TBD — public YouTube URL once final cut is uploaded |
-| **Landing demo** | https://zigiella.com/sprout |
+| **Video (≤ 3 min)** | https://www.youtube.com/watch?v=D9ETS4EPnxI |
+| **Landing demo** | https://sprout.zigiella.com |
 | **Repository** | https://github.com/zigiella/sprout |
 | **Writeup** | [`writeup/draft.md`](writeup/draft.md) (1467 words, also submitted as Kaggle draft) |
 | **Pollen demo APK** | [`demo/pollen-demo.apk`](demo/pollen-demo.apk) (~39 MB, mock LiteRT inference, no model needed) |

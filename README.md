@@ -11,7 +11,7 @@
 
 > **Sprout is a safety-bounded decision network for water under absence.**
 
-[Watch the 3-minute video](#) · [Try the live contract demo](https://zigiella.com/sprout) · [Read the Kaggle writeup](writeup/draft.md) · [Submission guide](SUBMISSION.md)
+[Watch the 3-minute video](https://www.youtube.com/watch?v=D9ETS4EPnxI) · [Try the live contract demo](https://sprout.zigiella.com) · [Read the Kaggle writeup](writeup/draft.md) · [Submission guide](SUBMISSION.md)
 
 ---
 

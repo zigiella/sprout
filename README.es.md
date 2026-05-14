@@ -11,7 +11,7 @@
 
 > **Sprout es una red de decisión acotada por seguridad para el agua bajo ausencia.**
 
-[Ver el vídeo de 3 minutos](#) · [Probar la demo pública de contratos](https://zigiella.com/sprout) · [Leer el writeup Kaggle](writeup/draft.md) · [Guía de entrega](SUBMISSION.md)
+[Ver el vídeo de 3 minutos](https://www.youtube.com/watch?v=D9ETS4EPnxI) · [Probar la demo pública de contratos](https://sprout.zigiella.com) · [Leer el writeup Kaggle](writeup/draft.md) · [Guía de entrega](SUBMISSION.md)
 
 ---
 
