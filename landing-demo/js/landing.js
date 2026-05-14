@@ -3,9 +3,17 @@
 
 (function () {
   const output = document.getElementById('output');
+  const label = document.getElementById('terminal-label');
+
+  const labels = {
+    rhizome:  'RHIZOME · DecisionReceipt',
+    pollen:   'POLLEN · MissionPatch',
+    meristem: 'MERISTEM · PolicyPacket'
+  };
 
   const demos = {
     rhizome: async () => {
+      label.textContent = labels.rhizome;
       output.textContent = 'Rhizome reading local state...\n';
       const state = {
         soil_pct: 18,
@@ -17,6 +25,7 @@
     },
 
     pollen: async () => {
+      label.textContent = labels.pollen;
       output.textContent = 'Pollen compiling voice...\n';
       const transcript = "Vuelvo el viernes. Esta planta aguanta más seca de lo que crees, riega un poco menos.";
       const result = await pollenCompileMock(transcript);
@@ -24,6 +33,7 @@
     },
 
     meristem: async () => {
+      label.textContent = labels.meristem;
       output.textContent = 'Meristem evaluating bundle...\n';
       const bundle = {
         recent_decisions: [
