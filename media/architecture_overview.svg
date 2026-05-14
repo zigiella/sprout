@@ -1,169 +1,159 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 520" role="img" aria-label="Sprout architecture overview · three jurisdictions, one water decision">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 520" font-family="Manrope, system-ui, sans-serif" role="img" aria-label="Sprout architecture overview · three jurisdictions, one water decision">
   <title>Three jurisdictions. One water decision.</title>
-  <desc>Sprout architecture: Rhizome and ESP32 in the field, Pollen on mobile, Meristem at home. Visits ferry MissionPatch out and DecisionReceipt back. The valve only opens after ESP32 validates.</desc>
+  <desc>Sprout architecture overview. Field: ESP32 (safety floor, deterministic) and Rhizome (AI node). Mobile: Pollen (AI on Android). Home: Meristem (slow consolidation). Pollen ferries MissionPatch and DecisionReceipt between visits; Meristem syncs Bundle and PolicyDiff when an uplink exists. The valve only opens after ESP32 ACK.</desc>
 
   <defs>
-    <style>
-      .bg { fill: #0e0e0c; }
-      .card-graphite { fill: #2a2a26; stroke: rgba(243,237,228,0.22); stroke-width: 1; }
-      .card { fill: #fffaf2; stroke: #d8cec2; stroke-width: 1; }
-      .t-eyebrow { font: 600 11px/1 'IBM Plex Mono', ui-monospace, monospace; fill: #c5f26b; letter-spacing: 0.14em; text-transform: uppercase; }
-      .t-title { font: 700 28px/1.1 'Manrope', system-ui, sans-serif; fill: #f3ede4; }
-      .t-group { font: 600 11px/1 'IBM Plex Mono', ui-monospace, monospace; fill: rgba(243,237,228,0.55); letter-spacing: 0.14em; text-transform: uppercase; }
-      .t-cardid { font: 500 11px/1 'IBM Plex Mono', ui-monospace, monospace; fill: rgba(243,237,228,0.55); letter-spacing: 0.12em; text-transform: uppercase; }
-      .t-cardid-dark { font: 500 11px/1 'IBM Plex Mono', ui-monospace, monospace; fill: rgba(26,26,24,0.6); letter-spacing: 0.12em; text-transform: uppercase; }
-      .t-cardname { font: 700 22px/1 'Manrope', system-ui, sans-serif; fill: #f3ede4; }
-      .t-cardname-dark { font: 700 22px/1 'Manrope', system-ui, sans-serif; fill: #1a1a18; }
-      .t-role { font: 400 13px/1.4 'Manrope', system-ui, sans-serif; fill: rgba(243,237,228,0.78); }
-      .t-role-dark { font: 400 13px/1.4 'Manrope', system-ui, sans-serif; fill: rgba(26,26,24,0.72); }
-      .t-seed { font: 600 12px/1 'IBM Plex Mono', ui-monospace, monospace; fill: #c5f26b; }
-      .t-flow { font: 400 12px/1.4 'IBM Plex Mono', ui-monospace, monospace; fill: rgba(243,237,228,0.72); }
-      .t-flow-em { font: 600 12px/1 'IBM Plex Mono', ui-monospace, monospace; fill: #c5f26b; }
-      .hairline { stroke: rgba(243,237,228,0.18); stroke-width: 1; fill: none; }
-      .seed { fill: #c5f26b; }
-      .seed-stroke { stroke: #c5f26b; fill: none; stroke-width: 1; }
-      .arrow { stroke: rgba(243,237,228,0.55); stroke-width: 1.5; fill: none; }
-      .arrow.dashed { stroke-dasharray: 4 3; }
-      .arrow-tip { fill: rgba(243,237,228,0.65); }
-    </style>
-    <marker id="arrtip" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
-      <path d="M0,0 L6,4 L0,8 z" class="arrow-tip"></path>
+    <marker id="arrtip-light" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L6,4 L0,8 z" fill="rgba(243,237,228,0.75)"></path>
+    </marker>
+    <marker id="arrtip-dim" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L6,4 L0,8 z" fill="rgba(243,237,228,0.55)"></path>
     </marker>
   </defs>
 
   
-  <rect class="bg" width="1180" height="520"></rect>
+  <rect width="1180" height="520" fill="#0E0E0C"></rect>
 
   
-  <text class="t-eyebrow" x="32" y="46">Architecture · overview</text>
-  <text class="t-title" x="32" y="80">Three jurisdictions. One water decision.</text>
+  <text x="32" y="46" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="500" letter-spacing="2.4" fill="#C5F26B">ARCHITECTURE · OVERVIEW</text>
+  <text x="32" y="84" font-size="26" font-weight="700" letter-spacing="-0.5" fill="#F3EDE4">Three jurisdictions. One water decision.</text>
 
   
-  
-  <g transform="translate(32,118)">
-    <line class="hairline" x1="0" y1="0" x2="540" y2="0"></line>
-    <text class="t-group" x="0" y="-8">Field · plot</text>
-    <text class="t-group" x="540" y="-8" text-anchor="end">offline by design</text>
-  </g>
-  
-  <g transform="translate(596,118)">
-    <line class="hairline" x1="0" y1="0" x2="262" y2="0"></line>
-    <text class="t-group" x="0" y="-8">Mobile · visit</text>
-  </g>
-  
-  <g transform="translate(884,118)">
-    <line class="hairline" x1="0" y1="0" x2="262" y2="0"></line>
-    <text class="t-group" x="0" y="-8">Home · slow</text>
+  <g font-family="IBM Plex Mono, Menlo, monospace" font-size="10.5" font-weight="500" letter-spacing="2.2">
+    <line x1="32" y1="120" x2="560" y2="120" stroke="rgba(243,237,228,0.22)" stroke-width="1"></line>
+    <text x="32" y="111" fill="rgba(243,237,228,0.62)">FIELD · PLOT</text>
+    <text x="560" y="111" text-anchor="end" fill="rgba(243,237,228,0.42)">OFFLINE BY DESIGN</text>
+
+    <line x1="598" y1="120" x2="854" y2="120" stroke="rgba(243,237,228,0.22)" stroke-width="1"></line>
+    <text x="598" y="111" fill="rgba(243,237,228,0.62)">MOBILE · VISIT</text>
+
+    <line x1="892" y1="120" x2="1148" y2="120" stroke="rgba(243,237,228,0.22)" stroke-width="1"></line>
+    <text x="892" y="111" fill="rgba(243,237,228,0.62)">HOME · SLOW</text>
   </g>
 
   
   <g transform="translate(32,140)">
-    <rect class="card" width="262" height="170" rx="3"></rect>
-    <text class="t-cardid-dark" x="20" y="32">01 · Field safety</text>
-    <text class="t-cardname-dark" x="20" y="60">ESP32</text>
-    <text class="t-role-dark" x="20" y="86">Validates tank level.</text>
-    <text class="t-role-dark" x="20" y="104">Caps actuation timing.</text>
-    <text class="t-role-dark" x="20" y="122">Has physical veto.</text>
-    <line class="hairline" x1="20" y1="138" x2="242" y2="138"></line>
-    <text class="t-flow-em" x="20" y="156">Final → valve</text>
-  </g>
-
-
-  <g transform="translate(310,140)">
-    <rect class="card-graphite" width="262" height="170" rx="3"></rect>
-
-    <circle class="seed" cx="246" cy="16" r="4"></circle>
-    <circle class="seed-stroke" cx="246" cy="16" r="9" opacity="0.35"></circle>
-    <text class="t-cardid" x="20" y="32">02 · Field node</text>
-    <text class="t-cardname" x="20" y="60">Rhizome</text>
-    <text class="t-role" x="20" y="86">Decides offline.</text>
-    <text class="t-role" x="20" y="104">Reads soil and local state.</text>
-    <text class="t-role" x="20" y="122">Issues candidate_action.</text>
-    <line class="hairline" x1="20" y1="138" x2="242" y2="138" stroke="rgba(243,237,228,0.18)"></line>
-    <text class="t-seed" x="20" y="156" fill="#C5F26B">Gemma 4 · E2B edge</text>
+    <rect width="256" height="170" rx="3" fill="#F3EDE4" stroke="#CDBBAA" stroke-width="1"></rect>
+    <text x="20" y="32" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" font-weight="500" letter-spacing="2.2" fill="#8A654B">01 · FIELD SAFETY</text>
+    <text x="20" y="60" font-size="18" font-weight="700" letter-spacing="-0.2" fill="#1A1A18">ESP32</text>
+    <text x="20" y="86" font-size="12.5" font-weight="500" fill="#2A221D">Validates tank level.</text>
+    <text x="20" y="104" font-size="12.5" font-weight="500" fill="#2A221D">Caps actuation timing.</text>
+    <text x="20" y="122" font-size="12.5" font-weight="500" fill="#2A221D">Has physical veto.</text>
+    <line x1="20" y1="138" x2="236" y2="138" stroke="#CDBBAA" stroke-width="1"></line>
+    <text x="20" y="156" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" letter-spacing="0.6" fill="#8A654B">Final → valve</text>
   </g>
 
   
-  <g transform="translate(596,140)">
-    <rect class="card-graphite" width="262" height="170" rx="3"></rect>
-    <circle class="seed" cx="246" cy="16" r="4"></circle>
-    <circle class="seed-stroke" cx="246" cy="16" r="9" opacity="0.35"></circle>
-    <text class="t-cardid" x="20" y="32">03 · Mobile</text>
-    <text class="t-cardname" x="20" y="60">Pollen</text>
-    <text class="t-role" x="20" y="86">Lives on Android.</text>
-    <text class="t-role" x="20" y="104">Turns the visit into</text>
-    <text class="t-role" x="20" y="122">a MissionPatch.</text>
-    <line class="hairline" x1="20" y1="138" x2="242" y2="138" stroke="rgba(243,237,228,0.18)"></line>
-    <text class="t-seed" x="20" y="156" fill="#C5F26B">Gemma 4 · E4B mobile</text>
+  <g transform="translate(304,140)">
+    <rect width="256" height="170" rx="3" fill="#1A1A18" stroke="rgba(243,237,228,0.10)" stroke-width="1"></rect>
+    
+    <circle cx="240" cy="16" r="4" fill="#C5F26B"></circle>
+    <circle cx="240" cy="16" r="9" fill="none" stroke="#C5F26B" stroke-width="1" opacity="0.32"></circle>
+    <text x="20" y="32" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" font-weight="500" letter-spacing="2.2" fill="rgba(243,237,228,0.55)">02 · FIELD NODE</text>
+    <text x="20" y="60" font-size="18" font-weight="700" letter-spacing="-0.2" fill="#F3EDE4">Rhizome</text>
+    <text x="20" y="86" font-size="12.5" font-weight="500" fill="rgba(243,237,228,0.78)">Decides offline.</text>
+    <text x="20" y="104" font-size="12.5" font-weight="500" fill="rgba(243,237,228,0.78)">Reads soil and local state.</text>
+    <text x="20" y="122" font-size="12.5" font-weight="500" fill="rgba(243,237,228,0.78)">Issues candidate_action.</text>
+    <line x1="20" y1="138" x2="236" y2="138" stroke="rgba(243,237,228,0.18)" stroke-width="1"></line>
+    <text x="20" y="156" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" letter-spacing="0.6" fill="#C5F26B">Gemma 4 E2B · edge</text>
   </g>
 
   
-  <g transform="translate(884,140)">
-    <rect class="card" width="262" height="170" rx="3"></rect>
-    <text class="t-cardid-dark" x="20" y="32">04 · Home</text>
-    <text class="t-cardname-dark" x="20" y="60">Meristem</text>
-    <text class="t-role-dark" x="20" y="86">Slow consolidation.</text>
-    <text class="t-role-dark" x="20" y="104">Refines policy when</text>
-    <text class="t-role-dark" x="20" y="122">an uplink exists.</text>
-    <line class="hairline" x1="20" y1="138" x2="242" y2="138"></line>
-    <text class="t-flow-em" x="20" y="156">Eventual · best-effort</text>
+  <g transform="translate(598,140)">
+    <rect width="256" height="170" rx="3" fill="#1A1A18" stroke="rgba(243,237,228,0.10)" stroke-width="1"></rect>
+    <circle cx="240" cy="16" r="4" fill="#C5F26B"></circle>
+    <circle cx="240" cy="16" r="9" fill="none" stroke="#C5F26B" stroke-width="1" opacity="0.32"></circle>
+    <text x="20" y="32" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" font-weight="500" letter-spacing="2.2" fill="rgba(243,237,228,0.55)">03 · MOBILE</text>
+    <text x="20" y="60" font-size="18" font-weight="700" letter-spacing="-0.2" fill="#F3EDE4">Pollen</text>
+    <text x="20" y="86" font-size="12.5" font-weight="500" fill="rgba(243,237,228,0.78)">Lives on Android.</text>
+    <text x="20" y="104" font-size="12.5" font-weight="500" fill="rgba(243,237,228,0.78)">Turns the visit into</text>
+    <text x="20" y="122" font-size="12.5" font-weight="500" fill="rgba(243,237,228,0.78)">a MissionPatch.</text>
+    <line x1="20" y1="138" x2="236" y2="138" stroke="rgba(243,237,228,0.18)" stroke-width="1"></line>
+    <text x="20" y="156" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" letter-spacing="0.6" fill="#C5F26B">Gemma 4 E4B · mobile</text>
   </g>
 
   
-
-  
-  <g transform="translate(572,140)">
-
-    <path class="arrow" d="M 24 50 L 0 50" marker-end="url(#arrtip)"></path>
-    <text class="t-flow" x="12" y="-6" text-anchor="middle">MissionPatch</text>
-
-    <path class="arrow" d="M 0 110 L 24 110" marker-end="url(#arrtip)"></path>
-    <text class="t-flow" x="12" y="190" text-anchor="middle">DecisionReceipt</text>
-  </g>
-
-
-  <g transform="translate(860,140)">
-
-    <path class="arrow dashed" d="M 0 50 L 24 50" marker-end="url(#arrtip)"></path>
-    <text class="t-flow" x="12" y="-6" text-anchor="middle">Bundle</text>
-
-    <path class="arrow dashed" d="M 24 110 L 0 110" marker-end="url(#arrtip)"></path>
-    <text class="t-flow" x="12" y="190" text-anchor="middle">PolicyDiff</text>
+  <g transform="translate(892,140)">
+    <rect width="256" height="170" rx="3" fill="#F3EDE4" stroke="#CDBBAA" stroke-width="1"></rect>
+    <text x="20" y="32" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" font-weight="500" letter-spacing="2.2" fill="#8A654B">04 · HOME</text>
+    <text x="20" y="60" font-size="18" font-weight="700" letter-spacing="-0.2" fill="#1A1A18">Meristem</text>
+    <text x="20" y="86" font-size="12.5" font-weight="500" fill="#2A221D">Slow consolidation.</text>
+    <text x="20" y="104" font-size="12.5" font-weight="500" fill="#2A221D">Refines policy when</text>
+    <text x="20" y="122" font-size="12.5" font-weight="500" fill="#2A221D">an uplink exists.</text>
+    <line x1="20" y1="138" x2="236" y2="138" stroke="#CDBBAA" stroke-width="1"></line>
+    <text x="20" y="156" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" letter-spacing="0.6" fill="#8A654B">Eventual · best-effort</text>
   </g>
 
   
-  <g transform="translate(32,360)">
-    <line class="hairline" x1="0" y1="0" x2="1116" y2="0"></line>
-    <text class="t-eyebrow" x="0" y="22">Authority</text>
-    <text class="t-flow" x="0" y="46">
-      <tspan>Rhizome proposes</tspan>
-      <tspan class="t-flow-em">  ·  </tspan>
-      <tspan>ESP32 validates</tspan>
-      <tspan class="t-flow-em">  ·  </tspan>
-      <tspan>the valve only opens after ACK</tspan>
+  
+  
+  <path d="M 594 200 L 564 200" fill="none" stroke="rgba(243,237,228,0.62)" stroke-width="1.4" marker-end="url(#arrtip-light)"></path>
+  <text x="579" y="190" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="10.5" font-weight="500" letter-spacing="0.5" fill="rgba(243,237,228,0.82)">MissionPatch</text>
+  
+  <path d="M 564 256 L 594 256" fill="none" stroke="rgba(243,237,228,0.62)" stroke-width="1.4" marker-end="url(#arrtip-light)"></path>
+  <text x="579" y="278" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="10.5" font-weight="500" letter-spacing="0.5" fill="rgba(243,237,228,0.82)">DecisionReceipt</text>
+
+  
+  
+  
+  <path d="M 858 200 L 888 200" fill="none" stroke="rgba(243,237,228,0.55)" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrtip-dim)"></path>
+  <text x="873" y="190" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="10.5" font-weight="500" letter-spacing="0.5" fill="rgba(243,237,228,0.72)">Bundle</text>
+  
+  <path d="M 888 256 L 858 256" fill="none" stroke="rgba(243,237,228,0.55)" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrtip-dim)"></path>
+  <text x="873" y="278" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="10.5" font-weight="500" letter-spacing="0.5" fill="rgba(243,237,228,0.72)">PolicyDiff</text>
+
+  
+  
+  <g transform="translate(34,326)">
+    <line x1="0" y1="0" x2="524" y2="0" stroke="rgba(243,237,228,0.18)" stroke-width="1"></line>
+    <text x="0" y="-7" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" font-weight="500" letter-spacing="2.2" fill="rgba(243,237,228,0.55)">SAFETY CHAIN</text>
+    <text x="0" y="22" font-family="IBM Plex Mono, Menlo, monospace" font-size="11.5" font-weight="500" letter-spacing="0.4" fill="rgba(243,237,228,0.78)">
+      <tspan fill="#F3EDE4" font-weight="600">Rhizome</tspan>
+      <tspan dx="6">proposes</tspan>
+      <tspan dx="8" fill="rgba(243,237,228,0.40)">→</tspan>
+      <tspan dx="6" fill="#F3EDE4" font-weight="600">ESP32</tspan>
+      <tspan dx="6">validates</tspan>
+      <tspan dx="8" fill="rgba(243,237,228,0.40)">→</tspan>
+      <tspan dx="6">the valve only opens after</tspan>
+      <tspan dx="4" fill="#C5F26B" font-weight="600">ACK</tspan>
     </text>
-    <text class="t-flow" x="0" y="66">
-      <tspan>Pollen ferries context between Rhizomes</tspan>
-      <tspan class="t-flow-em">  ·  </tspan>
-      <tspan>Meristem refines policies offline-eventual, never authoritative in the field</tspan>
+  </g>
+
+  
+  <g transform="translate(32,408)">
+    <line x1="0" y1="0" x2="1116" y2="0" stroke="rgba(243,237,228,0.22)" stroke-width="1"></line>
+
+    <text x="0" y="22" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" font-weight="500" letter-spacing="2.2" fill="rgba(243,237,228,0.55)">AUTHORITY</text>
+    <text x="0" y="46" font-family="IBM Plex Mono, Menlo, monospace" font-size="11.5" font-weight="500" letter-spacing="0.4" fill="rgba(243,237,228,0.78)">
+      <tspan>Pollen ferries context between Rhizomes.</tspan>
+      <tspan dx="10" fill="rgba(243,237,228,0.40)">·</tspan>
+      <tspan dx="10">Meristem refines policy offline-eventual,</tspan>
+    </text>
+    <text x="0" y="66" font-family="IBM Plex Mono, Menlo, monospace" font-size="11.5" font-weight="500" letter-spacing="0.4" fill="rgba(243,237,228,0.78)">
+      <tspan>never authoritative in the field.</tspan>
+      <tspan dx="10" fill="rgba(243,237,228,0.40)">·</tspan>
+      <tspan dx="10" fill="#C5F26B" font-weight="600">The model never touches the valve directly.</tspan>
     </text>
 
     
-    <g transform="translate(820,18)">
-      <rect x="0" y="0" width="10" height="10" class="card-graphite"></rect>
-      <text class="t-flow" x="18" y="9">AI present</text>
-      <circle class="seed" cx="98" cy="5" r="3"></circle>
-      <text class="t-flow" x="108" y="9">signal.seed</text>
-      <rect x="200" y="0" width="10" height="10" fill="#FAF6EF" stroke="#CDBBAA"></rect>
-      <text class="t-flow" x="218" y="9">deterministic</text>
-    </g>
-    <g transform="translate(820,46)">
-      <line class="arrow" x1="0" y1="5" x2="22" y2="5" marker-end="url(#arrtip)"></line>
-      <text class="t-flow" x="32" y="9">synchronous handoff</text>
-      <line class="arrow dashed" x1="200" y1="5" x2="222" y2="5" marker-end="url(#arrtip)"></line>
-      <text class="t-flow" x="232" y="9">eventual sync</text>
+    <g transform="translate(740,18)" font-family="IBM Plex Mono, Menlo, monospace" font-size="10.5" font-weight="500" letter-spacing="0.4">
+      
+      <rect x="0" y="0" width="12" height="12" fill="#1A1A18" stroke="rgba(243,237,228,0.20)"></rect>
+      <circle cx="9" cy="3" r="2" fill="#C5F26B"></circle>
+      <text x="22" y="10" fill="rgba(243,237,228,0.78)">AI present</text>
+
+      
+      <rect x="120" y="0" width="12" height="12" fill="#F3EDE4" stroke="#CDBBAA"></rect>
+      <text x="142" y="10" fill="rgba(243,237,228,0.78)">deterministic</text>
+
+      
+      <g transform="translate(0,30)">
+        <line x1="0" y1="6" x2="24" y2="6" stroke="rgba(243,237,228,0.62)" stroke-width="1.4" marker-end="url(#arrtip-light)"></line>
+        <text x="32" y="10" fill="rgba(243,237,228,0.78)">sync handoff</text>
+        <line x1="120" y1="6" x2="144" y2="6" stroke="rgba(243,237,228,0.55)" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrtip-dim)"></line>
+        <text x="152" y="10" fill="rgba(243,237,228,0.78)">eventual sync</text>
+      </g>
     </g>
   </g>
-
 </svg>
