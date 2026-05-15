@@ -181,13 +181,18 @@ fun VoiceBetaPanel(client: RhizomeClient, snapshot: RhizomeSnapshot) {
         val speechPrompt = stringResource(R.string.speech_prompt)
         Button(
             onClick = {
-                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES")
-                    putExtra(RecognizerIntent.EXTRA_PROMPT, speechPrompt)
+                if (net.sprout.pollen.BuildConfig.FLAVOR == "demo") {
+                    state = "Funcionalidad no disponible"
+                    resultText = "El motor LLM requiere la variante Device y hardware NPU para ejecutar Gemma localmente."
+                } else {
+                    val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                        putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                        putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES")
+                        putExtra(RecognizerIntent.EXTRA_PROMPT, speechPrompt)
+                    }
+                    isRecording = true
+                    speechLauncher.launch(intent)
                 }
-                isRecording = true
-                speechLauncher.launch(intent)
             },
             modifier = Modifier.fillMaxWidth().height(48.dp),
             shape = RoundedCornerShape(14.dp),
