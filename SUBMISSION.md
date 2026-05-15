@@ -173,6 +173,8 @@ If the Submission is selected as a Prize winner, the team agrees to grant the Co
 
 Sprout uses Gemma 4 models by Google. **Gemma is a trademark of Google LLC.** This project is not affiliated with or endorsed by Google. The Gemma 4 model naming and attribution guidelines (Google) are followed throughout the public surfaces (README, writeup, landing demo, video, node READMEs).
 
+Full credits — including production assets (voice-over via ElevenLabs under commercial terms, typography, location footage) and all third-party dependencies — live in [`CREDITS.md`](CREDITS.md).
+
 ---
 
 ## Team

@@ -281,4 +281,6 @@ El trabajo futuro incluye semánticas de `WATER` de producción con medición de
 
 Apache 2.0. Ver [`LICENSE`](LICENSE).
 
+Créditos completos de modelos, runtimes, dependencias open source, assets de producción y marcas: [`CREDITS.md`](CREDITS.md).
+
 Sprout usa modelos Gemma 4 de Google. Gemma is a trademark of Google LLC. Este proyecto no está afiliado ni respaldado por Google.
