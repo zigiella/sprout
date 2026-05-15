@@ -4,75 +4,62 @@
 
 ---
 
-## Qué es
+## What it is
 
-El "cerebro lento doméstico" del ecosistema Sprout. Vive en un portátil
-casero del agricultor (no en data center, no en hardware especializado).
-Recibe bundles que Pollen trae de cada visita a Rhizome (snapshot +
-DecisionReceipts + WeatherDigest + ValidationStamps), evalúa, y emite
-un `PolicyPacket` actualizado para que Pollen lleve a Rhizome en la
-próxima visita.
+The "slow domestic brain" of the Sprout ecosystem. It lives on the farmer's home laptop (not a data centre, not specialised hardware). It receives bundles Pollen carries from each visit to a Rhizome (snapshot + DecisionReceipts + WeatherDigest + ValidationStamps), evaluates them, and emits an updated `PolicyPacket` for Pollen to carry back to the Rhizome on the next visit.
 
-Jerarquía explícita del sistema (invariante adoptada review día 13):
-*"lo físico manda → Rhizome arbitra → Pollen media → **Meristem afina**"*.
+The system's explicit hierarchy (invariant adopted in day-13 review):
+*"physical layer prevails → Rhizome arbitrates → Pollen mediates → **Meristem refines**"*.
 
 ## Stack
 
-- **FastAPI** + Pydantic + SQLite (file-based, sin servicios extra)
-- **Inferencia**: cliente al `meristem_inference_adapter` con backend
-  `llamacpp` extendido. Modelo: **Gemma 4 E4B Q4_K_M (~5 GB)** sobre
-  `llama-server` local.
-- **Tool calling Gemma 4** confirmado funcional día 14 (ver
-  `verify_tool_calling.py`).
+- **FastAPI** + Pydantic + SQLite (file-based, no extra services)
+- **Inference**: a client to `meristem_inference_adapter` with an extended `llamacpp` backend. Model: **Gemma 4 E4B Q4_K_M (~5 GB)** running over a local `llama-server`.
+- **Gemma 4 tool calling** confirmed functional on day 14 (see `verify_tool_calling.py`).
 
 ## Endpoints
 
 ```
-POST /visit              → Pollen entrega bundle, recibe PolicyPacket
-GET  /policy/latest      → consulta última policy emitida (debug/demo)
-GET  /policy/{policy_id} → consulta policy por id (trazabilidad)
-GET  /health             → estado + métricas
-GET  /docs               → OpenAPI/Swagger automático
+POST /visit              → Pollen delivers a bundle, receives a PolicyPacket
+GET  /policy/latest      → query the latest emitted policy (debug/demo)
+GET  /policy/{policy_id} → query a policy by id (traceability)
+GET  /health             → status + metrics
+GET  /docs               → automatic OpenAPI / Swagger
 ```
 
-## Capas (ver ARCHITECTURE.md)
+## Layers (see ARCHITECTURE.md)
 
 ```
 HTTP Layer (FastAPI)
-  ↓ IngestService     (validación + persistencia bundle)
-  ↓ Evaluator         (4 reglas determinísticas + LLM rationale)
-  ↓ PolicyComposer    (construye PolicyPacket válido)
+  ↓ IngestService     (bundle validation + persistence)
+  ↓ Evaluator         (4 deterministic rules + LLM rationale)
+  ↓ PolicyComposer    (builds a valid PolicyPacket)
   ↓ Persistence       (SQLite: bundles + policies + decisions)
 ```
 
-**Decisión crítica**: la decisión NO la toma el LLM. Lógica determinista
-con 4 reglas (CONFIRM, CONSERVATIVE, ALERT, REFUSE). El LLM solo
-escribe `rationale` (técnico + prosa amable al operador). Aísla riesgo
-de drift del modelo de la jerarquía de seguridad.
+**Critical decision**: the decision is NOT made by the LLM. Deterministic logic with 4 rules (CONFIRM, CONSERVATIVE, ALERT, REFUSE). The LLM only writes the `rationale` (technical + operator-friendly prose). This isolates model-drift risk from the safety hierarchy.
 
-## Cómo correr (día 14, stub)
+## How to run (day 14, stub)
 
 ```bash
 cd code/meristem_node
 pip install -r requirements.txt
 python -m src.main
-# levanta en http://127.0.0.1:13000
-# /docs disponible
+# starts on http://127.0.0.1:13000
+# /docs available
 ```
 
-Endpoints todavía devuelven respuestas stubeadas día 14. Lógica real
-cierra día 16.
+Endpoints still return stubbed responses on day 14. Real logic closed on day 16.
 
-## Referencias
+## References
 
-- `ARCHITECTURE.md` — diseño por capas + flujo end-to-end + mini-batería
-- `draft_system_prompt_meristem_es.md` — borrador del prompt
-- `verify_tool_calling.py` — test que validó tool calling con llama.cpp
+- `ARCHITECTURE.md` — layered design + end-to-end flow + mini-battery
+- `draft_system_prompt_meristem_es.md` — system prompt draft
+- `verify_tool_calling.py` — test that validated tool calling with llama.cpp
 - `bitacora/2026-04-29_rhizome-v05-completo-y-tool-calling-validado_meristem.md`
-
 
 ---
 
 ## Note on language
 
-The English **Abstract** at the top of this file is the canonical public summary. The body below is in Spanish — it is the working language of the team and the place where decisions, trade-offs and trace get written. The contracts, code and tests are inspectable without Spanish context. See [Language note in the root README](../../README.md#language-note) for the project-wide policy.
+This README is English-first. Internal bitácoras (Spanish-language working journals) and the day-by-day development trace live under [`bitacora/`](../../bitacora/). See the [Language note in the root README](../../README.md#language-note) for the project-wide policy.

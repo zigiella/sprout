@@ -1,53 +1,53 @@
 # code/
 
-Todo el software de Sprout. Cada subproyecto tiene su propio README con dependencias, como correr, como probar.
+All Sprout software. Each subproject has its own README with dependencies, how to run, and how to test.
 
-## Subproyectos
+## Subprojects
 
-| Carpeta | Que es | Lenguaje | Target | Responsable |
-|---------|--------|----------|--------|-------------|
-| `rhizome/` | Nodo edge en parcela | Python 3.11 | Jetson Orin Nano Super | Dev Rhizome + especialista |
-| `pollen/` | Nodo itinerante | Kotlin (Android) | Pixel 10 Pro | Dev Pollen |
-| `meristem/` | Nodo estrategico local | Python 3.11 | Portatil (Mac mini en futuro) | Dev Meristem |
-| `simulator/` | Visualizacion de red (2/4/8 nodos) | Python / web | navegador | flexible |
-| `shared/` | Schemas JSON + protocolos comunes | JSON + pydantic + kotlinx | ambos | coordinado |
-| `finetune/` | Fine-tuning Unsloth de Gemma 4 E2B | Python / notebooks | Colab | Dev Meristem |
+| Folder | What it is | Language | Target | Owner |
+|--------|------------|----------|--------|-------|
+| `rhizome/` | Plot edge node | Python 3.11 | Jetson Orin Nano Super | Dev Rhizome + specialist |
+| `pollen/` | Roaming node | Kotlin (Android) | Pixel 10 Pro | Dev Pollen |
+| `meristem/` | Local strategic node | Python 3.11 | Laptop (Mac mini in the future) | Dev Meristem |
+| `simulator/` | Network visualization (2/4/8 nodes) | Python / web | browser | flexible |
+| `shared/` | JSON schemas + common protocols | JSON + pydantic + kotlinx | both | coordinated |
+| `finetune/` | Unsloth fine-tuning of Gemma 4 E2B | Python / notebooks | Colab | Dev Meristem |
 
-## Flujos de datos entre subproyectos
+## Data flow between subprojects
 
 ```
-Rhizome  <--BLE/WiFi Direct-->  Pollen  <--WiFi local / cloud opportunistic-->  Meristem
+Rhizome  <--BLE/WiFi Direct-->  Pollen  <--local WiFi / opportunistic cloud-->  Meristem
    |                                                                                |
-   +------------------- todos consumen y producen schemas de shared/ ---------------+
+   +------------------ all consume and produce schemas from shared/ ----------------+
 ```
 
-## Pre-requisitos comunes
+## Common prerequisites
 
 - Python 3.11+
-- Ollama instalado y corriendo (`ollama pull gemma4:e4b` minimo para Meristem)
-- Android Studio (solo para Pollen)
-- JetPack 6.x en Jetson (solo para Rhizome)
+- Ollama installed and running (`ollama pull gemma4:e4b` minimum for Meristem)
+- Android Studio (only for Pollen)
+- JetPack 6.x on the Jetson (only for Rhizome)
 
-## Variables de entorno
+## Environment variables
 
-Ver `.env.example` en cada subproyecto. **Nunca** commitear `.env` real.
+See `.env.example` in each subproject. **Never** commit a real `.env`.
 
-Variable relevante para todos:
-- `SHADOW_ENABLED=false` por defecto (activa Meristem sombra solo en desarrollo)
+Relevant variable across all subprojects:
+- `SHADOW_ENABLED=false` by default (only enable shadow Meristem in development)
 
-Solo si `SHADOW_ENABLED=true`:
-- `GEMINI_API_KEY=<tu-key-de-aistudio.google.com/apikey>`
+Only if `SHADOW_ENABLED=true`:
+- `GEMINI_API_KEY=<your-key-from-aistudio.google.com/apikey>`
 
-## Como correr el sistema completo localmente (fase madura)
+## How to run the full system locally (mature phase)
 
 ```bash
 # Terminal 1: Meristem
 cd code/meristem && python -m src.main
 
-# Terminal 2: Rhizome (o en el Jetson)
+# Terminal 2: Rhizome (or on the Jetson)
 cd code/rhizome && python -m src.main
 
-# Movil: instalar APK de pollen/ en el Pixel 10 Pro
+# Mobile: install the Pollen APK on the Pixel 10 Pro
 ```
 
-Detalle en los READMEs de cada subproyecto.
+Detail in each subproject's README.
