@@ -163,6 +163,16 @@ We submit primarily to **Main Track** for vision + execution. The architecture i
 
 ---
 
+## License and winner grant
+
+The Sprout repository is licensed under **Apache 2.0** (see [`LICENSE`](LICENSE)) — an OSI-approved permissive license. All third-party dependencies used to generate this Submission are OSI-approved open source (`llama.cpp`, LiteRT-LM, FastAPI, Pydantic, SQLite, ESP-IDF, Bosch `BME280_SensorAPI`).
+
+If the Submission is selected as a Prize winner, the team agrees to grant the Competition Sponsor the **CC-BY 4.0** license on the winning Submission and source code, in accordance with §1.6 and §2.5 of the Competition Rules. The repository will continue to be available to the public under Apache 2.0; the CC-BY 4.0 grant is in addition, not in replacement.
+
+Sprout uses Gemma 4 models by Google. **Gemma is a trademark of Google LLC.** This project is not affiliated with or endorsed by Google. The Gemma 4 model naming and attribution guidelines (Google) are followed throughout the public surfaces (README, writeup, landing demo, video, node READMEs).
+
+---
+
 ## Team
 
 Sprout was built by **zigiella + a coordinated set of role-specialized agents** (Cambium, Floema, Xilema, Endodermis, Meristem, Corola, Bract, Venation) during the 30-day window of the Gemma 4 Good Hackathon. The bitácora (`bitacora/`) documents every architectural decision, course correction and dependency between frentes.
