@@ -94,6 +94,8 @@ adb install app/build/outputs/apk/demo/debug/app-demo-debug.apk
 
 Mock LiteRT inference — walks through the UI without needing a 3 GB model on disk.
 
+The demo flavor is built to be unambiguous at evaluation time: it ships with a **"D" watermark on the launcher icon**, a permanent **"DEMO APP — NO LLM"** banner at the top of every screen, and dependency-injected mock clients for Rhizome and Meristem — so it works **offline-first, with no Jetson or ESP32 powered on**. Buttons that would require the on-device Gemma 4 model (voice recording, chat) are intentionally disabled with a clear notice pointing to the `device` flavor.
+
 ### Pollen on Android — device flavor (real Gemma 4 E4B via LiteRT-LM)
 
 The device flavor uses the official Google AI Edge dependency `com.google.ai.edge.litertlm:litertlm-android` and consumes raw `.wav` audio directly through `LiteRtInfra.kt::sendAudioFile()`.
