@@ -143,6 +143,7 @@ Sprout preserves field criteria during absence. It turns visits into operational
 
 **Repository:** https://github.com/zigiella/sprout · Apache 2.0
 **Entry point for reviewers:** [`SUBMISSION.md`](../SUBMISSION.md)
-**Spanish reference:** [`writeup/draft_es_long.md`](draft_es_long.md) — extended Spanish working draft kept for bilingual traceability.
+**Spanish mirror:** [`writeup/draft.es.md`](draft.es.md) — canonical Spanish translation of this draft.
+**Extended Spanish working draft:** [`writeup/draft_es_long.md`](draft_es_long.md) — kept for bilingual traceability of the process.
 
 *Built on Gemma 4 by Google. Gemma is a trademark of Google LLC. This project is not affiliated with or endorsed by Google.*
