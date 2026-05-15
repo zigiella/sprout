@@ -129,8 +129,10 @@ adb push gemma-4-E4B-it.litertlm /data/local/tmp/
     <li><strong>Explicit model confidence</strong> — if LiteRT-LM exposes <code>logprobs</code>, the threshold is 0.7.</li>
   </ol>
   <p>
-    The full spec lives in <a href="https://github.com/zigiella/sprout/blob/main/bitacora/2026-05-05_spec-mini-evaluator-pollen-meristem-a-floema.md">spec-mini-evaluator-pollen</a>
-    (624 lines, 12 test cases, Meristem authored, day 20).
+    Full detail in the <a href="https://github.com/zigiella/sprout/blob/main/code/pollen/README.md#anti-nonsense-logic-mini-evaluator">Pollen README &mdash; Anti-nonsense logic</a>
+    section. The Kotlin implementation lives in <code>code/pollen/app/src/main/kotlin/.../inference/MiniEvaluator.kt</code>
+    and the four cases are covered by <code>MiniEvaluatorTest.kt</code>
+    (<code>REFUSE_RETRY</code>, <code>REFUSE_HARD</code>, <code>APPLY_AS_IS</code>, <code>APPLY_CONSERVATIVE</code>).
   </p>
 
 </section>
