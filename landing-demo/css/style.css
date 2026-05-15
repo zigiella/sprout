@@ -170,6 +170,14 @@ button { color: var(--ink); }
 
 .ghost { opacity: 0.8; }
 
+/* Stacked button column inside cards (avoids inline-flow padding collisions). */
+.btn-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
 /* --- Demo (first section after hero) --- */
 .demo-first {
   background: var(--bg);

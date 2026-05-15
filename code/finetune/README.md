@@ -59,7 +59,7 @@ training:
   bf16: true
 ```
 
-Justificacion en [GEMMA4-SKILL.md seccion 7](../../GEMMA4-SKILL.md).
+Justificacion en [gemma4-reference.md seccion 7](../../research/gemma4-reference.md).
 
 ---
 
@@ -244,5 +244,5 @@ Segun [guia de naming de Google](https://ai.google/documents/32/External_Gemma_M
 ## 12. Referencias
 
 - [Unsloth Gemma 4 training guide](https://unsloth.ai/docs/models/gemma-4/train)
-- [GEMMA4-SKILL.md seccion 7](../../GEMMA4-SKILL.md)
+- [gemma4-reference.md seccion 7](../../research/gemma4-reference.md)
 - [HuggingFace PEFT docs](https://huggingface.co/docs/peft)
