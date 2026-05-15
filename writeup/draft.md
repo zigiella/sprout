@@ -73,7 +73,7 @@ The model configuration work is part of the engineering. We tested context size,
 
 Each node has a different model profile. Rhizome needs short, stable, bounded outputs. Pollen needs audio understanding, refusal, and schema fidelity. Meristem spends more time on policy review and rationale. Model configuration becomes a property of jurisdiction.
 
-## Safety and trust
+## Refusable by design
 
 Sprout signs decisions, expires authority, and records refusals.
 
@@ -102,6 +102,16 @@ Rhizome also includes `ShadowSkeptic`, a second local auditor. It disagrees safe
 Sprout’s unit of value is a decision with bounded authority. That unit scales from two pots to multiple plots because the contracts stay small: `DecisionReceipt`, `MissionPatch`, `WeatherDigest`, `ValidationStamp`, `FieldVisit`, and `PolicyPacket`.
 
 A cooperative can run Rhizomes in dispersed plots, carry Pollen on routine visits, and review policy at home. A community garden can preserve volunteer knowledge as expiring mission patches with clear scope and TTL.
+
+## How we built it
+
+Sprout was built in a 30-day window by one human and a team of role-specialized AI agents working under written constraints. Each agent has a defined jurisdiction, an explicit identity, and version-controlled authorship in the git history.
+
+The methodology mirrors the architecture. The repository is the contract. Bitácoras — Spanish-language development journals — record every architectural decision, course correction, and dependency between fronts. Day-start coordination messages follow a fixed template that names the interrelations between agents. Git commits carry agent identity inline so the trace stays reviewable.
+
+This pattern is not decoration. It produced artefacts a hackathon usually skips: a working dual-agent safety layer inside Rhizome, three independent Gemma 4 jurisdictions integrated through small JSON contracts, and a physical safety coprocessor that refuses unsafe commands by design rather than by patch. Process and product share the same invariant: jurisdiction with expiry.
+
+Methodology details and the bitácora index live in [`CONTRIBUTING.md`](../CONTRIBUTING.md) and the [`bitacora/`](../bitacora/) folder.
 
 ## Future work
 

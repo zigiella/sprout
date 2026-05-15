@@ -87,6 +87,26 @@ code {
   color: rgba(26, 26, 24, 0.55);
 }
 
+/* .node lives on light card backgrounds: keep typography, fix contrast,
+   preserve brand-lime as a small leading dot. */
+.cards .node {
+  color: rgba(26, 26, 24, 0.72);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 6px;
+}
+
+.cards .node::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--seed);
+  flex-shrink: 0;
+}
+
 .hero h1 {
   font-size: clamp(36px, 5.5vw, 64px);
   line-height: 1.02;

@@ -11,7 +11,7 @@
 
 > **Sprout es una red de decisión acotada por seguridad para el agua bajo ausencia.**
 
-[Ver el vídeo de 3 minutos](https://www.youtube.com/watch?v=D9ETS4EPnxI) · [Probar la demo pública de contratos](https://sprout.zigiella.com) · [Leer el writeup Kaggle](writeup/draft.md) · [Guía de entrega](SUBMISSION.md)
+[Ver el vídeo de 3 minutos](https://www.youtube.com/watch?v=D9ETS4EPnxI) · [Probar la demo pública de contratos](https://sprout.zigiella.com) · [Leer el writeup](writeup/draft.md) · [Guía de entrega](SUBMISSION.md)
 
 ---
 
@@ -127,6 +127,8 @@ Sprout usa Gemma 4 de formas concretas y específicas por nodo:
 
 Probamos configuraciones de prompt y runtime antes de congelar la ruta de demo: tamaño de contexto, presupuesto de output, comportamiento de thinking y estabilidad de salida estructurada. Un hallazgo útil fue que la latencia a menudo seguía a lo que el modelo escribía, no solo a lo que leía. Presupuestos de output más cortos mejoraron la usabilidad cuando el contrato se mantuvo estable.
 
+Las notas completas de evaluación, los experimentos de runtime por nodo y las fuentes consultadas viven en [`research/`](research/) — incluyendo el comportamiento de la ventana de contexto de Gemma 4 en Ollama, el profiling sobre Jetson Orin Nano Super, la migración a LiteRT-LM en Pixel 10 Pro y la estrategia de localización de idioma para Pollen.
+
 ---
 
 ## Demo en vivo
@@ -167,7 +169,7 @@ cd code/pollen
 ./gradlew testDemoDebugUnitTest
 ```
 
-Instala el APK demo desde `demo/` o compila en local. El flavor demo usa inferencia determinista para que funcione sin un archivo de modelo de 3 GB.
+El flavor demo usa inferencia mock determinista, así que funciona sin un archivo de modelo de 3 GB. Instala en cualquier Android 12+ (físico o emulador) con `adb install app/build/outputs/apk/demo/debug/app-demo-debug.apk`.
 
 ### Pollen flavor device con Gemma 4 E4B
 
@@ -206,7 +208,7 @@ Mira el README de cada componente para setup completo.
 | Path | Propósito |
 |---|---|
 | `SUBMISSION.md` | Camino rápido para evaluación: enlaces, evidencia, qué es real vs contrato |
-| `writeup/` | Writeup Kaggle y notas de apoyo |
+| `writeup/` | Writeup del proyecto y notas de apoyo |
 | `landing-demo/` | Demo pública determinista de contratos |
 | `code/rhizome/` | Nodo de parcela Jetson, bucle de decisión local, fachada de sync |
 | `code/pollen/` | Nodo móvil Android, ruta LiteRT-LM, voz → MissionPatch |
@@ -252,7 +254,7 @@ La metodología — repo-first, bitácoras escritas como contratos vinculantes, 
 
 ## Nota sobre idioma
 
-Sprout se ha construido por un equipo que trabaja en castellano. **Las puertas públicas (este README, el [writeup Kaggle](writeup/draft.md), la [guía de entrega](SUBMISSION.md), la [demo en vivo](https://sprout.zigiella.com), READMEs de nodos)** son English-first o bilingües. **Los artefactos internos (bitácoras, specs que evolucionan rápido, handoffs día a día, definiciones de rol de los agentes)** se mantienen en castellano por diseño — son evidencia del proceso de trabajo, no la interfaz pública.
+Sprout se ha construido por un equipo que trabaja en castellano. **Las puertas públicas (este README, el [writeup](writeup/draft.md), la [guía de entrega](SUBMISSION.md), la [demo en vivo](https://sprout.zigiella.com), READMEs de nodos)** son English-first o bilingües. **Los artefactos internos (bitácoras, specs que evolucionan rápido, handoffs día a día, definiciones de rol de los agentes)** se mantienen en castellano por diseño — son evidencia del proceso de trabajo, no la interfaz pública.
 
 Esto refleja la propia tesis del producto: **la inteligencia local debe encontrarse con las personas en el idioma y contexto donde el trabajo ocurre de verdad**. Los contratos y código de Sprout son inspeccionables sin necesidad de castellano; el diario de desarrollo preserva el castellano en el que el sistema fue realmente construido.
 

@@ -11,7 +11,7 @@
 
 > **Sprout is a safety-bounded decision network for water under absence.**
 
-[Watch the 3-minute video](https://www.youtube.com/watch?v=D9ETS4EPnxI) · [Try the live contract demo](https://sprout.zigiella.com) · [Read the Kaggle writeup](writeup/draft.md) · [Submission guide](SUBMISSION.md)
+[Watch the 3-minute video](https://www.youtube.com/watch?v=D9ETS4EPnxI) · [Try the live contract demo](https://sprout.zigiella.com) · [Read the writeup](writeup/draft.md) · [Submission guide](SUBMISSION.md)
 
 ---
 
@@ -127,6 +127,8 @@ Sprout uses Gemma 4 in concrete, node-specific ways:
 
 We tested prompt and runtime configurations before freezing the demo path: context window, output budget, thinking behavior and structured-output stability. One useful finding was that latency often followed what the model wrote, not only what it read. Shorter output budgets improved usability when the contract stayed stable.
 
+Full evaluation notes, runtime experiments by node and source references live in [`research/`](research/) — including Gemma 4 context-window behavior on Ollama, Jetson Orin Nano Super profiling, LiteRT-LM migration on Pixel 10 Pro, and the language-localization strategy for Pollen.
+
 ---
 
 ## Live demo
@@ -167,7 +169,7 @@ cd code/pollen
 ./gradlew testDemoDebugUnitTest
 ```
 
-Install the demo APK from `demo/` or build locally. The demo flavor uses deterministic inference so it runs without a 3GB model file.
+The demo flavor uses deterministic mock inference, so it runs without a 3 GB model file. Install on any Android 12+ device or emulator with `adb install app/build/outputs/apk/demo/debug/app-demo-debug.apk`.
 
 ### Pollen device flavor with Gemma 4 E4B
 
@@ -206,7 +208,7 @@ See each component README for full setup.
 | Path | Purpose |
 |---|---|
 | `SUBMISSION.md` | Fast path for evaluation: links, proof, what is real vs contract |
-| `writeup/` | Kaggle writeup and supporting notes |
+| `writeup/` | Project writeup and supporting notes |
 | `landing-demo/` | Public deterministic contract demo |
 | `code/rhizome/` | Jetson plot node, local decision loop, sync facade |
 | `code/pollen/` | Android mobile node, LiteRT-LM path, voice → MissionPatch |
@@ -252,7 +254,7 @@ The methodology — repo-first, written bitácoras as binding contracts, identit
 
 ## Language note
 
-Sprout was built by a Spanish-speaking team. **Public entry points (this README, the [Kaggle writeup](writeup/draft.md), the [submission guide](SUBMISSION.md), the [landing demo](https://sprout.zigiella.com), node READMEs)** are English-first or bilingual. **Internal artefacts (bitácoras, specs that evolve fast, day-by-day handoffs, agent role definitions)** remain in Spanish by design — they are evidence of the working process, not the public interface.
+Sprout was built by a Spanish-speaking team. **Public entry points (this README, the [writeup](writeup/draft.md), the [submission guide](SUBMISSION.md), the [landing demo](https://sprout.zigiella.com), node READMEs)** are English-first or bilingual. **Internal artefacts (bitácoras, specs that evolve fast, day-by-day handoffs, agent role definitions)** remain in Spanish by design — they are evidence of the working process, not the public interface.
 
 This mirrors the product thesis itself: **local intelligence should meet people in the language and context where work actually happens**. Sprout's contracts and code are inspectable without Spanish context; the development journal preserves the Spanish in which the system was actually built.
 

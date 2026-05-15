@@ -99,7 +99,7 @@
   </div>
   <figure class="diagram">
     <img src="media/architecture_overview.svg" alt="Sprout architecture overview: ESP32 + Rhizome (Field) + Pollen (Mobile) + Meristem (Home), with MissionPatch and DecisionReceipt flowing between them" loading="lazy">
-    <figcaption>Full architecture is explained in the <a href="https://github.com/zigiella/sprout/blob/main/writeup/draft.md">Kaggle writeup</a>.</figcaption>
+    <figcaption>Full architecture is explained in the <a href="https://github.com/zigiella/sprout/blob/main/writeup/draft.md">writeup</a>.</figcaption>
   </figure>
 </section>
 
@@ -110,10 +110,14 @@
   <div class="cards">
     <article>
       <p class="node">Pollen · demo flavor</p>
-      <h3>Install the app, no model needed</h3>
-      <p>~39 MB APK. Uses a deterministic mock evaluator. Runs on any Android emulator or device without downloading a 3 GB model. Walk through the UI, the voice path and refusal/retry flow.</p>
+      <h3>Walk through the app, no model needed</h3>
+      <p>Deterministic mock evaluator, no 3 GB model on disk. Build the demo flavor from <code>code/pollen/</code> and run it on any Android emulator or low-RAM device. Use it to inspect the UI, the voice path and the refusal/retry flow.</p>
+      <pre class="cmd"># Build and install the demo flavor
+cd code/pollen
+./gradlew assembleDemoDebug
+adb install app/build/outputs/apk/demo/debug/app-demo-debug.apk</pre>
       <p>
-        <a class="btn primary" href="https://github.com/zigiella/sprout/raw/main/demo/pollen-demo.apk">Download demo APK</a>
+        <a class="btn ghost" href="https://github.com/zigiella/sprout/blob/main/code/pollen/README.md">Pollen build guide →</a>
       </p>
     </article>
     <article>
@@ -146,7 +150,7 @@ adb push gemma-4-E4B-it.litertlm \
   <div class="cta-row">
     <a class="btn primary" href="https://www.youtube.com/watch?v=D9ETS4EPnxI" rel="noopener" target="_blank">Watch the 3-minute video</a>
     <a class="btn" href="https://github.com/zigiella/sprout">Project on GitHub</a>
-    <a class="btn ghost" href="https://github.com/zigiella/sprout/blob/main/writeup/draft.md">Kaggle writeup</a>
+    <a class="btn ghost" href="https://github.com/zigiella/sprout/blob/main/writeup/draft.md">Writeup</a>
     <a class="btn ghost" href="https://github.com/zigiella/sprout/blob/main/SUBMISSION.md">Submission guide</a>
   </div>
 </section>
