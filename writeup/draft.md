@@ -1,6 +1,6 @@
 # Sprout: local criteria for water when nobody is there
 
-**Subtitle:** Open, local AI for water decisions under absence, with expiring authority, signed receipts and a physical veto.
+**Subtitle:** Open, local AI for water decisions under absence, with bounded authority, signed receipts and a physical veto.
 
 ## The problem
 
@@ -73,7 +73,7 @@ The model configuration work is part of the engineering. We tested context size,
 
 Each node has a different model profile. Rhizome needs short, stable, bounded outputs. Pollen needs audio understanding, refusal, and schema fidelity. Meristem spends more time on policy review and rationale. Model configuration becomes a property of jurisdiction.
 
-## Expiring authority
+## Bounded authority
 
 Sprout signs decisions, expires authority, and records refusals.
 
@@ -125,7 +125,7 @@ Language is part of the roadmap. Sprout keeps internal contracts stable, while P
 
 Sprout preserves field criteria during absence. It turns visits into operational intelligence. It rejects expired instructions. It records what happened. It gives local AI a second skeptical voice before giving that voice any authority.
 
-**Sprout is open, local AI for water decisions under absence: expiring authority, signed receipts, a second local voice that audits without authority, and a physical layer that can say no.**
+**Sprout is open, local AI for water decisions under absence: bounded authority, signed receipts, a second local voice that audits without authority, and a physical layer that can say no.**
 
 ---
 
