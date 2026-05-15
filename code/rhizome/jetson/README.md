@@ -4,87 +4,80 @@
 
 ---
 
-Scripts operativos para arrancar Gemma 4 E2B en Jetson Orin Nano Super con
-`llama.cpp` sin depender de Ollama ni de hardware ESP32.
+Operational scripts to launch Gemma 4 E2B on Jetson Orin Nano Super with `llama.cpp`, without depending on Ollama or ESP32 hardware.
 
-Estos scripts no tocan firmware, sensores, actuadores ni reglas fisicas. Solo
-gestionan el runtime local de inferencia y el adapter Ollama-compatible.
+These scripts do not touch firmware, sensors, actuators or physical rules. They only manage the local inference runtime and the Ollama-compatible adapter.
 
-Tambien incluyen una fachada HTTP de lectura para Pollen. Esa fachada no toca
-ESP32 ni actuadores; solo sirve contratos JSON de Rhizome para que Android pueda
-probar contra una IP real de Jetson.
+They also include a read-only HTTP facade for Pollen. That facade does not touch the ESP32 or actuators; it only serves Rhizome JSON contracts so Android can test against a real Jetson IP.
 
-## Perfiles
+## Profiles
 
-| Perfil | Uso | Estado dia 18 |
+| Profile | Use | Day-18 status |
 |---|---|---|
-| `safe-cpu` | Demo contractual y bateria Rhizome v0.5 | Quality pass 18/18, lento |
-| `gpu-experimental` | Diagnostico/rendimiento | Experimental: puede fallar por memoria contigua y no es quality pass |
+| `safe-cpu` | Contractual demo and Rhizome v0.5 battery | Quality pass 18/18, slow |
+| `gpu-experimental` | Performance / diagnostics | Experimental: can fail on contiguous-memory issues and is not quality pass |
 
 ### `safe-cpu`
 
-Arranca `llama-server` en `:8080` con:
+Boots `llama-server` on `:8080` with:
 
 ```bash
 -ngl 0 --device none --no-op-offload --reasoning off
 ```
 
-Es el perfil seguro documentado por Endodermis el dia 17:
+This is the safe profile documented by Endodermis on day 17:
 
-- mini-test critico frio 6/6;
-- mini-test critico caliente 6/6;
-- bateria Rhizome v0.5 combinada 18/18;
-- sin OOM, sin truncamiento, sin Markdown fences.
+- critical mini-test cold 6/6;
+- critical mini-test hot 6/6;
+- combined Rhizome v0.5 battery 18/18;
+- no OOM, no truncation, no Markdown fences.
 
 ### `gpu-experimental`
 
-Arranca `llama-server` en `:8080` con:
+Boots `llama-server` on `:8080` with:
 
 ```bash
 -ngl 99 --fit off --no-op-offload --reasoning off
 ```
 
-El flag clave es `--no-op-offload`; sin el, el build de `llama.cpp` en Jetson
-puede abortar con:
+The key flag is `--no-op-offload`; without it, the `llama.cpp` build on Jetson can abort with:
 
 ```text
 GGML_ASSERT(n_inputs < GGML_SCHED_MAX_SPLIT_INPUTS)
 ```
 
-Estado dia 18:
+Day-18 status:
 
-- carga 36/36 capas en GPU;
-- acelera mucho las respuestas;
-- aun no es quality pass para Rhizome v0.5 porque RD04 muestra deriva
-  semantica segura (`need_clarification` en lugar de `ok`).
+- loads 36/36 layers on the GPU;
+- significantly faster responses;
+- not yet quality pass for Rhizome v0.5 because RD04 shows safe semantic drift (`need_clarification` instead of `ok`).
 
-Estado dia 19:
+Day-19 status:
 
-- desde `main`, `gpu-experimental` volvio a fallar una vez con
-  `NvMapMemAllocInternalTagged ... error 12` / `cudaMalloc failed`;
-- por tanto este perfil no es ni runtime-pass garantizado ni demo-safe;
-- si falla, restaurar inmediatamente:
+- from `main`, `gpu-experimental` failed once with `NvMapMemAllocInternalTagged ... error 12` / `cudaMalloc failed`;
+- therefore this profile is neither runtime-pass guaranteed nor demo-safe;
+- if it fails, restore immediately:
 
 ```bash
 ./run_runtime.sh safe-cpu
 ./smoke_adapter.sh
 ```
 
-## Requisitos
+## Requirements
 
-- Jetson Orin Nano Super con JetPack 6.x.
-- Docker instalado.
-- runtime NVIDIA disponible.
-- usuario con permiso para ejecutar `docker`.
-- modelo descargado en:
+- Jetson Orin Nano Super with JetPack 6.x.
+- Docker installed.
+- NVIDIA runtime available.
+- User with permission to run `docker`.
+- Model downloaded to:
 
 ```bash
 $HOME/sprout_models/gemma-4-E2B-it-Q4_K_S.gguf
 ```
 
-## Arranque
+## Boot
 
-Desde la Jetson:
+From the Jetson:
 
 ```bash
 cd ~/sprout/code/rhizome/jetson
@@ -95,7 +88,7 @@ cd ~/sprout/code/rhizome/jetson
 ./run_battery.sh critical
 ```
 
-Para probar GPU:
+To test GPU:
 
 ```bash
 ./run_runtime.sh gpu-experimental
@@ -104,7 +97,7 @@ Para probar GPU:
 ./run_battery.sh critical
 ```
 
-## Variables utiles
+## Useful variables
 
 ```bash
 MODEL_PATH=$HOME/sprout_models/gemma-4-E2B-it-Q4_K_S.gguf
@@ -115,21 +108,21 @@ CTX_SIZE=2048
 N_GPU_LAYERS=99
 ```
 
-Ejemplo:
+Example:
 
 ```bash
 CTX_SIZE=1024 ./run_runtime.sh gpu-experimental
 ```
 
-## Verificacion
+## Verification
 
-Health directo de `llama-server`:
+Direct `llama-server` health:
 
 ```bash
 curl -s http://127.0.0.1:8080/health
 ```
 
-Health del adapter:
+Adapter health:
 
 ```bash
 curl -s http://127.0.0.1:12000/health
@@ -141,18 +134,16 @@ Smoke:
 ./smoke_adapter.sh
 ```
 
-## API Rhizome para Pollen
+## Rhizome API for Pollen
 
-La API que consume `RhizomeNetworkClient` no es `llama-server` (`:8080`) ni el
-adapter Ollama-compatible (`:12000`). Es una fachada separada en `:13010`:
+The API consumed by `RhizomeNetworkClient` is neither `llama-server` (`:8080`) nor the Ollama-compatible adapter (`:12000`). It is a separate facade on `:13010`:
 
 ```bash
 ./start_sync_facade.sh
 ./smoke_sync_facade.sh
 ```
 
-Para activar el narrador Gemma 4 del boton de ausencia, primero debe estar vivo
-el adapter Ollama-compatible en `:12000`:
+To enable the Gemma 4 narrator on the absence button, the Ollama-compatible adapter on `:12000` must be alive first:
 
 ```bash
 GEMMA_VISIT_NARRATOR_URL=http://127.0.0.1:12000 \
@@ -162,10 +153,9 @@ GEMMA_VISIT_NARRATOR_MODEL=gemma4:e2b \
 ./smoke_gemma_visit_narrator.sh
 ```
 
-El narrador solo reescribe narrativa humana. Los counts, receipts, flags
-`executed`, `simulation` y codigos de seguridad siguen siendo deterministas.
+The narrator only rewrites human-facing narrative. Counts, receipts, `executed` / `simulation` flags and safety codes remain deterministic.
 
-Endpoints servidos:
+Endpoints served:
 
 ```text
 GET /status
@@ -177,78 +167,69 @@ POST /policy
 GET /policy/active
 ```
 
-`POST /policy` es el receptor beta de politicas transitorias generadas por
-Pollen durante una visita. Acepta `PolicyPacket` con
-`policy_origin="pollen-visit"` y TTL maximo de 12h, lo persiste como politica
-activa para la siguiente decision y devuelve un ack JSON. No valida hard limits
-fisicos: esa frontera sigue en Mini-Evaluator + ESP32.
+`POST /policy` is the beta receiver for transient policies generated by Pollen during a visit. It accepts `PolicyPacket` objects with `policy_origin="pollen-visit"` and a maximum TTL of 12 h, persists them as the active policy for the next decision and returns a JSON ack. It does not validate physical hard limits: that boundary remains in Mini-Evaluator + ESP32.
 
-Smoke de politica:
+Policy smoke:
 
 ```bash
 ./smoke_policy.sh
 ```
 
-Para la fachada simulada de `rhizome_02`:
+For the simulated `rhizome_02` facade:
 
 ```bash
 FACADE_URL=http://127.0.0.1:13020 TARGET_NODE_ID=rhizome_02 ./smoke_policy.sh
 ```
 
-Base URL para Pollen en la red local del dia 19:
+Base URL for Pollen on day-19 local network:
 
 ```text
 http://192.168.1.60:13010/
 ```
 
-Para el video se puede levantar una segunda fachada simulada en el mismo
-Jetson:
+For the video, a second simulated facade can be brought up on the same Jetson:
 
 ```bash
 ./start_demo_two_rhizomes.sh
 ```
 
-Si la Jetson cambia de WiFi, no depender de recordar la IP anterior. El
-hostname estable por mDNS es:
+If the Jetson changes WiFi, do not depend on remembering the previous IP. The stable hostname via mDNS is:
 
 ```text
 rhizome-01-node.local
 ```
 
-URLs preferentes:
+Preferred URLs:
 
 ```text
 rhizome_01 -> http://rhizome-01-node.local:13010/
 rhizome_02 -> http://rhizome-01-node.local:13020/
 ```
 
-Si la red bloquea mDNS, usar la IP actual que imprime:
+If the network blocks mDNS, use the current IP printed by:
 
 ```bash
 ./network_info.sh
 ```
 
-Endpoints de demo:
+Demo endpoints:
 
 ```text
 rhizome_01 -> http://<jetson-host-or-ip>:13010/
 rhizome_02 -> http://<jetson-host-or-ip>:13020/
 ```
 
-`rhizome_02` usa datos de `code/rhizome/demo_data/rhizome_02`. Es una
-simulacion host-side de interoperabilidad multi-Rhizome: no hay segundo ESP32,
-no hay segunda bomba y no se toca hardware fisico.
+`rhizome_02` uses data from `code/rhizome/demo_data/rhizome_02`. It is a host-side simulation of multi-Rhizome interoperability: no second ESP32, no second pump, no physical hardware involved.
 
-## Primer observe mode con ESP32 minimo
+## First observe-mode run with minimal ESP32
 
-Cuando el ESP32 exponga bomba on/off + humedad de tierra, probar primero sin
-ejecucion de agua:
+When the ESP32 exposes pump on/off plus soil moisture, test first without water execution:
 
 ```bash
 ./run_steward_serial_observe_minimal.sh
 ```
 
-Equivale a:
+Equivalent to:
 
 ```bash
 ESP32_MODE=serial \
@@ -262,12 +243,9 @@ SOIL_WET_BELOW_RAW=1300 \
 ./run_steward_once.sh
 ```
 
-La lectura actual documentada por Xilema (`soil_a_raw=1263-1267`) cae por
-debajo de `1300`, asi que Rhizome debe tratarla como suelo humedo y no proponer
-riego. En este perfil no se define `SOIL_DRY_ABOVE_RAW`: fuera de la banda
-humeda, Rhizome aplaza en vez de regar porque aun no hay calibracion seca.
+The current reading documented by Xilema (`soil_a_raw=1263-1267`) falls below `1300`, so Rhizome must treat it as moist soil and not propose irrigation. This profile does not define `SOIL_DRY_ABOVE_RAW`: outside the moist band, Rhizome defers instead of watering because no dry calibration exists yet.
 
-Umbrales autorizados por Xilema para el MVP:
+Thresholds authorized by Xilema for the MVP:
 
 ```text
 SOIL_RAW_POLARITY=low_is_wet
@@ -275,44 +253,38 @@ SOIL_WET_BELOW_RAW=1300
 SOIL_DRY_ABOVE_RAW=2200
 ```
 
-Interpretacion:
+Interpretation:
 
-- `<1300`: muy humedo, no regar.
-- `1300..2199`: banda ambigua, `DEFER`/observe.
-- `>=2200`: seco para MVP, candidato a riego si pasan las demas barandillas.
+- `<1300`: very moist, do not water.
+- `1300..2199`: ambiguous band, `DEFER`/observe.
+- `>=2200`: dry for the MVP, candidate for watering if all other guardrails pass.
 
-El primer riego real debe ser manual, corto y supervisado por Xilema/Bea,
-cambiando explicitamente `EXECUTE_WATER=1` y un `WATER_SECONDS` bajo.
+The first real watering must be manual, short, and supervised by Xilema/Bea, explicitly setting `EXECUTE_WATER=1` and a small `WATER_SECONDS`.
 
-Baseline operativo:
+Operational baseline:
 
 ```bash
 ./collect_baseline.sh | tee jetson_baseline_$(date -u +%Y%m%dT%H%M%SZ).log
 ```
 
-Bateria Rhizome v0.5:
+Rhizome v0.5 battery:
 
 ```bash
-./run_battery.sh critical          # 6 prompts criticos
-./run_battery.sh remaining         # 12 prompts restantes
+./run_battery.sh critical          # 6 critical prompts
+./run_battery.sh remaining         # 12 remaining prompts
 ./run_battery.sh full              # critical + remaining
 ./run_battery.sh critical --dry-run
 ```
 
-Los resultados se escriben en `code/tuning/results/` dentro del repo montado
-en el contenedor del adapter, con un sufijo UTC para no pisar los JSONL
-canonicos.
+Results are written to `code/tuning/results/` inside the repo mounted into the adapter container, with a UTC suffix so they do not overwrite the canonical JSONL.
 
-En modo real, `run_battery.sh` devuelve codigo distinto de cero si cualquier
-run tiene error HTTP, `envelope_valid=false` o `status_match` incorrecto. En
-modo `full`, si `critical` falla, `remaining` no se ejecuta.
+In real mode, `run_battery.sh` returns non-zero if any run has an HTTP error, `envelope_valid=false` or incorrect `status_match`. In `full` mode, if `critical` fails, `remaining` is not executed.
 
-## Interpretacion
+## Interpretation
 
-Para demo y pruebas contractuales, usar `safe-cpu` hasta que Cambium/Xilema
-acepten formalmente un perfil GPU.
+For demo and contractual testing, use `safe-cpu` until Cambium/Xilema formally accept a GPU profile.
 
-Para experimentos de rendimiento, usar `gpu-experimental` y ejecutar al menos:
+For performance experiments, use `gpu-experimental` and at minimum run:
 
 ```bash
 cd ~/sprout/code/tuning
@@ -321,34 +293,31 @@ python harness.py --matrix matrix_rhizome_v05.yaml \
   --out results/rhizome_v05_gpu_probe.jsonl
 ```
 
-No promover GPU a perfil demo hasta que la bateria critica sea estable y RD04
-quede alineado con el contrato.
+Do not promote GPU to demo profile until the critical battery is stable and RD04 aligns with the contract.
 
-Si `gpu-experimental` falla durante el arranque, no depurar en caliente durante
-un rehearsal. Restaurar `safe-cpu` y documentar el log.
+If `gpu-experimental` fails during boot, do not debug hot during a rehearsal. Restore `safe-cpu` and document the log.
 
-## Steward autonomo minimo
+## Minimal autonomous steward
 
-Para el piloto de maceta, `rhizome_steward.py` ejecuta el bucle minimo:
+For the pot pilot, `rhizome_steward.py` runs the minimal loop:
 
 ```text
-heartbeat -> telemetry -> decision -> optional WATER -> receipt -> logs rotados
+heartbeat -> telemetry -> decision -> optional WATER -> receipt -> rotated logs
 ```
 
-Smoke sin hardware real:
+Smoke without real hardware:
 
 ```bash
 ./run_steward_once.sh
 ```
 
-Una pasada contra ESP32 real sin permitir agua:
+One pass against a real ESP32 without allowing water:
 
 ```bash
 ESP32_MODE=serial ESP32_PORT=/dev/ttyACM0 ./run_steward_once.sh
 ```
 
-Perfil minimo de maceta, previsto para ESP32 con bomba y sensor de humedad pero
-sin caudalimetro ni sensor de nivel todavia:
+Minimal pot profile, intended for an ESP32 with pump and soil sensor but no flowmeter or level sensor yet:
 
 ```bash
 ESP32_MODE=serial \
@@ -357,12 +326,9 @@ ALLOW_MISSING_TANK_SENSOR=1 \
 ./run_steward_once.sh
 ```
 
-En este perfil Rhizome sigue escribiendo `tank_level_unavailable` y
-`flow_sensor_unavailable` cuando corresponda. No se oculta que esos sensores son
-previstos/futuros.
+In this profile Rhizome still writes `tank_level_unavailable` and `flow_sensor_unavailable` where applicable. We do not hide that these sensors are planned/future.
 
-Una pasada contra ESP32 real permitiendo agua. Usar solo con Xilema/Bea en la
-frontera fisica y con duraciones pequenas:
+One pass against a real ESP32 with water enabled. Use only with Xilema/Bea at the physical boundary and with small durations:
 
 ```bash
 ESP32_MODE=serial \
@@ -372,7 +338,7 @@ WATER_SECONDS=8 \
 ./run_steward_once.sh
 ```
 
-Si la firmware minima expone `PUMP_PULSE <ms>` como ruta segura:
+If the minimal firmware exposes `PUMP_PULSE <ms>` as a safe path:
 
 ```bash
 ESP32_MODE=serial \
@@ -386,21 +352,17 @@ WATER_SECONDS=3 \
 ./run_steward_once.sh
 ```
 
-Esto emite `PUMP_PULSE 3000` solo si Rhizome decide `WATER_A`. No usar
-`pump-toggle` con la build de dia 26: `PUMP_ON` no esta expuesto por seguridad.
-`WATER A 1` sigue siendo `DRY_RUN` en esta build.
+This emits `PUMP_PULSE 3000` only if Rhizome decides `WATER_A`. Do not use `pump-toggle` with the day-26 build: `PUMP_ON` is not exposed for safety reasons. `WATER A 1` is still `DRY_RUN` in that build.
 
-Si la build de firmware responde `execution=TEST_ONLY` aunque Bea haya validado
-que la bomba mueve agua real, usar solo en perfil supervisado:
+If the firmware build replies `execution=TEST_ONLY` even though Bea has validated that the pump moves real water, use only in the supervised profile:
 
 ```bash
 ACCEPT_ESP32_TEST_ONLY_PULSE_AS_EXECUTED=1
 ```
 
-Por defecto Rhizome trata `TEST_ONLY` como no ejecutado para no inflar
-receipts. Esta variable lo interpreta como pulso fisico confirmado por operador.
+By default Rhizome treats `TEST_ONLY` as not executed to avoid inflating receipts. This variable interprets it as a physical pulse confirmed by the operator.
 
-Si la humedad llega como raw no calibrado, declarar umbrales raw:
+If moisture arrives as uncalibrated raw, declare raw thresholds:
 
 ```bash
 ESP32_MODE=serial \
@@ -410,43 +372,37 @@ SOIL_WET_ABOVE_RAW=2600 \
 ./run_steward_once.sh
 ```
 
-Loop autonomo:
+Autonomous loop:
 
 ```bash
 ESP32_MODE=serial ESP32_PORT=/dev/ttyACM0 ./start_steward_loop.sh
 ```
 
-Por defecto el loop decide cada 15 minutos, mantiene heartbeat entre
-decisiones, rota logs y escribe en:
+By default the loop decides every 15 minutes, keeps heartbeat alive between decisions, rotates logs and writes to:
 
 ```text
 $HOME/.local/share/sprout/rhizome_steward/
 ```
 
-El wrapper deriva `SYNC_FACADE_STATE_DIR` de `NODE_ID`, de modo que
-`NODE_ID=rhizome_02` buscara politica activa en
-`/tmp/sprout_rhizome_sync_facade/rhizome_02` salvo override explicito.
+The wrapper derives `SYNC_FACADE_STATE_DIR` from `NODE_ID`, so `NODE_ID=rhizome_02` looks for active policy under `/tmp/sprout_rhizome_sync_facade/rhizome_02` unless explicitly overridden.
 
-Para que Pollen lea el estado real del steward:
+For Pollen to read the steward's real state:
 
 ```bash
 FACADE_DATA_DIR=$HOME/.local/share/sprout/rhizome_steward/facade_data \
 ./start_sync_facade.sh
 ```
 
-Gemma 4 E2B puede mejorar la explicacion sin cambiar accion:
+Gemma 4 E2B can improve the explanation without changing the action:
 
 ```bash
 GEMMA_RATIONALE_URL=http://127.0.0.1:12000 ./run_steward_once.sh
 ```
 
-El `ShadowSkeptic` se ejecuta por defecto como experimento de doble agente
-no vinculante. Sus observaciones se guardan en `shadow_skeptic/YYYY-MM-DD.jsonl`
-y siempre llevan `affects_decision=false`.
-
+`ShadowSkeptic` runs by default as a non-binding dual-agent experiment. Its observations are stored in `shadow_skeptic/YYYY-MM-DD.jsonl` and always carry `affects_decision=false`.
 
 ---
 
 ## Note on language
 
-The English **Abstract** at the top of this file is the canonical public summary. The body below is in Spanish — it is the working language of the team and the place where decisions, trade-offs and trace get written. The contracts, code and tests are inspectable without Spanish context. See [Language note in the root README](../../../README.md#language-note) for the project-wide policy.
+This README is English-first. Internal bitácoras (Spanish-language working journals) and the day-by-day development trace live under [`bitacora/`](../../../bitacora/). See the [Language note in the root README](../../../README.md#language-note) for the project-wide policy.
