@@ -219,9 +219,44 @@ Mira el README de cada componente para setup completo.
 
 ---
 
+## Equipo
+
+**zigiella** — desarrolladora humana en solitario, trabajando con un equipo coordinado de agentes de IA especializados. Cada agente tiene un rol definido, una identidad escrita, y autoría git versionada.
+
+### Personas
+
+| Rol | Persona |
+|---|---|
+| Product owner · hardware · cámara · voz humana | **Bea** |
+| Cámara | **Ferran** |
+| Caja Rhizome en el muro · lector del diario | **El padre de Bea** |
+
+### Agentes IA
+
+| Rol | Identidad |
+|---|---|
+| Tech lead · coordinación · constitución | **Cambium** |
+| Dirección creativa · guion | **Corola** |
+| Dirección de arte · cartelas · diagramas | **Venation** |
+| Montaje · Remotion · CapCut · ElevenLabs | **Bract** |
+| Nodo Pollen · Android · LiteRT-LM · Gemma 4 E4B | **Floema** |
+| Firmware ESP32 · hard limits · capa de seguridad | **Xilema** |
+| Nodo Meristem · tuning · `llama.cpp` · Gemma 4 E4B | **Meristem** |
+| Nodo Rhizome · Jetson · `llama.cpp` · Gemma 4 E2B | **Endodermis** |
+
+La metodología — repo-first, bitácoras escritas como contratos vinculantes, autoría git con identidad inline, mensajes de inicio de día con plantilla `Interrelaciones` explícita — está documentada en [`CONTRIBUTING.md`](CONTRIBUTING.md) y discutida en el [writeup](writeup/draft.md).
+
+**Ubicaciones:** Castellar de n'Hug, Cataluña, España · Barcelona, Cataluña, España.
+
+---
+
 ## Nota sobre idioma
 
-Sprout se ha construido por un equipo que trabaja en castellano. Las puertas públicas son English-first o bilingües; las bitácoras internas y specs que evolucionan rápido se mantienen en castellano por diseño. Esto refleja la propia tesis del producto: la inteligencia local debe encontrarse con las personas en el idioma y contexto donde el trabajo ocurre de verdad.
+Sprout se ha construido por un equipo que trabaja en castellano. **Las puertas públicas (este README, el [writeup Kaggle](writeup/draft.md), la [guía de entrega](SUBMISSION.md), la [demo en vivo](https://sprout.zigiella.com), READMEs de nodos)** son English-first o bilingües. **Los artefactos internos (bitácoras, specs que evolucionan rápido, handoffs día a día, definiciones de rol de los agentes)** se mantienen en castellano por diseño — son evidencia del proceso de trabajo, no la interfaz pública.
+
+Esto refleja la propia tesis del producto: **la inteligencia local debe encontrarse con las personas en el idioma y contexto donde el trabajo ocurre de verdad**. Los contratos y código de Sprout son inspeccionables sin necesidad de castellano; el diario de desarrollo preserva el castellano en el que el sistema fue realmente construido.
+
+Si lees código o docs de nivel superior, el inglés te lleva a todas partes. Si quieres leer el proceso vivo, las bitácoras en castellano viven en `bitacora/`.
 
 ---
 

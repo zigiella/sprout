@@ -219,9 +219,44 @@ See each component README for full setup.
 
 ---
 
+## Team
+
+**zigiella** — solo human developer, working with a coordinated team of specialized AI agents. Each agent has a defined role, a written identity, and version-controlled git authorship.
+
+### Humans
+
+| Role | Person |
+|---|---|
+| Product owner · hardware · camera · human voice | **Bea** |
+| Camera | **Ferran** |
+| Rhizome box on the wall · daily journal reader | **Bea's father** |
+
+### AI agents
+
+| Role | Identity |
+|---|---|
+| Tech lead · coordination · constitution | **Cambium** |
+| Creative direction · script | **Corola** |
+| Art direction · cards · diagrams | **Venation** |
+| Editing · Remotion · CapCut · ElevenLabs | **Bract** |
+| Pollen node · Android · LiteRT-LM · Gemma 4 E4B | **Floema** |
+| ESP32 firmware · hard limits · safety layer | **Xilema** |
+| Meristem node · tuning · `llama.cpp` · Gemma 4 E4B | **Meristem** |
+| Rhizome node · Jetson · `llama.cpp` · Gemma 4 E2B | **Endodermis** |
+
+The methodology — repo-first, written bitácoras as binding contracts, identity-inline git authorship, day-start coordination messages with an explicit `Interrelaciones` template — is documented in [`CONTRIBUTING.md`](CONTRIBUTING.md) and discussed in the [writeup](writeup/draft.md).
+
+**Locations:** Castellar de n'Hug, Catalonia, Spain · Barcelona, Catalonia, Spain.
+
+---
+
 ## Language note
 
-Sprout was built by a Spanish-speaking team. Public entry points are English-first or bilingual; internal bitácoras and fast-moving specs remain in Spanish by design. This mirrors the product thesis: local intelligence should meet people in the language and context where work actually happens.
+Sprout was built by a Spanish-speaking team. **Public entry points (this README, the [Kaggle writeup](writeup/draft.md), the [submission guide](SUBMISSION.md), the [landing demo](https://sprout.zigiella.com), node READMEs)** are English-first or bilingual. **Internal artefacts (bitácoras, specs that evolve fast, day-by-day handoffs, agent role definitions)** remain in Spanish by design — they are evidence of the working process, not the public interface.
+
+This mirrors the product thesis itself: **local intelligence should meet people in the language and context where work actually happens**. Sprout's contracts and code are inspectable without Spanish context; the development journal preserves the Spanish in which the system was actually built.
+
+If you are reading code or top-level docs, English will get you everywhere. If you want to read the working process, Spanish bitácoras live in `bitacora/`.
 
 ---
 
