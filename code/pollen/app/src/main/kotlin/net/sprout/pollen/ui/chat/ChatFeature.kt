@@ -95,6 +95,10 @@ class ChatViewModel(
     }
 
     fun startListening() {
+        if (net.sprout.pollen.BuildConfig.FLAVOR == "demo") {
+            _uiState.update { it.copy(error = "Funcionalidad no disponible: El motor LLM requiere la variante Device y hardware NPU.") }
+            return
+        }
         if (_uiState.value.isListening) {
             val audioFile = voiceInfra.stopRecording()
             _uiState.update { it.copy(isListening = false) }
@@ -112,6 +116,10 @@ class ChatViewModel(
     }
 
     fun send() {
+        if (net.sprout.pollen.BuildConfig.FLAVOR == "demo") {
+            _uiState.update { it.copy(error = "Funcionalidad no disponible: El motor LLM requiere la variante Device y hardware NPU.") }
+            return
+        }
         val prompt = _uiState.value.prompt.trim()
         if (prompt.isEmpty()) return
 

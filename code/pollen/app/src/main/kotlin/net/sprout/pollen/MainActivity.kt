@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
+import androidx.compose.foundation.background
 import net.sprout.pollen.ui.chat.ChatScreen
 import net.sprout.pollen.ui.chat.ChatViewModel
 import net.sprout.pollen.llm.LiteRtEngineFactory
@@ -109,6 +110,22 @@ class MainActivity : ComponentActivity() {
                     }
 
                     Column(modifier = Modifier.fillMaxSize()) {
+                        if (net.sprout.pollen.BuildConfig.FLAVOR == "demo") {
+                            androidx.compose.foundation.layout.Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.error),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "DEMO APP - NO LLM",
+                                    color = MaterialTheme.colorScheme.onError,
+                                    modifier = Modifier.padding(4.dp),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                )
+                            }
+                        }
                         if (currentScreen != AppScreen.HOME && currentScreen != AppScreen.DOWNLOAD_MODEL) {
                             Row(modifier = Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
                                 IconButton(onClick = { currentScreen = AppScreen.HOME }) {
