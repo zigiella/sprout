@@ -391,6 +391,7 @@ Co-Authored-By: Cambium <cambium@sprout.local>
 - **Nunca** reescribir historia para cambiar autoria en commits viejos. Si se subio algo con identidad equivocada, se corrige de aqui en adelante; el historial se respeta.
 - **Nunca** usar `--global` al configurar estas identidades. Son locales al repo.
 - Al clonar el repo por primera vez, configurar identidad es **el primer paso**, antes del primer commit.
+- **No incluir trailers `Co-Authored-By:` de proveedores de IA terceros** (Claude, ChatGPT, Copilot, etc.) en los mensajes de commit. La autoria en Sprout vive en las identidades `*@sprout.local` del equipo. Si una agente esta usando un modelo provisto por un proveedor terceros, esa relacion se documenta en el rol del agente (`docs/roles/`) o en la bitacora, no en los trailers de git. Mantiene limpio el grafo de Contributors de GitHub.
 
 ### 11.1 Multi-agente sobre el mismo clone
 

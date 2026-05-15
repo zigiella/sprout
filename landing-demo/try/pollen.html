@@ -79,14 +79,18 @@
     <div class="demo-panel">
       <h3>Demo flavor — runs anywhere</h3>
       <p>
-        Lightweight build (~30 MB) with mock LiteRT inference. No model bundled, no OOM.
+        Lightweight build with mock LiteRT inference. No model bundled, no OOM.
         Runs on any Android emulator or low-RAM phone. Use this to walk through the UI.
       </p>
+      <pre class="output-block"># Build and install the demo flavor
+cd code/pollen
+./gradlew assembleDemoDebug
+adb install app/build/outputs/apk/demo/debug/app-demo-debug.apk</pre>
       <p>
-        <a class="btn btn-primary" href="https://github.com/zigiella/sprout/blob/main/demo/pollen-demo.apk" rel="noopener">
-          Download Pollen <code>demo</code> APK
+        <a class="btn btn-ghost" href="https://github.com/zigiella/sprout/blob/main/code/pollen/README.md" rel="noopener">
+          Pollen build guide &rarr;
         </a>
-        <span class="muted small" style="margin-left:8px;">(~39 MB, mock inference — runs without a model)</span>
+        <span class="muted small" style="margin-left:8px;">Mock inference &mdash; no model file needed.</span>
       </p>
     </div>
     <div class="demo-panel">

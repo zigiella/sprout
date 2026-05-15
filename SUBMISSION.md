@@ -13,8 +13,8 @@
 | **Landing demo** | https://sprout.zigiella.com |
 | **Repository** | https://github.com/zigiella/sprout |
 | **Writeup** | [`writeup/draft.md`](writeup/draft.md) (1467 words, also submitted as Kaggle draft) |
-| **Pollen demo APK** | [`demo/pollen-demo.apk`](demo/pollen-demo.apk) (~39 MB, mock LiteRT inference, no model needed) |
-| **Pollen Venation UI APK** | [`demo/pollen-venation-ui.apk`](demo/pollen-venation-ui.apk) (~58 MB, polished UI, no device LiteRT model) |
+| **Pollen demo build** | `cd code/pollen && ./gradlew assembleDemoDebug` — mock LiteRT inference, no 3 GB model needed |
+| **Pollen device build** | `cd code/pollen && ./gradlew assembleDeviceRelease` — real Gemma 4 E4B via LiteRT-LM, model side-loaded with `adb push` |
 | **License** | Apache 2.0 |
 | **Gemma 4 attribution** | *Sprout uses Gemma 4 models by Google. Gemma is a trademark of Google LLC. This project is not affiliated with or endorsed by Google.* |
 
@@ -84,7 +84,17 @@ make test   # runs deterministic tests + LLM smoke
 
 ### Pollen on Android — demo flavor (no model needed)
 
-Install [`demo/pollen-demo.apk`](demo/pollen-demo.apk) on any Android 12+ device or emulator. Mock LiteRT inference — walks through the UI without needing a 3 GB model on disk.
+Build the demo flavor and install it on any Android 12+ device or emulator:
+
+```bash
+cd code/pollen
+./gradlew assembleDemoDebug
+adb install app/build/outputs/apk/demo/debug/app-demo-debug.apk
+```
+
+Mock LiteRT inference — walks through the UI without needing a 3 GB model on disk.
+
+The demo flavor is built to be unambiguous at evaluation time: it ships with a **"D" watermark on the launcher icon**, a permanent **"DEMO APP — NO LLM"** banner at the top of every screen, and dependency-injected mock clients for Rhizome and Meristem — so it works **offline-first, with no Jetson or ESP32 powered on**. Buttons that would require the on-device Gemma 4 model (voice recording, chat) are intentionally disabled with a clear notice pointing to the `device` flavor.
 
 ### Pollen on Android — device flavor (real Gemma 4 E4B via LiteRT-LM)
 
@@ -124,7 +134,7 @@ If you have **30 minutes**:
 4. Read [`docs/01_architecture.md`](docs/01_architecture.md) for the three-node design.
 5. Read [`docs/30_safety_rules.md`](docs/30_safety_rules.md) for the ESP32 hard limits.
 6. Run `make test` in `code/meristem_node/` to see the deterministic evaluator + LLM smoke pass.
-7. Install [`demo/pollen-demo.apk`](demo/pollen-demo.apk) on a phone or emulator.
+7. Build and install the Pollen demo flavor: `cd code/pollen && ./gradlew assembleDemoDebug && adb install app/build/outputs/apk/demo/debug/app-demo-debug.apk`.
 
 If you have **2 hours and want to scrutinize**:
 
@@ -152,6 +162,18 @@ We submit primarily to **Main Track** for vision + execution. The architecture i
 
 - **Global Resilience** — drought + dispersed agriculture + intermittent connectivity, with a working pattern that brings the decision to where the water lives.
 - **Safety & Trust** — auditable decisions, signed receipts, expiring contracts, physical veto. Every refusal is a product feature, not a failure.
+
+---
+
+## License and winner grant
+
+The Sprout repository is licensed under **Apache 2.0** (see [`LICENSE`](LICENSE)) — an OSI-approved permissive license. All third-party dependencies used to generate this Submission are OSI-approved open source (`llama.cpp`, LiteRT-LM, FastAPI, Pydantic, SQLite, ESP-IDF, Bosch `BME280_SensorAPI`).
+
+If the Submission is selected as a Prize winner, the team agrees to grant the Competition Sponsor the **CC-BY 4.0** license on the winning Submission and source code, in accordance with §1.6 and §2.5 of the Competition Rules. The repository will continue to be available to the public under Apache 2.0; the CC-BY 4.0 grant is in addition, not in replacement.
+
+Sprout uses Gemma 4 models by Google. **Gemma is a trademark of Google LLC.** This project is not affiliated with or endorsed by Google. The Gemma 4 model naming and attribution guidelines (Google) are followed throughout the public surfaces (README, writeup, landing demo, video, node READMEs).
+
+Full credits — including production assets (voice-over via ElevenLabs under commercial terms, typography, location footage) and all third-party dependencies — live in [`CREDITS.md`](CREDITS.md).
 
 ---
 

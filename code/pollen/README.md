@@ -34,7 +34,7 @@ La app se construye en dos flavors distintos:
 
 | Flavor | Para qué | Inferencia | Modelo requerido | APK |
 |--------|----------|------------|------------------|-----|
-| **`demo`** | Emulador, dispositivos sin recursos, walkthrough de la UI sin modelo | Mock LiteRT determinista | Ninguno | [`demo/pollen-demo.apk`](../../demo/pollen-demo.apk) (~39 MB) |
+| **`demo`** | Emulador, dispositivos sin recursos, walkthrough de la UI sin modelo | Mock LiteRT determinista | Ninguno | `./gradlew assembleDemoDebug` |
 | **`device`** | Pixel 10 Pro u otro Android 12+ real, con Gemma 4 E4B local | LiteRT-LM real | `gemma-4-E4B-it.litertlm` (3,6 GB) side-loaded vía ADB | Build local |
 
 La separación vive en `app/src/demo/.../llm/LiteRtInfra.kt` (mock) vs `app/src/device/.../llm/LiteRtInfra.kt` (real LiteRT-LM con `sendAudioFile()`).

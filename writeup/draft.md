@@ -1,6 +1,6 @@
 # Sprout: local criteria for water when nobody is there
 
-**Subtitle:** Open, local AI for water decisions under absence, with expiring authority, signed receipts and a physical veto.
+**Subtitle:** Open, local AI for water decisions under absence, with bounded authority, signed receipts and a physical veto.
 
 ## The problem
 
@@ -23,6 +23,10 @@ The operating invariant is simple: **physical layer prevails, Rhizome arbitrates
 
 Every intelligence has jurisdiction. Every instruction has expiry.
 
+![Sprout architecture overview: ESP32 and Rhizome in the field, Pollen on mobile, Meristem at home, with MissionPatch and DecisionReceipt flowing on sync and Bundle / PolicyDiff on eventual sync.](https://raw.githubusercontent.com/zigiella/sprout/main/media/sprout-architecture-overview.png)
+
+*Three jurisdictions, one water decision. The valve only opens after ESP32 ACK.*
+
 ## Rhizome and ESP32
 
 Rhizome runs Gemma 4 E2B on a Jetson Orin Nano Super through `llama.cpp`. It reads local telemetry, applies deterministic safety and need gates, and chooses among `WATER`, `DEFER`, `SKIP`, and `BLOCK`.
@@ -42,6 +46,10 @@ Sprout includes a local dual-agent pattern inside Rhizome. The primary steward c
 `ShadowSkeptic` creates safety evidence. It flags conservative alternatives, distrust signals, and reasons to review a situation. It never irrigates, never vetoes, never rewrites the final action, and never touches the ESP32 path.
 
 That boundary gives the second agent a precise jurisdiction: observe, question, record. Each disagreement becomes a measurable event. Future versions can promote recurring, useful objections into deterministic gates. Even skepticism has jurisdiction.
+
+![Sprout dual-agent pattern: the State bundle splits into the Operational agent — which decides inside the safe envelope and emits a DecisionReceipt with action and rationale — and ShadowSkeptic, which objects without authority and writes a Disagreement log with affects_decision=false.](https://raw.githubusercontent.com/zigiella/sprout/main/media/sprout-double-agent.png)
+
+*A second voice without physical authority. Disagreement becomes data, not action.*
 
 ## Pollen
 
@@ -73,7 +81,7 @@ The model configuration work is part of the engineering. We tested context size,
 
 Each node has a different model profile. Rhizome needs short, stable, bounded outputs. Pollen needs audio understanding, refusal, and schema fidelity. Meristem spends more time on policy review and rationale. Model configuration becomes a property of jurisdiction.
 
-## Safety and trust
+## Bounded authority
 
 Sprout signs decisions, expires authority, and records refusals.
 
@@ -82,6 +90,10 @@ The critical path starts with deterministic checks: schema validation, TTL, auth
 A `MissionPatch` represents the visit and carries a short TTL. A `PolicyPacket` represents a wider policy window and carries validity. A `WeatherDigest` expires before weather context becomes stale. Late objects are rejected and logged.
 
 The dual-agent layer follows the same rule. `ShadowSkeptic` records objections. Those objections become data. Proven objections can later become deterministic rules. The current agent remains observational.
+
+![Sprout authority stack: Gemma on Rhizome proposes a candidate action of 30s; the ESP32 validates the physical envelope — tank level, duty cycle, flow rate — and emits a final action of 12s, ACK · limited by tank, signed in a DecisionReceipt.](https://raw.githubusercontent.com/zigiella/sprout/main/media/sprout-authority-stack.png)
+
+*AI proposes. ESP32 validates. The model never touches the valve directly.*
 
 ## What we built
 
@@ -103,6 +115,16 @@ Sprout’s unit of value is a decision with bounded authority. That unit scales 
 
 A cooperative can run Rhizomes in dispersed plots, carry Pollen on routine visits, and review policy at home. A community garden can preserve volunteer knowledge as expiring mission patches with clear scope and TTL.
 
+## How we built it
+
+Sprout was built in a 30-day window by one human and a team of role-specialized AI agents working under written constraints. Each agent has a defined jurisdiction, an explicit identity, and version-controlled authorship in the git history.
+
+The methodology mirrors the architecture. The repository is the contract. Bitácoras — Spanish-language development journals — record every architectural decision, course correction, and dependency between fronts. Day-start coordination messages follow a fixed template that names the interrelations between agents. Git commits carry agent identity inline so the trace stays reviewable.
+
+This pattern is not decoration. It produced artefacts a hackathon usually skips: a working dual-agent safety layer inside Rhizome, three independent Gemma 4 jurisdictions integrated through small JSON contracts, and a physical safety coprocessor that refuses unsafe commands by design rather than by patch. Process and product share the same invariant: jurisdiction with expiry.
+
+Methodology details and the bitácora index live in [`CONTRIBUTING.md`](../CONTRIBUTING.md) and the [`bitacora/`](../bitacora/) folder.
+
 ## Future work
 
 Next iterations extend the same authority model. A flow meter will close production semantics for autonomous `WATER`. A local weather station will enrich `WeatherDigest` objects. Camera input will add visible plant evidence while remaining non-authoritative. Pollen will support full-duplex field conversation. Meristem will add seasonal rules, multi-crop policy evaluation, and stronger tool-assisted review.
@@ -115,7 +137,7 @@ Language is part of the roadmap. Sprout keeps internal contracts stable, while P
 
 Sprout preserves field criteria during absence. It turns visits into operational intelligence. It rejects expired instructions. It records what happened. It gives local AI a second skeptical voice before giving that voice any authority.
 
-**Sprout is open, local AI for water decisions under absence: expiring authority, signed receipts, a second local voice that audits without authority, and a physical layer that can say no.**
+**Sprout is open, local AI for water decisions under absence: bounded authority, signed receipts, a second local voice that audits without authority, and a physical layer that can say no.**
 
 ---
 
