@@ -323,3 +323,10 @@ Si el puerto USB no enumera a la primera en un S3 nuevo:
 - Espressif, `SPI Flash and External SPI RAM Configuration`, leída el `2026-04-25`: https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/flash_psram_config.html
 - Espressif, `I2C Master Driver`, leída el `2026-04-27`: https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-reference/peripherals/i2c.html
 - Bosch Sensortec, `BME280_SensorAPI`, commit `c90d419492e26dd95586598a794e65eb2760753a`, leído el `2026-04-27`: https://github.com/boschsensortec/BME280_SensorAPI
+
+
+---
+
+## Note on language
+
+The English **Abstract** at the top of this file is the canonical public summary. The body below is in Spanish — it is the working language of the team and the place where decisions, trade-offs and trace get written. The contracts, code and tests are inspectable without Spanish context. See [Language note in the root README](../../README.md#language-note) for the project-wide policy.

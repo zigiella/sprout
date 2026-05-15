@@ -69,3 +69,10 @@ cierra día 16.
 - `draft_system_prompt_meristem_es.md` — borrador del prompt
 - `verify_tool_calling.py` — test que validó tool calling con llama.cpp
 - `bitacora/2026-04-29_rhizome-v05-completo-y-tool-calling-validado_meristem.md`
+
+
+---
+
+## Note on language
+
+The English **Abstract** at the top of this file is the canonical public summary. The body below is in Spanish — it is the working language of the team and the place where decisions, trade-offs and trace get written. The contracts, code and tests are inspectable without Spanish context. See [Language note in the root README](../../README.md#language-note) for the project-wide policy.

@@ -135,3 +135,10 @@ Material de bitácora relevante:
 - `bitacora/2026-05-01_litertlm-pixel10pro-compatibility_floema.md` — validación Pixel 10 Pro.
 - `bitacora/2026-05-12_PR-voice-beta-final_floema.md` — descripción consolidada del PR voice-beta-final.
 - `research/04_litertlm_thinking_pt1.md`, `pt2`, `digest` — investigación comparativa LiteRT-LM vs MediaPipe.
+
+
+---
+
+## Note on language
+
+The English **Abstract** at the top of this file is the canonical public summary. The body below is in Spanish — it is the working language of the team and the place where decisions, trade-offs and trace get written. The contracts, code and tests are inspectable without Spanish context. See [Language note in the root README](../../README.md#language-note) for the project-wide policy.

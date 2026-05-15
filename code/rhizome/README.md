@@ -405,3 +405,10 @@ Campos de trazabilidad:
   }
 }
 ```
+
+
+---
+
+## Note on language
+
+The English **Abstract** at the top of this file is the canonical public summary. The body below is in Spanish — it is the working language of the team and the place where decisions, trade-offs and trace get written. The contracts, code and tests are inspectable without Spanish context. See [Language note in the root README](../../README.md#language-note) for the project-wide policy.

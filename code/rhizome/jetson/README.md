@@ -1,5 +1,9 @@
 # Rhizome Jetson Runtime
 
+**Abstract.** Operational scripts to launch Gemma 4 E2B on Jetson Orin Nano Super with `llama.cpp`, independently of Ollama and the ESP32 hardware. These scripts handle local inference runtime and an Ollama-compatible adapter only — they never touch firmware, sensors, actuators or physical rules. The package also includes a read-only HTTP facade that lets Pollen talk to a real Jetson IP. Two profiles are documented: `safe-cpu` (contractual, validated in 18/18 prompt battery) and `gpu-experimental` (36/36 layers offloaded, quality not yet contractual). `ShadowSkeptic` runs by default as a non-binding dual-agent experiment with `affects_decision=false`.
+
+---
+
 Scripts operativos para arrancar Gemma 4 E2B en Jetson Orin Nano Super con
 `llama.cpp` sin depender de Ollama ni de hardware ESP32.
 
@@ -439,3 +443,10 @@ GEMMA_RATIONALE_URL=http://127.0.0.1:12000 ./run_steward_once.sh
 El `ShadowSkeptic` se ejecuta por defecto como experimento de doble agente
 no vinculante. Sus observaciones se guardan en `shadow_skeptic/YYYY-MM-DD.jsonl`
 y siempre llevan `affects_decision=false`.
+
+
+---
+
+## Note on language
+
+The English **Abstract** at the top of this file is the canonical public summary. The body below is in Spanish — it is the working language of the team and the place where decisions, trade-offs and trace get written. The contracts, code and tests are inspectable without Spanish context. See [Language note in the root README](../../../README.md#language-note) for the project-wide policy.
