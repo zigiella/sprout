@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 360" font-family="Manrope, system-ui, sans-serif" role="img" aria-label="Sprout authority stack · AI proposes, ESP32 validates">
+  <title>AI proposes. ESP32 validates.</title>
+  <desc>Sprout safety floor. Gemma on Rhizome proposes a candidate_action (30s). ESP32 validates the physical envelope — tank level, duty cycle, flow rate, overrides — and produces a final_action (12s, ACK · limited by tank). Every actuation leaves a DecisionReceipt. The model never touches the valve directly.</desc>
+
+  <defs>
+    <marker id="atip-dim" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L7,4.5 L0,9 z" fill="rgba(243,237,228,0.55)"></path>
+    </marker>
+    <marker id="atip-ok" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L7,4.5 L0,9 z" fill="#4F8A5B"></path>
+    </marker>
+  </defs>
+
+  
+  <rect width="1180" height="360" fill="#3a3733"></rect>
+
+  
+  <text x="32" y="40" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="500" letter-spacing="2.4" fill="#C5F26B">SAFETY FLOOR · AUTHORITY STACK</text>
+  <text x="32" y="74" font-size="26" font-weight="700" letter-spacing="-0.5" fill="#F3EDE4">AI proposes. ESP32 validates.</text>
+
+  
+  <g transform="translate(32,116)">
+    <rect width="260" height="184" rx="3" fill="#1A1A18" stroke="rgba(243,237,228,0.10)" stroke-width="1"></rect>
+    
+    <circle cx="244" cy="16" r="4" fill="#C5F26B"></circle>
+    <circle cx="244" cy="16" r="9" fill="none" stroke="#C5F26B" stroke-width="1" opacity="0.32"></circle>
+    <text x="20" y="32" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" font-weight="500" letter-spacing="2.2" fill="rgba(243,237,228,0.55)">STAGE 01 · PROPOSE</text>
+    <text x="20" y="60" font-size="16" font-weight="700" letter-spacing="-0.2" fill="#F3EDE4">Gemma · Rhizome</text>
+    <text x="20" y="94" font-family="IBM Plex Mono, Menlo, monospace" font-size="11.5" font-weight="500" fill="rgba(243,237,228,0.86)">decision_type: WATER</text>
+    <text x="20" y="114" font-family="IBM Plex Mono, Menlo, monospace" font-size="11.5" font-weight="500" fill="rgba(243,237,228,0.86)">candidate_action: 30s</text>
+    <text x="20" y="134" font-family="IBM Plex Mono, Menlo, monospace" font-size="11.5" font-weight="500" fill="rgba(243,237,228,0.55)">why: soil &lt; 30</text>
+    <text x="20" y="154" font-family="IBM Plex Mono, Menlo, monospace" font-size="11.5" font-weight="500" fill="rgba(243,237,228,0.55)">budget_cap_ml: 900</text>
+    <line x1="20" y1="168" x2="240" y2="168" stroke="rgba(243,237,228,0.18)" stroke-width="1"></line>
+  </g>
+
+  
+  <g>
+    <line x1="296" y1="208" x2="356" y2="208" stroke="rgba(243,237,228,0.55)" stroke-width="1.5" marker-end="url(#atip-dim)"></line>
+    <text x="326" y="196" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="10.5" font-weight="500" letter-spacing="0.5" fill="rgba(243,237,228,0.72)">candidate</text>
+  </g>
+
+  
+  <g transform="translate(360,116)">
+    <rect width="260" height="184" rx="3" fill="#F3EDE4" stroke="#CDBBAA" stroke-width="1"></rect>
+    
+    <line x1="0" y1="42" x2="260" y2="42" stroke="#4F8A5B" stroke-width="2"></line>
+    <text x="20" y="32" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" font-weight="500" letter-spacing="2.2" fill="#8A654B">STAGE 02 · VALIDATE</text>
+    <text x="20" y="70" font-size="16" font-weight="700" letter-spacing="-0.2" fill="#1A1A18">ESP32</text>
+    
+    <g font-family="IBM Plex Mono, Menlo, monospace" font-size="11.5" font-weight="500" fill="#2A221D">
+      <text x="20" y="98">tank_level &gt; min</text>
+      <text x="232" y="98" text-anchor="end" fill="#4F8A5B" font-weight="600">✓</text>
+      <text x="20" y="118">duty_cycle ≤ cap</text>
+      <text x="232" y="118" text-anchor="end" fill="#4F8A5B" font-weight="600">✓</text>
+      <text x="20" y="138">flow_rate ≤ 6L/min</text>
+      <text x="232" y="138" text-anchor="end" fill="#4F8A5B" font-weight="600">✓</text>
+      <text x="20" y="158" fill="#8A654B">override: capped</text>
+    </g>
+    <line x1="20" y1="172" x2="240" y2="172" stroke="#CDBBAA" stroke-width="1"></line>
+  </g>
+
+  
+  <g>
+    <line x1="624" y1="208" x2="684" y2="208" stroke="#4F8A5B" stroke-width="1.5" marker-end="url(#atip-ok)"></line>
+    <text x="654" y="196" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="10.5" font-weight="600" letter-spacing="0.5" fill="#4F8A5B">final · ACK</text>
+  </g>
+
+  
+  <g transform="translate(688,116)">
+    <rect width="260" height="184" rx="3" fill="#F3EDE4" stroke="#CDBBAA" stroke-width="1"></rect>
+    <text x="20" y="32" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" font-weight="500" letter-spacing="2.2" fill="#8A654B">STAGE 03 · ACTUATE</text>
+    <text x="20" y="60" font-size="16" font-weight="700" letter-spacing="-0.2" fill="#1A1A18">Valve</text>
+    <text x="20" y="94" font-family="IBM Plex Mono, Menlo, monospace" font-size="11.5" font-weight="500" fill="#2A221D">final_action: 12s</text>
+    <text x="20" y="114" font-family="IBM Plex Mono, Menlo, monospace" font-size="11.5" font-weight="500" fill="#2A221D">esp32_outcome:</text>
+    <text x="40" y="132" font-family="IBM Plex Mono, Menlo, monospace" font-size="11.5" font-weight="600" fill="#4F8A5B">ACK · limited</text>
+    <text x="20" y="158" font-family="IBM Plex Mono, Menlo, monospace" font-size="11.5" font-weight="500" fill="#8A654B">why_short: tank cap</text>
+    <line x1="20" y1="172" x2="240" y2="172" stroke="#CDBBAA" stroke-width="1"></line>
+  </g>
+
+  
+  <g transform="translate(976,116)">
+    <rect width="172" height="184" rx="3" fill="#F3EDE4" stroke="#CDBBAA" stroke-width="1"></rect>
+    <text x="16" y="32" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" font-weight="500" letter-spacing="2.2" fill="#8A654B">RECEIPT</text>
+    <text x="16" y="58" font-size="14" font-weight="700" letter-spacing="-0.1" fill="#1A1A18">DecisionReceipt</text>
+    <g font-family="IBM Plex Mono, Menlo, monospace" font-size="10.5" font-weight="500" fill="#2A221D">
+      <text x="16" y="84">candidate 30s</text>
+      <text x="16" y="102">final 12s</text>
+      <text x="16" y="120">limited by tank</text>
+    </g>
+    <line x1="16" y1="134" x2="156" y2="134" stroke="#CDBBAA" stroke-width="1"></line>
+    
+    <g transform="translate(16,148)">
+      <rect x="0" y="0" width="62" height="22" fill="none" stroke="#4F8A5B" stroke-width="1.4"></rect>
+      <text x="31" y="15" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" font-weight="700" letter-spacing="2" fill="#4F8A5B">ACK</text>
+    </g>
+  </g>
+
+  
+  <line x1="32" y1="324" x2="1148" y2="324" stroke="rgba(243,237,228,0.22)" stroke-width="1"></line>
+  <text x="32" y="346" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="500" letter-spacing="2.4" fill="rgba(243,237,228,0.62)">
+    <tspan>INVARIANT</tspan>
+    <tspan dx="12" fill="rgba(243,237,228,0.40)">·</tspan>
+    <tspan dx="10" fill="rgba(243,237,228,0.82)" letter-spacing="0.4">THE MODEL NEVER TOUCHES THE VALVE DIRECTLY</tspan>
+  </text>
+</svg>
