@@ -33,14 +33,14 @@ code {
 .container {
   max-width: 1120px;
   margin: auto;
-  padding: 72px 24px;
+  padding: 96px 24px;
 }
 
 /* --- Hero --- */
 .hero {
-  background: #1a1a18;
+  background: #0e0e0c;
   color: #f3ede4;
-  min-height: 86vh;
+  min-height: auto;
 }
 
 .nav {
@@ -49,50 +49,75 @@ code {
   align-items: center;
   padding: 24px 32px;
   flex-wrap: wrap;
+  border-bottom: 1px solid rgba(243, 237, 228, 0.08);
 }
 
 .brand {
   font-weight: 800;
   margin-right: auto;
+  letter-spacing: -0.01em;
 }
 
 .nav a {
   text-decoration: none;
   color: #f3ede4;
-  opacity: 0.85;
+  opacity: 0.75;
+  font-size: 14px;
 }
 
 .nav a:hover { opacity: 1; }
 
 .hero-inner {
-  max-width: 980px;
-  padding: 11vh 32px 80px;
+  max-width: 920px;
+  padding: 72px 32px 96px;
 }
 
-.kicker, .node {
+.kicker, .node, .eyebrow {
   color: var(--seed);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 13px;
+  letter-spacing: 0.16em;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 12px;
+  color: rgba(26, 26, 24, 0.55);
 }
 
 .hero h1 {
-  font-size: clamp(44px, 8vw, 92px);
-  line-height: 0.95;
-  margin: 20px 0;
+  font-size: clamp(36px, 5.5vw, 64px);
+  line-height: 1.02;
+  margin: 16px 0 24px;
   text-wrap: pretty;
   max-width: 840px;
+  letter-spacing: -0.02em;
+  font-weight: 700;
 }
 
 .tagline {
-  font-size: clamp(21px, 3vw, 34px);
-  max-width: 880px;
+  font-size: clamp(18px, 2vw, 22px);
+  max-width: 760px;
+  color: #dcd3c7;
+  line-height: 1.5;
 }
 
 .lede {
-  font-size: 20px;
-  max-width: 900px;
-  color: #dcd3c7;
+  font-size: 16px;
+  max-width: 760px;
+  color: rgba(220, 211, 199, 0.85);
+  line-height: 1.6;
+  margin-top: 16px;
+}
+
+.lede-muted {
+  font-size: 18px;
+  color: var(--muted);
+  max-width: 720px;
+  margin: 0 0 28px;
+  line-height: 1.5;
 }
 
 .cta-row {
@@ -125,12 +150,56 @@ button { color: var(--ink); }
 
 .ghost { opacity: 0.8; }
 
+/* --- Demo (first section after hero) --- */
+.demo-first {
+  background: var(--bg);
+  border-top: 4px solid var(--seed);
+}
+
+.demo-first h2 {
+  font-size: clamp(28px, 3.5vw, 40px);
+  letter-spacing: -0.01em;
+  margin: 0 0 16px;
+}
+
+/* --- Section H2 generic --- */
+.container h2 {
+  font-size: clamp(28px, 3.5vw, 40px);
+  letter-spacing: -0.01em;
+  margin: 0 0 16px;
+  line-height: 1.1;
+}
+
+/* --- Project CTA (footer call to action) --- */
+.project-cta {
+  background: #0e0e0c;
+  color: #f3ede4;
+  text-align: left;
+}
+
+.project-cta h2 {
+  font-size: clamp(28px, 3.5vw, 44px);
+  color: #f3ede4;
+  letter-spacing: -0.01em;
+}
+
+.project-cta .lede-muted {
+  color: rgba(220, 211, 199, 0.75);
+}
+
+.project-cta .btn {
+  color: #f3ede4;
+  border-color: rgba(243, 237, 228, 0.25);
+}
+
+.project-cta .btn.primary {
+  color: #1a1a18;
+  border-color: var(--seed);
+}
+
 /* --- Truth section --- */
 .truth {
-  margin-top: -72px;
   background: var(--soft);
-  border: 1px solid var(--line);
-  border-radius: 28px;
 }
 
 .truth-grid {
