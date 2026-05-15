@@ -23,6 +23,10 @@ The operating invariant is simple: **physical layer prevails, Rhizome arbitrates
 
 Every intelligence has jurisdiction. Every instruction has expiry.
 
+![Sprout architecture overview: ESP32 and Rhizome in the field, Pollen on mobile, Meristem at home, with MissionPatch and DecisionReceipt flowing on sync and Bundle / PolicyDiff on eventual sync.](https://raw.githubusercontent.com/zigiella/sprout/main/media/sprout-architecture-overview.png)
+
+*Three jurisdictions, one water decision. The valve only opens after ESP32 ACK.*
+
 ## Rhizome and ESP32
 
 Rhizome runs Gemma 4 E2B on a Jetson Orin Nano Super through `llama.cpp`. It reads local telemetry, applies deterministic safety and need gates, and chooses among `WATER`, `DEFER`, `SKIP`, and `BLOCK`.
@@ -42,6 +46,10 @@ Sprout includes a local dual-agent pattern inside Rhizome. The primary steward c
 `ShadowSkeptic` creates safety evidence. It flags conservative alternatives, distrust signals, and reasons to review a situation. It never irrigates, never vetoes, never rewrites the final action, and never touches the ESP32 path.
 
 That boundary gives the second agent a precise jurisdiction: observe, question, record. Each disagreement becomes a measurable event. Future versions can promote recurring, useful objections into deterministic gates. Even skepticism has jurisdiction.
+
+![Sprout dual-agent pattern: the State bundle splits into the Operational agent — which decides inside the safe envelope and emits a DecisionReceipt with action and rationale — and ShadowSkeptic, which objects without authority and writes a Disagreement log with affects_decision=false.](https://raw.githubusercontent.com/zigiella/sprout/main/media/sprout-double-agent.png)
+
+*A second voice without physical authority. Disagreement becomes data, not action.*
 
 ## Pollen
 
@@ -82,6 +90,10 @@ The critical path starts with deterministic checks: schema validation, TTL, auth
 A `MissionPatch` represents the visit and carries a short TTL. A `PolicyPacket` represents a wider policy window and carries validity. A `WeatherDigest` expires before weather context becomes stale. Late objects are rejected and logged.
 
 The dual-agent layer follows the same rule. `ShadowSkeptic` records objections. Those objections become data. Proven objections can later become deterministic rules. The current agent remains observational.
+
+![Sprout authority stack: Gemma on Rhizome proposes a candidate action of 30s; the ESP32 validates the physical envelope — tank level, duty cycle, flow rate — and emits a final action of 12s, ACK · limited by tank, signed in a DecisionReceipt.](https://raw.githubusercontent.com/zigiella/sprout/main/media/sprout-authority-stack.png)
+
+*AI proposes. ESP32 validates. The model never touches the valve directly.*
 
 ## What we built
 
