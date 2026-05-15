@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sprout — Local-first AI water optimization</title>
-  <meta name="description" content="Sprout is a safety-bounded Gemma 4 decision network for irrigation under absence. Rhizome decides beside the water, Pollen turns visits into expiring criteria, Meristem refines policy at home, and an ESP32 owns the physical veto.">
+  <title>Sprout · demo — try the contract simulator</title>
+  <meta name="description" content="Interactive browser demo of Sprout — a safety-bounded Gemma 4 decision network. Click each node to inspect its real contract: MissionPatch, DecisionReceipt, PolicyPacket. The full project lives on GitHub and Kaggle.">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Sprout — Local-first AI water optimization">
-  <meta property="og:description" content="A safety-bounded Gemma 4 decision network for irrigation under absence. Three local nodes + a physical veto layer. Open source, Apache 2.0.">
+  <meta property="og:title" content="Sprout · demo — try the contract simulator">
+  <meta property="og:description" content="Interactive browser demo of the three-node decision network. Inspect contracts, TTLs and refusal paths instantly. The full project lives on GitHub.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sprout.zigiella.com/">
-  <meta property="og:image" content="https://sprout.zigiella.com/media/architecture_overview.svg">
+  <meta property="og:image" content="https://sprout.zigiella.com/media/sprout-cover-local-first-ai.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Sprout — Local-first AI water optimization">
-  <meta name="twitter:description" content="A safety-bounded Gemma 4 decision network for irrigation under absence.">
+  <meta name="twitter:title" content="Sprout · demo — try the contract simulator">
+  <meta name="twitter:description" content="Interactive browser demo of the three-node decision network.">
 
   <!-- Favicon: signal-seed dot on soil-graphite -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231a1a18'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23c5f26b'/%3E%3C/svg%3E">
@@ -25,46 +25,34 @@
 
 <header class="hero">
   <nav class="nav">
-    <span class="brand">Sprout · project demo page</span>
+    <span class="brand">Sprout · demo</span>
+    <a href="#demo">Try it</a>
     <a href="#truth">What is real</a>
-    <a href="#demo">Demo</a>
-    <a href="#gemma">Gemma 4</a>
-    <a href="#safety">Safety</a>
-    <a href="https://github.com/zigiella/sprout">GitHub</a>
+    <a href="#get">Get the apps</a>
+    <a href="https://github.com/zigiella/sprout">Project repo →</a>
   </nav>
   <section class="hero-inner">
-    <p class="kicker">Local-first AI · Gemma 4 · open source</p>
-    <h1>Water decisions for plots the network forgets.</h1>
-    <p class="tagline">When the network is absent — and the human is far — local criteria still irrigate.</p>
-    <p class="lede">Sprout is a safety-bounded Gemma 4 decision network for irrigation under absence: Rhizome decides beside the water, Pollen turns each visit into expiring criteria, Meristem refines policy at home, and an ESP32 safety coprocessor owns the physical veto.</p>
+    <p class="kicker">Interactive demo · contract simulator</p>
+    <h1>Try Sprout in your browser.</h1>
+    <p class="tagline">A deterministic demo of the three-node decision network. Inspect contracts, TTLs, receipts and refusal paths — no model download, no cloud API, no login.</p>
+    <p class="lede">
+      <strong>This page is the live demo.</strong> The full project — architecture, code, writeup and the 3-minute video — lives in the repo and in Kaggle. Use the links below to step into the project; scroll down to play with the demo.
+    </p>
     <div class="cta-row">
-      <a class="btn primary" href="https://www.youtube.com/watch?v=D9ETS4EPnxI" id="video-link" rel="noopener" target="_blank">Watch the 3-minute demo</a>
-      <a class="btn" href="#demo">Try the architecture demo</a>
-      <a class="btn ghost" href="https://github.com/zigiella/sprout/blob/main/SUBMISSION.md">Reviewer quickstart</a>
+      <a class="btn primary" href="#demo">Scroll to the demo ↓</a>
+      <a class="btn" href="https://www.youtube.com/watch?v=D9ETS4EPnxI" rel="noopener" target="_blank">Watch the 3-minute video</a>
+      <a class="btn ghost" href="https://github.com/zigiella/sprout">Project on GitHub</a>
+      <a class="btn ghost" href="https://github.com/zigiella/sprout/blob/main/writeup/draft.md">Read the writeup</a>
     </div>
   </section>
 </header>
 
 <main>
 
-<section id="truth" class="truth container">
-  <h2>What is real in this submission</h2>
-  <div class="truth-grid">
-    <div><strong>Rhizome</strong><span>Jetson + Gemma 4 E2B via <code>llama.cpp</code></span></div>
-    <div><strong>Pollen</strong><span>Android device path + Gemma 4 E4B via LiteRT-LM, native audio</span></div>
-    <div><strong>ESP32</strong><span>Physical board, pump/soil supervised <code>TEST_ONLY</code> path</span></div>
-    <div><strong>Meristem</strong><span>Home laptop evaluator + Gemma 4 E4B tool-calling</span></div>
-  </div>
-  <p class="note">The browser demo below is <strong>deterministic by design</strong>. It lets reviewers inspect contracts, TTLs, receipts and refusal paths instantly; it does not pretend to run Gemma 4 in the browser. Real Gemma 4 execution lives in the Android, Jetson and laptop paths documented in the repo.</p>
-  <figure class="diagram">
-    <img src="media/architecture_overview.svg" alt="Sprout architecture overview: Pollen Android + Rhizome Jetson + ESP32 physical veto + Meristem home laptop" loading="lazy">
-    <figcaption>Sprout distributes irrigation criteria across three Gemma 4 nodes with different jurisdictions and one physical veto layer.</figcaption>
-  </figure>
-</section>
-
-<section id="demo" class="container">
-  <h2>Try the three jurisdictions</h2>
-  <p class="muted">Click any node to inspect its contract live. <strong>Mock code is public</strong> in <a href="https://github.com/zigiella/sprout/blob/main/landing-demo/js/api.js">js/api.js</a>.</p>
+<section id="demo" class="container demo-first">
+  <p class="eyebrow">The demo</p>
+  <h2>Three nodes. Three contracts. Try each.</h2>
+  <p class="muted">Click a node to inspect its real contract in the terminal below. The simulator is deterministic — it shows the exact JSON shapes, TTLs and refusal paths the real system produces. <a href="https://github.com/zigiella/sprout/blob/main/landing-demo/js/api.js">Source of the mock</a>.</p>
   <div class="cards">
     <article>
       <p class="node">Rhizome · minutes</p>
@@ -99,37 +87,26 @@
   </div>
 </section>
 
-<section id="gemma" class="container split">
-  <div>
-    <h2>How Gemma 4 is used</h2>
-    <ul>
-      <li><strong>E2B on Rhizome:</strong> short, bounded local rationales over decisions already closed by deterministic gates. Runs via <code>llama.cpp</code> on Jetson Orin Nano Super.</li>
-      <li><strong>E4B on Pollen:</strong> native audio multimodal on Android via LiteRT-LM (<code>com.google.ai.edge.litertlm:litertlm-android:0.10.0</code>). Voice → validated <code>MissionPatch</code> with no STT pipeline.</li>
-      <li><strong>E4B on Meristem:</strong> tool-calling-assisted policy review on a home laptop via <code>llama.cpp</code>.</li>
-    </ul>
-    <p class="muted">Each node has a different model profile. Configuration is a property of jurisdiction, not a global choice.</p>
+<section id="truth" class="truth container">
+  <p class="eyebrow">Honesty floor</p>
+  <h2>What is real vs what is in your browser</h2>
+  <p class="note">This page does not pretend to run Gemma 4 in your browser. It is a <strong>deterministic contract simulator</strong>. The real Gemma 4 execution lives in the Android, Jetson and laptop paths documented in the repo. Below is what the system does for real:</p>
+  <div class="truth-grid">
+    <div><strong>Rhizome</strong><span>Jetson + Gemma 4 E2B via <code>llama.cpp</code></span></div>
+    <div><strong>Pollen</strong><span>Android device path + Gemma 4 E4B via LiteRT-LM, native audio</span></div>
+    <div><strong>ESP32</strong><span>Physical board, pump/soil supervised <code>TEST_ONLY</code> path</span></div>
+    <div><strong>Meristem</strong><span>Home laptop evaluator + Gemma 4 E4B tool-calling</span></div>
   </div>
-  <blockquote>Gemma proposes language, structure and rationale. The physical layer still owns water.</blockquote>
-</section>
-
-<section id="safety" class="container safety">
-  <h2>Safety &amp; Trust</h2>
-  <ol>
-    <li><strong>Physical layer prevails.</strong> The ESP32 firmware enforces five hard rules (<code>JETSON_HEARTBEAT_LOST</code>, <code>TANK_LOW</code>, <code>EVENT_DURATION_OUT_OF_RANGE</code>, <code>NO_FLOW_DETECTED</code>, <code>ALERT_LATCHED</code>). No LLM can weaken them.</li>
-    <li><strong>Every intelligence has jurisdiction.</strong> Rhizome arbitrates in minutes. Pollen mediates within visit TTL. Meristem refines in days.</li>
-    <li><strong>Every criterion expires.</strong> <code>MissionPatch</code>, <code>WeatherDigest</code> and <code>PolicyPacket</code> carry TTL or validity windows. Late objects are rejected, not silently obeyed.</li>
-    <li><strong>Refusal is a feature.</strong> When Pollen does not understand a voice instruction, it asks for rephrasing. When Rhizome sees an expired policy, it rejects. When the ESP32 detects an unsafe condition, it blocks.</li>
-    <li><strong>A second local voice audits without authority.</strong> <code>ShadowSkeptic</code> records objections inside Rhizome with <code>affects_decision=false</code>. Even skepticism has jurisdiction.</li>
-  </ol>
   <figure class="diagram">
-    <img src="media/authority_stack.svg" alt="Authority stack: ESP32 prevails (physical), Rhizome arbitrates (minutes), Pollen mediates (visit TTL), Meristem refines (days)" loading="lazy">
-    <figcaption>The farther a node is from the water, the less physical authority it has. The ESP32 can always say no.</figcaption>
+    <img src="media/architecture_overview.svg" alt="Sprout architecture overview: ESP32 + Rhizome (Field) + Pollen (Mobile) + Meristem (Home), with MissionPatch and DecisionReceipt flowing between them" loading="lazy">
+    <figcaption>Full architecture is explained in the <a href="https://github.com/zigiella/sprout/blob/main/writeup/draft.md">Kaggle writeup</a>.</figcaption>
   </figure>
 </section>
 
 <section id="get" class="container">
-  <h2>Get the apps and the hardware path</h2>
-  <p class="muted">Beyond the browser simulator, Sprout is real software you can install and real hardware you can build.</p>
+  <p class="eyebrow">Beyond the browser</p>
+  <h2>Get the apps. Or build the hardware.</h2>
+  <p class="muted">Sprout is real software you can install and real hardware you can build.</p>
   <div class="cards">
     <article>
       <p class="node">Pollen · demo flavor</p>
@@ -149,7 +126,7 @@
 # Side-load the model
 adb push gemma-4-E4B-it.litertlm \
   /data/local/tmp/gemma-4-E4B-it.litertlm</pre>
-      <p class="muted small">Requires Android 12+ (API 31+), 12 GB RAM recommended, NPU/GPU capable device. CPU runtime is stable but slow.</p>
+      <p class="muted small">Requires Android 12+ (API 31+), 12 GB RAM recommended, NPU/GPU capable device.</p>
     </article>
     <article>
       <p class="node">Hardware proof</p>
@@ -163,15 +140,15 @@ adb push gemma-4-E4B-it.litertlm \
   </div>
 </section>
 
-<section class="container">
-  <h2>What comes next</h2>
-  <ul>
-    <li><strong>A second voice with bounded authority</strong> — promote <code>ShadowSkeptic</code> to a Gemma 4 auditor that can question without overriding.</li>
-    <li><strong>The farmer's language</strong> — fine-tune Gemma 4 E4B for minority agricultural languages.</li>
-    <li><strong>More senses</strong> — vision, multi-zone irrigation, local weather station, solar power.</li>
-    <li><strong>Talkback</strong> — full-duplex voice, two-way conversation in the field.</li>
-  </ul>
-  <p><a class="btn ghost" href="https://github.com/zigiella/sprout/blob/main/ROADMAP.md">Read the full roadmap →</a></p>
+<section class="container project-cta">
+  <h2>The full project lives here.</h2>
+  <p class="lede-muted">This page is just the demo. The architecture, the code, the writeup and the 3-minute video are where the project actually lives:</p>
+  <div class="cta-row">
+    <a class="btn primary" href="https://www.youtube.com/watch?v=D9ETS4EPnxI" rel="noopener" target="_blank">Watch the 3-minute video</a>
+    <a class="btn" href="https://github.com/zigiella/sprout">Project on GitHub</a>
+    <a class="btn ghost" href="https://github.com/zigiella/sprout/blob/main/writeup/draft.md">Kaggle writeup</a>
+    <a class="btn ghost" href="https://github.com/zigiella/sprout/blob/main/SUBMISSION.md">Submission guide</a>
+  </div>
 </section>
 
 </main>
