@@ -99,7 +99,11 @@
   </div>
   <figure class="diagram">
     <img src="media/architecture_overview.svg" alt="Sprout architecture overview: ESP32 + Rhizome (Field) + Pollen (Mobile) + Meristem (Home), with MissionPatch and DecisionReceipt flowing between them" loading="lazy">
-    <figcaption>Full architecture is explained in the <a href="https://github.com/zigiella/sprout/blob/main/writeup/draft.md">writeup</a>.</figcaption>
+    <figcaption>Three jurisdictions, one water decision. Full architecture is explained in the <a href="https://github.com/zigiella/sprout/blob/main/writeup/draft.md">writeup</a>.</figcaption>
+  </figure>
+  <figure class="diagram">
+    <img src="media/authority_stack.svg" alt="Sprout authority stack: Gemma on Rhizome proposes a candidate action; the ESP32 validates the physical envelope (tank, duty cycle, flow) and produces a final action with a DecisionReceipt. The model never touches the valve directly." loading="lazy">
+    <figcaption>The farther a node is from the water, the less physical authority it has. The ESP32 can always say no. <em>Every intelligence has jurisdiction. And expiry.</em></figcaption>
   </figure>
 </section>
 
