@@ -73,7 +73,7 @@ The model configuration work is part of the engineering. We tested context size,
 
 Each node has a different model profile. Rhizome needs short, stable, bounded outputs. Pollen needs audio understanding, refusal, and schema fidelity. Meristem spends more time on policy review and rationale. Model configuration becomes a property of jurisdiction.
 
-## Refusable by design
+## Expiring authority
 
 Sprout signs decisions, expires authority, and records refusals.
 
