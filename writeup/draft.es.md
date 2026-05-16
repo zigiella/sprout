@@ -1,6 +1,6 @@
 # Sprout: criterios locales para el agua cuando no hay nadie
 
-**Subtítulo:** IA abierta y local para decisiones sobre el agua bajo ausencia, con autoridad acotada, recibos firmados y un veto físico.
+**Subtítulo:** IA abierta y local para decisiones sobre el agua bajo ausencia, con autoridad acotada y caduca, recibos firmados y un veto físico.
 
 ## El problema
 
@@ -137,7 +137,7 @@ El idioma forma parte del roadmap. Sprout mantiene los contratos internos establ
 
 Sprout preserva el criterio de campo durante la ausencia. Convierte visitas en inteligencia operativa. Rechaza instrucciones caducadas. Registra lo que pasó. Le da a la IA local una segunda voz escéptica antes de darle a esa voz cualquier autoridad.
 
-**Sprout es IA abierta y local para decisiones sobre el agua bajo ausencia: autoridad acotada, recibos firmados, una segunda voz local que audita sin autoridad y una capa física que puede decir no.**
+**Sprout es IA abierta y local para decisiones sobre el agua bajo ausencia: autoridad acotada y caduca, recibos firmados, una segunda voz local que audita sin autoridad y una capa física que puede decir no.**
 
 ---
 

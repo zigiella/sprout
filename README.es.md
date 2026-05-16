@@ -169,7 +169,7 @@ cd code/pollen
 ./gradlew testDemoDebugUnitTest
 ```
 
-El flavor demo usa inferencia mock determinista, así que funciona sin un archivo de modelo de 3 GB. Instala en cualquier Android 12+ (físico o emulador) con `adb install app/build/outputs/apk/demo/debug/app-demo-debug.apk`.
+El flavor demo usa inferencia mock determinista, así que funciona sin un archivo de modelo de 3 GB. Instala en cualquier Android 12+ (físico o emulador) con `adb install app/build/outputs/apk/demo/debug/pollen-demo.apk`.
 
 ### Pollen flavor device con Gemma 4 E4B
 
