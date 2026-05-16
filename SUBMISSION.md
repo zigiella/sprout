@@ -131,7 +131,7 @@ If you only have **5 minutes**:
 
 If you have **30 minutes**:
 
-4. Read [`docs/01_architecture.md`](docs/01_architecture.md) for the three-node design.
+4. Read [`docs/01_architecture.en.md`](docs/01_architecture.en.md) for the three-node design.
 5. Read [`docs/30_safety_rules.en.md`](docs/30_safety_rules.en.md) for the ESP32 hard limits.
 6. Run `make test` in `code/meristem_node/` to see the deterministic evaluator + LLM smoke pass.
 7. Build and install the Pollen demo flavor: `cd code/pollen && ./gradlew assembleDemoDebug && adb install app/build/outputs/apk/demo/debug/pollen-demo.apk`.

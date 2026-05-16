@@ -7,7 +7,7 @@ Documentacion del producto y la arquitectura. Orden de lectura sugerido por nume
 | # | Documento | Tema |
 |---|-----------|------|
 | 00 | [00_brief.md](00_brief.md) | Brief inicial del proyecto |
-| 01 | [01_architecture.md](01_architecture.md) | Arquitectura del sistema y alcance del MVP |
+| 01 | [01_architecture.en.md](01_architecture.en.md) · [ES histórico](01_architecture.md) | System architecture (EN canonical, ES day-15 preserved as evidence of process) |
 | 02 | [02_bom.md](02_bom.md) | Bill of materials (hardware) |
 | 10 | [10_rhizome_spec.md](10_rhizome_spec.md) | Spec del nodo Rhizome (Jetson) |
 | 11 | [11_pollen_spec.md](11_pollen_spec.md) | Spec del nodo Pollen (Pixel 10 Pro) |
