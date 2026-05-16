@@ -116,6 +116,21 @@ Test reports are uploaded as an artifact (`pollen-test-reports`) for post-failur
 
 **Hard rule:** a PR with red CI does not get merged. Documented in CONTRIBUTING §9.
 
+## Connecting to a real Meristem and Rhizome (current state)
+
+In the MVP the base URLs that Pollen uses to reach Meristem and Rhizome are hardcoded in the source:
+
+- `code/pollen/app/src/main/kotlin/net/sprout/pollen/ui/VisitarMeristemScreen.kt:46` → `MeristemNetworkClient("http://192.168.1.36:13000/")`
+- `code/pollen/app/src/main/kotlin/net/sprout/pollen/ui/VisitarRhizomeScreen.kt:46` → `RhizomeNetworkClient("http://192.168.1.60:$port/")` (port 13010 for `rhizome_01`, 13020 for `rhizome_02`)
+
+To connect the device flavor APK to a different Meristem or Rhizome instance, currently the path is:
+
+1. Edit those two lines with the IPs of the target Meristem and Rhizome.
+2. Rebuild the device flavor APK with `./gradlew assembleDeviceRelease`.
+3. Side-load the rebuilt APK to the phone.
+
+A runtime Settings screen (two URL fields, persisted via `PollenStore` / SharedPreferences) and mDNS / NSD auto-discovery are roadmap for v1.1. Spec lives in [`bitacora/2026-05-16_spec-settings-screen-pollen_cambium-a-floema.md`](../../bitacora/2026-05-16_spec-settings-screen-pollen_cambium-a-floema.md).
+
 ## Anti-nonsense logic (Mini Evaluator)
 
 `MiniEvaluator.kt` applies four deterministic checks before applying any `MissionPatch` proposed by the LLM:
