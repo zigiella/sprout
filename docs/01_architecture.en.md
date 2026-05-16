@@ -1,6 +1,6 @@
 # Sprout architecture
 
-> Local-first AI for water decisions under absence, with bounded, expiring authority, signed receipts and a physical veto.
+> Local-first AI for water decisions under absence, with bounded, expiring authority, auditable receipts and a physical veto.
 
 This document is the canonical architectural reference for Sprout. It describes the system as it actually exists in [`main`](https://github.com/zigiella/sprout/tree/main) at v1.0 (Gemma 4 Good Hackathon submission), not as it was originally specced. The earlier Spanish working draft is preserved at [`01_architecture.md`](01_architecture.md) as evidence of process.
 
@@ -22,7 +22,7 @@ Physical layer prevails → Rhizome arbitrates → Pollen mediates → Meristem 
 
 Three corollaries follow from this single invariant:
 
-1. **Physical authority increases near the water.** The ESP32 owns the valve. No model, agent or human override can move water without an ESP32 ACK.
+1. **Physical authority increases near the water.** The ESP32 owns the actuator path (relay + pump). No model, agent or human override can move water without an ESP32 ACK.
 2. **Symbolic authority decreases near the water.** Meristem can write durable policy, but cannot execute in the field. Pollen can compile a `MissionPatch`, but only Rhizome can apply it under safety gates.
 3. **Every criterion expires.** A `MissionPatch` carries a short TTL (visit-scope). A `PolicyPacket` carries a validity window (policy-scope). A `WeatherDigest` carries a freshness window. Late objects are rejected and logged with a legible reason.
 
@@ -38,29 +38,29 @@ The field carries **two distinct intelligences** with explicit jurisdictions:
 
 **Rhizome** runs on Jetson Orin Nano Super with **Gemma 4 E2B** via `llama.cpp`. It:
 
-- reads local telemetry from the ESP32 over USB-CDC serial (soil moisture, tank level, heartbeat, pump state);
-- builds a `RhizomeSnapshot`;
+- reads local telemetry from the ESP32 over USB-CDC serial (soil moisture, heartbeat, pump state, plus tank level and flow when those sensors are wired);
+- builds a `RhizomeSnapshot` — missing tank or flow readings become explicit `tank_level_unavailable` / `flow_sensor_unavailable` contradictions, not silent zeros;
 - applies a deterministic gate (telemetry, active policy, TTL, cooldown, tank state, safety state, execution mode);
-- chooses among `WATER`, `DEFER`, `SKIP` and `BLOCK`;
-- emits a candidate action plus a signed `DecisionReceipt`;
+- chooses among `WATER`, `DEFER`, `SKIP`, `BLOCK` and `ALERT`;
+- emits a candidate action plus a versioned `DecisionReceipt` — the schema reserves a `signature` field; cryptographic signing is wired as a placeholder (`signature=None`) and reserved for a follow-up milestone;
 - when configured, asks Gemma 4 E2B to write a short human-readable rationale over the already-closed decision.
 
 **Rhizome does not authorize water.** The decision is closed before Gemma writes anything; Gemma improves the *explanation*, not the *action*. This isolates LLM drift risk from the safety hierarchy.
 
 Two runtime profiles are documented:
 
-- `safe-cpu` — `-ngl 0 --device none --no-op-offload --reasoning off`. The contractual demo path. Validated 18/18 on the Rhizome v0.5 prompt battery. Slow but reliable.
+- `safe-cpu` — `-ngl 0 --device none --no-op-offload --reasoning off`. The contractual demo path. The Rhizome v0.5 prompt battery reaches 18/18 on this profile. Later sensitivity in the strict-helper RH02 path is documented separately and does not affect the physical action chain. Slow but reliable.
 - `gpu-experimental` — `-ngl 99 --fit off --no-op-offload --reasoning off`. Loads 36/36 layers to GPU. Faster but not contractual (RD04 shows safe semantic drift `need_clarification` instead of `ok`). Not promoted to demo.
 
-**ESP32-S3** runs custom **ESP-IDF firmware** and owns the physical layer. Its state machine is `SAFE_IDLE → READY → EXECUTING → DEGRADED → ALERT_LATCHED`. It validates every irrigation command against five hard rules and rejects with a legible reason if any fails:
+**ESP32-S3** runs custom **ESP-IDF firmware** and owns the physical layer. Its state machine is `SAFE_IDLE → READY → EXECUTING → DEGRADED → ALERT_LATCHED`. It validates every irrigation command against five canonical hard rules and rejects with a legible reason code if any fails:
 
-- `JETSON_HEARTBEAT_LOST`
-- `TANK_LOW`
-- `EVENT_DURATION_OUT_OF_RANGE`
-- `NO_FLOW_DETECTED`
-- `ALERT_LATCHED`
+- `JETSON_HEARTBEAT_LOST` — validated on real hardware.
+- `TANK_LOW` — contract path. The tank level sensor is not wired in the pot MVP; the firmware accepts simulated values via `SET_SENSOR_STUB TANK_LEVEL_PCT` and the rule exercises correctly with stubs.
+- `EVENT_DURATION_OUT_OF_RANGE` — validated on real hardware.
+- `NO_FLOW_DETECTED` — contract path. The flow sensor is not wired in the pot MVP; same stub mechanism as `TANK_LOW`.
+- `ALERT_LATCHED` — validated on real hardware.
 
-The physical bench includes a 12V pump with active-low relay on `GPIO16`, a capacitive soil moisture sensor on `GPIO4 (ADC)`, a `BME280` ambient sensor over I²C on `GPIO8/GPIO9`, and a tank level reading.
+The physical bench includes a 12V pump with active-low relay on `GPIO16`, a capacitive soil moisture sensor on `GPIO4 (ADC)` and a `BME280` ambient sensor over I²C on `GPIO8/GPIO9`. Tank level and flow remain stubbed inputs in the MVP — see `30_safety_rules.en.md` and `hardware/firmware_esp32/README.md` for the stub commands.
 
 **Submission boundary:** the autonomous `WATER` command remains conservative in `DRY_RUN`; supervised physical actuation is demonstrated through `PUMP_PULSE <ms>` returning `execution=TEST_ONLY`. Day 27 validated 12 supervised pulses on a real pot with measurable soil moisture drop (raw 2278 → 1289 after pulse). The full hard-rules contract is documented in [`30_safety_rules.en.md`](30_safety_rules.en.md).
 
@@ -98,11 +98,11 @@ Meristem ingests bundles that Pollen carries from each Rhizome visit (snapshot +
 Two critical separations:
 
 - **The evaluator never depends on the model.** The four rules close on facts. Gemma 4 E4B only writes the `rationale` (technical + operator-friendly prose). This isolates model drift from the policy hierarchy.
-- **Tool calling is used for the operator-facing chat**, not for irrigation decisions. The chat is read-only over recent history, cross-target comparison and previous-policy diff.
+- **Tool calling can enrich the rationale** of both the operator-facing chat and the `/visit` response (recent-history lookup, cross-target comparison, previous-policy diff). The four-rule evaluator itself never depends on tool output; tool calls are descriptive, not authoritative.
 
 Pollen talks to Meristem either over WebSocket or a parallel HTTP fallback (added after a real field test on day 27), discovered via mDNS as `meristem.local:13000`. **Nothing leaves the home network** — no cloud, no accounts, no telemetry.
 
-A `PolicyPacket` carries a validity window. Its authority belongs to days, not seconds. Rhizome validates it before use. The ESP32 remains above it in the safety hierarchy.
+A `PolicyPacket` carries a validity window. Its authority belongs to days, not seconds. Rhizome validates it before use. The ESP32 remains above it in the safety hierarchy. Policies emitted by Meristem carry `policy_origin="meristem-batch"` and `policy_scope="durable"`; transient policies generated by Pollen during a visit carry `policy_origin="pollen-visit"` and `policy_scope="transient"` with a maximum TTL of 12 h.
 
 ### 3.4 Why not a single controller
 
@@ -126,7 +126,7 @@ The MVP runs on **ten JSON contracts**, all documented in [`20_data_contracts.md
 | Contract | Origin | Validity | Purpose |
 |---|---|---|---|
 | `RhizomeSnapshot` | Rhizome | snapshot timestamp + sensor freshness | Current local state of the plot |
-| `DecisionReceipt` | Rhizome | permanent (audit trail) | Signed record of one decision: evidence, candidate, ESP32 outcome, final action, rationale |
+| `DecisionReceipt` | Rhizome | permanent (audit trail) | Versioned record of one decision: evidence, candidate, ESP32 outcome, final action, rationale. Schema reserves a `signature` field (currently `None`, signing wired as placeholder for follow-up milestone). |
 | `AlertEvent` | Rhizome / ESP32 | until acknowledged | Operator-visible safety event |
 | `MissionPatch` | Pollen | short TTL (hours) | Human intent compiled from voice, scoped to the visit |
 | `ValidationStamp` | Pollen | snapshot moment | Operator confirmation or dispute of Rhizome state |
@@ -164,7 +164,7 @@ Inside Rhizome, two local agents run in parallel over the same `RhizomeSnapshot`
 
 The boundary is intentional. The second agent gives Sprout a precise local jurisdiction: observe, question, record. Each disagreement becomes a measurable event. Proven recurring objections can later be promoted into deterministic gates. **Even skepticism has jurisdiction.**
 
-Implementation lives in `code/rhizome/src/rhizome_steward.py` (steward) plus the `ShadowSkeptic` module. Logs are stored under `~/.local/share/sprout/rhizome_steward/shadow_skeptic/YYYY-MM-DD.jsonl`.
+Both the Operational Steward and the `ShadowSkeptic` class live in `code/rhizome/src/rhizome_steward.py`. Skeptic observations are stored under `~/.local/share/sprout/rhizome_steward/shadow_skeptic/YYYY-MM-DD.jsonl`.
 
 ### 5.3 Why no model touches the valve
 
@@ -185,12 +185,12 @@ A typical irrigation decision moves through this chain:
 2. Rhizome reads telemetry  → RhizomeSnapshot
 3. Rhizome applies deterministic gates  (policy, TTL, cooldown, tank, safety)
 4. Optional: ShadowSkeptic logs objection  (affects_decision=false)
-5. Rhizome chooses candidate action  → DRY_RUN or WATER_A/WATER_B
+5. Rhizome chooses candidate action  → DRY_RUN, WATER_A (single physical plot in MVP), DEFER, SKIP, BLOCK or ALERT
 6. Optional: Gemma 4 E2B writes rationale  (over already-closed decision)
 7. Rhizome emits command to ESP32  → over serial
 8. ESP32 validates against five hard rules
 9. ESP32 ACK / REJECT  → with reason code
-10. Rhizome persists signed DecisionReceipt
+10. Rhizome persists versioned DecisionReceipt  (signature reserved, `None` in MVP)
 11. Pollen visits Rhizome (next time the human walks by)
 12. Pollen pulls /summary/since · /receipts · /snapshot/latest
 13. Pollen optionally compiles voice → MissionPatch (with TTL)
@@ -199,10 +199,11 @@ A typical irrigation decision moves through this chain:
 16. Rhizome activates transient policy for next decision window
 17. Pollen carries SyncBundle home to Meristem (eventual)
 18. Meristem evaluates bundle (four-rule evaluator) → PolicyPacket
-19. PolicyPacket returns to Rhizome via Pollen on the next visit
+19. Optional: Gemma 4 E4B enriches PolicyPacket rationale via tool calling (over already-closed evaluation)
+20. PolicyPacket returns to Rhizome via Pollen on the next visit
 ```
 
-Steps 1–10 are real-time, local, and never require the network. Steps 11–14 are visit-scoped. Steps 17–19 are eventual.
+Steps 1–10 are real-time, local, and never require the network. Steps 11–16 are visit-scoped. Steps 17–20 are eventual.
 
 ---
 
@@ -212,7 +213,7 @@ Steps 1–10 are real-time, local, and never require the network. Steps 11–14 
 |---|---|---|---|---|
 | Rhizome | Jetson Orin Nano Super | Gemma 4 E2B (Q4_K_S) | `llama.cpp` | `safe-cpu` contractual; `gpu-experimental` for iteration only |
 | Pollen | Pixel 10 Pro (Android 12+) | Gemma 4 E4B (Q4_K_M) | LiteRT-LM (Google AI Edge) | Native multimodal audio; demo flavor uses mock; device flavor side-loads model |
-| Meristem | Home laptop | Gemma 4 E4B (Q4_K_M, ~5 GB) | `llama.cpp` (`llama-server`) | Tool calling validated functional day 14; chat is read-only |
+| Meristem | Home laptop | Gemma 4 E4B (Q4_K_M, ~5 GB) | `llama.cpp` (`llama-server`) | Adapter tool-calling capability validated day 14; end-to-end with E4B + `tool_calls_recovered_from_text=1` validated day 26 (smoke v6) |
 | ESP32 | ESP32-S3 N16R8 | n/a (no model) | ESP-IDF | Five hard rules; state machine; physical veto |
 
 `llama.cpp` is the shared runtime for Rhizome and Meristem — two distinct resource-constrained deployments serviced by the same binary family. LiteRT-LM is the only path for native audio multimodal Gemma 4 on Android in 2026.
@@ -231,16 +232,17 @@ We are explicit about the boundary between **validated execution** and **contrac
 
 ### Validated on physical hardware
 
-- Rhizome on Jetson Orin Nano Super running Gemma 4 E2B (Q4_K_S) via `llama.cpp` — battery of 18 prompts, 18/18 envelope-valid + status-match.
-- ESP32-S3 firmware on real hardware — state machine `SAFE_IDLE / READY / EXECUTING / DEGRADED / ALERT_LATCHED`. Rejects out-of-range duration, lost heartbeat, low tank, latched alert.
+- Rhizome on Jetson Orin Nano Super running Gemma 4 E2B (Q4_K_S) via `llama.cpp` — Rhizome v0.5 `safe-cpu` battery reached 18/18 envelope-valid + status-match. Later strict-helper RH02 sensitivity is documented separately and does not affect the physical action path.
+- ESP32-S3 firmware on real hardware — state machine `SAFE_IDLE / READY / EXECUTING / DEGRADED / ALERT_LATCHED`. Three of the five hard rules are exercised against real sensors (`JETSON_HEARTBEAT_LOST`, `EVENT_DURATION_OUT_OF_RANGE`, `ALERT_LATCHED`); `TANK_LOW` and `NO_FLOW_DETECTED` are contract paths exercised via `SET_SENSOR_STUB` (tank/flow sensors are not wired in the pot MVP).
 - End-to-end Pollen ↔ Rhizome ↔ ESP32 — HTTP polling from Android to Jetson; Rhizome decides locally; commands flow to ESP32; ESP32 validates and (in supervised mode) actuates a 12V pump on a real pot.
-- 12 supervised water pulses observed and recorded on day 27 pilot run, with `ACCEPT_ESP32_TEST_ONLY_PULSE_AS_EXECUTED=1` enabled after operator-validated supervision.
-- Meristem deterministic evaluator + Gemma 4 E4B tool calling — 5/5 mini-battery PASS, with `tool_calls_recovered_from_text=1`.
+- 12 supervised water pulses observed and recorded on day 27 pilot run, with `ACCEPT_ESP32_TEST_ONLY_PULSE_AS_EXECUTED=1` enabled after operator-validated supervision. Soil moisture raw reading dropped from 2278 to 1289 after the pulse series, consistent with water reaching the substrate.
+- Meristem deterministic four-rule evaluator — 5/5 mini-battery PASS on day 24 (evaluator only, no model required).
+- Meristem end-to-end with Gemma 4 E4B + tool calling — day 26 smoke v6 ran successfully with `tool_calls_recovered_from_text=1` on the `chat_alert` path.
 
 ### Contract demonstrated in repo + browser
 
 - The browser landing demo at `landing-demo/` runs deterministic mocks (code in `landing-demo/js/api.js`) so a judge can inspect contracts without downloading models. The mocks are intentionally deterministic, not "fake".
-- All ten JSON contracts of the MVP are documented and exercised by tests in `code/shared/`.
+- All ten JSON contracts of the MVP are documented in [`20_data_contracts.md`](20_data_contracts.md). The core subset (`RhizomeSnapshot`, `DecisionReceipt`, `MissionPatch`, `ValidationStamp`, `WeatherDigest`, `PolicyPacket`) is exercised by tests in `code/shared/`; the remaining contracts (`AlertEvent`, `VisitAmendment`, `FieldVisit`, `SyncBundle`) are documented and instantiated in code but not yet covered by dedicated tests.
 
 ### Natural extensions noted
 
@@ -253,7 +255,7 @@ We are explicit about the boundary between **validated execution** and **contrac
 ## 9. Out of scope (honest)
 
 - **Production `WATER` semantics with flow-loop closure.** The MVP keeps autonomous `WATER` in `DRY_RUN`; supervised actuation runs via `PUMP_PULSE` `TEST_ONLY`. Closing the loop with a real flowmeter is the next milestone.
-- **Multi-zone simultaneous irrigation.** The architecture supports it (multiple plots, multiple Rhizomes), but the MVP runs on two pots with one Rhizome and one ESP32.
+- **Multi-zone simultaneous irrigation.** The architecture supports it (multiple plots, multiple Rhizomes). The physical MVP runs on one Rhizome with one ESP32 and a single physical sensing path on one pot; `rhizome_02` is a host-side simulation for the multi-Rhizome interoperability demo, not a second physical node.
 - **Solar power.** Currently mains-powered; the bench includes no solar harvest.
 - **Vision evidence as authoritative.** Camera input is planned to add visible plant evidence; in the MVP it is non-authoritative.
 - **Fine-tuned Gemma 4 for local agricultural vocabularies.** Scaffolded in `code/finetune/` (Unsloth path) but not in the MVP.
@@ -271,7 +273,7 @@ We are explicit about the boundary between **validated execution** and **contrac
 | Pollen node spec | [`11_pollen_spec.md`](11_pollen_spec.md) |
 | Meristem node spec | [`12_meristem_spec.md`](12_meristem_spec.md) |
 | ESP32 firmware spec | [`13_esp32_spec.md`](13_esp32_spec.md) |
-| Gemma 4 naming compliance | [`40_naming_guidelines.md`](40_naming_guidelines.md) · external guidelines summary in [`../docs/external/README.md`](external/README.md) |
+| Gemma 4 naming compliance | external Google guidelines summary in [`external/README.md`](external/README.md) (canonical Sprout compliance audit) |
 | Rhizome runtime on Jetson | [`../code/rhizome/jetson/README.md`](../code/rhizome/jetson/README.md) |
 | Pollen Android app | [`../code/pollen/README.md`](../code/pollen/README.md) |
 | Meristem service | [`../code/meristem_node/README.md`](../code/meristem_node/README.md) |
