@@ -19,8 +19,28 @@
 # Documentación: https://git-scm.com/docs/gitmailmap
 # ----------------------------------------------------------
 
-# Mapea cualquier trailer Co-Authored-By: <noreply@anthropic.com> a zigiella
-zigiella <beatriz.m.v@gmail.com>                <noreply@anthropic.com>
+# Mapea trailers Co-Authored-By: Claude ... <noreply@anthropic.com> a zigiella.
+# Día 24 (9 may) probamos solo con el email; GitHub Contributors siguió mostrando
+# Claude tras 7 días. Día 31 (16 may) añadimos formas más específicas (Name+Email)
+# que el widget de Contributors de GitHub deberia honrar al recomputar.
+#
+# Si tras 48h GitHub sigue mostrando Claude, hay que ir a Opción C
+# (rewrite de historia con git filter-repo).
+
+# Forma 3 del mailmap: Proper Name <proper@email> <commit@email>
+zigiella <beatriz.m.v@gmail.com>                                            <noreply@anthropic.com>
+
+# Forma 4 del mailmap: Proper Name <proper@email> Commit Name <commit@email>
+# Cubre la variante exacta del trailer que añade Claude Code.
+zigiella <beatriz.m.v@gmail.com>  Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+zigiella <beatriz.m.v@gmail.com>  Claude <noreply@anthropic.com>
+zigiella <beatriz.m.v@gmail.com>  Claude Opus 4 <noreply@anthropic.com>
+zigiella <beatriz.m.v@gmail.com>  Claude Opus 4.5 <noreply@anthropic.com>
+zigiella <beatriz.m.v@gmail.com>  Claude Opus 4.6 <noreply@anthropic.com>
+zigiella <beatriz.m.v@gmail.com>  Claude Opus 4.7 <noreply@anthropic.com>
+zigiella <beatriz.m.v@gmail.com>  Claude Sonnet 4 <noreply@anthropic.com>
+zigiella <beatriz.m.v@gmail.com>  Claude Sonnet 4.5 <noreply@anthropic.com>
+zigiella <beatriz.m.v@gmail.com>  Claude Code <noreply@anthropic.com>
 
 # Consolidación de identidades Cambium (varios sufijos de email
 # usados durante el proyecto — todos referencian al mismo agente)
