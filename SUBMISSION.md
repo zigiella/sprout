@@ -54,7 +54,7 @@ We want to be very explicit about this distinction. A hackathon project that ove
 - The **browser landing demo** at `landing-demo/` runs **deterministic mocks** (code in `landing-demo/js/api.js`, read it) so a judge can inspect the contracts without downloading models or using cloud APIs. The mocks are intentionally deterministic, not "fake" — they let you scrutinize the shape of every JSON object the real system produces.
 - **All ten JSON contracts** of the MVP (`RhizomeSnapshot`, `DecisionReceipt`, `AlertEvent`, `MissionPatch`, `ValidationStamp`, `WeatherDigest`, `VisitAmendment`, `FieldVisit`, `PolicyPacket`, `SyncBundle`) are documented in `docs/20_data_contracts.md` and exercised by tests in `code/shared/`.
 
-### Apuntado para extensión natural
+### Natural extensions noted
 
 - **`SAFETY_DOWNGRADE` rule** (capping a valid command to a safer envelope instead of rejecting it): defined in the contract; the firmware currently rejects with `EVENT_DURATION_OUT_OF_RANGE` when out of bounds. Modulation (e.g. *"AI asked 30s → final 12s"*) is the natural next step once the flow sensor closes the operational loop.
 - **GPU offload** on Jetson: 36/36 layers loaded successfully, but quality is not contractual under one test case (`RD04` derives semantically). The contractual path of the demo is `safe-cpu`.
@@ -89,7 +89,7 @@ Build the demo flavor and install it on any Android 12+ device or emulator:
 ```bash
 cd code/pollen
 ./gradlew assembleDemoDebug
-adb install app/build/outputs/apk/demo/debug/app-demo-debug.apk
+adb install app/build/outputs/apk/demo/debug/pollen-demo.apk
 ```
 
 Mock LiteRT inference — walks through the UI without needing a 3 GB model on disk.
@@ -132,9 +132,9 @@ If you only have **5 minutes**:
 If you have **30 minutes**:
 
 4. Read [`docs/01_architecture.md`](docs/01_architecture.md) for the three-node design.
-5. Read [`docs/30_safety_rules.md`](docs/30_safety_rules.md) for the ESP32 hard limits.
+5. Read [`docs/30_safety_rules.en.md`](docs/30_safety_rules.en.md) for the ESP32 hard limits.
 6. Run `make test` in `code/meristem_node/` to see the deterministic evaluator + LLM smoke pass.
-7. Build and install the Pollen demo flavor: `cd code/pollen && ./gradlew assembleDemoDebug && adb install app/build/outputs/apk/demo/debug/app-demo-debug.apk`.
+7. Build and install the Pollen demo flavor: `cd code/pollen && ./gradlew assembleDemoDebug && adb install app/build/outputs/apk/demo/debug/pollen-demo.apk`.
 
 If you have **2 hours and want to scrutinize**:
 
@@ -158,18 +158,51 @@ Three Gemma 4 instances, three jurisdictions, **no cloud roundtrip at any layer*
 
 ## Tracks
 
-We submit primarily to **Main Track** for vision + execution. The architecture is also a natural fit for:
+The Submission is entered in the three main Track categories:
 
-- **Global Resilience** — drought + dispersed agriculture + intermittent connectivity, with a working pattern that brings the decision to where the water lives.
-- **Safety & Trust** — auditable decisions, signed receipts, expiring contracts, physical veto. Every refusal is a product feature, not a failure.
+- **Main Track**
+- **Impact Track**
+- **Special Technology Track**
+
+Within those, the architecture maps to the following sub-tracks:
+
+### Main Track — overall vision + execution + impact
+
+> *Sprout is a safety-bounded decision network for irrigation under absence.*
+
+Sprout is not a single model, app or device. It is a reusable pattern for agriculture in low-connectivity terrain: three Gemma 4 jurisdictions with explicit boundaries, a physical safety floor, and signed receipts that survive the absence of the network.
+
+### Impact Track / Global Resilience
+
+> *Sprout targets the gap between field, human and network.*
+
+Sprout responds directly to drought, dispersed agriculture, intermittent connectivity, decisions that cannot wait for the cloud, and water management under human absence. The Rules describe this category as systems that anticipate, mitigate and respond to large challenges — from offline / edge response to long-term climate mitigation. Sprout brings local decision to places where the network arrives late or not at all.
+
+### Impact Track / Safety & Trust
+
+> *Every intelligence has jurisdiction. Every authority expires. The physical layer can say no.*
+
+Sprout implements a technical constitution that maps directly to this category: bounded authority, TTL / expiry on every instruction, signed `DecisionReceipt` objects, `MissionPatch` and `PolicyPacket` with explicit validity windows, `ShadowSkeptic` as a second local auditor with `affects_decision=false`, and an ESP32 safety coprocessor that owns the physical veto. The Rules describe Safety & Trust as frameworks of transparency, reliability, grounding and explainability. Sprout does not just claim those properties — it ships them as code.
+
+### Special Technology Track / LiteRT Prize
+
+> *Pollen makes the phone a field intelligence node, not a dashboard.*
+
+Pollen runs Gemma 4 E4B on Android via Google AI Edge LiteRT-LM, with native multimodal audio. It transforms a human visit into structured intelligence: voice input → validated `MissionPatch` → refusal / retry / hard refusal under the Mini Evaluator's four checks. The Rules describe the LiteRT Prize as the most compelling and effective use case built using LiteRT with Gemma 4. Pollen is exactly that — Gemma 4 local on the pocket, doing essential work inside the system, not decoration.
+
+### Special Technology Track / llama.cpp Prize
+
+> *Gemma 4 runs across field and home nodes without requiring cloud availability.*
+
+Rhizome runs Gemma 4 E2B on Jetson Orin Nano Super via `llama.cpp`. Meristem runs Gemma 4 E4B on a home laptop via `llama.cpp` with tool calling. The same runtime serves two distinct resource-constrained deployments. The Rules describe the llama.cpp Prize as the best innovative implementation of Gemma 4 on resource-constrained hardware — Sprout deploys it at both ends of the operational chain.
 
 ---
 
-## License and winner grant
+## License and attribution
 
 The Sprout repository is licensed under **Apache 2.0** (see [`LICENSE`](LICENSE)) — an OSI-approved permissive license. All third-party dependencies used to generate this Submission are OSI-approved open source (`llama.cpp`, LiteRT-LM, FastAPI, Pydantic, SQLite, ESP-IDF, Bosch `BME280_SensorAPI`).
 
-If the Submission is selected as a Prize winner, the team agrees to grant the Competition Sponsor the **CC-BY 4.0** license on the winning Submission and source code, in accordance with §1.6 and §2.5 of the Competition Rules. The repository will continue to be available to the public under Apache 2.0; the CC-BY 4.0 grant is in addition, not in replacement.
+Per §1.6 and §2.5 of the Competition Rules, the team accepts the obligation to grant the Competition Sponsor a **CC-BY 4.0** license on the Submission and source code under the conditions stated in those Rules. The repository remains publicly available under Apache 2.0; the CC-BY 4.0 grant is in addition, not in replacement.
 
 Sprout uses Gemma 4 models by Google. **Gemma is a trademark of Google LLC.** This project is not affiliated with or endorsed by Google. The Gemma 4 model naming and attribution guidelines (Google) are followed throughout the public surfaces (README, writeup, landing demo, video, node READMEs).
 

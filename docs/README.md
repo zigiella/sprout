@@ -15,7 +15,7 @@ Documentacion del producto y la arquitectura. Orden de lectura sugerido por nume
 | 13 | [13_esp32_spec.md](13_esp32_spec.md) | Spec del coprocesador ESP32 |
 | 20 | 20_data_contracts.md | Schemas JSON: weather_packet, policy_delta, contradiction_alert (pendiente) |
 | 23 | [23_rhizome_prompt_mapping_v0.md](23_rhizome_prompt_mapping_v0.md) | Mapeo de prompts Rhizome v0/v0.5 |
-| 30 | 30_safety_rules.md | Reglas fisicas duras del ESP32 (pendiente) |
+| 30 | [30_safety_rules.en.md](30_safety_rules.en.md) · [ES](30_safety_rules.md) | ESP32 hard safety rules (EN canonical, ES preserved) |
 | 40 | 40_naming_guidelines.md | Cumplimiento naming Gemma (pendiente) |
 | 51 | [51_rhizome_gemma4_e2b_jetson_guide.md](51_rhizome_gemma4_e2b_jetson_guide.md) | Guia Gemma 4 E2B + llama.cpp en Jetson |
 | 52 | [52_endodermis_jetson_bringup_brief.md](52_endodermis_jetson_bringup_brief.md) | Briefing operativo para Endodermis |

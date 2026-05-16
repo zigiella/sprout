@@ -11,7 +11,7 @@ Esta carpeta esta reservada para builds finales del APK Android de Pollen. Duran
 ```bash
 cd code/pollen
 ./gradlew assembleDemoDebug
-adb install app/build/outputs/apk/demo/debug/app-demo-debug.apk
+adb install app/build/outputs/apk/demo/debug/pollen-demo.apk
 ```
 
 Mock LiteRT determinista — no necesita el modelo de 3 GB. Sirve para recorrer la UI, el flujo de voz y los caminos de refusal/retry.
@@ -22,7 +22,7 @@ Mock LiteRT determinista — no necesita el modelo de 3 GB. Sirve para recorrer 
 cd code/pollen
 ./gradlew assembleDeviceRelease
 adb push gemma-4-E4B-it.litertlm /data/local/tmp/gemma-4-E4B-it.litertlm
-adb install app/build/outputs/apk/device/release/app-device-release.apk
+adb install app/build/outputs/apk/device/release/pollen-device.apk
 ```
 
 Requiere Android 12+ / API 31+, 12 GB RAM recomendado, 6 GB libres. Ver [`code/pollen/README.md`](../code/pollen/README.md) para los pasos completos de side-load del modelo y permisos.
