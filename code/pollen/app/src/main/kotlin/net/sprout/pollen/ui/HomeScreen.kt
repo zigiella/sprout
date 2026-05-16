@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Nature
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,7 +23,8 @@ import net.sprout.pollen.R
 @Composable
 fun HomeScreen(
     onNavigateToRhizome: (String) -> Unit,
-    onNavigateToMeristem: () -> Unit
+    onNavigateToMeristem: () -> Unit,
+    onNavigateToSettings: () -> Unit
 ) {
     val context = LocalContext.current
     
@@ -30,8 +32,13 @@ fun HomeScreen(
         // Header
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.home_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
-            IconButton(onClick = { toggleLanguage(context) }) {
-                Icon(Icons.Default.Language, contentDescription = "Cambiar Idioma", tint = MaterialTheme.colorScheme.onBackground)
+            Row {
+                IconButton(onClick = onNavigateToSettings) {
+                    Icon(Icons.Default.Settings, contentDescription = "Configuración", tint = MaterialTheme.colorScheme.onBackground)
+                }
+                IconButton(onClick = { toggleLanguage(context) }) {
+                    Icon(Icons.Default.Language, contentDescription = "Cambiar Idioma", tint = MaterialTheme.colorScheme.onBackground)
+                }
             }
         }
         Spacer(modifier = Modifier.height(16.dp))

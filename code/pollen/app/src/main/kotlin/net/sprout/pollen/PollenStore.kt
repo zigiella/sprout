@@ -54,4 +54,24 @@ class PollenStore(context: Context) {
     fun setModelPath(path: String) {
         prefs.edit().putString("model_path", path).apply()
     }
+
+    fun saveMeristemUrl(url: String) {
+        prefs.edit().putString("meristem_url", url).apply()
+    }
+
+    fun loadMeristemUrl(): String {
+        return prefs.getString("meristem_url", "http://192.168.1.36:13000/") ?: "http://192.168.1.36:13000/"
+    }
+
+    fun saveRhizomeUrl(plotId: String, url: String) {
+        prefs.edit().putString("rhizome_url_${plotId}", url).apply()
+    }
+
+    fun loadRhizomeUrl(plotId: String): String {
+        val default = if (plotId.contains("02"))
+            "http://192.168.1.60:13020/"
+        else
+            "http://192.168.1.60:13010/"
+        return prefs.getString("rhizome_url_${plotId}", default) ?: default
+    }
 }
