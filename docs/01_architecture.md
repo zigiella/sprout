@@ -1,4 +1,18 @@
-# Sprout — arquitectura v2
+# Sprout — arquitectura v2 (histórico, día 15)
+
+> ⚠️ **Documento histórico.** Esta es la versión de trabajo en castellano de aproximadamente el día 15 del proyecto (pre-`ShadowSkeptic`, pre-Mini Evaluator, pre-cierre Pollen `device` flavor). Se conserva como evidencia de proceso. **La versión canónica y actualizada vive en [`01_architecture.en.md`](01_architecture.en.md).**
+>
+> Diferencias principales respecto al estado v1.0 actual:
+>
+> - No menciona `ShadowSkeptic` (patrón doble-agente añadido día 22+)
+> - No describe el Mini Evaluator de Pollen (cuatro chequeos deterministas, día 20+)
+> - No incluye las cinco hard rules canónicas del ESP32 (`TANK_LOW`, `JETSON_HEARTBEAT_LOST`, `EVENT_DURATION_OUT_OF_RANGE`, `NO_FLOW_DETECTED`, `ALERT_LATCHED`)
+> - No diferencia `WATER DRY_RUN` vs `PUMP_PULSE TEST_ONLY` (frontera supervisada de actuación)
+> - No documenta los perfiles `safe-cpu` vs `gpu-experimental` de la Jetson
+> - No menciona el sync facade `:13010` ni el hostname mDNS `rhizome-01-node.local`
+> - No incluye el inventario completo de los 10 contratos JSON del MVP
+
+---
 
 ## 0. Definición oficial
 
