@@ -90,7 +90,7 @@
 <section id="truth" class="truth container">
   <p class="eyebrow">Honesty floor</p>
   <h2>What is real vs what is in your browser</h2>
-  <p class="note">This page does not pretend to run Gemma 4 in your browser. It is a <strong>deterministic contract simulator</strong>. The real Gemma 4 execution lives in the Android, Jetson and laptop paths documented in the repo. Below is what the system does for real:</p>
+  <p class="note">This browser demo does not run Gemma 4 locally. It is a <strong>deterministic contract simulator</strong>. The real Gemma 4 execution lives in the Android, Jetson and laptop paths documented in the repo. Below is what the system does for real:</p>
   <div class="truth-grid">
     <div><strong>Rhizome</strong><span>Jetson + Gemma 4 E2B via <code>llama.cpp</code></span></div>
     <div><strong>Pollen</strong><span>Android device path + Gemma 4 E4B via LiteRT-LM, native audio</span></div>
@@ -115,14 +115,14 @@
     <article>
       <p class="node">Pollen · demo flavor</p>
       <h3>Walk through the app, no model needed</h3>
-      <p>Deterministic mock evaluator, no 3 GB model on disk. Runs on any Android emulator or low-RAM device. The launcher icon carries a <strong>"D" watermark</strong> and the app shows a permanent <strong>"DEMO APP — NO LLM"</strong> banner so the variant is always unambiguous.</p>
+      <p>Deterministic contract evaluator, no 3 GB model on disk. Runs on any Android emulator or low-RAM device. The launcher icon carries a <strong>"D" watermark</strong> and the app shows a permanent <strong>"DEMO APP — NO LLM"</strong> banner so the variant is always unambiguous.</p>
       <div class="btn-stack">
         <a class="btn primary" href="get/">Get the demo APK →</a>
         <a class="btn ghost" href="https://github.com/zigiella/sprout/blob/main/code/pollen/README.md">Or build from source →</a>
       </div>
     </article>
     <article>
-      <p class="node">Pollen · device flavor</p>
+      <p class="node">Pollen · device flavor · advanced</p>
       <h3>Run real Gemma 4 E4B on your phone</h3>
       <p>Real LiteRT-LM pipeline. Side-load <code>gemma-4-E4B-it.litertlm</code> (3.6 GB) once and grant microphone permission. Then the app runs Gemma 4 E4B fully offline on your phone.</p>
       <div class="btn-stack">
@@ -160,6 +160,9 @@
   <p>
     <strong>zigiella</strong> · Apache 2.0 · <a href="https://github.com/zigiella/sprout">github.com/zigiella/sprout</a><br>
     Built on Gemma 4 by Google. Gemma is a trademark of Google LLC. This project is not affiliated with or endorsed by Google.
+  </p>
+  <p class="muted small" style="margin-top:8px;font-size:12px;">
+    Visuals by the Sprout team · Voice-over with ElevenLabs · Type: Manrope + IBM Plex Mono
   </p>
 </footer>
 

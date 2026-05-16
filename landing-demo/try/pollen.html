@@ -10,12 +10,12 @@
 
 <header class="demo-header">
   <div class="container">
-    <p class="breadcrumb"><a href="../index.html">← Sprout</a> · Try Pollen <span class="beta-badge">BETA</span></p>
+    <p class="breadcrumb"><a href="../index.html">← Sprout</a> · Try Pollen</p>
     <h1>Pollen</h1>
     <p class="muted">Mobile node · Gemma 4 E4B (multimodal audio) · LiteRT-LM · jurisdiction: visit TTL</p>
 
     <div class="demo-disclaimer">
-      <strong>BETA — voice → policy.</strong> The real Pollen app on Android feeds raw <code>.wav</code>
+      <strong>Voice → MissionPatch.</strong> The real Pollen app on Android feeds raw <code>.wav</code>
       audio directly to Gemma 4 E4B via LiteRT-LM, with no separate STT pipeline. In this browser demo
       we accept text instead of audio (browsers can't ship an Android model). The compilation logic and
       schema validation are the same as on the device. <strong>If the system can't translate with
@@ -79,7 +79,7 @@
     <div class="demo-panel">
       <h3>Demo flavor — runs anywhere</h3>
       <p>
-        Lightweight build with mock LiteRT inference. No model bundled, no OOM.
+        Lightweight build with deterministic contract inference. No model bundled, no OOM.
         Runs on any Android emulator or low-RAM phone. Use this to walk through the UI.
       </p>
       <pre class="output-block"># Build and install the demo flavor
@@ -90,7 +90,7 @@ adb install app/build/outputs/apk/demo/debug/pollen-demo.apk</pre>
         <a class="btn btn-ghost" href="https://github.com/zigiella/sprout/blob/main/code/pollen/README.md" rel="noopener">
           Pollen build guide &rarr;
         </a>
-        <span class="muted small" style="margin-left:8px;">Mock inference &mdash; no model file needed.</span>
+        <span class="muted small" style="margin-left:8px;">Demo inference &mdash; no model file needed.</span>
       </p>
     </div>
     <div class="demo-panel">
