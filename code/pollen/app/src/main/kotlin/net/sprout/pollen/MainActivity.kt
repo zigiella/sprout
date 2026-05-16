@@ -37,6 +37,7 @@ import net.sprout.pollen.ui.VisitarRhizomeScreen
 import net.sprout.pollen.ui.AuditLogScreen
 import net.sprout.pollen.ui.DownloadModelScreen
 import net.sprout.pollen.ui.HomeScreen
+import net.sprout.pollen.ui.SettingsScreen
 import androidx.compose.ui.res.stringResource
 import net.sprout.pollen.R
 import androidx.compose.material3.AlertDialog
@@ -55,7 +56,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 
 enum class AppScreen {
-    DOWNLOAD_MODEL, HOME, MERISTEM, RHIZOME_DETAIL, CHAT, AUDIT
+    DOWNLOAD_MODEL, HOME, MERISTEM, RHIZOME_DETAIL, CHAT, AUDIT, SETTINGS
 }
 
 class MainActivity : ComponentActivity() {
@@ -153,6 +154,9 @@ class MainActivity : ComponentActivity() {
                                     },
                                     onNavigateToMeristem = {
                                         currentScreen = AppScreen.MERISTEM
+                                    },
+                                    onNavigateToSettings = {
+                                        currentScreen = AppScreen.SETTINGS
                                     }
                                 )
                             }
@@ -201,6 +205,11 @@ class MainActivity : ComponentActivity() {
                             }
                             AppScreen.AUDIT -> {
                                 AuditLogScreen(receipts = globalReceipts, policy = globalPolicy)
+                            }
+                            AppScreen.SETTINGS -> {
+                                SettingsScreen(
+                                    onBack = { currentScreen = AppScreen.HOME }
+                                )
                             }
                         }
                     }

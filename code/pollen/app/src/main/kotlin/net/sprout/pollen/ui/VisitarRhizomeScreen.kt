@@ -38,12 +38,13 @@ fun VisitarRhizomeScreen(
     onChatClicked: () -> Unit = {},
     onAuditClicked: () -> Unit = {}
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val store = remember { net.sprout.pollen.PollenStore(context) }
     val client: RhizomeClient = remember(plotId) { 
         if (net.sprout.pollen.BuildConfig.FLAVOR == "demo") {
             RhizomeMockClient()
         } else {
-            val port = if (plotId.contains("02")) "13020" else "13010"
-            RhizomeNetworkClient("http://192.168.1.60:$port/")
+            RhizomeNetworkClient(store.loadRhizomeUrl(plotId))
         }
     }
     val scope = rememberCoroutineScope()

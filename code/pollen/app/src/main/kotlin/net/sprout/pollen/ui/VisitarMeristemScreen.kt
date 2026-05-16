@@ -39,15 +39,16 @@ fun VisitarMeristemScreen(
     currentReceipts: List<DecisionReceipt> = emptyList(),
     onPolicyDownloaded: (PolicyPacket) -> Unit = {}
 ) {
+    val context = LocalContext.current
+    val store = remember { net.sprout.pollen.PollenStore(context) }
     val client: MeristemClient = remember { 
         if (net.sprout.pollen.BuildConfig.FLAVOR == "demo") {
             MeristemMockClient()
         } else {
-            MeristemNetworkClient("http://192.168.1.36:13000/")
+            MeristemNetworkClient(store.loadMeristemUrl())
         }
     }
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
     
     var isConnected by remember { mutableStateOf(false) }
     var lastConnectionDate by remember { mutableStateOf<String>("-") }
