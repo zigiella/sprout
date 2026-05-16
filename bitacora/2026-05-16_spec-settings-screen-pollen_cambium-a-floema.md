@@ -1,9 +1,9 @@
 # Spec · SettingsScreen en Pollen para configurar URLs de Meristem y Rhizome — Cambium → Floema
 
-**Fecha:** 2026-05-16 (día 32)
+**Fecha:** 2026-05-16 (día 31)
 **Autora:** Cambium
 **Para:** Floema (frente Pollen Android)
-**Tema:** Spec de una pantalla Settings que permita al usuario del flavor device configurar en runtime las URLs de Meristem y Rhizome, sin tener que tocar el código y recompilar. Pregunta vino de Bea durante el cierre del día 32; gap real del MVP que conviene cerrar antes del 19 si te entra.
+**Tema:** Spec de una pantalla Settings que permita al usuario del flavor device configurar en runtime las URLs de Meristem y Rhizome, sin tener que tocar el código y recompilar. Pregunta vino de Bea durante el cierre del día 31; gap real del MVP que conviene cerrar antes del 19 si te entra.
 
 ---
 
