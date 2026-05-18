@@ -1,5 +1,16 @@
 # Meristem — especificación v2
 
+> **⚠ Historical document (day 7, 2026-04-22).** This is the original Meristem spec from the early planning phase. It carries fact-level drift from the implemented v1.0:
+> - Target model is **Gemma 4 E4B**, not "26B A4B" (the latter was a target later discarded).
+> - Runtime is **`llama.cpp` (llama-server)** directly, not "Ollama-compatible adapter".
+> - Storage is **SQLite**, not DuckDB.
+>
+> Preserved as evidence of process. For the canonical current reality see:
+> - [`01_architecture.en.md`](01_architecture.en.md) §3.3 — Meristem
+> - [`../code/meristem_node/README.md`](../code/meristem_node/README.md)
+
+---
+
 ## 1. Rol
 
 Meristem es el cerebro lento del sistema.
