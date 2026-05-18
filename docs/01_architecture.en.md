@@ -70,7 +70,7 @@ Pollen runs on Android (Pixel 10 Pro) with **Gemma 4 E4B** via Google AI Edge **
 
 Pollen has two build flavors:
 
-- **`demo` flavor** — deterministic mock evaluator, no model bundled, "D" watermark on the launcher icon, permanent red "DEMO APP — NO LLM" banner, dependency-injected mock clients (`RhizomeMockClient` + `MeristemMockClient`) so the app works offline-first with no Jetson or ESP32 powered on. Voice/chat buttons are blocked with a clear notice pointing to the device flavor.
+- **`demo` flavor** — deterministic contract evaluator, no model bundled, "D" watermark on the launcher icon, permanent red "DEMO APP — NO LLM" banner, dependency-injected mock clients (`RhizomeMockClient` + `MeristemMockClient`) so the app works offline-first with no Jetson or ESP32 powered on. Voice/chat buttons are blocked with a clear notice pointing to the device flavor.
 - **`device` flavor** — real LiteRT-LM pipeline with side-loaded `gemma-4-E4B-it.litertlm` (3.6 GB) in `/data/local/tmp/`. Runs Gemma 4 E4B fully offline on the phone. Requires Android 12+ / API 31+, 12 GB RAM recommended.
 
 Pollen has four responsibilities:

@@ -13,7 +13,7 @@
 | **Landing demo** | https://sprout.zigiella.com |
 | **Repository** | https://github.com/zigiella/sprout |
 | **Writeup** | [`writeup/draft.md`](writeup/draft.md) (1467 words, also submitted as Kaggle draft) |
-| **Pollen demo build** | `cd code/pollen && ./gradlew assembleDemoDebug` — mock LiteRT inference, no 3 GB model needed |
+| **Pollen demo build** | `cd code/pollen && ./gradlew assembleDemoDebug` — deterministic contract inference, no 3 GB model needed |
 | **Pollen device build** | `cd code/pollen && ./gradlew assembleDeviceRelease` — real Gemma 4 E4B via LiteRT-LM, model side-loaded with `adb push` |
 | **License** | Apache 2.0 |
 | **Gemma 4 attribution** | *Sprout uses Gemma 4 models by Google. Gemma is a trademark of Google LLC. This project is not affiliated with or endorsed by Google.* |
@@ -92,7 +92,7 @@ cd code/pollen
 adb install app/build/outputs/apk/demo/debug/pollen-demo.apk
 ```
 
-Mock LiteRT inference — walks through the UI without needing a 3 GB model on disk.
+Deterministic contract inference — walks through the UI without needing a 3 GB model on disk.
 
 The demo flavor is built to be unambiguous at evaluation time: it ships with a **"D" watermark on the launcher icon**, a permanent **"DEMO APP — NO LLM"** banner at the top of every screen, and dependency-injected mock clients for Rhizome and Meristem — so it works **offline-first, with no Jetson or ESP32 powered on**. Buttons that would require the on-device Gemma 4 model (voice recording, chat) are intentionally disabled with a clear notice pointing to the `device` flavor.
 

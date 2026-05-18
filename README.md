@@ -140,7 +140,7 @@ The public web demo is a **deterministic contract simulator**:
 - evaluate Meristem-style policy changes;
 - see TTLs, receipts and refusal paths.
 
-It does not pretend to run Gemma 4 in the browser. It exists so anyone can experience the architecture without hardware, model downloads, cloud APIs or login.
+It does not run Gemma 4 in the browser. It exists so anyone can experience the architecture without hardware, model downloads, cloud APIs or login.
 
 The real local Gemma 4 paths are documented in:
 
@@ -179,7 +179,7 @@ cd code/pollen
 adb push gemma-4-E4B-it.litertlm /data/local/tmp/gemma-4-E4B-it.litertlm
 ```
 
-Then open Pollen on Android and select the local model path.
+Then open Pollen on Android and select the local model path. To connect Pollen to your own Meristem and Rhizome servers, tap the gear icon (⚙) on the Home screen and enter the URLs at runtime — full setup in [`code/pollen/README.md`](code/pollen/README.md#connecting-to-a-real-meristem-and-rhizome).
 
 ### Rhizome on Jetson
 
